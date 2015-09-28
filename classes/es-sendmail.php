@@ -342,6 +342,12 @@ class es_cls_sendmail
 				
 				// Get post excerpt
 				$the_excerpt = $post->post_content;
+
+// XTEC ************ MODIFICAT - Avoid to strip html tags from the post
+// 2015.10.08 @dgras
+				$the_excerpt = strip_shortcodes($the_excerpt);
+//************ ORIGINAL
+/*
 				$the_excerpt = strip_tags(strip_shortcodes($the_excerpt));
 				$words = explode(' ', $the_excerpt, $excerpt_length + 1);
 				if(count($words) > $excerpt_length)
@@ -350,6 +356,8 @@ class es_cls_sendmail
 					array_push($words, '...');
 					$the_excerpt = implode(' ', $words);
 				}
+*/
+//************ FI
 
 				if (  (function_exists('has_post_thumbnail')) && (has_post_thumbnail($post_id)))
 				{
@@ -439,6 +447,29 @@ class es_cls_sendmail
 							$adminmailcontant = str_replace("<br />", "\r\n", $adminmailcontant);
 							$adminmailcontant = str_replace("<br>", "\r\n", $adminmailcontant);
 						}	
+
+//XTEC ************ AFEGIT - Added unsubscribe link to welcome message
+//2016.01.07 @sarjona
+						$unsublink = $settings['es_c_unsublink'];
+						$unsublink = str_replace("###DBID###", $subscriber["es_email_id"], $unsublink);
+						$unsublink = str_replace("###EMAIL###", $subscriber["es_email_mail"], $unsublink);
+						$unsublink = str_replace("###GUID###", $subscriber["es_email_guid"], $unsublink);
+						$unsublink  = $unsublink . "&cache=".$cacheid;
+
+						$unsubtext = stripslashes($settings['es_c_unsubtext']);
+						$unsubtext = str_replace("###LINK###", $unsublink , $unsubtext);
+						if ( $settings['es_c_mailtype'] == "WP HTML MAIL" || $settings['es_c_mailtype'] == "PHP HTML MAIL" )
+						{
+							$unsubtext = '<br><br>' . $unsubtext;
+						}
+						else
+						{
+							$unsubtext = '\n\n' . $unsubtext;
+						}
+						$adminmailcontant .= $unsubtext;
+//************ FI
+
+
 						break;
 						
 					case 'newsletter':

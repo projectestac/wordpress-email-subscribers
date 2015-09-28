@@ -5,26 +5,54 @@ function _es_redirect()
 
 function _es_help()
 {
+// XTEC ************ MODIFICAT - Change the url for help
+// 2015.10.19 @dgras
+	window.open("http://agora.xtec.cat/moodle/moodle/mod/glossary/view.php?id=1741&mode=entry&hook=2501");
+//************ ORIGINAL
+/*
 	window.open("http://www.gopiplus.com/work/2014/05/02/email-subscribers-wordpress-plugin/");
+*/
+//************ FI
 }
 
 function _es_addemail()
 {
 	if(document.form_addemail.es_email_mail.value=="")
 	{
-		alert("Please enter subscriber email address.")
+// XTEC ************ MODIFICAT - Localization support
+// 2015.10.07 @dgras
+			alert("Si us plau, introduïu l'adreça de correu del subscriptor.");
+//************ ORIGINAL
+/*
+			alert("Please enter subscriber email address.")
+*/
+//************ FI
 		document.form_addemail.es_email_mail.focus();
 		return false;
 	}
 	else if(document.form_addemail.es_email_status.value=="" || document.form_addemail.es_email_status.value=="Select")
 	{
-		alert("Please select subscriber email status.")
+// XTEC ************ MODIFICAT - Localization support
+// 2015.10.07 @dgras
+		alert("Si us plau, seleccioneu l'estat del correu del subscriptor.");
+//************ ORIGINAL
+/*
+			alert("Please select subscriber email status.")
+*/
+//************ FI
 		document.form_addemail.es_email_status.focus();
 		return false;
 	}
 	else if( (document.form_addemail.es_email_group.value == "") && (document.form_addemail.es_email_group_txt.value == "") )
 	{
-		alert("Please select or create group for this subscriber.")
+        // XTEC ************ MODIFICAT - Localization support
+// 2015.10.21 @dgras
+        alert("Si us plau seleccioneu o creu el grup per a aquest subscriptor.");
+//************ ORIGINAL
+/*
+      alert("Please select or create group for this subscriber.")
+*/
+//************ FI
 		document.form_addemail.es_email_group.focus();
 		return false;
 	}
@@ -32,7 +60,14 @@ function _es_addemail()
 
 function _es_delete(id, query)
 {
+	// XTEC ************ MODIFICAT - Localization support
+// 2015.10.06 @dgras
+	if(confirm("Voleu eliminar aquest registre?"))
+//************ ORIGINAL
+/*
 	if(confirm("Do you want to delete this record?"))
+*/
+//************ FI
 	{
 		document.getElementById("searchquery").value = document.frm_es_display.searchquery.value;;
 		document.getElementById("searchquery_cnt").value = document.frm_es_display.searchquery_cnt.value;
@@ -130,16 +165,37 @@ function _es_bulkaction()
 {
 	if(document.frm_es_display.bulk_action.value=="")
 	{
-		alert("Please select the bulk action."); 
+// XTEC ************ MODIFICAT - Localization support
+// 2015.10.07 @dgras
+			alert("Si us plau seleccioneu l'acció massiva.");
+//************ ORIGINAL
+/*
+			alert("Please select the bulk action.");
+*/
+//************ FI
 		document.frm_es_display.bulk_action.focus();
 		return false;
 	}
 	
 	if(document.frm_es_display.bulk_action.value == "delete")
 	{
-		if(confirm("Do you want to delete selected record(s)?"))
+// XTEC ************ MODIFICAT - Localization support
+// 2015.10.07 @dgras
+ 			if(confirm("Voleu eliminar el(s) registre(s) seleccionat(s)?"))
+//************ ORIGINAL
+/*
+			if(confirm("Do you want to delete selected record(s)?"))
+*/
+//************ FI
 		{
+// XTEC ************ MODIFICAT - Localization support
+// 2015.10.07 @dgras
+			if(confirm("Segur que el voleu eliminar?"))
+//************ ORIGINAL
+/*
 			if(confirm("Are you sure you want to delete?"))
+*/
+//************ FI
 			{
 				//var searchquery = document.frm_es_display.searchquery.value;
 				//var sts = document.frm_es_display.searchquery_sts.value;
@@ -167,7 +223,14 @@ function _es_bulkaction()
 	}
 	else if(document.frm_es_display.bulk_action.value == "resend")
 	{
+// XTEC ************ MODIFICAT - Localization support
+// 2015.10.07 @dgras
+		if(confirm("Voleu tornar a enviar el correu electrònic de confirmació? \n Tingueu en compte que això actualitzarà l'estat actual d'abonats a 'Sense confirmar'."))
+//************ ORIGINAL
+/*
 		if(confirm("Do you want to resend confirmation email? \nAlso please note, this will update subscriber current status to 'Unconfirmed'."))
+*/
+//************ FI
 		{
 			//var searchquery = document.frm_es_display.searchquery.value;
 			//var sts = document.frm_es_display.searchquery_sts.value;
@@ -192,7 +255,14 @@ function _es_bulkaction()
 	{
 		if(document.frm_es_display.es_email_group.value=="")
 		{
+// XTEC ************ MODIFICAT - Localization support
+// 2015.10.07 @dgras
+			alert("Si us plau, seleccioneu nou grup d'abonats.");
+//************ ORIGINAL
+/*
 			alert("Please select new subscriber group.");
+*/
+//************ FI
 			document.frm_es_display.es_email_group.focus();
 			return false;
 		}
@@ -234,9 +304,16 @@ function _es_action_visible(val)
 
 function _es_exportcsv(url, option)
 {
+// XTEC ************ MODIFICAT - Localization support
+// 2015.10.07 @dgras
+	if(confirm("Voleu exportar els correus?"))
+//************ ORIGINAL
+/*
 	if(confirm("Do you want to export the emails?"))
+*/
+//************ FI
 	{
-		document.frm_es_subscriberexport.action= url+"&option="+option;
+        document.frm_es_subscriberexport.action= url+"&option="+option;
 		document.frm_es_subscriberexport.submit();
 	}
 }
@@ -249,13 +326,27 @@ function _es_importemail()
 	{
         if(document.form_addemail.es_email_status.value=="" || document.form_addemail.es_email_status.value=="Select")
 		{
+// XTEC ************ MODIFICAT - Localization support
+// 2015.10.07 @dgras
+			alert("Si us plau, seleccioneu l'estat de correu del subscriptor");
+//************ ORIGINAL
+/*
 			alert("Please select subscriber email status.")
+*/
+//************ FI
 			document.form_addemail.es_email_status.focus();
 			return false;
 		}
 		else if( (document.form_addemail.es_email_group.value == "") && (document.form_addemail.es_email_group_txt.value == "") )
 		{
+// XTEC ************ MODIFICAT - Localization support
+// 2015.10.07 @dgras
+			alert("Si us plau, seleccioneu o creeu el grup per a aquest subscriptor.");
+//************ ORIGINAL
+/*
 			alert("Please select or create group for this subscriber.")
+*/
+//************ FI
 			document.form_addemail.es_email_group.focus();
 			return false;
 		}
@@ -266,7 +357,14 @@ function _es_importemail()
     } 
 	else 
 	{
-		alert('Please select only csv file. \nPlease check official website for csv structure.');  
+// XTEC ************ MODIFICAT - Localization support
+// 2015.10.07 @dgras
+		alert("Si us plau, seleccioneu arxius en format csv. \nSi us plau, consulteu el lloc web oficial per saber l'estructura del csv.");
+//************ ORIGINAL
+/*
+		alert('Please select only csv file. \nPlease check official website for csv structure.');
+*/
+//************ FI
 		return false;
     }
 }

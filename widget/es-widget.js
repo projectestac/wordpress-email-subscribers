@@ -16,7 +16,14 @@
         es_email.select();
         return false;
     }
+// XTEC ************ MODIFICAT - Localization support
+// 2016.01.07 @sarjona
+	document.getElementById("es_msg").innerHTML = "carregant...";
+//************ ORIGINAL
+/*
 	document.getElementById("es_msg").innerHTML = "loading...";
+*/
+//************ FI
 	var date_now = "";
     var mynumber = Math.random();
 	var str= "es_email="+ encodeURI(es_email.value) + "&es_name=" + encodeURI(es_name.value) + "&es_group=" + encodeURI(es_group.value) + "&timestamp=" + encodeURI(date_now) + "&action=" + encodeURI(mynumber);
@@ -84,8 +91,16 @@ function eemail_submitresult()
 				}
 				else if((http_req.responseText).trim() == "subscribed-pending-doubleoptin")
 				{
+// XTEC ************ MODIFICAT - Localization support
+// 2016.01.07 @sarjona
+					alert('Us heu subscrit correctament al butlletí de notícies. Rebreu un correu electrònic de confirmació en pocs minuts. Seguiu l\'enllaç per a confirmar la vostra subscripció. Si el correu electrònic triga més de 15 minuts en arribar a la bústia, reviseu la carpeta de correu brossa.');
+					document.getElementById("es_msg").innerHTML = "Subscripció correcta.";
+//************ ORIGINAL
+/*
 					alert('You have successfully subscribed to the newsletter. You will receive a confirmation email in few minutes. Please follow the link in it to confirm your subscription. If the email takes more than 15 minutes to appear in your mailbox, please check your spam folder.');
 					document.getElementById("es_msg").innerHTML = "Subscribed successfully.";
+*/
+//************ FI
 					document.getElementById("es_txt_email").value="";
 					document.getElementById("es_txt_name").value="";
 				}

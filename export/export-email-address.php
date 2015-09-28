@@ -13,7 +13,15 @@ if(isset($_GET['es']))
 		//{
 			if($_SERVER['REQUEST_METHOD'] == "POST") 
 			{
-				if (strpos($_SERVER['HTTP_REFERER'], get_option('siteurl')) !== false) 
+//XTEC ************ MODIFICAT - To fix bug when exporting CSV
+//2015.12.07 @sarjona
+				$siteurl = preg_replace('/^http:/i', '', get_option('siteurl'));
+				if (strpos($_SERVER['HTTP_REFERER'], $siteurl) !== false)
+//************ ORIGINAL
+/*
+				if (strpos($_SERVER['HTTP_REFERER'], get_option('siteurl')) !== false)
+*/
+//************ FI
 				{
 					global $wpdb;
 					$option = isset($_REQUEST['option']) ? $_REQUEST['option'] : '';

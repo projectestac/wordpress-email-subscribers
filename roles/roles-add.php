@@ -158,5 +158,14 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 	  <?php wp_nonce_field('es_roles_add'); ?>
     </form>
 </div>
-<p class="description"><?php echo ES_OFFICIAL; ?></p>
+<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+<!-- 2015.10.01 @dgras-->
+<?php if(is_xtec_super_admin()) : ?>
+	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+<?php endif; ?>
+<!--************ ORIGINAL	-->
+<!--
+	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+-->
+<!--************ FI-->
 </div>

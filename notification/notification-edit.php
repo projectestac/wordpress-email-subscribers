@@ -181,53 +181,110 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 		echo "</tr></table>";
 	  ?>
       <p><?php _e('Please select post categories.', 'email-subscribers'); ?></p>
-	  
-	  <label for="tag-link"><?php _e('Custom post type', 'email-subscribers'); ?></label>
-	  <?php
-		$args=array('public'=> true, 'exclude_from_search'=> false, '_builtin' => false); 
-		$output = 'names';
-		$operator = 'and';
-		$post_types=get_post_types($args,$output,$operator);
-		//print_r($post_types);
-		$col=3;
-		echo "<table border='0' cellspacing='0'><tr>"; 
-		foreach($post_types as $post_type) 
-		{     
-			echo "<td style='padding-top:4px;padding-bottom:4px;padding-right:10px;'>";
-			if (strpos($form['es_note_cat'],'##{T}'.$post_type.'{T}##') !== false) 
-			{
-				$checked = 'checked="checked"';
-			}
-			else
-			{
-				$checked = "";
-			}
-			?>
-			<input type="checkbox" <?php echo $checked; ?>  value='{T}<?php echo $post_type; ?>{T}' id="es_note_cat[]" name="es_note_cat[]">
-			<?php echo $post_type; ?>
+		<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+		<!-- 2015.10.12 @dgras-->
+		<?php if(is_xtec_super_admin()) : ?>
+			<label for="tag-link"><?php _e('Custom post type', 'email-subscribers'); ?></label>
 			<?php
-			if($col > 1) 
+			$args=array('public'=> true, 'exclude_from_search'=> false, '_builtin' => false);
+			$output = 'names';
+			$operator = 'and';
+			$post_types=get_post_types($args,$output,$operator);
+			//print_r($post_types);
+			$col=3;
+			echo "<table border='0' cellspacing='0'><tr>";
+			foreach($post_types as $post_type)
 			{
-				$col=$col-1;
-				echo "</td><td>"; 
+				echo "<td style='padding-top:4px;padding-bottom:4px;padding-right:10px;'>";
+				if (strpos($form['es_note_cat'],'##{T}'.$post_type.'{T}##') !== false)
+				{
+					$checked = 'checked="checked"';
+				}
+				else
+				{
+					$checked = "";
+				}
+				?>
+				<input type="checkbox" <?php echo $checked; ?>  value='{T}<?php echo $post_type; ?>{T}' id="es_note_cat[]" name="es_note_cat[]">
+				<?php echo $post_type; ?>
+				<?php
+				if($col > 1)
+				{
+					$col=$col-1;
+					echo "</td><td>";
+				}
+				elseif($col = 1)
+				{
+					$col=$col-1;
+					echo "</td></tr><tr>";;
+					$col=3;
+				}
+				$count = $count + 1;
 			}
-			elseif($col = 1)
+			echo "</tr></table>";
+			?>
+			<p><?php _e('Please select your custom post type (Optional).', 'email-subscribers'); ?></p>
+		<?php endif; ?>
+		<!--************ ORIGINAL	-->
+<!--
+			<label for="tag-link"><?php _e('Custom post type', 'email-subscribers'); ?></label>
+			<?php
+			$args=array('public'=> true, 'exclude_from_search'=> false, '_builtin' => false);
+			$output = 'names';
+			$operator = 'and';
+			$post_types=get_post_types($args,$output,$operator);
+			//print_r($post_types);
+			$col=3;
+			echo "<table border='0' cellspacing='0'><tr>";
+			foreach($post_types as $post_type)
 			{
-				$col=$col-1;
-				echo "</td></tr><tr>";;
-				$col=3;
+				echo "<td style='padding-top:4px;padding-bottom:4px;padding-right:10px;'>";
+				if (strpos($form['es_note_cat'],'##{T}'.$post_type.'{T}##') !== false)
+				{
+					$checked = 'checked="checked"';
+				}
+				else
+				{
+					$checked = "";
+				}
+				?>
+				<input type="checkbox" <?php echo $checked; ?>  value='{T}<?php echo $post_type; ?>{T}' id="es_note_cat[]" name="es_note_cat[]">
+				<?php echo $post_type; ?>
+				<?php
+				if($col > 1)
+				{
+					$col=$col-1;
+					echo "</td><td>";
+				}
+				elseif($col = 1)
+				{
+					$col=$col-1;
+					echo "</td></tr><tr>";;
+					$col=3;
+				}
+				$count = $count + 1;
 			}
-			$count = $count + 1;
-		}
-		echo "</tr></table>";
-	  ?>
-	  <p><?php _e('Please select your custom post type (Optional).', 'email-subscribers'); ?></p>
-	  
+			echo "</tr></table>";
+			?>
+			<p><?php _e('Please select your custom post type (Optional).', 'email-subscribers'); ?></p>
+-->
+		<!--************ FI-->
 	  <label for="tag-link"><?php _e('Notification Status', 'email-subscribers'); ?></label>
       <select name="es_note_status" id="es_note_status">
+<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+<!-- 2015.10.12 @dgras-->
+		  		<option value='Enable' <?php if($form['es_note_status']=='Enable') { echo 'selected="selected"' ; } ?>><?php _e('Send mail immediately when new post is published.', 'email-subscribers') ?></option>
+				<?php if(is_xtec_super_admin()) : ?>
+					<option value='Cron' <?php if($form['es_note_status']=='Cron') { echo 'selected="selected"' ; } ?>><?php _e('Add to cron when new post is published and send via cron job.', 'email-subscribers') ?></option>
+				<?php endif; ?>
+		  		<option value='Disable' <?php if($form['es_note_status']=='Disable') { echo 'selected="selected"' ; } ?>><?php _e('Disable notification.', 'email-subscribers')?></option>
+<!--************ ORIGINAL	-->
+<!--
         <option value='Enable' <?php if($form['es_note_status']=='Enable') { echo 'selected="selected"' ; } ?>>Send mail immediately when new post is published.</option>
 		<option value='Cron' <?php if($form['es_note_status']=='Cron') { echo 'selected="selected"' ; } ?>>Add to cron when new post is published and send via cron job.</option>
 		<option value='Disable' <?php if($form['es_note_status']=='Disable') { echo 'selected="selected"' ; } ?>>Disable notification</option>
+-->
+<!--************ FI-->
       </select>
       <p><?php _e('Please select notification status.', 'email-subscribers'); ?></p>
 
@@ -242,5 +299,14 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 	  <?php wp_nonce_field('es_form_edit'); ?>
     </form>
 </div>
-<p class="description"><?php echo ES_OFFICIAL; ?></p>
+<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+<!-- 2015.10.01 @dgras-->
+<?php if(is_xtec_super_admin()) : ?>
+	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+<?php endif; ?>
+<!--************ ORIGINAL	-->
+<!--
+	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+-->
+<!--************ FI-->
 </div>

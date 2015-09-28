@@ -121,14 +121,28 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 	  
 	  <label for="tag-display-status"><?php _e('Status', 'email-subscribers'); ?></label>
       <select name="es_email_status" id="es_email_status">
-        <option value='Confirmed' selected="selected">Confirmed</option>
-		<option value='Unconfirmed'>Unconfirmed</option>
-		<option value='Unsubscribed'>Unsubscribed</option>
-		<option value='Single Opt In'>Single Opt In</option>
+<!--XTEC ************ MODIFICAT - Localization support-->
+<!-- 2015.10.06 @dgras-->
+		  <option value='Confirmed' selected="selected"><?php _e('Confirmed', 'email-subscribers') ?></option>
+		  <option value='Unconfirmed'><?php _e('Unconfirmed', 'email-subscribers') ?></option>
+		  <option value='Unsubscribed'><?php _e('Unsubscribed', 'email-subscribers') ?></option>
+		  <option value='Single Opt In'><?php _e('Single Opt In', 'email-subscribers') ?></option>
+<!--************ ORIGINAL	-->
+<!--
+		  <option value='Confirmed' selected="selected">Confirmed</option>
+		  <option value='Unconfirmed'>Unconfirmed</option>
+		  <option value='Unsubscribed'>Unsubscribed</option>
+		  <option value='Single Opt In'>Single Opt In</option>
+-->
+<!--************ FI-->
       </select>
       <p><?php _e('Please select subscriber email status.', 'email-subscribers'); ?></p>
 	  
 	  <label for="tag-display-status"><?php _e('Select (or) Create Group', 'email-subscribers'); ?></label>
+<!-- XTEC ************ AFEGIT - Add a comment to help understand the functionality of adding groups -->
+<!-- 2015.10.12 @dgras-->
+		<p><?php _e('It is necessary to add an email to create a new group.', 'email-subscribers'); ?></p>
+<!--************ FI-->
 	  <select name="es_email_group" id="es_email_group">
 		<option value=''><?php _e('Select', 'email-subscribers'); ?></option>
 		<?php
@@ -158,5 +172,14 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 	  <?php wp_nonce_field('es_form_add'); ?>
     </form>
 </div>
-<p class="description"><?php echo ES_OFFICIAL; ?></p>
+<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+<!-- 2015.10.01 @dgras-->
+<?php if(is_xtec_super_admin()) : ?>
+    <p class="description"><?php echo ES_OFFICIAL; ?></p>
+<?php endif; ?>
+<!--************ ORIGINAL	-->
+<!--
+    <p class="description"><?php echo ES_OFFICIAL; ?></p>
+-->
+<!--************ FI-->
 </div>

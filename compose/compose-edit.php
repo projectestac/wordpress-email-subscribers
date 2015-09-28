@@ -85,8 +85,16 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
       
       <label for="tag-link"><?php _e('Mail type', 'email-subscribers'); ?></label>
       <select name="es_email_type" id="es_email_type">
+<!--XTEC ************ MODIFICAT - Localization support-->
+<!--2015.10.06 @dgras-->
+		  	<option value='Static Template' <?php if($form['es_email_type']=='Static Template') { echo 'selected="selected"' ; } ?>><?php _e('Static Template (For Newsletter Email)', 'email-subscribers') ?></option>
+		  	<option value='Dynamic Template' <?php if($form['es_email_type']=='Dynamic Template') { echo 'selected="selected"' ; } ?>><?php _e('Dynamic Template (For Notification Email)', 'email-subscribers')?></option>
+<!--************ ORIGINAL-->
+<!--
         <option value='Static Template' <?php if($form['es_email_type']=='Static Template') { echo 'selected="selected"' ; } ?>>Static Template (For Newsletter Email)</option>
 		<option value='Dynamic Template' <?php if($form['es_email_type']=='Dynamic Template') { echo 'selected="selected"' ; } ?>>Dynamic Template (For Notification Email)</option>
+-->
+<!--************ FI-->
       </select>
       <p><?php _e('Please select your mail type.', 'email-subscribers'); ?></p>
 	  
@@ -102,7 +110,14 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 	  
 	  <label for="tag-link"><?php _e('Status', 'email-subscribers'); ?></label>
       <select name="es_templ_status" id="es_templ_status">
+<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+<!-- 2015.10.01 @dgras-->
+		  		  <option value='Published' <?php if($form['es_templ_status']=='Published') { echo 'selected="selected"' ; } ?> ><?php _e('Published', 'email-subscribers'); ?></option>
+<!--************ ORIGINAL	-->
+<!--
         <option value='Published' <?php if($form['es_templ_status']=='Published') { echo 'selected="selected"' ; } ?>>Published</option>
+-->
+<!--************ FI-->
       </select>
       <p><?php _e('Please select your mail status.', 'email-subscribers'); ?></p>
 
@@ -117,5 +132,14 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 	  <?php wp_nonce_field('es_form_edit'); ?>
     </form>
 </div>
-<p class="description"><?php echo ES_OFFICIAL; ?></p>
+<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+<!-- 2015.10.01 @dgras-->
+<?php if(is_xtec_super_admin()) : ?>
+	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+<?php endif; ?>
+<!--************ ORIGINAL	-->
+<!--
+	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+-->
+<!--************ FI-->
 </div>

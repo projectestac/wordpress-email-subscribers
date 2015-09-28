@@ -443,13 +443,32 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
 		<div class="alignright">
 			<a class="button add-new-h2" title="Click to add new email." href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php _e('Add New', 'email-subscribers'); ?></a> 
 			<a class="button add-new-h2" title="Click to import emails." href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=import"><?php _e('Import Email', 'email-subscribers'); ?></a> 
-			<a class="button add-new-h2" title="Click to export emails into CSV file." href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=export"><?php _e('Export Email', 'email-subscribers'); ?></a> 
-			<a class="button add-new-h2" title="Automatically add registered user." href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php _e('Sync Email', 'email-subscribers'); ?></a> 
+			<a class="button add-new-h2" title="Click to export emails into CSV file." href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=export"><?php _e('Export Email', 'email-subscribers'); ?></a>
+
+<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+<!-- 2015.10.01 @dgras-->
+			<?php if(is_xtec_super_admin()) : ?>
+				<a class="button add-new-h2" title="Automatically add registered user." href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php _e('Sync Email', 'email-subscribers'); ?></a>
+			<?php endif; ?>
+<!--************ ORIGINAL	-->
+<!--
+				<a class="button add-new-h2" title="Automatically add registered user." href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php _e('Sync Email', 'email-subscribers'); ?></a>
+-->
+<!--************ FI-->
 			<a class="button add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php _e('Help', 'email-subscribers'); ?></a> 
 		</div>
     </div>
 	</form>
 	<br />
-    <p class="description"><?php echo ES_OFFICIAL; ?></p>
+<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+<!-- 2015.10.01 @dgras-->
+	  <?php if(is_xtec_super_admin()) : ?>
+		  <p class="description"><?php echo ES_OFFICIAL; ?></p>
+	  <?php endif; ?>
+<!--************ ORIGINAL	-->
+<!--
+		  <p class="description"><?php echo ES_OFFICIAL; ?></p>
+-->
+<!--************ FI-->
   </div>
 </div>

@@ -105,10 +105,20 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 	  
 	  <label for="tag-display-status"><?php _e('Status', 'email-subscribers'); ?></label>
       <select name="es_email_status" id="es_email_status">
+<!--XTEC ************ MODIFICAT - Localization support -->
+<!-- 2015.10.01 @dgras-->
+		  <option value='Confirmed' <?php if($form['es_email_status']=='Confirmed') { echo 'selected="selected"' ; } ?>><?php _e('Confirmed', 'email-subscribers') ?></option>
+		  <option value='Unconfirmed' <?php if($form['es_email_status']=='Unconfirmed') { echo 'selected="selected"' ; } ?>><?php _e('Unconfirmed', 'email-subscribers') ?></option>
+		  <option value='Unsubscribed' <?php if($form['es_email_status']=='Unsubscribed') { echo 'selected="selected"' ; } ?>><?php _e('Unsubscribed', 'email-subscribers') ?></option>
+		  <option value='Single Opt In' <?php if($form['es_email_status']=='Single Opt In') { echo 'selected="selected"' ; } ?>><?php _e('Single Opt In', 'email-subscribers') ?></option>
+<!--************ ORIGINAL	-->
+<!--
         <option value='Confirmed' <?php if($form['es_email_status']=='Confirmed') { echo 'selected="selected"' ; } ?>>Confirmed</option>
 		<option value='Unconfirmed' <?php if($form['es_email_status']=='Unconfirmed') { echo 'selected="selected"' ; } ?>>Unconfirmed</option>
 		<option value='Unsubscribed' <?php if($form['es_email_status']=='Unsubscribed') { echo 'selected="selected"' ; } ?>>Unsubscribed</option>
 		<option value='Single Opt In' <?php if($form['es_email_status']=='Single Opt In') { echo 'selected="selected"' ; } ?>>Single Opt In</option>
+-->
+<!--************ FI-->
       </select>
       <p><?php _e('Please select subscriber email status.', 'email-subscribers'); ?></p>
 	  
@@ -151,5 +161,14 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 	  <?php wp_nonce_field('es_form_edit'); ?>
     </form>
 </div>
-<p class="description"><?php echo ES_OFFICIAL; ?></p>
+<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+<!--************ ORIGINAL	-->
+<!--
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+-->
+<!--************ FI-->
 </div>

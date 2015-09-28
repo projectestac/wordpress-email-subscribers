@@ -7,8 +7,15 @@
 <?php if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); } ?>
 <script language="javaScript" src="<?php echo ES_URL; ?>subscribers/view-subscriber.js"></script>
 <?php
-//$_SESSION['es_exportcsv'] = "YES"; 
+//$_SESSION['es_exportcsv'] = "YES";
+//XTEC ************ MODIFICAT - To fix bug when exporting CSV
+//2015.12.07 @sarjona
+$home_url = preg_replace('/^http:/i', 'https:', home_url('/'));
+//************ ORIGINAL
+/*
 $home_url = home_url('/');
+*/
+//************ FI
 $cnt_subscriber = 0;
 $cnt_users = 0;
 $cnt_comment_author = 0;
@@ -64,13 +71,22 @@ $cnt_comment_author = $wpdb->get_var("SELECT count(DISTINCT comment_author_email
   </form>
   <div class="tablenav">
 	  <h2>
-		<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>/wp-admin/admin.php?page=es-view-subscribers&amp;ac=add"><?php _e('Add Email', 'email-subscribers'); ?></a> 
+		<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>/wp-admin/admin.php?page=es-view-subscribers&amp;ac=add"><?php _e('Add Email', 'email-subscribers'); ?></a>
 		<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>/wp-admin/admin.php?page=es-view-subscribers&amp;ac=import"><?php _e('Import Email', 'email-subscribers'); ?></a>
 		<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>/wp-admin/admin.php?page=es-view-subscribers"><?php _e('Back', 'email-subscribers'); ?></a>
 		<a class="button add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php _e('Help', 'email-subscribers'); ?></a>
 	  </h2>
   </div>
   <div style="height:10px;"></div>
+<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+<!-- 2015.10.01 @dgras-->
+<?php if(is_xtec_super_admin()) : ?>
   <p class="description"><?php echo ES_OFFICIAL; ?></p>
+<?php endif; ?>
+<!--************ ORIGINAL	-->
+<!--
+  <p class="description"><?php echo ES_OFFICIAL; ?></p>
+-->
+<!--************ FI-->
   </div>
 </div>

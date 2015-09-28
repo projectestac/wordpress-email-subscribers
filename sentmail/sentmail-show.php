@@ -180,6 +180,15 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
 	  <?php _e('Note: Please click <strong>Optimize Table</strong> button to delete all reports except latest 10.', 'email-subscribers'); ?>
 	  </p></div>
 	  <?php } ?>
-	  <p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ ORIGINAL	-->
+	<!--
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+    -->
+	<!--************ FI-->
 	</div>
 </div>

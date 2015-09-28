@@ -6,8 +6,45 @@ class es_cls_common
 		$returnstring = "";
 		switch ($value) 
 		{
+//XTEC ************ MODIFICAT - Localization support
+//2015.10.06 @dgras
 			case "Confirmed":
-				$returnstring = '<span style="color:#006600;font-weight:bold;">Confirmed</span>';
+				$returnstring = '<span style="color:#006600;font-weight:bold;">'.__('Confirmed', 'email-subscribers').'</span>';
+				break;
+			case "Unconfirmed":
+				$returnstring = '<span style="color:#FF0000">'.__('Unconfirmed', 'email-subscribers').'</span>';
+				break;
+			case "Unsubscribed":
+				$returnstring = '<span style="color:#999900">'.__('Unsubscribed', 'email-subscribers').'</span>';
+				break;
+			case "Single Opt In":
+				$returnstring = '<span style="color:#0000FF">'.__('Single Opt In', 'email-subscribers').'</span>';
+				break;
+			case "Viewed":
+				$returnstring = '<span style="color:#00CC00;font-weight:bold">'.__('Viewed', 'email-subscribers').'</span>';
+				break;
+			case "Nodata":
+				$returnstring = '<span style="color:#999900;">'.__('Nodata', 'email-subscribers').'</span>';
+				break;
+			case "Disable":
+				$returnstring = '<span style="color:#FF0000">'.__('Disable', 'email-subscribers').'</span>';
+				break;
+			case "In Queue":
+				$returnstring = '<span style="color:#FF0000">'.__('In Queue', 'email-subscribers').'</span>';
+				break;
+			case "Sent":
+				$returnstring = '<span style="color:#00FF00;font-weight:bold;">'.__('Sent', 'email-subscribers').'</span>';
+				break;
+			case "Cron Mail":
+				$returnstring = '<span style="color:#ffd700;font-weight:bold;">'.__('Cron Mail', 'email-subscribers').'</span>';
+				break;
+			case "Instant Mail":
+				$returnstring = '<span style="color:#993399;">'.__('Instant Mail', 'email-subscribers').'</span>';
+				break;
+//************ ORIGINAL
+/*
+			case "Confirmed":
+				$returnstring = '<span style="color:#006600;font-weight:bold;">"Confirmed"</span>';
 				break;
 			case "Unconfirmed":
 				$returnstring = '<span style="color:#FF0000">Unconfirmed</span>';
@@ -35,10 +72,12 @@ class es_cls_common
 				break;
 			case "Cron Mail":
 				$returnstring = '<span style="color:#ffd700;font-weight:bold;">Cron Mail</span>';
-				break;	
+				break;
 			case "Instant Mail":
 				$returnstring = '<span style="color:#993399;">Instant Mail</span>';
 				break;
+*/
+//************ FI
 			default:
        			$returnstring = $value;
 		}
@@ -116,20 +155,40 @@ class es_cls_common
 	
 	public static function es_sent_report_subject() 
 	{
+//XTEC ************ MODIFICAT - Localization support
+//2015.10.13 @dgras
+		$report = "Butlletí Informe enviament";
+//************ ORIGINAL
+/*
 		$report = "Newsletter Sent Report";
+*/
+//************ FI
 		return $report;
 	}
 	
 	public static function es_sent_report_plain() 
 	{
 		$report = "";
-		$report = $report. "Hi Admin,\n\n";
-		$report = $report. "Mail has been sent successfully to ###COUNT### email(s). Please find the details below.\n\n";
-		$report = $report. "Unique ID : ###UNIQUE### \n";
-		$report = $report. "Start Time: ###STARTTIME### \n";
-		$report = $report. "End Time: ###ENDTIME### \n";
-		$report = $report. "For more information, Login to your Dashboard and go to Sent Mails menu in Email Subscribers. \n\n";
-		$report = $report. "Thank You \n";
+//XTEC ************ MODIFICAT - Localization support
+//2015.10.13 @dgras
+        $report = $report. "Hola Administrador,\n\n";
+        $report = $report. "El missatge ha estat enviat amb èxit a ###COUNT### de correu electrònic(s). Trobareu els detalls a continuació.\n\n";
+        $report = $report. "Id únic: ###UNIQUE### \n";
+        $report = $report. "Hora d'inici: ###STARTTIME### \n";
+        $report = $report. "Hora de finalització: ###ENDTIME### \n";
+        $report = $report. "Per a més informació, accediu al tauler i aneu al menú de Correus enviats a subscriptors. \n\n";
+        $report = $report. "Gràcies \n";
+//************ ORIGINAL
+/*
+        $report = $report. "Hi Admin,\n\n";
+        $report = $report. "Mail has been sent successfully to ###COUNT### email(s). Please find the details below.\n\n";
+        $report = $report. "Unique ID : ###UNIQUE### \n";
+        $report = $report. "Start Time: ###STARTTIME### \n";
+        $report = $report. "End Time: ###ENDTIME### \n";
+        $report = $report. "For more information, Login to your Dashboard and go to Sent Mails menu in Email Subscribers. \n\n";
+        $report = $report. "Thank You \n";
+*/
+//************ FI
 		$report = $report. "www.gopiplus.com \n";
 		return $report;
 	}
@@ -137,13 +196,26 @@ class es_cls_common
 	public static function es_sent_report_html() 
 	{
 		$report = "";
-		$report = $report. "Hi Admin, <br/><br/>";
-		$report = $report. "Mail has been sent successfully to ###COUNT### email(s). Please find the details below.<br/><br/>";
-		$report = $report. "Unique ID : ###UNIQUE### <br/>";
-		$report = $report. "Start Time: ###STARTTIME### <br/>";
-		$report = $report. "End Time: ###ENDTIME### <br/>";
-		$report = $report. "For more information, Login to your Dashboard and go to Sent Mails menu in Email Subscribers. <br/><br/>";
-		$report = $report. "Thank You <br/>";
+//XTEC ************ MODIFICAT - Localization support
+//2015.10.13 @dgras
+        $report = $report. "Hola Administrador, <br/><br/>";
+        $report = $report. "El missatge ha estat enviat amb èxit a ###COUNT### de correu electrònic(s). Trobareu els detalls a continuació.<br/><br/>";
+        $report = $report. "Id únic : ###UNIQUE### <br/>";
+        $report = $report. "Hora d'inici: ###STARTTIME### <br/>";
+        $report = $report. "Hora de finalització: ###ENDTIME### <br/>";
+        $report = $report. "Per a més informació, accediu al tauler i aneu al menú de Correus enviats a subscriptors. <br/><br/>";
+        $report = $report. "Gràcies <br/>";
+//************ ORIGINAL
+/*
+        $report = $report. "Hi Admin, <br/><br/>";
+        $report = $report. "Mail has been sent successfully to ###COUNT### email(s). Please find the details below.<br/><br/>";
+        $report = $report. "Unique ID : ###UNIQUE### <br/>";
+        $report = $report. "Start Time: ###STARTTIME### <br/>";
+        $report = $report. "End Time: ###ENDTIME### <br/>";
+        $report = $report. "For more information, Login to your Dashboard and go to Sent Mails menu in Email Subscribers. <br/><br/>";
+        $report = $report. "Thank You <br/>";
+*/
+//************ FI
 		$report = $report. "www.gopiplus.com <br/>";
 		return $report;
 	}

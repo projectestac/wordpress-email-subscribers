@@ -93,8 +93,16 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
 					?>
 					<tr class="<?php if ($i&1) { echo'alternate'; } else { echo ''; }?>">
 					  	<td><?php echo esc_html(stripslashes($data['es_templ_heading'])); ?></td>
+						<!--XTEC ************ MODIFICAT - Localization support -->
+						<!-- 2015.10.01 @dgras-->
+						<td><?php echo __($data['es_templ_status'], 'email-subscribers'); ?></td>
+						<td><?php echo __($data['es_email_type'], 'email-subscribers'); ?></td>
+						<!--************ ORIGINAL	-->
+<!--
 						<td><?php echo $data['es_templ_status']; ?></td>
 						<td><?php echo $data['es_email_type']; ?></td>
+-->
+						<!--************ FI-->
 						<td>
 						<a title="Edit" href="<?php echo ES_ADMINURL; ?>?page=es-compose&amp;ac=edit&amp;did=<?php echo $data['es_templ_id']; ?>"><?php _e('Edit', 'email-subscribers'); ?></a> 
 						| <a onClick="javascript:_es_delete('<?php echo $data['es_templ_id']; ?>')" href="javascript:void(0);"><?php _e('Delete', 'email-subscribers'); ?></a>
@@ -122,6 +130,15 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
 		  </h2>
 	  </div>
 	  <div style="height:10px;"></div>
-	  <p class="description"><?php echo ES_OFFICIAL; ?></p>
+<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+<!-- 2015.10.01 @dgras-->
+<?php if(is_xtec_super_admin()) : ?>
+	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+<?php endif; ?>
+<!--************ ORIGINAL	-->
+<!--
+	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+-->
+<!--************ FI-->
 	</div>
 </div>
