@@ -90,7 +90,7 @@ class es_cls_common
 	{
 		$string = '';
 		$c=0;
-		$filename = ES_TDOMAIN.$option.'_'.date('Ymd_His').".csv";
+		$filename = 'email-subscribers'.$option.'_'.date('Ymd_His').".csv";
 		foreach($arrays AS $array) 
 		{
 			$val_array = array();

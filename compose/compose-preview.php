@@ -7,14 +7,14 @@ es_cls_security::es_check_number($did);
 $result = es_cls_compose::es_template_count($did);
 if ($result != '1')
 {
-	?><div class="error fade"><p><strong><?php _e('Oops, selected details doesnt exist.', ES_TDOMAIN); ?></strong></p></div><?php
+	?><div class="error fade"><p><strong><?php _e('Oops, selected details doesnt exist.', 'email-subscribers'); ?></strong></p></div><?php
 }
 ?>
 <script language="javaScript" src="<?php echo ES_URL; ?>compose/compose.js"></script>
 <div class="wrap">
   <div id="icon-plugins" class="icon32"></div>
-    <h2><?php _e(ES_PLUGIN_DISPLAY, ES_TDOMAIN); ?></h2>
-	<h3><?php _e('Preview Mail', ES_TDOMAIN); ?></h3>
+    <h2><?php _e(ES_PLUGIN_DISPLAY, 'email-subscribers'); ?></h2>
+	<h3><?php _e('Preview Mail', 'email-subscribers'); ?></h3>
     <div class="tool-box">
 	<div style="padding:15px;background-color:#FFFFFF;">
 	<?php
@@ -26,9 +26,9 @@ if ($result != '1')
 	</div>
 	<div class="tablenav">
 	  <h2>
-		<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-compose"><?php _e('Back', ES_TDOMAIN); ?></a>
-		<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-compose&ac=edit&did=<?php echo $did; ?>"><?php _e('Edit', ES_TDOMAIN); ?></a>
-		<a class="button add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php _e('Help', ES_TDOMAIN); ?></a>
+		<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-compose"><?php _e('Back', 'email-subscribers'); ?></a>
+		<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-compose&ac=edit&did=<?php echo $did; ?>"><?php _e('Edit', 'email-subscribers'); ?></a>
+		<a class="button add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php _e('Help', 'email-subscribers'); ?></a>
 	  </h2>
 	</div>
 	<div style="height:10px;"></div>

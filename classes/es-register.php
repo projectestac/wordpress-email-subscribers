@@ -40,14 +40,14 @@ class es_cls_registerhook
 		// add error in to array variable
         if($missingtables) 
 		{
-			$errors[] = __('These tables could not be created on installation ' . implode(', ',$missingtables), ES_TDOMAIN);
+			$errors[] = __('These tables could not be created on installation ' . implode(', ',$missingtables), 'email-subscribers');
             $has_errors=true;
         }
 		
 		// if error call wp_die()
         if($has_errors) 
 		{
-			wp_die( __( $errors[0] , ES_TDOMAIN ) );
+			wp_die( __( $errors[0] , 'email-subscribers' ) );
 			return false;
 		}
 		else
@@ -130,35 +130,35 @@ class es_cls_registerhook
 			$es_roles_help = $es_c_rolesandcapabilities['es_roles_help'];
 		}
 		
-		add_menu_page( __( 'Email Subscriber', ES_TDOMAIN ), 
-			__( 'Email Subscriber', ES_TDOMAIN ), 'admin_dashboard', 'email-subscribers', 'es_admin_option', ES_URL.'images/mail.png', 51 );
+		add_menu_page( __( 'Email Subscriber', 'email-subscribers' ), 
+			__( 'Email Subscriber', 'email-subscribers' ), 'admin_dashboard', 'email-subscribers', 'es_admin_option', ES_URL.'images/mail.png', 51 );
 			
-		add_submenu_page('email-subscribers', __( 'Subscribers', ES_TDOMAIN ), 
-			__( 'Subscribers', ES_TDOMAIN ), $es_roles_subscriber, 'es-view-subscribers', array( 'es_cls_intermediate', 'es_subscribers' ));
+		add_submenu_page('email-subscribers', __( 'Subscribers', 'email-subscribers' ), 
+			__( 'Subscribers', 'email-subscribers' ), $es_roles_subscriber, 'es-view-subscribers', array( 'es_cls_intermediate', 'es_subscribers' ));
 			
-		add_submenu_page('email-subscribers', __( 'Compose', ES_TDOMAIN ), 
-			__( 'Compose', ES_TDOMAIN ), $es_roles_mail, 'es-compose', array( 'es_cls_intermediate', 'es_compose' ));
+		add_submenu_page('email-subscribers', __( 'Compose', 'email-subscribers' ), 
+			__( 'Compose', 'email-subscribers' ), $es_roles_mail, 'es-compose', array( 'es_cls_intermediate', 'es_compose' ));
 			
-		add_submenu_page('email-subscribers', __( 'Notification', ES_TDOMAIN ), 
-			__( 'Notification', ES_TDOMAIN ), $es_roles_notification, 'es-notification', array( 'es_cls_intermediate', 'es_notification' ));
+		add_submenu_page('email-subscribers', __( 'Notification', 'email-subscribers' ), 
+			__( 'Notification', 'email-subscribers' ), $es_roles_notification, 'es-notification', array( 'es_cls_intermediate', 'es_notification' ));
 			
-		add_submenu_page('email-subscribers', __( 'Send Email', ES_TDOMAIN ), 
-			__( 'Send Email', ES_TDOMAIN ), $es_roles_sendmail, 'es-sendemail', array( 'es_cls_intermediate', 'es_sendemail' ));
+		add_submenu_page('email-subscribers', __( 'Send Email', 'email-subscribers' ), 
+			__( 'Send Email', 'email-subscribers' ), $es_roles_sendmail, 'es-sendemail', array( 'es_cls_intermediate', 'es_sendemail' ));
 		
-		add_submenu_page('email-subscribers', __( 'Cron', ES_TDOMAIN ), 
-			__( 'Cron Mail', ES_TDOMAIN ), $es_roles_sendmail, 'es-cron', array( 'es_cls_intermediate', 'es_cron' ));
+		add_submenu_page('email-subscribers', __( 'Cron', 'email-subscribers' ), 
+			__( 'Cron Mail', 'email-subscribers' ), $es_roles_sendmail, 'es-cron', array( 'es_cls_intermediate', 'es_cron' ));
 				
-		add_submenu_page('email-subscribers', __( 'Settings', ES_TDOMAIN ), 
-			__( 'Settings', ES_TDOMAIN ), $es_roles_setting, 'es-settings', array( 'es_cls_intermediate', 'es_settings' ));	
+		add_submenu_page('email-subscribers', __( 'Settings', 'email-subscribers' ), 
+			__( 'Settings', 'email-subscribers' ), $es_roles_setting, 'es-settings', array( 'es_cls_intermediate', 'es_settings' ));	
 			
-		add_submenu_page('email-subscribers', __( 'Roles', ES_TDOMAIN ), 
-			__( 'Roles', ES_TDOMAIN ), 'administrator', 'es-roles', array( 'es_cls_intermediate', 'es_roles' ));	
+		add_submenu_page('email-subscribers', __( 'Roles', 'email-subscribers' ), 
+			__( 'Roles', 'email-subscribers' ), 'administrator', 'es-roles', array( 'es_cls_intermediate', 'es_roles' ));	
 			
-		add_submenu_page('email-subscribers', __( 'Sent Mails', ES_TDOMAIN ), 
-			__( 'Sent Mails', ES_TDOMAIN ), $es_roles_sentmail, 'es-sentmail', array( 'es_cls_intermediate', 'es_sentmail' ));	
+		add_submenu_page('email-subscribers', __( 'Sent Mails', 'email-subscribers' ), 
+			__( 'Sent Mails', 'email-subscribers' ), $es_roles_sentmail, 'es-sentmail', array( 'es_cls_intermediate', 'es_sentmail' ));	
 			
-		add_submenu_page('email-subscribers', __( 'Help & Info', ES_TDOMAIN ), 
-			__( 'Help & Info', ES_TDOMAIN ), $es_roles_help, 'es-general-information', array( 'es_cls_intermediate', 'es_information' ));
+		add_submenu_page('email-subscribers', __( 'Help & Info', 'email-subscribers' ), 
+			__( 'Help & Info', 'email-subscribers' ), $es_roles_help, 'es-general-information', array( 'es_cls_intermediate', 'es_information' ));
 			
 	}
 	
@@ -210,8 +210,8 @@ class es_widget_register extends WP_Widget
 {
 	function __construct() 
 	{
-		$widget_ops = array('classname' => 'widget_text elp-widget', 'description' => __(ES_PLUGIN_DISPLAY, ES_TDOMAIN), ES_PLUGIN_NAME);
-		parent::__construct(ES_PLUGIN_NAME, __(ES_PLUGIN_DISPLAY, ES_TDOMAIN), $widget_ops);
+		$widget_ops = array('classname' => 'widget_text elp-widget', 'description' => __(ES_PLUGIN_DISPLAY, 'email-subscribers'), ES_PLUGIN_NAME);
+		parent::__construct(ES_PLUGIN_NAME, __(ES_PLUGIN_DISPLAY, 'email-subscribers'), $widget_ops);
 	}
 	
 	function widget( $args, $instance ) 
@@ -247,17 +247,17 @@ class es_widget_register extends WP_Widget
 			<?php } ?>
 			<div class="es_msg"><span id="es_msg"></span></div>
 			<?php if( $es_name == "YES" ) { ?>
-			<div class="es_lablebox"><?php _e('Name', ES_TDOMAIN); ?></div>
+			<div class="es_lablebox"><?php _e('Name', 'email-subscribers'); ?></div>
 			<div class="es_textbox">
 				<input class="es_textbox_class" name="es_txt_name" id="es_txt_name" value="" maxlength="225" type="text">
 			</div>
 			<?php } ?>
-			<div class="es_lablebox"><?php _e('Email *', ES_TDOMAIN); ?></div>
+			<div class="es_lablebox"><?php _e('Email *', 'email-subscribers'); ?></div>
 			<div class="es_textbox">
 				<input class="es_textbox_class" name="es_txt_email" id="es_txt_email" onkeypress="if(event.keyCode==13) es_submit_page('<?php echo $url; ?>')" value="" maxlength="225" type="text">
 			</div>
 			<div class="es_button">
-				<input class="es_textbox_button" name="es_txt_button" id="es_txt_button" onClick="return es_submit_page('<?php echo $url; ?>')" value="<?php _e('Subscribe', ES_TDOMAIN); ?>" type="button">
+				<input class="es_textbox_button" name="es_txt_button" id="es_txt_button" onClick="return es_submit_page('<?php echo $url; ?>')" value="<?php _e('Subscribe', 'email-subscribers'); ?>" type="button">
 			</div>
 			<?php if( $es_name != "YES" ) { ?>
 				<input name="es_txt_name" id="es_txt_name" value="" type="hidden">
@@ -293,23 +293,23 @@ class es_widget_register extends WP_Widget
 		$es_group 		= $instance['es_group'];
 		?>
 		<p>
-			<label for="<?php echo $this->get_field_id('es_title'); ?>"><?php _e('Widget Title', ES_TDOMAIN); ?></label>
+			<label for="<?php echo $this->get_field_id('es_title'); ?>"><?php _e('Widget Title', 'email-subscribers'); ?></label>
 			<input class="widefat" id="<?php echo $this->get_field_id('es_title'); ?>" name="<?php echo $this->get_field_name('es_title'); ?>" type="text" value="<?php echo $es_title; ?>" />
         </p>
 		<p>
-            <label for="<?php echo $this->get_field_id('es_name'); ?>"><?php _e('Display Name Field', ES_TDOMAIN); ?></label>
+            <label for="<?php echo $this->get_field_id('es_name'); ?>"><?php _e('Display Name Field', 'email-subscribers'); ?></label>
 			<select class="widefat" id="<?php echo $this->get_field_id('es_name'); ?>" name="<?php echo $this->get_field_name('es_name'); ?>">
 				<option value="YES" <?php $this->es_selected($es_name == 'YES'); ?>>YES</option>
 				<option value="NO" <?php $this->es_selected($es_name == 'NO'); ?>>NO</option>
 			</select>
         </p>
 		<p>
-			<label for="<?php echo $this->get_field_id('es_desc'); ?>"><?php _e('Short Description', ES_TDOMAIN); ?></label>
+			<label for="<?php echo $this->get_field_id('es_desc'); ?>"><?php _e('Short Description', 'email-subscribers'); ?></label>
 			<input class="widefat" id="<?php echo $this->get_field_id('es_desc'); ?>" name="<?php echo $this->get_field_name('es_desc'); ?>" type="text" value="<?php echo $es_desc; ?>" />
-			<?php _e('Short description about your subscription form.', ES_TDOMAIN); ?>
+			<?php _e('Short description about your subscription form.', 'email-subscribers'); ?>
         </p>
 		<p>
-			<label for="<?php echo $this->get_field_id('es_group'); ?>"><?php _e('Subscriber Group', ES_TDOMAIN); ?></label>
+			<label for="<?php echo $this->get_field_id('es_group'); ?>"><?php _e('Subscriber Group', 'email-subscribers'); ?></label>
 			<input class="widefat" id="<?php echo $this->get_field_id('es_group'); ?>" name="<?php echo $this->get_field_name('es_group'); ?>" type="text" value="<?php echo $es_group; ?>" />
         </p>
 		<?php

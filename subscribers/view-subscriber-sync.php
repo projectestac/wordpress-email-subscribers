@@ -30,13 +30,13 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 	
 	if ($form['es_registered_group'] == '' && $form['es_registered'] == "YES")
 	{
-		$es_errors[] = __('Please select default group to newly registered user.', ES_TDOMAIN);
+		$es_errors[] = __('Please select default group to newly registered user.', 'email-subscribers');
 		$es_error_found = TRUE;
 	}
 
 	if ($form['es_commented_group'] == '' && $form['es_commented'] == "YES")
 	{
-		$es_errors[] = __('Please select default group to newly commented user.', ES_TDOMAIN);
+		$es_errors[] = __('Please select default group to newly commented user.', 'email-subscribers');
 		$es_error_found = TRUE;
 	}
 		
@@ -53,7 +53,7 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 			'es_commented_group' => ''
 		);
 		
-		$es_success = __('Sync email successfully updated.', ES_TDOMAIN);
+		$es_success = __('Sync email successfully updated.', 'email-subscribers');
 	}
 }
 
@@ -83,20 +83,20 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 <script language="javaScript" src="<?php echo ES_URL; ?>subscribers/view-subscriber.js"></script>
 <div class="form-wrap">
 	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php _e(ES_PLUGIN_DISPLAY, ES_TDOMAIN); ?></h2>
+	<h2><?php _e(ES_PLUGIN_DISPLAY, 'email-subscribers'); ?></h2>
 	<form name="form_addemail" method="post" action="#" onsubmit="return _es_addemail()"  >
-      <h3 class="title"><?php _e('Sync email', ES_TDOMAIN); ?></h3>
+      <h3 class="title"><?php _e('Sync email', 'email-subscribers'); ?></h3>
       
-	  <label for="tag-image"><?php _e('Sync newly registered user', ES_TDOMAIN); ?></label>
+	  <label for="tag-image"><?php _e('Sync newly registered user', 'email-subscribers'); ?></label>
       <select name="es_registered" id="es_email_status">
         <option value='NO' <?php if($es_registered == 'NO') { echo "selected='selected'" ; } ?>>NO</option>
 		<option value='YES' <?php if($es_registered == 'YES') { echo "selected='selected'" ; } ?>>YES</option>
       </select>
-      <p><?php _e('Automatically add a newly registered user email address to subscribers list.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Automatically add a newly registered user email address to subscribers list.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-display-status"><?php _e('Select default group', ES_TDOMAIN); ?></label>
+	  <label for="tag-display-status"><?php _e('Select default group', 'email-subscribers'); ?></label>
 	  <select name="es_registered_group" id="es_email_group">
-		<option value=''><?php _e('Select', ES_TDOMAIN); ?></option>
+		<option value=''><?php _e('Select', 'email-subscribers'); ?></option>
 		<?php
 		$thisselected = "";
 		$groups = array();
@@ -116,18 +116,18 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 		}
 		?>
 	  </select>
-      <p><?php _e('Please select default group to newly registered user.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Please select default group to newly registered user.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-image"><?php _e('Sync newly commented user', ES_TDOMAIN); ?></label>
+	  <label for="tag-image"><?php _e('Sync newly commented user', 'email-subscribers'); ?></label>
       <select name="es_commented" id="es_email_status">
         <option value='NO' <?php if($es_commented == 'NO') { echo "selected='selected'" ; } ?>>NO</option>
 		<!--<option value='YES' <?php //if($es_commented == 'YES') { echo "selected='selected'" ; } ?>>YES</option>-->
       </select>
-      <p><?php _e('Automatically add a newly commented (who posted comments) user email address to subscribers list.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Automatically add a newly commented (who posted comments) user email address to subscribers list.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-display-status"><?php _e('Select default group', ES_TDOMAIN); ?></label>
+	  <label for="tag-display-status"><?php _e('Select default group', 'email-subscribers'); ?></label>
 	  <select name="es_commented_group" id="es_email_group">
-		<option value=''><?php _e('Select', ES_TDOMAIN); ?></option>
+		<option value=''><?php _e('Select', 'email-subscribers'); ?></option>
 		<?php
 		//$thisselected = "";
 //		$groups = array();
@@ -147,15 +147,15 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 //		}
 		?>
 	  </select>
-      <p><?php _e('Please select default group to newly commented user.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Please select default group to newly commented user.', 'email-subscribers'); ?></p>
 
 	  
       <input type="hidden" name="es_form_submit" value="yes"/>
 	  <div style="padding-top:5px;"></div>
       <p>
-        <input name="publish" lang="publish" class="button add-new-h2" value="<?php _e('Submit', ES_TDOMAIN); ?>" type="submit" />
-        <input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Cancel', ES_TDOMAIN); ?>" type="button" />
-        <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', ES_TDOMAIN); ?>" type="button" />
+        <input name="publish" lang="publish" class="button add-new-h2" value="<?php _e('Submit', 'email-subscribers'); ?>" type="submit" />
+        <input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Cancel', 'email-subscribers'); ?>" type="button" />
+        <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', 'email-subscribers'); ?>" type="button" />
       </p>
 	  <?php wp_nonce_field('es_form_add'); ?>
     </form>

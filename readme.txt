@@ -5,8 +5,8 @@ Author URI: http://www.gopiplus.com/work/2014/05/02/email-subscribers-wordpress-
 Plugin URI: http://www.gopiplus.com/work/2014/05/02/email-subscribers-wordpress-plugin/
 Tags: email newsletter, subscription, sendmail, newsletter, subscribers
 Requires at least: 3.4
-Tested up to: 4.3
-Stable tag: 2.9.1
+Tested up to: 4.3.1
+Stable tag: 2.9.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -58,6 +58,7 @@ This plugin have subscription box and it allows users to publicly subscribe by s
 * Serbian (sr_RS) - [Ogi Djuraskovic](http://firstsiteguide.com/)
 * German (de_DE) - [Stefanie Drucker](http://www.kreativhuhn.at)
 * Russian (ru_RU) - [everyonesdesign](https://wordpress.org/support/profile/everyonesdesign)
+* Polish (pl) - [Abdul Sattar](https://www.couponmachine.in/)
 
 = Frequently asked questions: =
 
@@ -78,6 +79,7 @@ This plugin have subscription box and it allows users to publicly subscribe by s
 *   Q15. How to schedule auto mails (Cron mails)?
 *   Q16. How to schedule auto emails for Email subscribers wordpress plugin in cPanel?
 *   Q17. How to schedule auto emails for Email subscribers wordpress plugin in Parallels Plesk?
+*   Q18. How to add Group Selection in front end subscription box?
 
 == Installation ==
 
@@ -103,6 +105,7 @@ Installation Instruction and Configuration [Installation Instruction and Configu
 *   Q15. How to schedule auto mails (Cron mails)?
 *   Q16. How to schedule auto emails for Email subscribers wordpress plugin in cPanel?
 *   Q17. How to schedule auto emails for Email subscribers wordpress plugin in Parallels Plesk?
+*   Q18. How to add Group Selection in front end subscription box?
 
 FAQ Answer [http://www.gopiplus.com/work/2014/05/02/email-subscribers-wordpress-plugin/](http://www.gopiplus.com/work/2014/05/02/email-subscribers-wordpress-plugin/)
 
@@ -233,6 +236,12 @@ Up to plugin version 2.6 only administrator level users can manage this plugin i
 
 * Fixed cross-site scripting vulnerabilities and a potential SQL injection.
 
+= 2.9.2 =
+
+* Add-on plugin available for advanced subscribers form (Users can select interested group in subscribers form).
+* Polish language file added in the language directory.
+* Text Domain slug has been added for Language Packs.
+
 == Upgrade Notice ==
 
 = 1.0 =
@@ -343,3 +352,9 @@ Up to plugin version 2.6 only administrator level users can manage this plugin i
 = 2.9.1 =
 
 * Fixed cross-site scripting vulnerabilities and a potential SQL injection.
+
+= 2.9.2 =
+
+* Add-on plugin available for advanced subscribers form (Users can select interested group in subscribers form).
+* Polish language file added in the language directory.
+* Text Domain slug has been added for Language Packs.

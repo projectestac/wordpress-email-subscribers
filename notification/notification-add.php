@@ -23,25 +23,25 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 	$form['es_note_group'] = isset($_POST['es_note_group']) ? $_POST['es_note_group'] : '';
 	if ($form['es_note_group'] == '')
 	{
-		$es_errors[] = __('Please select subscribers group.', ES_TDOMAIN);
+		$es_errors[] = __('Please select subscribers group.', 'email-subscribers');
 		$es_error_found = TRUE;
 	}
 	$form['es_note_status'] = isset($_POST['es_note_status']) ? $_POST['es_note_status'] : '';
 	if ($form['es_note_status'] == '')
 	{
-		$es_errors[] = __('Please select notification status.', ES_TDOMAIN);
+		$es_errors[] = __('Please select notification status.', 'email-subscribers');
 		$es_error_found = TRUE;
 	}
 	$form['es_note_templ'] = isset($_POST['es_note_templ']) ? $_POST['es_note_templ'] : '';
 	if ($form['es_note_templ'] == '')
 	{
-		$es_errors[] = __('Please select notification mail subject. Use compose menu to create new.', ES_TDOMAIN);
+		$es_errors[] = __('Please select notification mail subject. Use compose menu to create new.', 'email-subscribers');
 		$es_error_found = TRUE;
 	}
 	$es_note_cat = isset($_POST['es_note_cat']) ? $_POST['es_note_cat'] : '';
 	if ($es_note_cat == '')
 	{
-		$es_errors[] = __('Please select post categories.', ES_TDOMAIN);
+		$es_errors[] = __('Please select post categories.', 'email-subscribers');
 		$es_error_found = TRUE;
 	}
 
@@ -66,7 +66,7 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 		$action = es_cls_notification::es_notification_ins($form, $action = "insert");
 		if($action)
 		{
-			$es_success = __('Notification was successfully created.', ES_TDOMAIN);
+			$es_success = __('Notification was successfully created.', 'email-subscribers');
 		}
 		
 		// Reset the form fields
@@ -88,8 +88,8 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 {
 	?>
 	<div class="updated fade">
-		<p><strong><?php echo $es_success; ?> <a href="<?php echo ES_ADMINURL; ?>?page=es-notification"><?php _e('Click here', ES_TDOMAIN); ?></a>
-		<?php _e(' to view the details', ES_TDOMAIN); ?></strong></p>
+		<p><strong><?php echo $es_success; ?> <a href="<?php echo ES_ADMINURL; ?>?page=es-notification"><?php _e('Click here', 'email-subscribers'); ?></a>
+		<?php _e(' to view the details', 'email-subscribers'); ?></strong></p>
 	</div>
 	<?php
 }
@@ -97,13 +97,13 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 <script language="javaScript" src="<?php echo ES_URL; ?>notification/notification.js"></script>
 <div class="form-wrap">
 	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php _e(ES_PLUGIN_DISPLAY, ES_TDOMAIN); ?></h2>
-	<h3><?php _e('Add Notification', ES_TDOMAIN); ?></h3>
+	<h2><?php _e(ES_PLUGIN_DISPLAY, 'email-subscribers'); ?></h2>
+	<h3><?php _e('Add Notification', 'email-subscribers'); ?></h3>
 	<form name="es_form" method="post" action="#" onsubmit="return _es_submit()"  >
       
-      <label for="tag-link"><?php _e('Subscribers Group', ES_TDOMAIN); ?></label>
+      <label for="tag-link"><?php _e('Subscribers Group', 'email-subscribers'); ?></label>
       <select name="es_note_group" id="es_note_group">
-		<option value=''><?php _e('Select', ES_TDOMAIN); ?></option>
+		<option value=''><?php _e('Select', 'email-subscribers'); ?></option>
 		<?php
 		$groups = array();
 		$groups = es_cls_dbquery::es_view_subscriber_group();
@@ -117,11 +117,11 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 		}
 		?>
       </select>
-      <p><?php _e('Please select subscribers group.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Please select subscribers group.', 'email-subscribers'); ?></p>
 
- 		<label for="tag-link"><?php _e('Notification Mail', ES_TDOMAIN); ?></label>
+ 		<label for="tag-link"><?php _e('Notification Mail', 'email-subscribers'); ?></label>
 		<select name="es_note_templ" id="es_note_templ">
-		<option value=''><?php _e('Select', ES_TDOMAIN); ?></option>
+		<option value=''><?php _e('Select', 'email-subscribers'); ?></option>
 		<?php
 		$subject = array();
 		$subject = es_cls_compose::es_template_select_type($type = "Dynamic Template");
@@ -136,9 +136,9 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 		}
 		?>
 		</select>
-		<p><?php _e('Please select notification mail subject. Use compose menu to create new.', ES_TDOMAIN); ?></p>
+		<p><?php _e('Please select notification mail subject. Use compose menu to create new.', 'email-subscribers'); ?></p>
 
-	  <label for="tag-link"><?php _e('Post Categories', ES_TDOMAIN); ?></label>
+	  <label for="tag-link"><?php _e('Post Categories', 'email-subscribers'); ?></label>
       <?php
 		$args = array( 'hide_empty' => 0, 'orderby' => 'name', 'order' => 'ASC' );
 		$categories = get_categories($args); 
@@ -168,9 +168,9 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 		}
 		echo "</tr></table>";
 	  ?>
-      <p><?php _e('Please select post categories.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Please select post categories.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-link"><?php _e('Custom post type', ES_TDOMAIN); ?></label>
+	  <label for="tag-link"><?php _e('Custom post type', 'email-subscribers'); ?></label>
 	  <?php
 		$args=array('public'=> true, 'exclude_from_search'=> false, '_builtin' => false); 
 		$output = 'names';
@@ -201,21 +201,21 @@ if ($es_error_found == FALSE && strlen($es_success) > 0)
 		}
 		echo "</tr></table>";
 	  ?>
-	  <p><?php _e('Please select your custom post type (Optional).', ES_TDOMAIN); ?></p>
+	  <p><?php _e('Please select your custom post type (Optional).', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-link"><?php _e('Notification Status', ES_TDOMAIN); ?></label>
+	  <label for="tag-link"><?php _e('Notification Status', 'email-subscribers'); ?></label>
       <select name="es_note_status" id="es_note_status">
         <option value='Enable' selected="selected">Send mail immediately when new post is published.</option>
 		<option value='Cron'>Add to cron when new post is published and send via cron job.</option>
 		<option value='Disable'>Disable notification.</option>
       </select>
-      <p><?php _e('Please select notification status.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Please select notification status.', 'email-subscribers'); ?></p>
 
       <input type="hidden" name="es_form_submit" value="yes"/>
       <p class="submit">
-        <input name="publish" lang="publish" class="button add-new-h2" value="<?php _e('Submit', ES_TDOMAIN); ?>" type="submit" />
-        <input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Cancel', ES_TDOMAIN); ?>" type="button" />
-        <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', ES_TDOMAIN); ?>" type="button" />
+        <input name="publish" lang="publish" class="button add-new-h2" value="<?php _e('Submit', 'email-subscribers'); ?>" type="submit" />
+        <input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Cancel', 'email-subscribers'); ?>" type="button" />
+        <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', 'email-subscribers'); ?>" type="button" />
       </p>
 	  <?php wp_nonce_field('es_form_add'); ?>
     </form>

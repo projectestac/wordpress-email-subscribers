@@ -25,7 +25,7 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 	$form['es_email_mail'] = isset($_POST['es_email_mail']) ? $_POST['es_email_mail'] : '';
 	if ($form['es_email_mail'] == '')
 	{
-		$es_errors[] = __('Please enter subscriber email address.', ES_TDOMAIN);
+		$es_errors[] = __('Please enter subscriber email address.', 'email-subscribers');
 		$es_error_found = TRUE;
 	}
 	
@@ -42,7 +42,7 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 	
 	if ($form['es_email_group'] == '')
 	{
-		$es_errors[] = __('Please select or create your group for this email.', ES_TDOMAIN);
+		$es_errors[] = __('Please select or create your group for this email.', 'email-subscribers');
 		$es_error_found = TRUE;
 	}
 	
@@ -51,7 +51,7 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 		$special_letters = es_cls_common::es_special_letters();
 		if (preg_match($special_letters, $form['es_email_group']))
 		{
-			$es_errors[] = __('Error: Special characters ([\'^$%&*()}{@#~?><>,|=_+\"]) are not allowed in the group name.', ES_TDOMAIN);
+			$es_errors[] = __('Error: Special characters ([\'^$%&*()}{@#~?><>,|=_+\"]) are not allowed in the group name.', 'email-subscribers');
 			$es_error_found = TRUE;
 		}
 	}
@@ -63,16 +63,16 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 		$action = es_cls_dbquery::es_view_subscriber_ins($form, "insert");
 		if($action == "sus")
 		{
-			$es_success = __('Email was successfully inserted.', ES_TDOMAIN);
+			$es_success = __('Email was successfully inserted.', 'email-subscribers');
 		}
 		elseif($action == "ext")
 		{
-			$es_errors[] = __('Email already exist in our list.', ES_TDOMAIN);
+			$es_errors[] = __('Email already exist in our list.', 'email-subscribers');
 			$es_error_found = TRUE;
 		}
 		elseif($action == "invalid")
 		{
-			$es_errors[] = __('Email is invalid.', ES_TDOMAIN);
+			$es_errors[] = __('Email is invalid.', 'email-subscribers');
 			$es_error_found = TRUE;
 		}
 			
@@ -89,7 +89,7 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 if ($es_error_found == TRUE && isset($es_errors[0]) == TRUE)
 {
 	?><div class="error fade"><p><strong><?php echo $es_errors[0]; ?>
-	<a href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers"><?php _e('Click here', ES_TDOMAIN); ?></a> <?php _e(' to view the details', ES_TDOMAIN); ?>
+	<a href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers"><?php _e('Click here', 'email-subscribers'); ?></a> <?php _e(' to view the details', 'email-subscribers'); ?>
 	</strong></p></div><?php
 }
 if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
@@ -98,7 +98,7 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 	<div class="updated fade">
 	<p><strong>
 	<?php echo $es_success; ?>
-	<a href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers"><?php _e('Click here', ES_TDOMAIN); ?></a> <?php _e(' to view the details', ES_TDOMAIN); ?>
+	<a href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers"><?php _e('Click here', 'email-subscribers'); ?></a> <?php _e(' to view the details', 'email-subscribers'); ?>
 	</strong></p>
 	</div>
 	<?php
@@ -107,30 +107,30 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 <script language="javaScript" src="<?php echo ES_URL; ?>subscribers/view-subscriber.js"></script>
 <div class="form-wrap">
 	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php _e(ES_PLUGIN_DISPLAY, ES_TDOMAIN); ?></h2>
+	<h2><?php _e(ES_PLUGIN_DISPLAY, 'email-subscribers'); ?></h2>
 	<form name="form_addemail" method="post" action="#" onsubmit="return _es_addemail()"  >
-      <h3 class="title"><?php _e('Add email', ES_TDOMAIN); ?></h3>
+      <h3 class="title"><?php _e('Add email', 'email-subscribers'); ?></h3>
       
-	  <label for="tag-image"><?php _e('Enter full name', ES_TDOMAIN); ?></label>
+	  <label for="tag-image"><?php _e('Enter full name', 'email-subscribers'); ?></label>
       <input name="es_email_name" type="text" id="es_email_name" value="" maxlength="225" size="30"  />
-      <p><?php _e('Please enter subscriber full name.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Please enter subscriber full name.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-image"><?php _e('Enter email address.', ES_TDOMAIN); ?></label>
+	  <label for="tag-image"><?php _e('Enter email address.', 'email-subscribers'); ?></label>
       <input name="es_email_mail" type="text" id="es_email_mail" value="" maxlength="225" size="50" />
-      <p><?php _e('Please enter subscriber email address.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Please enter subscriber email address.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-display-status"><?php _e('Status', ES_TDOMAIN); ?></label>
+	  <label for="tag-display-status"><?php _e('Status', 'email-subscribers'); ?></label>
       <select name="es_email_status" id="es_email_status">
         <option value='Confirmed' selected="selected">Confirmed</option>
 		<option value='Unconfirmed'>Unconfirmed</option>
 		<option value='Unsubscribed'>Unsubscribed</option>
 		<option value='Single Opt In'>Single Opt In</option>
       </select>
-      <p><?php _e('Please select subscriber email status.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Please select subscriber email status.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-display-status"><?php _e('Select (or) Create Group', ES_TDOMAIN); ?></label>
+	  <label for="tag-display-status"><?php _e('Select (or) Create Group', 'email-subscribers'); ?></label>
 	  <select name="es_email_group" id="es_email_group">
-		<option value=''><?php _e('Select', ES_TDOMAIN); ?></option>
+		<option value=''><?php _e('Select', 'email-subscribers'); ?></option>
 		<?php
 		$groups = array();
 		$groups = es_cls_dbquery::es_view_subscriber_group();
@@ -146,14 +146,14 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 	  </select>
 	  (or) 
 	  <input name="es_email_group_txt" type="text" id="es_email_group_txt" value="" maxlength="225" />
-      <p><?php _e('Please select or create group for this subscriber.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Please select or create group for this subscriber.', 'email-subscribers'); ?></p>
 	  
       <input type="hidden" name="es_form_submit" value="yes"/>
 	  <div style="padding-top:5px;"></div>
       <p>
-        <input name="publish" lang="publish" class="button add-new-h2" value="<?php _e('Submit', ES_TDOMAIN); ?>" type="submit" />
-        <input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Cancel', ES_TDOMAIN); ?>" type="button" />
-        <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', ES_TDOMAIN); ?>" type="button" />
+        <input name="publish" lang="publish" class="button add-new-h2" value="<?php _e('Submit', 'email-subscribers'); ?>" type="submit" />
+        <input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Cancel', 'email-subscribers'); ?>" type="button" />
+        <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', 'email-subscribers'); ?>" type="button" />
       </p>
 	  <?php wp_nonce_field('es_form_add'); ?>
     </form>

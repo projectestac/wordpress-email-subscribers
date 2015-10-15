@@ -8,15 +8,15 @@ if ($sentguid == '')
 {
 	?>
 	<div class="error fade">
-	  <p><strong><?php _e('Oops.. Unexpected error occurred. Please try again.', ES_TDOMAIN); ?></strong></p>
+	  <p><strong><?php _e('Oops.. Unexpected error occurred. Please try again.', 'email-subscribers'); ?></strong></p>
 	</div>
 	<?php
 }
 ?>
 <div class="wrap">
   <div id="icon-plugins" class="icon32"></div>
-    <h2><?php _e(ES_PLUGIN_DISPLAY, ES_TDOMAIN); ?></h2>
-	<h3><?php _e('Delivery Report', ES_TDOMAIN); ?></h3>
+    <h2><?php _e(ES_PLUGIN_DISPLAY, 'email-subscribers'); ?></h2>
+	<h3><?php _e('Delivery Report', 'email-subscribers'); ?></h3>
     <div class="tool-box">
 	<?php
 	$pagenum = isset( $_GET['pagenum'] ) ? absint( $_GET['pagenum'] ) : 1;
@@ -34,26 +34,26 @@ if ($sentguid == '')
       <table width="100%" class="widefat" id="straymanage">
         <thead>
           <tr>
-            <th width="3%" scope="col"><?php _e('Sno', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Email', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Sent Date', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Status', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Type', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Viewed Status', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Viewed Date', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Database ID', ES_TDOMAIN); ?></th>
+            <th width="3%" scope="col"><?php _e('Sno', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Email', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Sent Date', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Status', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Type', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Viewed Status', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Viewed Date', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Database ID', 'email-subscribers'); ?></th>
           </tr>
         </thead>
 		<tfoot>
           <tr>
-            <th width="3%" scope="col"><?php _e('Sno', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Email', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Sent Date', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Status', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Type', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Viewed Status', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Viewed Date', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Database ID', ES_TDOMAIN); ?></th>
+            <th width="3%" scope="col"><?php _e('Sno', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Email', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Sent Date', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Status', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Type', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Viewed Status', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Viewed Date', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Database ID', 'email-subscribers'); ?></th>
           </tr>
         </tfoot>
 		<tbody>
@@ -81,7 +81,7 @@ if ($sentguid == '')
 			}
 			else
 			{
-				?><tr><td colspan="8" align="center"><?php _e('No records available.', ES_TDOMAIN); ?></td></tr><?php 
+				?><tr><td colspan="8" align="center"><?php _e('No records available.', 'email-subscribers'); ?></td></tr><?php 
 			}
 			?>
 		</tbody>
@@ -116,8 +116,8 @@ if ($sentguid == '')
 		</style>
 		<div class="tablenav">
 			<div class="alignleft">
-				<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-sentmail"><?php _e('Back', ES_TDOMAIN); ?></a> &nbsp;
-				<a class="button add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php _e('Help', ES_TDOMAIN); ?></a> 
+				<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-sentmail"><?php _e('Back', 'email-subscribers'); ?></a> &nbsp;
+				<a class="button add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php _e('Help', 'email-subscribers'); ?></a> 
 			</div>
 			<div class="alignright">
 				<?php echo $page_links; ?>

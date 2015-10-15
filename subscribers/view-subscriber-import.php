@@ -42,7 +42,7 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 		$special_letters = es_cls_common::es_special_letters();
 		if (preg_match($special_letters, $es_email_group))
 		{
-			$es_errors[] = __('Error: Special characters ([\'^$%&*()}{@#~?><>,|=_+\"]) are not allowed in the group name.', ES_TDOMAIN);
+			$es_errors[] = __('Error: Special characters ([\'^$%&*()}{@#~?><>,|=_+\"]) are not allowed in the group name.', 'email-subscribers');
 			$es_error_found = TRUE;
 		}
 	}
@@ -100,11 +100,11 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 			}
 			?>
 			<div class="updated fade">
-				<p><strong><?php echo $inserted; ?> <?php _e('Email(s) was successfully imported.', ES_TDOMAIN); ?></strong></p>
-				<p><strong><?php echo $duplicate; ?> <?php _e('Email(s) are already in our database.', ES_TDOMAIN); ?></strong></p>
-				<p><strong><?php echo $invalid; ?> <?php _e('Email(s) are invalid.', ES_TDOMAIN); ?></strong></p>
+				<p><strong><?php echo $inserted; ?> <?php _e('Email(s) was successfully imported.', 'email-subscribers'); ?></strong></p>
+				<p><strong><?php echo $duplicate; ?> <?php _e('Email(s) are already in our database.', 'email-subscribers'); ?></strong></p>
+				<p><strong><?php echo $invalid; ?> <?php _e('Email(s) are invalid.', 'email-subscribers'); ?></strong></p>
 				<p><strong><a href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers">
-				<?php _e('Click here', ES_TDOMAIN); ?></a> <?php _e(' to view the details', ES_TDOMAIN); ?></strong></p>
+				<?php _e('Click here', 'email-subscribers'); ?></a> <?php _e(' to view the details', 'email-subscribers'); ?></strong></p>
 			</div>
 			<?php
 		}
@@ -112,7 +112,7 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 		{
 			?>
 			<div class="error fade">
-				<p><strong><?php _e('File upload failed or no data available in the csv file.', ES_TDOMAIN); ?></strong></p>
+				<p><strong><?php _e('File upload failed or no data available in the csv file.', 'email-subscribers'); ?></strong></p>
 			</div>
 			<?php
 		}
@@ -135,7 +135,7 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 		<strong>
 		<?php echo $es_success; ?>
 		<a href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers">
-			<?php _e('Click here', ES_TDOMAIN); ?></a> <?php _e(' to view the details', ES_TDOMAIN); ?>
+			<?php _e('Click here', 'email-subscribers'); ?></a> <?php _e(' to view the details', 'email-subscribers'); ?>
 		</strong>
 		</p>
 	  </div>
@@ -145,26 +145,26 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 <script language="javaScript" src="<?php echo ES_URL; ?>subscribers/view-subscriber.js"></script>
 <div class="form-wrap">
 	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php _e(ES_PLUGIN_DISPLAY, ES_TDOMAIN); ?></h2>
+	<h2><?php _e(ES_PLUGIN_DISPLAY, 'email-subscribers'); ?></h2>
 	<form name="form_addemail" id="form_addemail" method="post" action="#" onsubmit="return _es_importemail()" enctype="multipart/form-data">
-      <h3><?php _e('Upload email', ES_TDOMAIN); ?></h3>
-	  <label for="tag-image"><?php _e('Select csv file', ES_TDOMAIN); ?></label>
+      <h3><?php _e('Upload email', 'email-subscribers'); ?></h3>
+	  <label for="tag-image"><?php _e('Select csv file', 'email-subscribers'); ?></label>
 	  <input type="file" name="es_csv_name" id="es_csv_name" />
-      <p><?php _e('Please select the input csv file. Please check official website for csv structure.', ES_TDOMAIN); ?>
+      <p><?php _e('Please select the input csv file. Please check official website for csv structure.', 'email-subscribers'); ?>
 	  <a target="_blank" href="http://www.gopiplus.com/work/2014/05/06/email-subscribers-wordpress-plugin-subscriber-management-and-import-and-export-email-address/">click here</a></p>
 	   
-	  <label for="tag-email-status"><?php _e('Status', ES_TDOMAIN); ?></label>
+	  <label for="tag-email-status"><?php _e('Status', 'email-subscribers'); ?></label>
       <select name="es_email_status" id="es_email_status">
         <option value='Confirmed' selected="selected">Confirmed</option>
 		<option value='Unconfirmed'>Unconfirmed</option>
 		<option value='Unsubscribed'>Unsubscribed</option>
 		<option value='Single Opt In'>Single Opt In</option>
       </select>
-      <p><?php _e('Please select subscriber email status.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Please select subscriber email status.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-email-group"><?php _e('Select (or) Create Group', ES_TDOMAIN); ?></label>
+	  <label for="tag-email-group"><?php _e('Select (or) Create Group', 'email-subscribers'); ?></label>
 	  <select name="es_email_group" id="es_email_group">
-		<option value=''><?php _e('Select', ES_TDOMAIN); ?></option>
+		<option value=''><?php _e('Select', 'email-subscribers'); ?></option>
 		<?php
 		$groups = array();
 		$groups = es_cls_dbquery::es_view_subscriber_group();
@@ -180,14 +180,14 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 	  </select>
 	  (or) 
 	  <input name="es_email_group_txt" type="text" id="es_email_group_txt" value="" maxlength="225" />
-      <p><?php _e('Please select or create group for this subscriber.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Please select or create group for this subscriber.', 'email-subscribers'); ?></p>
 		
       <input type="hidden" name="es_form_submit" value="yes"/>
 	  <div style="padding-top:5px;"></div>
       <p>
-        <input name="publish" lang="publish" class="button add-new-h2" value="<?php _e('Upload CSV', ES_TDOMAIN); ?>" type="submit" />
-		<input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Back', ES_TDOMAIN); ?>" type="button" />
-        <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', ES_TDOMAIN); ?>" type="button" />
+        <input name="publish" lang="publish" class="button add-new-h2" value="<?php _e('Upload CSV', 'email-subscribers'); ?>" type="submit" />
+		<input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Back', 'email-subscribers'); ?>" type="button" />
+        <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', 'email-subscribers'); ?>" type="button" />
       </p>
 	  <?php wp_nonce_field('es_form_add'); ?>
     </form>
