@@ -122,3 +122,9 @@ using administrator login and select Editor role to Send Email Menu, So that you
 ********************************Version 2.9.1************************************************************
 
 * Fixed cross-site scripting vulnerabilities and a potential SQL injection.
+
+********************************Version 2.9.2************************************************************
+
+* Add-on plugin available for advanced subscribers form (Users can select interested group in subscribers form).
+* Polish language file added in the language directory.
+* Text Domain slug has been added for Language Packs.

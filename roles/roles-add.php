@@ -78,7 +78,7 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 	<div class="updated fade">
 	<p><strong>
 	<?php echo $es_success; ?>
-	<a href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers"><?php _e('Click here', ES_TDOMAIN); ?></a> <?php _e(' to view the details', ES_TDOMAIN); ?>
+	<a href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers"><?php _e('Click here', 'email-subscribers'); ?></a> <?php _e(' to view the details', 'email-subscribers'); ?>
 	</strong></p>
 	</div>
 	<?php
@@ -87,73 +87,73 @@ if ($es_error_found == FALSE && isset($es_success[0]) == TRUE)
 <script language="javaScript" src="<?php echo ES_URL; ?>roles/roles.js"></script>
 <div class="form-wrap">
 	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php _e(ES_PLUGIN_DISPLAY, ES_TDOMAIN); ?></h2>
+	<h2><?php _e(ES_PLUGIN_DISPLAY, 'email-subscribers'); ?></h2>
 	<form name="form_roles" method="post" action="#" onsubmit="return _es_addroles()"  >
-      <h3 class="title"><?php _e('Roles and Capabilities', ES_TDOMAIN); ?></h3>
+      <h3 class="title"><?php _e('Roles and Capabilities', 'email-subscribers'); ?></h3>
       
-	  <label for="tag-image"><?php _e('Subscribers Menu', ES_TDOMAIN); ?></label>
+	  <label for="tag-image"><?php _e('Subscribers Menu', 'email-subscribers'); ?></label>
       <select name="es_roles_subscriber" id="es_roles_subscriber">
 		<option value='manage_options' <?php if($es_roles_subscriber == 'manage_options') { echo "selected='selected'" ; } ?>>Administrator Only</option>
 		<option value='edit_others_pages' <?php if($es_roles_subscriber == 'edit_others_pages') { echo "selected='selected'" ; } ?>>Administrator/Editor</option>
 		<option value='edit_posts' <?php if($es_roles_subscriber == 'edit_posts') { echo "selected='selected'" ; } ?>>Administrator/Editor/Author/Contributor</option>
 	  </select>
-      <p><?php _e('Select user role to access plugin Subscribers Menu. Only Admin user can change this value.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Select user role to access plugin Subscribers Menu. Only Admin user can change this value.', 'email-subscribers'); ?></p>
 	  
 	  
-	  <label for="tag-image"><?php _e('Compose Menu', ES_TDOMAIN); ?></label>
+	  <label for="tag-image"><?php _e('Compose Menu', 'email-subscribers'); ?></label>
       <select name="es_roles_mail" id="es_roles_mail">
 		<option value='manage_options' <?php if($es_roles_mail == 'manage_options') { echo "selected='selected'" ; } ?>>Administrator Only</option>
 		<option value='edit_others_pages' <?php if($es_roles_mail == 'edit_others_pages') { echo "selected='selected'" ; } ?>>Administrator/Editor</option>
 		<option value='edit_posts' <?php if($es_roles_mail == 'edit_posts') { echo "selected='selected'" ; } ?>>Administrator/Editor/Author/Contributor</option>
 	  </select>
-      <p><?php _e('Select user role to access plugin Compose Menu. Only Admin user can change this value.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Select user role to access plugin Compose Menu. Only Admin user can change this value.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-display-status"><?php _e('Notification Menu', ES_TDOMAIN); ?></label>
+	  <label for="tag-display-status"><?php _e('Notification Menu', 'email-subscribers'); ?></label>
       <select name="es_roles_notification" id="es_roles_notification">
 		<option value='manage_options' <?php if($es_roles_notification == 'manage_options') { echo "selected='selected'" ; } ?>>Administrator Only</option>
 		<option value='edit_others_pages' <?php if($es_roles_notification == 'edit_others_pages') { echo "selected='selected'" ; } ?>>Administrator/Editor</option>
 		<option value='edit_posts' <?php if($es_roles_notification == 'edit_posts') { echo "selected='selected'" ; } ?>>Administrator/Editor/Author/Contributor</option>
 	  </select>
-      <p><?php _e('Select user role to access plugin Notification Menu. Only Admin user can change this value.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Select user role to access plugin Notification Menu. Only Admin user can change this value.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-display-status"><?php _e('Send Email Menu/Cron Menu', ES_TDOMAIN); ?></label>
+	  <label for="tag-display-status"><?php _e('Send Email Menu/Cron Menu', 'email-subscribers'); ?></label>
 	  <select name="es_roles_sendmail" id="es_roles_sendmail">
 		<option value='manage_options' <?php if($es_roles_sendmail == 'manage_options') { echo "selected='selected'" ; } ?>>Administrator Only</option>
 		<option value='edit_others_pages' <?php if($es_roles_sendmail == 'edit_others_pages') { echo "selected='selected'" ; } ?>>Administrator/Editor</option>
 		<option value='edit_posts' <?php if($es_roles_sendmail == 'edit_posts') { echo "selected='selected'" ; } ?>>Administrator/Editor/Author/Contributor</option>
 	  </select>
-      <p><?php _e('Select user role to access plugin Send Email Menu. Only Admin user can change this value.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Select user role to access plugin Send Email Menu. Only Admin user can change this value.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-display-status"><?php _e('Settings Menu', ES_TDOMAIN); ?></label>
+	  <label for="tag-display-status"><?php _e('Settings Menu', 'email-subscribers'); ?></label>
 	  <select name="es_roles_setting" id="es_roles_setting">
 		<option value='manage_options' <?php if($es_roles_setting == 'manage_options') { echo "selected='selected'" ; } ?>>Administrator Only</option>
 		<option value='edit_others_pages' <?php if($es_roles_setting == 'edit_others_pages') { echo "selected='selected'" ; } ?>>Administrator/Editor</option>
 		<option value='edit_posts' <?php if($es_roles_setting == 'edit_posts') { echo "selected='selected'" ; } ?>>Administrator/Editor/Author/Contributor</option>
 	  </select>
-      <p><?php _e('Select user role to access plugin Settings Menu. Only Admin user can change this value.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Select user role to access plugin Settings Menu. Only Admin user can change this value.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-display-status"><?php _e('Sent Mails Menu', ES_TDOMAIN); ?></label>
+	  <label for="tag-display-status"><?php _e('Sent Mails Menu', 'email-subscribers'); ?></label>
 	  <select name="es_roles_sentmail" id="es_roles_sentmail">
 		<option value='manage_options' <?php if($es_roles_sentmail == 'manage_options') { echo "selected='selected'" ; } ?>>Administrator Only</option>
 		<option value='edit_others_pages' <?php if($es_roles_sentmail == 'edit_others_pages') { echo "selected='selected'" ; } ?>>Administrator/Editor</option>
 		<option value='edit_posts' <?php if($es_roles_sentmail == 'edit_posts') { echo "selected='selected'" ; } ?>>Administrator/Editor/Author/Contributor</option>
 	  </select>
-      <p><?php _e('Select user role to access plugin Sent Mails Menu. Only Admin user can change this value.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Select user role to access plugin Sent Mails Menu. Only Admin user can change this value.', 'email-subscribers'); ?></p>
 	  
-	  <label for="tag-display-status"><?php _e('Help & Info Menu', ES_TDOMAIN); ?></label>
+	  <label for="tag-display-status"><?php _e('Help & Info Menu', 'email-subscribers'); ?></label>
 	  <select name="es_roles_help" id="es_roles_help">
 		<option value='manage_options' <?php if($es_roles_help == 'manage_options') { echo "selected='selected'" ; } ?>>Administrator Only</option>
 		<option value='edit_others_pages' <?php if($es_roles_help == 'edit_others_pages') { echo "selected='selected'" ; } ?>>Administrator/Editor</option>
 		<option value='edit_posts' <?php if($es_roles_help == 'edit_posts') { echo "selected='selected'" ; } ?>>Administrator/Editor/Author/Contributor</option>
 	  </select>
-      <p><?php _e('Select user role to access plugin Help & Info Menu. Only Admin user can change this value.', ES_TDOMAIN); ?></p>
+      <p><?php _e('Select user role to access plugin Help & Info Menu. Only Admin user can change this value.', 'email-subscribers'); ?></p>
 	  
       <input type="hidden" name="es_form_submit" value="yes"/>
 	  <div style="padding-top:5px;"></div>
       <p>
-        <input name="publish" lang="publish" class="button add-new-h2" value="<?php _e('Submit', ES_TDOMAIN); ?>" type="submit" />
-        <input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Cancel', ES_TDOMAIN); ?>" type="button" />
-        <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', ES_TDOMAIN); ?>" type="button" />
+        <input name="publish" lang="publish" class="button add-new-h2" value="<?php _e('Submit', 'email-subscribers'); ?>" type="submit" />
+        <input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Cancel', 'email-subscribers'); ?>" type="button" />
+        <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', 'email-subscribers'); ?>" type="button" />
       </p>
 	  <?php wp_nonce_field('es_roles_add'); ?>
     </form>

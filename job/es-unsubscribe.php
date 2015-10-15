@@ -57,7 +57,7 @@ if(isset($_GET['es']))
 			}
 			if($message == "")
 			{
-				$message = __('Oops.. We are getting some technical error. Please try again or contact admin.', ES_TDOMAIN);
+				$message = __('Oops.. We are getting some technical error. Please try again or contact admin.', 'email-subscribers');
 			}
 			echo $message;
 		}
@@ -67,7 +67,7 @@ if(isset($_GET['es']))
 			$message = str_replace("\r\n", "<br />", $message);
 			if($message == "")
 			{
-				$message = __('Oops.. We are getting some technical error. Please try again or contact admin.', ES_TDOMAIN);
+				$message = __('Oops.. We are getting some technical error. Please try again or contact admin.', 'email-subscribers');
 			}
 			echo $message;
 		}

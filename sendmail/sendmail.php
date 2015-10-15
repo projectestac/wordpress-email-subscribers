@@ -8,7 +8,7 @@ if ($es_c_email_subscribers_ver <> "2.9")
 	<div class="error fade">
 		<p>
 		Note: You have recently upgraded the plugin and your tables are not sync. 
-		Please <a title="Sync plugin tables." href="<?php echo ES_ADMINURL; ?>?page=es-settings&amp;ac=sync"><?php _e('Click Here', ES_TDOMAIN); ?></a> to sync the table. 
+		Please <a title="Sync plugin tables." href="<?php echo ES_ADMINURL; ?>?page=es-settings&amp;ac=sync"><?php _e('Click Here', 'email-subscribers'); ?></a> to sync the table. 
 		This is mandatory and it will not affect your data.
 		</p>
 	</div>
@@ -32,7 +32,7 @@ if ($sendmailsubmit == 'yes')
 	$form['es_templ_heading'] = isset($_POST['es_templ_heading']) ? $_POST['es_templ_heading'] : '';
 	if ($form['es_templ_heading'] == '')
 	{
-		$es_errors[] = __('Please select your mail subject.', ES_TDOMAIN);
+		$es_errors[] = __('Please select your mail subject.', 'email-subscribers');
 		$es_error_found = TRUE;
 	}
 	
@@ -40,14 +40,14 @@ if ($sendmailsubmit == 'yes')
 	$recipients = isset($_POST['eemail_checked']) ? $_POST['eemail_checked'] : '';
 	if ($recipients == '')
 	{
-		$es_errors[] = __('No email address selected.', ES_TDOMAIN);
+		$es_errors[] = __('No email address selected.', 'email-subscribers');
 		$es_error_found = TRUE;
 	}
 	
 	$form['es_sent_type'] = isset($_POST['es_sent_type']) ? $_POST['es_sent_type'] : '';
 	if ($form['es_sent_type'] == '')
 	{
-		$es_errors[] = __('Please select your mail type.', ES_TDOMAIN);
+		$es_errors[] = __('Please select your mail type.', 'email-subscribers');
 		$es_error_found = TRUE;
 	}
 	
@@ -55,13 +55,13 @@ if ($sendmailsubmit == 'yes')
 	{
 		es_cls_sendmail::es_prepare_newsletter_manual($es_templ_heading, $recipients, $form['es_sent_type']);				
 		$es_success_msg = TRUE;
-		$es_success = __('Mail sent successfully', ES_TDOMAIN);
+		$es_success = __('Mail sent successfully', 'email-subscribers');
 		if ($es_success_msg == TRUE)
 		{
 			?>
 			<div class="updated fade">
 			  <p>
-				<strong><?php echo $es_success; ?> <a href="<?php echo ES_ADMINURL; ?>?page=es-sentmail"><?php _e('Click here for details', ES_TDOMAIN); ?></a></strong>
+				<strong><?php echo $es_success; ?> <a href="<?php echo ES_ADMINURL; ?>?page=es-sentmail"><?php _e('Click here for details', 'email-subscribers'); ?></a></strong>
 			  </p>
 			</div>
 			<?php
@@ -70,7 +70,7 @@ if ($sendmailsubmit == 'yes')
 		{
 			?>
 			<div class="error fade">
-			  <p><strong><?php _e('Oops.. We are getting some error. mail not sending.', ES_TDOMAIN); ?></strong></p>
+			  <p><strong><?php _e('Oops.. We are getting some error. mail not sending.', 'email-subscribers'); ?></strong></p>
 			</div>
 			<?php
 		}
@@ -91,21 +91,21 @@ if ($es_error_found == TRUE && isset($es_errors[0]) == TRUE)
 <div class="wrap">
 <div class="form-wrap">
 	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php _e(ES_PLUGIN_DISPLAY, ES_TDOMAIN); ?></h2>
-	<h3><?php _e('Send Email', ES_TDOMAIN); ?></h3>
+	<h2><?php _e(ES_PLUGIN_DISPLAY, 'email-subscribers'); ?></h2>
+	<h3><?php _e('Send Email', 'email-subscribers'); ?></h3>
 	<form name="es_form" method="post" action="#" onsubmit="return _es_submit()"  >
 	<table class="form-table">
 	<tbody>
 		<tr>
 		<th scope="row">
 			<label for="elp">
-				<?php _e('Select your mail subject', ES_TDOMAIN); ?>
-				<p class="description"><?php _e('Select a mail subject from available list. Go to Compose page to create new mail.', ES_TDOMAIN); ?></p>
+				<?php _e('Select your mail subject', 'email-subscribers'); ?>
+				<p class="description"><?php _e('Select a mail subject from available list. Go to Compose page to create new mail.', 'email-subscribers'); ?></p>
 			</label>
 		</th>
 		<td>
 			<select name="es_templ_heading" id="es_templ_heading">
-			<option value=''><?php _e('Select', ES_TDOMAIN); ?></option>
+			<option value=''><?php _e('Select', 'email-subscribers'); ?></option>
 			<?php
 			$subject = array();
 			$subject = es_cls_compose::es_template_select_type($type = "Static Template");
@@ -130,8 +130,8 @@ if ($es_error_found == TRUE && isset($es_errors[0]) == TRUE)
 		<tr>
 			<th scope="row">
 				<label for="elp">
-					<?php _e('Mail Type', ES_TDOMAIN); ?>
-					<p class="description"><?php _e('Select your mail type.', ES_TDOMAIN); ?></p>
+					<?php _e('Mail Type', 'email-subscribers'); ?>
+					<p class="description"><?php _e('Select your mail type.', 'email-subscribers'); ?></p>
 				</label>
 			</th>
 			<td>
@@ -145,13 +145,13 @@ if ($es_error_found == TRUE && isset($es_errors[0]) == TRUE)
 		<tr>
 		<th scope="row">
 			<label for="elp">
-				<?php _e('Select subscriber group', ES_TDOMAIN); ?>
-				<p class="description"><?php _e('Select your subscriber group to send email.', ES_TDOMAIN); ?></p>
+				<?php _e('Select subscriber group', 'email-subscribers'); ?>
+				<p class="description"><?php _e('Select your subscriber group to send email.', 'email-subscribers'); ?></p>
 			</label>
 		</th>
 		<td>
 			<select name="es_email_group" id="es_email_group" onChange="_es_mailgroup(this.options[this.selectedIndex].value)">
-			<option value=''><?php _e('Select', ES_TDOMAIN); ?></option>
+			<option value=''><?php _e('Select', 'email-subscribers'); ?></option>
 			<?php
 			$groups = array();
 			$thisselected = "";
@@ -171,8 +171,8 @@ if ($es_error_found == TRUE && isset($es_errors[0]) == TRUE)
 			}
 			?>
 			</select>
-			<input type="button" name="CheckAll" value="<?php _e('Check All', ES_TDOMAIN); ?>" onClick="_es_checkall('es_form', 'eemail_checked[]', true);">
-			<input type="button" name="UnCheckAll" value="<?php _e('Uncheck All', ES_TDOMAIN); ?>" onClick="_es_checkall('es_form', 'eemail_checked[]', false);">
+			<input type="button" name="CheckAll" value="<?php _e('Check All', 'email-subscribers'); ?>" onClick="_es_checkall('es_form', 'eemail_checked[]', true);">
+			<input type="button" name="UnCheckAll" value="<?php _e('Uncheck All', 'email-subscribers'); ?>" onClick="_es_checkall('es_form', 'eemail_checked[]', false);">
 		</td>
 		</tr>
 		<tr>
@@ -235,7 +235,7 @@ if ($es_error_found == TRUE && isset($es_errors[0]) == TRUE)
 			else
 			{
 				echo '<span style="color:#FF0000">';
-				_e('No subscribers available for this search criteria.', ES_TDOMAIN);
+				_e('No subscribers available for this search criteria.', 'email-subscribers');
 				echo "<br>";
 				echo "Email starts with : " . $es_search_query;
 				echo "<br>";
@@ -254,12 +254,12 @@ if ($es_error_found == TRUE && isset($es_errors[0]) == TRUE)
 	<input type="hidden" name="sendmailsubmit" id="sendmailsubmit" value=""/>
 	<input type="hidden" name="wp_create_nonce" id="wp_create_nonce" value="<?php echo $nonce; ?>"/>
 	<?php if( $count <> 0 ) { ?>
-	<input type="submit" name="Submit" class="button add-new-h2" value="<?php _e('Send Email', ES_TDOMAIN); ?>" style="width:160px;" />&nbsp;&nbsp;
+	<input type="submit" name="Submit" class="button add-new-h2" value="<?php _e('Send Email', 'email-subscribers'); ?>" style="width:160px;" />&nbsp;&nbsp;
 	<?php } else { ?>
-	<input type="submit" name="Submit" disabled="disabled" class="button add-new-h2" value="<?php _e('Send Email', ES_TDOMAIN); ?>" style="width:160px;" />&nbsp;&nbsp;
+	<input type="submit" name="Submit" disabled="disabled" class="button add-new-h2" value="<?php _e('Send Email', 'email-subscribers'); ?>" style="width:160px;" />&nbsp;&nbsp;
 	<?php } ?>
-	<input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Cancel', ES_TDOMAIN); ?>" type="button" />&nbsp;&nbsp;
-    <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', ES_TDOMAIN); ?>" type="button" />
+	<input name="publish" lang="publish" class="button add-new-h2" onclick="_es_redirect()" value="<?php _e('Cancel', 'email-subscribers'); ?>" type="button" />&nbsp;&nbsp;
+    <input name="Help" lang="publish" class="button add-new-h2" onclick="_es_help()" value="<?php _e('Help', 'email-subscribers'); ?>" type="button" />
 	</div>
 	<?php wp_nonce_field('es_form_submit'); ?>
 	</form>

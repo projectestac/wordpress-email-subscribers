@@ -15,7 +15,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
 		$result = es_cls_sentmail::es_sentmail_count($did);
 		if ($result != '1')
 		{
-			?><div class="error fade"><p><strong><?php _e('Oops, selected details doesnt exist.', ES_TDOMAIN); ?></strong></p></div><?php
+			?><div class="error fade"><p><strong><?php _e('Oops, selected details doesnt exist.', 'email-subscribers'); ?></strong></p></div><?php
 		}
 		else
 		{
@@ -30,7 +30,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
 				
 				//	Set success message
 				$es_success_msg = TRUE;
-				$es_success = __('Selected record was successfully deleted.', ES_TDOMAIN);
+				$es_success = __('Selected record was successfully deleted.', 'email-subscribers');
 			}
 		}
 	}
@@ -39,7 +39,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
 		check_admin_referer('es_form_show');
 		es_cls_optimize::es_optimize_setdetails();
 		$es_success_msg = TRUE;
-		$es_success = __('Successfully deleted all reports except latest 10.', ES_TDOMAIN);
+		$es_success = __('Successfully deleted all reports except latest 10.', 'email-subscribers');
 	}	
 	if ($es_success_msg == TRUE)
 	{
@@ -50,8 +50,8 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
 <script language="javaScript" src="<?php echo ES_URL; ?>sentmail/sentmail.js"></script>
 <div class="wrap">
   <div id="icon-plugins" class="icon32"></div>
-    <h2><?php _e(ES_PLUGIN_DISPLAY, ES_TDOMAIN); ?></h2>
-	<h3><?php _e('Sent Mails', ES_TDOMAIN); ?></h3>
+    <h2><?php _e(ES_PLUGIN_DISPLAY, 'email-subscribers'); ?></h2>
+	<h3><?php _e('Sent Mails', 'email-subscribers'); ?></h3>
     <div class="tool-box">
 	<?php
 	$pagenum = isset( $_GET['pagenum'] ) ? absint( $_GET['pagenum'] ) : 1;
@@ -69,28 +69,28 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
       <table width="100%" class="widefat" id="straymanage">
         <thead>
           <tr>
-			<th scope="col"><?php _e('View Reports', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Preview', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Source', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Status', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Type', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Start Date', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('End Date', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Total', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Action', ES_TDOMAIN); ?></th>
+			<th scope="col"><?php _e('View Reports', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Preview', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Source', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Status', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Type', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Start Date', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('End Date', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Total', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Action', 'email-subscribers'); ?></th>
           </tr>
         </thead>
 		<tfoot>
           <tr>
-			<th scope="col"><?php _e('View Reports', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Preview', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Source', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Status', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Type', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Start Date', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('End Date', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Total', ES_TDOMAIN); ?></th>
-			<th scope="col"><?php _e('Action', ES_TDOMAIN); ?></th>
+			<th scope="col"><?php _e('View Reports', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Preview', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Source', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Status', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Type', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Start Date', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('End Date', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Total', 'email-subscribers'); ?></th>
+			<th scope="col"><?php _e('Action', 'email-subscribers'); ?></th>
           </tr>
         </tfoot>
 		<tbody>
@@ -129,7 +129,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
 			}
 			else
 			{
-				?><tr><td colspan="9" align="center"><?php _e('No records available.', ES_TDOMAIN); ?></td></tr><?php 
+				?><tr><td colspan="9" align="center"><?php _e('No records available.', 'email-subscribers'); ?></td></tr><?php 
 			}
 			?>
 		</tbody>
@@ -165,9 +165,9 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
 		<div class="tablenav">
 			<div class="alignleft">
 				<select name="action" id="action">
-					<option value="optimize-table"><?php _e('Optimize Table', ES_TDOMAIN); ?></option>
+					<option value="optimize-table"><?php _e('Optimize Table', 'email-subscribers'); ?></option>
 				</select>
-				<input type="submit" value="<?php _e('Optimize Table', ES_TDOMAIN); ?>" class="button action" id="doaction" name="">
+				<input type="submit" value="<?php _e('Optimize Table', 'email-subscribers'); ?>" class="button action" id="doaction" name="">
 			</div>
 			<div class="alignright">
 				<?php echo $page_links; ?>
@@ -177,7 +177,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
       </form>
 	  <?php if ($fulltotal > 30 ) { ?>
 	  <div class="error fade"><p>
-	  <?php _e('Note: Please click <strong>Optimize Table</strong> button to delete all reports except latest 10.', ES_TDOMAIN); ?>
+	  <?php _e('Note: Please click <strong>Optimize Table</strong> button to delete all reports except latest 10.', 'email-subscribers'); ?>
 	  </p></div>
 	  <?php } ?>
 	  <p class="description"><?php echo ES_OFFICIAL; ?></p>
