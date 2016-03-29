@@ -54,7 +54,14 @@ if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes')
 	
 	if ($es_email_group == '')
 	{
+//XTEC ************ MODIFICAT - Changed default group from Public to Portada
+//2016.03.29 @sarjona
+		$es_email_group = 'Portada';
+//************ ORIGINAL
+/*
 		$es_email_group = "Public";
+*/
+//************ FI
 	}
 	
 	if($extension === 'csv')

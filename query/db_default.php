@@ -103,13 +103,27 @@ class es_cls_default
 		{
 			$form["es_email_mail"] = get_option('admin_email');
 			$form["es_email_name"] = "Admin";
+//XTEC ************ MODIFICAT - Changed default group from Public to Portada
+//2016.03.29 @sarjona
+			$form["es_email_group"] = 'Portada';
+//************ ORIGINAL
+/*
 			$form["es_email_group"] = "Public";
+*/
+//************ FI
 			$form["es_email_status"] = "Confirmed";
 			es_cls_dbquery::es_view_subscriber_ins($form, "insert");
 
 			$form["es_email_mail"] = "a.example@example.com";
 			$form["es_email_name"] = "Example";
+//XTEC ************ MODIFICAT - Changed default group from Public to Portada
+//2016.03.29 @sarjona
+			$form["es_email_group"] = 'Portada';
+//************ ORIGINAL
+/*
 			$form["es_email_group"] = "Public";
+*/
+//************ FI
 			$form["es_email_status"] = "Confirmed";
 			es_cls_dbquery::es_view_subscriber_ins($form, "insert");
 		}
