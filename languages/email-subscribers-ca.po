@@ -4,14 +4,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Email Subscribers\n"
 "POT-Creation-Date: 2015-10-21 15:48+0100\n"
-"PO-Revision-Date: 2016-01-11 16:15+0100\n"
-"Last-Translator: Toni Ginard <toni.ginard@gmail.com>\n"
+"PO-Revision-Date: 2016-04-08 10:26+0200\n"
+"Last-Translator: Mònica Grau <mgrau226@xtec.cat>\n"
 "Language-Team: \n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.8.4\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop;_e;__\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: /home/david/PhpstormProjects/upcnet/agora/html/"
@@ -65,7 +65,7 @@ msgstr ""
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/compose/compose-edit.php:123
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/roles/roles-add.php:154
 msgid "Submit"
-msgstr "Envia"
+msgstr "Desa"
 
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/cron/cron-add.php:91
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/settings/settings-edit.php:381
@@ -433,7 +433,7 @@ msgstr ""
 
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/base/es-defined.php:34
 msgid "Email Subscribers"
-msgstr "Subscripcions de correu electrònic"
+msgstr "Subscripcions"
 
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/base/es-defined.php:35
 msgid "Dynamic Template"
@@ -760,7 +760,7 @@ msgstr "S'ha desat la subscripció correctament."
 
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/subscribers/view-subscriber-add.php:70
 msgid "Email already exist in our list."
-msgstr "El missatge ja existeix a la llista."
+msgstr "L'adreça de correu electrònic ja existeix a la llista."
 
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/subscribers/view-subscriber-add.php:75
 msgid "Email is invalid."
@@ -795,7 +795,7 @@ msgstr "L'adreça s'ha actualitzat correctament"
 
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/subscribers/view-subscriber-edit.php:70
 msgid "Email already exist for this group."
-msgstr "L'adreça ja pertany a aquest grup."
+msgstr "L'adreça de correu electrònic ja pertany a aquest grup."
 
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/subscribers/view-subscriber-edit.php:96
 msgid "Edit email"
@@ -880,7 +880,7 @@ msgstr ""
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/compose/compose-show.php:45
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/sentmail/sentmail-show.php:33
 msgid "Selected record was successfully deleted."
-msgstr ""
+msgstr "El registre seleccionat s'ha eliminat correctament."
 
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/subscribers/view-subscriber-show.php:72
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/subscribers/view-subscriber-show.php:125
@@ -1014,7 +1014,7 @@ msgstr "Grup de subscriptors"
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/notification/notification-show.php:58
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/notification/notification-show.php:66
 msgid "Categories / Custom Post"
-msgstr "Categories / Article personalitzat"
+msgstr "Categories"
 
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/notification/notification-show.php:59
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/notification/notification-show.php:67
@@ -1075,7 +1075,7 @@ msgstr "Afegeix una notificació"
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/notification/notification-add.php:122
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/notification/notification-edit.php:121
 msgid "Notification Mail"
-msgstr "Adreça de notificació"
+msgstr "Plantilla de notificació"
 
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/notification/notification-add.php:141
 #: /home/david/PhpstormProjects/upcnet/agora/html/wordpress/wp-content/plugins/email-subscribers/notification/notification-edit.php:145
