@@ -241,17 +241,40 @@ class es_widget_register extends WP_Widget
 		} 
 		?>
 		<script language="javascript" type="text/javascript" src="<?php echo ES_URL; ?>widget/es-widget.js"></script>
-		<div>
+		 <!-- XTEC ************ MODIFICAT - Added Placeholder
+                             2015.05.10 @jmeler -->
+                <div class="es_form">
+                <!-- ************ ORIGINAL
+                <div>
+                *******************FI -->
 			<?php if( $es_desc <> "" ) { ?>
 			<div class="es_caption"><?php echo $es_desc; ?></div>
 			<?php } ?>
 			<div class="es_msg"><span id="es_msg"></span></div>
 			<?php if( $es_name == "YES" ) { ?>
+                        
+                        <!-- XTEC ************ MODIFICAT - Added Placeholder
+                             2015.05.10 @jmeler -->
+                        <div class="es_textbox">
+                            <input class="es_textbox_class" name="es_txt_name" id="es_txt_name" placeholder="<?php _e('Name', 'email-subscribers'); ?>" value="" maxlength="225" type="text">
+			</div>
+                        <!-- ************ ORIGINAL
 			<div class="es_lablebox"><?php _e('Name', 'email-subscribers'); ?></div>
 			<div class="es_textbox">
 				<input class="es_textbox_class" name="es_txt_name" id="es_txt_name" value="" maxlength="225" type="text">
 			</div>
+                        *******************FI -->
 			<?php } ?>
+                        
+                        <!-- XTEC ************ MODIFICAT - Added Placeholder
+                             2015.05.10 @jmeler -->
+                        <div class="es_textbox">
+				<input class="es_textbox_class" name="es_txt_email" id="es_txt_email" placeholder="<?php _e('Email *', 'email-subscribers'); ?>" onkeypress="if(event.keyCode==13) es_submit_page('<?php echo $url; ?>')" value="" maxlength="225" type="text">
+			</div>
+                        <div class="es_button">
+				<input class="button small radius" name="es_txt_button" id="es_txt_button" onClick="return es_submit_page('<?php echo $url; ?>')" value="<?php _e('Subscribe', 'email-subscribers'); ?>" type="button">
+			</div>
+			<!-- ************ ORIGINAL
 			<div class="es_lablebox"><?php _e('Email *', 'email-subscribers'); ?></div>
 			<div class="es_textbox">
 				<input class="es_textbox_class" name="es_txt_email" id="es_txt_email" onkeypress="if(event.keyCode==13) es_submit_page('<?php echo $url; ?>')" value="" maxlength="225" type="text">
@@ -259,7 +282,8 @@ class es_widget_register extends WP_Widget
 			<div class="es_button">
 				<input class="es_textbox_button" name="es_txt_button" id="es_txt_button" onClick="return es_submit_page('<?php echo $url; ?>')" value="<?php _e('Subscribe', 'email-subscribers'); ?>" type="button">
 			</div>
-			<?php if( $es_name != "YES" ) { ?>
+                        *******************FI --> 
+                        <?php if( $es_name != "YES" ) { ?>
 				<input name="es_txt_name" id="es_txt_name" value="" type="hidden">
 			<?php } ?>
 			<input name="es_txt_group" id="es_txt_group" value="<?php echo $es_group; ?>" type="hidden">

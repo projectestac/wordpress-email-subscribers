@@ -12,12 +12,13 @@
 }
 .es_textbox 
 {
-	padding-bottom:10px;
+	padding-bottom:inherit;
 }
 .es_button 
 {
-	padding-top:10px;
+	padding-top:inherit;
 	padding-bottom:5px;
+        text-align: right;
 }
 .es_textbox_class 
 {
@@ -30,4 +31,9 @@
 .es_lablebox
 {
 	padding-bottom:3px;
+}
+
+.es_form
+{
+        padding:0 30px 0 5px;
 }
