@@ -1,76 +1,192 @@
-Plugin Name	: Email Subscribers
-Plugin URI	: http://www.gopiplus.com/work/2014/05/02/email-subscribers-wordpress-plugin/
-Author		: Gopi Ramasamy
-Author URI	: http://www.gopiplus.com
-License		: GPLv2 or later
-License URI	: http://www.gnu.org/licenses/gpl-2.0.html
- 
-********************************Version 1.0************************************************************
+Plugin Name	: Email Subscribers & Newsletters
+Plugin URI	: http://www.icegram.com/
+Author		: Icegram
+Author URI	: http://www.icegram.com/
+License		: GPLv3
 
-First version.
+********************************Version 3.2.3************************************************************
 
-Email subscribers plugin has options to send newsletters to subscribers. It has a separate page with HTML editor to create a HTML newsletter. 
-Also have options to send notification email to subscribers when new posts are published to your blog. Separate page available to include and 
-exclude categories to send notifications. Using plugin Import and Export options admins can easily import registered users and commenters to 
-subscriptions list.
+* New: New contributor name has been added
+* Update: Documentation links
+* New: Translation for Lithuanian (lt_LT) language added (Thanks to Andrius)
+* Update: Translation for Czech (cs_CZ) language updated (Thanks to Martin)
+* Update: Translation for Spanish (es_ES) language updated (Thanks to David Bravo)
+* Update: Translation for Turkish (tr_TR) language updated (Thanks to Erkan ORUÇ)
+* Update: POT file
 
-********************************Version 1.1************************************************************
+********************************Version 3.2.2************************************************************
 
-1. Subscriber admin page, Check ALL & Uncheck All bug fixed.
-2. Updated Help documents.
+* Fix: Illegal string offset 'es_registered' when syncing existing WordPress Subscribers
+* Fix: Confirmation text for static newsletters on Send Mail page
+* New: Translation for French (fr_FR) language added (Thanks to Serge)
+* Update: Translation for Polish (pl_PL) language updated (Thanks to Witold)
 
-********************************Version 1.2************************************************************
+********************************Version 3.2.1************************************************************
 
-* Widget translation issue has been fixed
-* PHP warning message from Subscribers Export page has been removed.
+* Fix: Optimize Table & Delete Records button not working
+* Update: Translation for German (de_DE) language removed
+* Update: Translation for Ukrainian (uk) language removed
 
-********************************Version 1.3************************************************************
+********************************Version 3.2************************************************************
 
-* Fixed small error on mail compose page.
-* Added check for Already Confirmed emails. This is to prevent user clicking optin email link multiple time.
+* New: Show the recipients count while sending static newsletters from Send Mail page
+* New: Show Submission Date of subscribers on View Subscribers page
+* New: Improved UI for Admin pages (Subscribers, Compose, Notification, Send Mail, Roles)
+* New: Improved UI & Revised FAQ links for Help & Info page
+* Fix: Security Check Failed error while sending static newsletters from Send Mail page
+* Fix: Apostrophe in FROM name contains backslash escape character in emails
+* Fix: Unable to update Subscribers group while editing Notification
+* Fix: Failed to delete buffer while exporting the Subscriber list
+* Fix: Use wp_get_referer() instead of $_SERVER['HTTP_REFERER'] while exporting email addresses ($_SERVER['HTTP_REFERER'] was not set on some servers)
+* Fix: Presence of two content-type in email header was resulting in emails to bounce back in some cases
+* Fix: Success notice was not visible when admin was saving / updating Roles
+* Fix: Uncaught TypeError: Cannot read property 'es_email_mail' of undefined in Admin Roles page while updating Roles
+* Fix: Made few strings translatable
+* Update: Added pagination links on top in Sent Mail and Delivery Report page
+* Update: Show 15 reports of emails sent on one page of Sent Mail page
+* Update: Show 100 entries of subscribers on one page of Delivery Report page
+* Update: Changed the confirmation text shown after subscriber successfully subscribes for Double Opt-In
+* Update: Made text correction & improvements in many places
+* Update: Updated POT file
+* Update: Removed A-Z & 0-9 listings from View Subscriber & Send Mail page
+* Update: Removed listing all subscribers emails on Send Mail page
+* Update: Removed showing Database Id on View Subscribers page
+* Update: Removed comments sync option from Sync Email page
+* Update: Removed unnecessary view-group.js, roles.js & settings.js files
+* Update: Translation for Czech (cs_CZ) language updated (Thanks to Martin)
+* Update: Translation for Turkish (tr_TR) language updated (Thanks to Erkan ORUÇ)
+* Update: Translation for Polish (pl_PL) language updated (Thanks to Witold)
+* Update: Translation for Spanish (es_ES) language updated (Thanks to David Bravo)
+* Update: Translation for Russian (ru_RU) language updated (Thanks to Grishin Alexander)
+* Update: Translation for Dutch (nl_NL) language updated (Thanks to Maurice)
+* Update: Code Indentation & Code Improvements
 
-********************************Version 1.4************************************************************
+********************************Version 3.1.5************************************************************
 
-* Scheduled published posts issue has been fixed (From this version onwards, Notification emails will be triggered for scheduled posts)
-* Bulk update option for subscribers group in admin view subscribers page.
+* New: Changed Notification Layout
+* New: Created Check,Uncheck All Buttons while selecting categories on the Notification screen
+* New: Translation for Czech (cs_CZ) language added (Thanks to Martin)
+* Fix: Subscribers subscribing via [Rainmaker](https://wordpress.org/plugins/icegram-rainmaker/) were not receving confirmation emails
+* Fix: Made few strings translatable
+* Update: Text correction in few places
+* Update: Updated POT file
+* Update: Translation for Spanish (es_ES) language updated (Thanks to David Bravo)
+* Update: Translation for Russian (ru_RU) language updated (Thanks to Grishin Alexander)
+* Update: Translation for Polish (pl_PL) language updated (Thanks to Witold)
+* Update: Translation for Turkish (tr_TR) language updated (Thanks to Erkan ORUÇ)
+* Update: Translation for Tamil (ta) language deleted
+* Update: Code Indentation & Code Improvements
+* Tweak: Added div class for the subscribe, unsubscribe messages shown via emails
 
-********************************Version 1.5************************************************************
+********************************Version 3.1.4************************************************************
 
-* Bug fix on admin notification email for new subscribers.
+* New: Use [Rainmaker](https://wordpress.org/plugins/icegram-rainmaker/) form to collect Subscribers
+* New: Setting to select featured image size when using ###POSTIMAGE### shortlink
+* New: Translation for Spanish (es_ES) language added (Thanks to bohemme)
+* Fix: Made few strings translatable
+* Fix: Incorrect text domain in few places
+* Update: Revised FAQ links in Help & Info page inside plugin
+* Update: Updated POT file
+* Update: Translation for Russian (ru_RU) language updated (Thanks to Alexander)
+* Update: Translation for Turkish (tr_TR) language updated (Thanks to Erkan ORUC)
+* Update: Text correction in few places
+* Update: Code Indentation
+* Tweak: Code improvements when using wp_enqueue_script
+* Tweak: Do not allow admin to edit sample cron job url from Cron Mail Settings
+* Tweak: CSS changes in Help & Info page inside plugin
 
-********************************Version 1.6************************************************************
+********************************Version 3.1.3************************************************************
 
-* Bug fix on Send Mail/Notification warning message (i.e Call to undefined method issue has been fixed)
-Call to undefined method es_cls_common::es_sent_report_plain() 	- Fixed
-Call to undefined method es_cls_common::es_sent_report_html() 	- Fixed
+* New: Added form tag to subscribe form
+* Fix: Added missing charset to meta tag
+* Update: Moved javascripts to footer
+* Update: Translation for Serbian (sr_RS) language updated (Thanks to Ogi Djuraskovic)
+* Update: Updated POT file
 
-********************************Version 1.7************************************************************
+********************************Version 3.1.2************************************************************
 
-* Bug fixed on individual subscriber delete option.
-* Bug fixed on individual subscriber resend confirmation mail option.
+* New: You can now include Unsubscribe link in Welcome Email (Email Subscribers v3.1.2+)
+* New: Welcome Page on activating Email Subscribers
+* Fix: Shortcode not showing error messages upon user subscription
+* Fix: Show full sized featured image when using ###POSTIMAGE### shortlink
+* Fix: Can't edit settings in admin panel if SSL is enabled
+* Update: Revised the FAQ's in Help & Info page inside plugin
+* Update: Text correction in few places
+* Update: Updated POT file
+* Tweak: Do not allow admin to edit Subscribe, Unsubscribe link in admin settings
 
-********************************Version 1.8************************************************************
+********************************Version 3.1.1************************************************************
 
-* Bug fixed on Double Opt-In welcome mail check (Previously it was not checking admin setting for welcome mail).
-* Tested up to WordPress 3.9.2
+* Fix: call_user_func_array() expects parameter 1 to be a valid callback, function 'es_admin_option' not found or invalid function name
+* Fix: Incorrect plugin name in admin dashboard
+* Fix: Warnings in console on submitting subscription form in Chrome
+* Update: Revised Help & Info page inside plugin
+* Update: Added translation for missing texts
+* Update: Updated POT file
+* Tweak: Minor tweaks
 
-********************************Version 1.9************************************************************
+********************************Version 3.1************************************************************
 
-* New option added in admin setting page to update Sent Mail Report  Subject/Content. For each newsletter mail and notification mail, 
-plugin will send one report mail to admin with default content. Now with this option, admin can update that default mail content.
+* New: Scripts and styles are now localized and can be translated
+* Fix: Subscribe button not visible correctly in Chrome
+* Update: Added POT file
 
-********************************Version 2.0************************************************************
+********************************Version 3.0.1************************************************************
 
-* Tested up to WordPress 4.0
-* In view subscribers admin page, new option added to filter the email address based on status.
-* Paging option added on view subscribers admin page. In default it will show only first 200 emails, you have drop down box to navigate another page (i.e. 201 to 400 emails etc..).
-* Warning message fix on email address import page (i.e Strict standards: Only variables should be passed by reference)	- Fixed
+* New contributor name has been added successfully.
 
-********************************Version 2.1************************************************************
+********************************Version 3.0************************************************************
 
-* In view subscribers admin page, Filter option and paging moved to the top right corner (Previous version it was in bottom).
-* Plugin tested for multisite installation blogs.
-http://www.gopiplus.com/work/2014/08/31/email-subscribers-wordpress-plugin-network-activation-for-multisite-installation/
+* Tested upto 4.4
+
+********************************Version 2.9.2************************************************************
+
+* Add-on plugin available for advanced subscribers form (Users can select interested group in subscribers form).
+* Polish language file added in the language directory.
+* Text Domain slug has been added for Language Packs.
+
+********************************Version 2.9.1************************************************************
+
+* Fixed cross-site scripting vulnerabilities and a potential SQL injection.
+
+********************************Version 2.9************************************************************
+
+* Tested upto 4.3
+* Option available to add same email address to multiple group name
+* Cron Mail option added. With this option you can schedule cron jobs for newsletter and notification emails. Using this cron option you can schedule mail (example 100 mails per hour)
+* Group Name added in the export list.
+* Mail Type option has been added in the Send Mail admin page. With this option you can add the mails into cron job or you can send the mail immediately.
+* Notification Status option has been added in the notification setup page. With this option you can add notification mails into cron job or you can send the mail immediately when new post is published.
+* Group name filter has been added in the subscriber admin page.
+
+********************************Version 2.8************************************************************
+
+* Tested upto 4.2
+* Fixed warning message bug on Roles page
+* Sync Email option has been added in the subscribers admin page. with this option all newly registered email address will be synced automatically into the plugin subscribers group.
+
+********************************Version 2.7************************************************************
+
+* Up to plugin version 2.6 only administrator level users can manage this plugin in dashboard. From this version I have introduced new feature called Roles. 
+* The user role can be selected using this Roles Menu. For example, If you want to give Send Email feature to Editor. Go to plugin Roles menu 
+using administrator login and select Editor role to Send Email Menu, So that your Editor level user can access plugin Send Email menu to publish newsletter emails.
+
+********************************Version 2.6************************************************************
+
+* Added new option in the Email Import page to select Email Status and Email Group. with this option you can select (or create) group name and emails status when you import the email address.
+
+********************************Version 2.5************************************************************
+
+* Now plugin supports custom post type. I.e. With this plugin, you can able to send automatic newsletter/notification emails when you publish custom posts.
+
+********************************Version 2.4************************************************************
+
+* Tested upto 4.1
+* Fixed special character bug on Sender of Notification FROM email name.
+
+********************************Version 2.3************************************************************
+
+* This warning issue has been fixed (Warning: call_user_func_array() expects parameter 1 to be a valid callback, function 'es_admin_option' not found or invalid function name)
 
 ********************************Version 2.2************************************************************
 
@@ -79,52 +195,69 @@ http://www.gopiplus.com/work/2014/08/31/email-subscribers-wordpress-plugin-netwo
 	###POSTLINK-ONLY### 		- Use this key word to add post link in the mail content (Post link cannot be clickable)
 	###POSTLINK-WITHTITLE### 	- Use this key word to display post link with title (Clickable post title)
 	###POSTLINK### 				- Use this key word to display clickable post link.
-	
-********************************Version 2.3************************************************************
 
-This warning issue has been fixed (Warning: call_user_func_array() expects parameter 1 to be a valid callback, function 'es_admin_option' not found or invalid function name)
+********************************Version 2.1************************************************************
 
-********************************Version 2.4************************************************************
+* In view subscribers admin page, Filter option and paging moved to the top right corner (Previous version it was in bottom).
+* Plugin tested for multisite installation blogs.
 
-* Tested upto 4.1
-* Fixed special character bug on Sender of Notification FROM email name.
+********************************Version 2.0************************************************************
 
-********************************Version 2.5************************************************************
+* Tested up to WordPress 4.0
+* In view subscribers admin page, new option added to filter the email address based on status.
+* Paging option added on view subscribers admin page. In default it will show only first 200 emails, you have drop down box to navigate another page (i.e. 201 to 400 emails etc..).
+* Warning message fix on email address import page (i.e Strict standards: Only variables should be passed by reference)	- Fixed
 
-Now plugin supports custom post type. I.e. With this plugin, you can able to send automatic newsletter/notification emails when you publish custom posts.
+********************************Version 1.9************************************************************
 
-********************************Version 2.6************************************************************
+* New option added in admin setting page to update Sent Mail Report  Subject/Content. For each newsletter mail and notification mail, 
+plugin will send one report mail to admin with default content. Now with this option, admin can update that default mail content.
 
-Added new option in the Email Import page to select Email Status and Email Group. with this option you can select (or create) group name and emails status when you import the email address.
+********************************Version 1.8************************************************************
 
-********************************Version 2.7************************************************************
+* Bug fixed on Double Opt-In welcome mail check (Previously it was not checking admin setting for welcome mail).
+* Tested up to WordPress 3.9.2
 
-Up to plugin version 2.6 only administrator level users can manage this plugin in dashboard. From this version I have introduced new feature called Roles. 
-The user role can be selected using this Roles Menu. For example, If you want to give Send Email feature to Editor. Go to plugin Roles menu 
-using administrator login and select Editor role to Send Email Menu, So that your Editor level user can access plugin Send Email menu to publish newsletter emails.
+********************************Version 1.7************************************************************
 
-********************************Version 2.8************************************************************
+* Bug fixed on individual subscriber delete option.
+* Bug fixed on individual subscriber resend confirmation mail option.
 
-* Tested upto 4.2
-* Fixed warning message bug on Roles page
-* Sync Email option has been added in the subscribers admin page. with this option all newly registered email address will be synced automatically into the plugin subscribers group.
+********************************Version 1.6************************************************************
 
-********************************Version 2.9************************************************************
+* Bug fix on Send Mail/Notification warning message (i.e Call to undefined method issue has been fixed)
+Call to undefined method es_cls_common::es_sent_report_plain() 	- Fixed
+Call to undefined method es_cls_common::es_sent_report_html() 	- Fixed
 
-1. Tested upto 4.3
-2. Option available to add same email address to multiple group name
-3. Cron Mail option added. With this option you can schedule cron jobs for newsletter and notification emails. Using this cron option you can schedule mail (example 100 mails per hour)
-4. Group Name added in the export list.
-5. Mail Type option has been added in the Send Mail admin page. With this option you can add the mails into cron job or you can send the mail immediately.
-6. Notification Status option has been added in the notification setup page. With this option you can add notification mails into cron job or you can send the mail immediately when new post is published.
-7. Group name filter has been added in the subscriber admin page.
+********************************Version 1.5************************************************************
 
-********************************Version 2.9.1************************************************************
+* Bug fix on admin notification email for new subscribers.
 
-* Fixed cross-site scripting vulnerabilities and a potential SQL injection.
+********************************Version 1.4************************************************************
 
-********************************Version 2.9.2************************************************************
+* Scheduled published posts issue has been fixed (From this version onwards, Notification emails will be triggered for scheduled posts)
+* Bulk update option for subscribers group in admin view subscribers page.
 
-* Add-on plugin available for advanced subscribers form (Users can select interested group in subscribers form).
-* Polish language file added in the language directory.
-* Text Domain slug has been added for Language Packs.
+********************************Version 1.3************************************************************
+
+* Fixed small error on mail compose page.
+* Added check for Already Confirmed emails. This is to prevent user clicking optin email link multiple time.
+
+********************************Version 1.2************************************************************
+
+* Widget translation issue has been fixed
+* PHP warning message from Subscribers Export page has been removed.
+
+********************************Version 1.1************************************************************
+
+* Subscriber admin page, Check ALL & Uncheck All bug fixed.
+* Updated Help documents.
+
+********************************Version 1.0************************************************************
+
+First version.
+
+Email subscribers plugin has options to send newsletters to subscribers. It has a separate page with HTML editor to create a HTML newsletter. 
+Also have options to send notification email to subscribers when new posts are published to your blog. Separate page available to include and 
+exclude categories to send notifications. Using plugin Import and Export options admins can easily import registered users and commenters to 
+subscriptions list.

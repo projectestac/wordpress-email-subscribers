@@ -1,54 +1,46 @@
-<?php if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); } ?>
 <?php
-class es_cls_sentmail
-{
-	public static function es_sentmail_select($id = 0, $offset = 0, $limit = 0)
-	{
+
+if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
+	die('You are not allowed to call this page directly.');
+}
+
+class es_cls_sentmail {
+	public static function es_sentmail_select($id = 0, $offset = 0, $limit = 0) {
 		global $wpdb;
 		$prefix = $wpdb->prefix;
 		$arrRes = array();
 		$sSql = "SELECT * FROM `".$prefix."es_sentdetails` where 1=1";
-		if($id > 0)
-		{
+		if($id > 0) {
 			$sSql = $sSql . " and es_sent_id=".$id;
 			$arrRes = $wpdb->get_row($sSql, ARRAY_A);
-		}
-		else
-		{
+		} else {
 			$sSql = $sSql . " order by es_sent_id desc limit $offset, $limit";
 			$arrRes = $wpdb->get_results($sSql, ARRAY_A);
 		}
 		return $arrRes;
 	}
-	
-	public static function es_sentmail_count($id = 0)
-	{
+
+	public static function es_sentmail_count($id = 0) {
 		global $wpdb;
 		$prefix = $wpdb->prefix;
 		$result = '0';
-		if($id > 0)
-		{
+		if($id > 0) {
 			$sSql = $wpdb->prepare("SELECT COUNT(*) AS `count` FROM `".$prefix."es_sentdetails` WHERE `es_sent_id` = %d", array($id));
-		}
-		else
-		{
+		} else {
 			$sSql = "SELECT COUNT(*) AS `count` FROM `".$prefix."es_sentdetails`";
 		}
 		$result = $wpdb->get_var($sSql);
 		return $result;
 	}
-	
-	public static function es_sentmail_delete($id = 0)
-	{
+
+	public static function es_sentmail_delete($id = 0) {
 		global $wpdb;
 		$prefix = $wpdb->prefix;
 		$Sentdetails = array();
 		$Sentdetails = es_cls_sentmail::es_sentmail_select($id, 0, 1);
-		if(count($Sentdetails) > 0)
-		{
+		if(count($Sentdetails) > 0) {
 			$es_deliver_sentguid = $Sentdetails['es_sent_guid'];	
-			if($es_deliver_sentguid <> "")
-			{
+			if($es_deliver_sentguid <> "") {
 				$sSql = $wpdb->prepare("DELETE FROM `".$prefix."es_deliverreport` WHERE `es_deliver_sentguid` = %s", $es_deliver_sentguid);
 				$wpdb->query($sSql);
 			}	
@@ -58,23 +50,19 @@ class es_cls_sentmail
 
 		return true;
 	}
-	
-	public static function es_sentmail_ins($guid = "", $qstring = 0, $source = "", $startdt = "", $enddt = "", $count = "", $preview = "", $mailsenttype = "")
-	{
+
+	public static function es_sentmail_ins($guid = "", $qstring = 0, $source = "", $startdt = "", $enddt = "", $count = "", $preview = "", $mailsenttype = "") {
 		global $wpdb;
 		$returnid = 0;
 		$prefix = $wpdb->prefix;
 		$currentdate = date('Y-m-d G:i:s'); 
 		
-		if($mailsenttype == "Instant Mail")
-		{
+		if($mailsenttype == "Instant Mail") {
 			$es_sent_status = "Sent";
-		}
-		else
-		{
+		} else {
 			$es_sent_status = "In Queue";
 		}
-		
+
 		$sSql = $wpdb->prepare("INSERT INTO `".$prefix."es_sentdetails` (`es_sent_guid`, `es_sent_qstring`, `es_sent_source`,
 								`es_sent_starttime`, `es_sent_endtime`, `es_sent_count`, `es_sent_preview`, `es_sent_status`, `es_sent_type`) 
 								VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", 
@@ -82,9 +70,8 @@ class es_cls_sentmail
 		$wpdb->query($sSql);
 		return true;
 	}
-	
-	public static function es_sentmail_ups($guid = "", $sentsubject = "")
-	{
+
+	public static function es_sentmail_ups($guid = "", $sentsubject = "") {
 		global $wpdb;
 		$returnid = 0;
 		$prefix = $wpdb->prefix;
@@ -94,9 +81,8 @@ class es_cls_sentmail
 		$wpdb->query($sSql);
 		return true;
 	}
-	
-	public static function es_sentmail_cronmail_inqueue()
-	{
+
+	public static function es_sentmail_cronmail_inqueue() {
 		global $wpdb;
 		$prefix = $wpdb->prefix;
 		$arrRes = array();
@@ -105,9 +91,8 @@ class es_cls_sentmail
 		$arrRes = $wpdb->get_results($sSql, ARRAY_A);
 		return $arrRes;
 	}
-	
-	public static function es_sentmail_cronmail_ups($guid = "")
-	{
+
+	public static function es_sentmail_cronmail_ups($guid = "") {
 		global $wpdb;
 		$returnid = 0;
 		$prefix = $wpdb->prefix;
@@ -118,4 +103,3 @@ class es_cls_sentmail
 		return true;
 	}
 }
-?>
