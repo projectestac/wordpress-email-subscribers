@@ -1,4 +1,5 @@
 <?php
+
 require_once(ES_DIR.'classes'.DIRECTORY_SEPARATOR.'es-register.php');
 require_once(ES_DIR.'classes'.DIRECTORY_SEPARATOR.'es-intermediate.php');
 require_once(ES_DIR.'classes'.DIRECTORY_SEPARATOR.'es-common.php');
@@ -12,4 +13,3 @@ require_once(ES_DIR.'query'.DIRECTORY_SEPARATOR.'db_delivery.php');
 require_once(ES_DIR.'query'.DIRECTORY_SEPARATOR.'db_sentmail.php');
 require_once(ES_DIR.'query'.DIRECTORY_SEPARATOR.'db_optimize.php');
 require_once(ES_DIR.'query'.DIRECTORY_SEPARATOR.'db_default.php');
-?>

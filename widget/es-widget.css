@@ -1,33 +1,26 @@
-.es_caption 
-{
+.es_caption {
 	padding-bottom:5px;
 	padding-top:5px;
 	padding-right:5px;
 }
-.es_msg 
-{
+.es_msg {
 	padding-top:5px;
 	padding-bottom:5px;
 	color:#F00;
 }
-.es_textbox 
-{
+.es_textbox {
 	padding-bottom:10px;
 }
-.es_button 
-{
+.es_button {
 	padding-top:10px;
 	padding-bottom:5px;
 }
-.es_textbox_class 
-{
+.es_textbox_class {
 	width:200px;
 }
-.es_textbox_button 
-{
-	width:100px;
+.es_textbox_button {
+	width:130px;
 }
-.es_lablebox
-{
+.es_lablebox {
 	padding-bottom:3px;
 }
