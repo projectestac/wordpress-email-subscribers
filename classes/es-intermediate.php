@@ -1,12 +1,10 @@
 <?php
-class es_cls_intermediate
-{
-	public static function es_subscribers()
-	{
+
+class es_cls_intermediate {
+	public static function es_subscribers() {
 		global $wpdb;
 		$current_page = isset($_GET['ac']) ? $_GET['ac'] : '';
-		switch($current_page)
-		{
+		switch($current_page) {
 			case 'add':
 				require_once(ES_DIR.'subscribers'.DIRECTORY_SEPARATOR.'view-subscriber-add.php');
 				break;
@@ -27,13 +25,11 @@ class es_cls_intermediate
 				break;
 		}
 	}
-	
-	public static function es_compose()
-	{
+
+	public static function es_compose() {
 		global $wpdb;
 		$current_page = isset($_GET['ac']) ? $_GET['ac'] : '';
-		switch($current_page)
-		{
+		switch($current_page) {
 			case 'add':
 				require_once(ES_DIR.'compose'.DIRECTORY_SEPARATOR.'compose-add.php');
 				break;
@@ -48,13 +44,11 @@ class es_cls_intermediate
 				break;
 		}
 	}
-	
-	public static function es_notification()
-	{
+
+	public static function es_notification() {
 		global $wpdb;
 		$current_page = isset($_GET['ac']) ? $_GET['ac'] : '';
-		switch($current_page)
-		{
+		switch($current_page) {
 			case 'add':
 				require_once(ES_DIR.'notification'.DIRECTORY_SEPARATOR.'notification-add.php');
 				break;
@@ -66,18 +60,15 @@ class es_cls_intermediate
 				break;
 		}
 	}
-	
-	public static function es_sendemail()
-	{
+
+	public static function es_sendemail() {
 		require_once(ES_DIR.'sendmail'.DIRECTORY_SEPARATOR.'sendmail.php');
 	}
-	
-	public static function es_settings()
-	{
+
+	public static function es_settings() {
 		global $wpdb;
 		$current_page = isset($_GET['ac']) ? $_GET['ac'] : '';
-		switch($current_page)
-		{
+		switch($current_page) {
 			case 'add':
 				require_once(ES_DIR.'settings'.DIRECTORY_SEPARATOR.'settings-add.php');
 				break;
@@ -89,13 +80,11 @@ class es_cls_intermediate
 				break;
 		}
 	}
-	
-	public static function es_sentmail()
-	{
+
+	public static function es_sentmail() {
 		global $wpdb;
 		$current_page = isset($_GET['ac']) ? $_GET['ac'] : '';
-		switch($current_page)
-		{
+		switch($current_page) {
 			case 'delivery':
 				require_once(ES_DIR.'sentmail'.DIRECTORY_SEPARATOR.'deliverreport-show.php');
 				break;
@@ -107,13 +96,11 @@ class es_cls_intermediate
 				break;
 		}
 	}
-	
-	public static function es_roles()
-	{
+
+	public static function es_roles() {
 		global $wpdb;
 		$current_page = isset($_GET['ac']) ? $_GET['ac'] : '';
-		switch($current_page)
-		{
+		switch($current_page) {
 			case 'add':
 				require_once(ES_DIR.'roles'.DIRECTORY_SEPARATOR.'roles-add.php');
 				break;
@@ -126,12 +113,10 @@ class es_cls_intermediate
 		}
 	}
 	
-	public static function es_cron()
-	{
+	public static function es_cron() {
 		global $wpdb;
 		$current_page = isset($_GET['ac']) ? $_GET['ac'] : '';
-		switch($current_page)
-		{
+		switch($current_page) {
 			case 'add':
 				require_once(ES_DIR.'cron'.DIRECTORY_SEPARATOR.'cron-add.php');
 				break;
@@ -143,10 +128,8 @@ class es_cls_intermediate
 				break;
 		}
 	}
-	
-	public static function es_information()
-	{
+
+	public static function es_information() {
 		require_once(ES_DIR.'help'.DIRECTORY_SEPARATOR.'help.php');
 	}
 }
-?>

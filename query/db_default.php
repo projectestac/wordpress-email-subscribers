@@ -1,32 +1,33 @@
-<?php if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); } ?>
 <?php
-class es_cls_default
-{	
-	public static function es_pluginconfig_default()
-	{
+
+if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
+	die('You are not allowed to call this page directly.');
+}
+
+class es_cls_default {
+	public static function es_pluginconfig_default() {
 		global $wpdb;
 		$prefix = $wpdb->prefix;
-		
+
 		$result = es_cls_settings::es_setting_count(0);
-		if ($result == 0)
-		{
+		if ($result == 0) {
 			$admin_email = get_option('admin_email');
 			$blogname = get_option('blogname');
-			
-			if($admin_email == "")
-			{
+
+			if($admin_email == "") {
 				$admin_email = "admin@gmail.com";
 			}
-			
+
 			$home_url = home_url('/');
 			$optinlink = $home_url . "?es=optin&db=###DBID###&email=###EMAIL###&guid=###GUID###";
 			$unsublink = $home_url . "?es=unsubscribe&db=###DBID###&email=###EMAIL###&guid=###GUID###"; 
-			
+
 			$es_c_fromname = "Admin";
-			$es_c_fromemail = $admin_email; 
-			$es_c_mailtype = "WP HTML MAIL"; 
-			$es_c_adminmailoption = "YES"; 
+			$es_c_fromemail = $admin_email;
+			$es_c_mailtype = "WP HTML MAIL";
+			$es_c_adminmailoption = "YES";
 			$es_c_adminemail = $admin_email;
+
 // XTEC ************ MODIFICAT - Support localization
 // 2015.10.09 @dgras
 			$es_c_adminmailsubject = $blogname . (" Subscripci&oacute; nova de correu");
@@ -69,13 +70,13 @@ class es_cls_default
 			$es_c_adminmailcontant = "Hi Admin, \r\n\r\nWe have received a request to subscribe new email address to receive emails from our website. \r\n\r\nEmail: ###EMAIL### \r\nName : ###NAME### \r\n\r\nThank You\r\n".$blogname;
 			$es_c_usermailoption = "YES";
 			$es_c_usermailsubject = $blogname . " Welcome to our newsletter";
-			$es_c_usermailcontant = "Hi ###NAME###, \r\n\r\nWe have received a request to subscribe this email address to receive newsletter from our website. \r\n\r\nThank You\r\n".$blogname;
+			$es_c_usermailcontant = "Hi ###NAME###, \r\n\r\nWe have received a request to subscribe this email address to receive newsletter from our website. \r\n\r\nThank You\r\n".$blogname." \r\n\r\n No longer interested in emails from ".$blogname."?. Please <a href='###LINK###'>click here</a> to unsubscribe";
 			$es_c_optinoption = "Double Opt In";
 			$es_c_optinsubject = $blogname . " confirm subscription";
-			$es_c_optincontent = "Hi ###NAME###, \r\n\r\nA newsletter subscription request for this email address was received. Please confirm it by <a href='###LINK###'>clicking here</a>. If you cannot click the link, please use the following link. \r\n\r\n ###LINK### \r\n\r\nThank You\r\n".$blogname;
+			$es_c_optincontent = "Hi ###NAME###, \r\n\r\nA newsletter subscription request for this email address was received. Please confirm it by <a href='###LINK###'>clicking here</a>.\r\n\r\nIf you still cannot subscribe, please click this link : \r\n ###LINK### \r\n\r\nThank You\r\n".$blogname;
 			$es_c_optinlink = $optinlink;
 			$es_c_unsublink = $unsublink;
-			$es_c_unsubtext = "No longer interested email from ".$blogname."?. Please <a href='###LINK###'>click here</a> to unsubscribe";
+			$es_c_unsubtext = "No longer interested in emails from ".$blogname."?. Please <a href='###LINK###'>click here</a> to unsubscribe";
 			$es_c_unsubhtml = "Thank You, You have been successfully unsubscribed. You will no longer hear from us.";
 			$es_c_subhtml = "Thank You, You have been successfully subscribed to our newsletter.";
 			$es_c_message1 = "Oops.. This subscription cant be completed, sorry. The email address is blocked or already subscribed. Thank you.";
@@ -83,11 +84,11 @@ class es_cls_default
 */
 //************ FI
 
-			$sSql = $wpdb->prepare("INSERT INTO `".$prefix."es_pluginconfig`
+			$sSql = $wpdb->prepare("INSERT INTO `".$prefix."es_pluginconfig` 
 					(`es_c_fromname`,`es_c_fromemail`, `es_c_mailtype`, `es_c_adminmailoption`, `es_c_adminemail`, `es_c_adminmailsubject`,
 					`es_c_adminmailcontant`,`es_c_usermailoption`, `es_c_usermailsubject`, `es_c_usermailcontant`, `es_c_optinoption`, `es_c_optinsubject`,
 					`es_c_optincontent`,`es_c_optinlink`, `es_c_unsublink`, `es_c_unsubtext`, `es_c_unsubhtml`, `es_c_subhtml`, `es_c_message1`, `es_c_message2`)
-					VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+					VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
 					array($es_c_fromname,$es_c_fromemail, $es_c_mailtype, $es_c_adminmailoption, $es_c_adminemail, $es_c_adminmailsubject,
 					$es_c_adminmailcontant,$es_c_usermailoption, $es_c_usermailsubject, $es_c_usermailcontant, $es_c_optinoption, $es_c_optinsubject,
 					$es_c_optincontent,$es_c_optinlink, $es_c_unsublink, $es_c_unsubtext, $es_c_unsubhtml, $es_c_subhtml, $es_c_message1, $es_c_message2));
@@ -96,11 +97,9 @@ class es_cls_default
 		return true;
 	}
 
-	public static function es_subscriber_default()
-	{
+	public static function es_subscriber_default() {
 		$result = es_cls_dbquery::es_view_subscriber_count(0);
-		if ($result == 0)
-		{
+		if ($result == 0) {
 			$form["es_email_mail"] = get_option('admin_email');
 			$form["es_email_name"] = "Admin";
 //XTEC ************ MODIFICAT - Changed default group from Public to Portada
@@ -130,11 +129,10 @@ class es_cls_default
 		return true;
 	}
 
-	public static function es_template_default()
-	{
+	public static function es_template_default() {
 		$result = es_cls_compose::es_template_count(0);
-		if ($result == 0)
-		{
+		if ($result == 0) {
+
 // XTEC ************ MODIFICAT - Support localization
 // 2015.10.09 @dgras
 			$form['es_templ_heading'] = "S'ha publicat un article nou:  ###POSTTITLE###";
@@ -265,7 +263,7 @@ class es_cls_default
 			$form['es_email_type'] = 'Dynamic Template';
 			$action = es_cls_compose::es_template_ins($form, $action = "insert");
 
-			$Sample = '<strong style="color: #990000"> Email subscribersr</strong><p>Email subscribers plugin has options to send newsletters to subscribers. It has a separate page with HTML editor to create a HTML newsletter.';
+			$Sample = '<strong style="color: #990000"> Email Subscribers</strong><p>Email Subscribers plugin has options to send newsletters to subscribers. It has a separate page with HTML editor to create a HTML newsletter.'; 
 			$Sample .= ' Also have options to send notification email to subscribers when new posts are published to your blog. Separate page available to include and exclude categories to send notifications.';
 			$Sample .= ' Using plugin Import and Export options admins can easily import registered users and commenters to subscriptions list.</p>';
 			$Sample .= ' <strong style="color: #990000">Plugin Features</strong><ol>';
@@ -286,30 +284,27 @@ class es_cls_default
 			$form['es_email_type'] = 'Static Template';
 */
 //************ FI
+
 			$action = es_cls_compose::es_template_ins($form, $action = "insert");
 		}
 		return true;
 	}
 	
-	public static function es_notifications_default()
-	{
+	public static function es_notifications_default() {
 		$result = es_cls_notification::es_notification_count(0);
-		if ($result == 0)
-		{
+		if ($result == 0) {
 			$form["es_note_group"] = "Public";
 			$form["es_note_status"] = "Enable";
 			$form["es_note_templ"] = "1";
-			
+
 			$listcategory = "";
 			$args = array( 'hide_empty' => 0, 'orderby' => 'name', 'order' => 'ASC' );
 			$categories = get_categories($args); 
 			$total = count($categories);
 			$i = 1;
-			foreach($categories as $category) 
-			{
+			foreach($categories as $category) {
 				$listcategory = $listcategory . " ##" . $category->cat_name . "## ";
-				if($i < $total)
-				{
+				if($i < $total) {
 					$listcategory = $listcategory .  "--";
 				}
 				$i = $i + 1;
@@ -320,4 +315,3 @@ class es_cls_default
 		return true;
 	}
 }
-?>

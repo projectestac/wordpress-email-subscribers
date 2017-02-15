@@ -1,0 +1,1935 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Email Subscribers\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: Tue Feb 09 2016 16:21:13 GMT+0530 (IST)\n"
+"PO-Revision-Date: 2016-10-19 16:55+0300\n"
+"Last-Translator: Erkan Oruç <erkanoruc@gmail.com>\n"
+"Language-Team: \n"
+"Language: tr\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Generator: Poedit 1.6.9\n"
+"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
+"__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
+"_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
+"esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
+"esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
+"X-Poedit-Basepath: .\n"
+"X-Loco-Target-Locale: tr_TR\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../notification/notification-add.php:70
+msgid "Notification successfully created. "
+msgstr "Bilgilendirme başarıyla oluşturuldu."
+
+#: ../notification/notification-add.php:115
+msgid "Select Subscribers Group"
+msgstr "Üye Grubunu Seçiniz"
+
+#: ../notification/notification-add.php:137
+#: ../notification/notification-edit.php:160
+msgid "Select Notification Mail Subject"
+msgstr "Bilgilendirme E-posta Konusunu Seçiniz"
+
+#: ../notification/notification-add.php:138
+#: ../notification/notification-edit.php:161
+msgid "(Use compose menu to create new)"
+msgstr "(Yeni oluşturmak için oluştur menüsünü kullanınız)"
+
+#: ../notification/notification-add.php:162
+#: ../notification/notification-edit.php:188
+msgid "Select Post Categories"
+msgstr "Gönderim Kategorisini Seçiniz"
+
+#: ../notification/notification-add.php:196
+#: ../notification/notification-edit.php:234
+msgid "Select your Custom Post Type"
+msgstr "Özel Gönderim Tipinizi Seçiniz"
+
+#: ../notification/notification-add.php:197
+#: ../notification/notification-edit.php:235
+msgid "(Optional)"
+msgstr "(Opsiyonel)"
+
+#: ../notification/notification-add.php:233
+#: ../notification/notification-edit.php:277
+msgid "Select Notification Status"
+msgstr "Bilgilendirme Durumunu Seçiniz"
+
+#: ../notification/notification-add.php:247
+#: ../notification/notification-edit.php:293 ../roles/roles-add.php:202
+#: ../subscribers/view-subscriber-edit.php:192 .. cron/cron-add.php:91
+#: ../compose/compose-edit.php:118 ../compose/compose-add. php:106
+msgid "Save"
+msgstr "Kaydet"
+
+#: ../notification/notification-show.php:20
+#: ../notification/notification-edit.php:19 ../settings/settings-edit.php:19
+#: ../sentmail/sentmail-preview.php:17 .. sentmail/sentmail-show.php:21
+#: ../subscribers/view-subscriber-show.php:44
+#: subscribers/view-subscriber-edit.php:21 ../compose/compose-edit.php:19
+#: compose/compose-show.php:32 ../compose/compose-preview.php:17
+msgid "Oops, selected details does not exists."
+msgstr "Bir dakika, seçtiğiniz detaylar mevcut değil."
+
+#: ../notification/notification-show.php:34 ../sentmail/sentmail-show.php:35
+#: .. compose/compose-show.php:46
+msgid "Selected record deleted."
+msgstr "Seçilen kayıt silindi."
+
+#: ../notification/notification-edit.php:91
+msgid "Notification successfully updated. "
+msgstr "Bilgilendirme başarıyla güncellendi."
+
+#. Name of the plugin
+msgid "Email Subscribers & Newsletters"
+msgstr "Email Subscribers & Newsletters"
+
+#. Description of the plugin
+msgid ""
+"Add subscription forms on website, send HTML newsletters & automatically "
+"notify subscribers about new blog posts once it gets published."
+msgstr ""
+"Web siteniz üzerine üyelik formu ekleyin, HTML newsletters gönderin & yeni "
+"bir yazı yayınladığını anda aboneleri otomatik bilgilendirin."
+
+#: ../roles/roles-add.php:52
+msgid "Role Updated. "
+msgstr "Yetki Güncellendi."
+
+#: ../roles/roles-add.php:109
+msgid ""
+"Select user roles who can access following menus. Only Admin can change this."
+msgstr ""
+"Aşağıdaki menülere girebilecek kullanıcı yetkilerini seçiniz. Bunu sadece "
+"yönetici değiştirebilir."
+
+#: ../settings/settings-edit.php:154
+msgid "Settings Saved."
+msgstr "Ayarlar Kaydedildi."
+
+#: ../settings/settings-edit.php:157
+msgid "Oops, unable to update."
+msgstr "Bir dakika, güncelleme yapılamadı."
+
+#: ../sentmail/sentmail-show.php:174
+msgid "Optimize Table & Delete Records"
+msgstr "Tabloları Düzenle & Kayıtları Sil"
+
+#: ../sentmail/sentmail-show.php:183
+msgid ""
+"Note: Please click on <strong>Optimize Table & Delete Records</strong> "
+"button to delete all reports except latest 10."
+msgstr ""
+"Not: Lütfen son 10 tane haricindeki tüm raporları silmek için "
+"<strong>Tabloları Düzenle & Kayıtları Sil</strong> düğmesine tıklayınız."
+
+#: ../subscribers/view-subscriber-import.php:43
+msgid ""
+"Error: Special characters (['^$%&*()}{@#~?><>,|=_+\\\"]) are not allowed in "
+"the Group name."
+msgstr ""
+"Hata: Grup isimlerinde özel karakterlere  (['^$%&*()}{@#~?><>,|=_+\\\"]) "
+"izin verilmemektedir."
+
+#: ../subscribers/view-subscriber-import.php:91
+msgid "email imported."
+msgstr "e-posta içeri aktarıldı."
+
+#: ../subscribers/view-subscriber-import.php:92
+msgid "email already exists."
+msgstr "e-posta zaten mevcut."
+
+#: ../subscribers/view-subscriber-import.php:93
+msgid "email are invalid."
+msgstr "e-posta geçersiz."
+
+#: ../subscribers/view-subscriber-import.php:96
+#: ../subscribers/view-subscriber- import.php:125
+msgid " to view details."
+msgstr "detayları görmek için."
+
+#: ../subscribers/view-subscriber-import.php:104
+msgid "File Upload Failed."
+msgstr "Dosya Yükleme Başarısız."
+
+#: ../subscribers/view-subscriber-import.php:143
+msgid "Import Email Addresses"
+msgstr "E-posta Adreslerini İçeri Aktar"
+
+#: ../subscribers/view-subscriber-import.php:144
+#: ../subscribers/view-subscriber- show.php:208
+#: ../subscribers/view-subscriber-export.php:28 ../subscribers/view-
+#: subscriber-add.php:112 ../subscribers/view-subscriber-edit.php:111 ..
+#: subscribers/view-subscriber-sync.php:91
+msgid "Add New Subscriber"
+msgstr "Yeni Abone Ekle"
+
+#: ../subscribers/view-subscriber-import.php:145
+#: ../subscribers/view-subscriber- show.php:210
+#: ../subscribers/view-subscriber-add.php:114 ../subscribers/view-
+#: subscriber-edit.php:113 ../subscribers/view-subscriber-sync.php:93
+msgid "Export"
+msgstr "Dışarı Aktar"
+
+#: ../subscribers/view-subscriber-import.php:146
+#: ../subscribers/view-subscriber- show.php:211
+#: ../subscribers/view-subscriber-export.php:30 ../subscribers/view-
+#: subscriber-add.php:115 ../subscribers/view-subscriber-edit.php:114 ..
+#: subscribers/view-subscriber-sync.php:144
+msgid "Sync"
+msgstr "Eşitle"
+
+#: ../subscribers/view-subscriber-import.php:156
+msgid "Select CSV file"
+msgstr "CSV dosyasını seç"
+
+#: ../subscribers/view-subscriber-import.php:158
+msgid "Check CSV structure "
+msgstr "CSV yapısını kontrol et"
+
+#: ../subscribers/view-subscriber-import.php:159
+msgid "from here"
+msgstr "buradan"
+
+#: ../subscribers/view-subscriber-import.php:170
+msgid "Select Subscribers Email Status"
+msgstr "Abonelerin E-posta Durumunu Seç"
+
+#: ../subscribers/view-subscriber-import.php:186
+msgid "Select (or) Create Group for Subscribers"
+msgstr "Aboneler için Grup Seç (veya) Oluştur"
+
+#: ../subscribers/view-subscriber-import.php:203
+#: ../subscribers/view-subscriber- add.php:175
+msgid "(or)"
+msgstr "(veya)"
+
+#: ../subscribers/view-subscriber-import.php:211
+#: ../subscribers/view-subscriber- show.php:209
+#: ../subscribers/view-subscriber-export.php:29 ../subscribers/view-
+#: subscriber-add.php:113 ../subscribers/view-subscriber-edit.php:112 ..
+#: subscribers/view-subscriber-sync.php:92
+msgid "Import"
+msgstr "İçeri Aktar"
+
+#: ../subscribers/view-subscriber-show.php:55
+#: ../subscribers/view-subscriber-show. php:94
+msgid "Record deleted."
+msgstr "Kayıt Silindi."
+
+#: ../subscribers/view-subscriber-show.php:66
+msgid ""
+"To send confirmation email, please change the Opt-in option to Double Opt In."
+msgstr ""
+"Onay e-postası göndermek için lütfen onay gönderim seçeneğini Çift Onay "
+"olarak değiştirin."
+
+#: ../subscribers/view-subscriber-show.php:114
+msgid ""
+"To send confirmation mail, please change the Opt-in option to Double Opt In."
+msgstr ""
+"Onay postası göndermek için lütfen onay gönderim seçeneğini Çift Onay olarak "
+"değiştirin."
+
+#: ../subscribers/view-subscriber-show.php:133
+msgid "Confirmation email(s) Resent Successfully."
+msgstr "Onay E-postası veya E-postaları Başarıyla Tekrar Gönderildi."
+
+#: ../subscribers/view-subscriber-show.php:162
+msgid "Selected subscribers group updated."
+msgstr "Seçilen abone grubu güncellendi."
+
+#: ../subscribers/view-subscriber-show.php:291
+msgid "1 to 200 emails"
+msgstr "1 den 200 e-posta"
+
+#: ../subscribers/view-subscriber-show.php:292
+msgid "201 to 400"
+msgstr "201 den 400 e"
+
+#: ../subscribers/view-subscriber-show.php:293
+msgid "401 to 600"
+msgstr "401 den 600 e"
+
+#: ../subscribers/view-subscriber-show.php:294
+msgid "601 to 800"
+msgstr "601 den 800 e"
+
+#: ../subscribers/view-subscriber-show.php:295
+msgid "801 to 1000"
+msgstr "801 den 1000 e"
+
+#: ../subscribers/view-subscriber-show.php:296
+msgid "1001 to 2000"
+msgstr "1001 den 2000 e"
+
+#: ../subscribers/view-subscriber-show.php:297
+msgid "2001 to 5000"
+msgstr "2001 den 5000 e"
+
+#: ../subscribers/view-subscriber-show.php:298
+msgid "5001 to 10000"
+msgstr "5001 den 10000 e"
+
+#: ../subscribers/view-subscriber-show.php:299
+msgid "Display All"
+msgstr "Hepsini Göster"
+
+#: ../subscribers/view-subscriber-show.php:311 ../subscribers/view-subscriber-
+#: show.php:325
+msgid "Email Address"
+msgstr "E-posta Adresi"
+
+#: ../subscribers/view-subscriber-show.php:315 ../subscribers/view-subscriber-
+#: show.php:329
+msgid "Submission Date<br>(YYYY-MM-DD)"
+msgstr "Kabul Edilme Tarihi <br>(YYYY-MM-DD)"
+
+#: ../subscribers/view-subscriber-export.php:27
+msgid "Export Email Addresses"
+msgstr "E-posta Adreslerini Dışarı Aktar"
+
+#: ../subscribers/view-subscriber-export.php:39
+#: ../subscribers/view-subscriber- export.php:47
+msgid "Type of List to Export"
+msgstr "Dışarı Aktarım için Liste Tipi"
+
+#: ../subscribers/view-subscriber-export.php:40
+#: ../subscribers/view-subscriber- export.php:48
+msgid "Total Emails"
+msgstr "Toplam E-posta"
+
+#: ../subscribers/view-subscriber-export.php:54
+msgid "1"
+msgstr "1"
+
+#: ../subscribers/view-subscriber-export.php:55
+msgid "All Subscribers List"
+msgstr "Tüm Abone Listesi"
+
+#: ../subscribers/view-subscriber-export.php:57
+#: ../subscribers/view-subscriber- export.php:63
+#: ../subscribers/view-subscriber-export.php:69
+msgid "Click to Export in CSV"
+msgstr "CSV olarak Dışarı Aktarmak için Tıklayınız."
+
+#: ../subscribers/view-subscriber-export.php:60
+msgid "2"
+msgstr "2"
+
+#: ../subscribers/view-subscriber-export.php:61
+msgid "WordPress Registered Users"
+msgstr "Wordpress Kayıtlı Kullanıcılar"
+
+#: ../subscribers/view-subscriber-export.php:66
+msgid "3"
+msgstr "3"
+
+#: ../subscribers/view-subscriber-export.php:67
+msgid "Commented Authors"
+msgstr "Yorum Yapan Yazarlar"
+
+#: ../subscribers/view-subscriber-add.php:65
+msgid "Subscriber has been saved."
+msgstr "Abone kaydedildi."
+
+#: ../subscribers/view-subscriber-add.php:67
+msgid "Subscriber already exists."
+msgstr "Abone zaten mevcut."
+
+#: ../subscribers/view-subscriber-add.php:70
+msgid "Invalid Email."
+msgstr "Geçersiz E-posta."
+
+#: ../subscribers/view-subscriber-add.php:124
+msgid "Enter Subscriber's Full name"
+msgstr "Abonenin Tam İsmini Giriniz"
+
+#: ../subscribers/view-subscriber-add.php:134
+msgid "Enter Subscriber's Email Address"
+msgstr "Abonenin E-posta Adresini Giriniz"
+
+#: ../subscribers/view-subscriber-add.php:144
+msgid "Select Subscriber's Status"
+msgstr "Abonenin Durumunu Seçiniz"
+
+#: ../subscribers/view-subscriber-add.php:159
+msgid "Select (or) Create Group for Subscriber"
+msgstr "Aboneler için Grup Seç (veya) Oluştur"
+
+#: ../subscribers/view-subscriber-add.php:184
+msgid "Add Subscriber"
+msgstr "Abone Ekle"
+
+#: ../subscribers/view-subscriber-edit.php:73
+msgid "Subscriber details updated."
+msgstr "Abone detayları güncellendi."
+
+#: ../subscribers/view-subscriber-edit.php:75
+msgid "Subscriber already exists for this group."
+msgstr "Bu grup için abone zaten mevcut."
+
+#: ../subscribers/view-subscriber-edit.php:110
+msgid "Edit Subscriber"
+msgstr "Aboneyi Düzenle"
+
+#: ../subscribers/view-subscriber-edit.php:123
+msgid "Edit Subscriber's Full Name"
+msgstr "Abone İsmini Düzenle"
+
+#: ../subscribers/view-subscriber-edit.php:133
+msgid "Edit Subscriber's Email Address"
+msgstr "Abone E-posta Adresini Düzenle"
+
+#: ../subscribers/view-subscriber-edit.php:143
+msgid "Update Subscriber's Status"
+msgstr "Abone Durumunu Güncelle"
+
+#: ../subscribers/view-subscriber-edit.php:158
+msgid "Update Subscriber's Group"
+msgstr "Abone Grubunu Güncelle"
+
+#: ../subscribers/view-subscriber-sync.php:49
+msgid "Emails Successfully Synced."
+msgstr "E-postalar başarıyla Eşitlendi."
+
+#: ../subscribers/view-subscriber-sync.php:102
+msgid "Sync newly registered users to subscribers list"
+msgstr "Yeni kayıtlı kullanıcıları abone listesinde güncelle"
+
+#: ../subscribers/view-subscriber-sync.php:115
+msgid "Select group to add newly registered users to"
+msgstr "Yeni kayıtlı kullanıcıların ekleneceği grubu seçiniz"
+
+#: ../cron/cron-add.php:80
+msgid ""
+"This is your cron job URL. It is a readonly field and you are advised not to "
+"modify it."
+msgstr ""
+"Bu sizin planlanmış gönderim URL adresinizdir. Bu okunabilir bir alandır, "
+"değiştirilmez."
+
+#: ../cron/cron-add.php:84
+msgid ""
+"Enter number of mails you want to send per hour/trigger (Your web host has "
+"limits. We suggest 50 emails per hour to be safe)."
+msgstr ""
+"Her saat başı göndermek istediğiniz e-posta adedini giriniz. (Web "
+"hostinginizin limitleri vardır. Biz güvenli olması için saatte 50 e-posta "
+"göndermenizi öneririz.)"
+
+#: ../cron/cron-add.php:88
+msgid ""
+"Send above mail to admin whenever cron URL is triggered from your server."
+"<br />(Available Keywords: ###DATE###, ###SUBJECT###, ###COUNT###)"
+msgstr ""
+"Hostinginiz planlanmış işe başladığında yukardaki e-postayı yöneticiye "
+"gönder.<br />(Mevcut Anahtar Kelimeler: ###DATE###, ###SUBJECT###, "
+"###COUNT###)"
+
+#: ../cron/cron-add.php:98
+msgid ""
+"<a target=\"_blank\" href=\"http://www.storeapps.org/docs/es-how-to-schedule-"
+"cron-mails/\">What is Cron?</a>"
+msgstr ""
+"<a target=\"_blank\" href=\"http://www.storeapps.org/docs/es-how-to-schedule-"
+"cron-mails/\">Planlanmış gönderim nedir ?</a>"
+
+#: ../compose/compose-edit.php:60
+msgid "Template successfully updated. "
+msgstr "Şablon başarılı bir şekilde güncellendi."
+
+#: ../compose/compose-edit.php:90 ../compose/compose-add.php:79
+msgid "Select your Mail Type"
+msgstr "E-posta Tipini Seçiniz"
+
+#: ../compose/compose-edit.php:99 ../compose/compose-add.php:88
+msgid "Keyword: ###POSTTITLE###"
+msgstr "Anahtar: ###POSTTITLE###"
+
+#: ../compose/compose-edit.php:101 ../compose/compose-add.php:90
+msgid "Enter Content for your Mail"
+msgstr "E-posta İçeriğini Giriniz"
+
+#: ../compose/compose-edit.php:105 ../compose/compose-add.php:94
+#, php-format
+msgid ""
+"%s : ###NAME###, ###EMAIL###, ###DATE###, ###POSTTITLE###, ###POSTLINK###, "
+"###POSTLINK-WITHTITLE###, ###POSTLINK-ONLY###, ###POSTIMAGE###, "
+"###POSTDESC###, ###POSTFULL###"
+msgstr ""
+"%s : ###NAME###, ###EMAIL###, ###DATE###, ###POSTTITLE###, ###POSTLINK###, "
+"###POSTLINK-WITHTITLE###, ###POSTLINK-ONLY###, ###POSTIMAGE###, "
+"###POSTDESC###, ###POSTFULL###"
+
+#: ../compose/compose-edit.php:105 ../compose/compose-add.php:94
+msgid "Available Keywords"
+msgstr "Mevcut Anahtar Kelimeler"
+
+#: ../compose/compose-add.php:42
+msgid "Template successfully created. "
+msgstr "Şablon başarıyla oluşturuldu."
+
+#: ../compose/compose-show.php:81 ../compose/compose-show.php:89
+msgid "Actions"
+msgstr "Eylemler"
+
+#: ../help/help.php:114 ../help/help.php:123 ../help/help.php:126
+#: ../help/help. php:129 ../help/help.php:132 ../help/help.php:135
+#: ../help/help.php:138 .. help/help.php:141 ../help/help.php:144
+#: ../help/help.php:147 ../help/help.php:150 ../help/help.php:153
+#: ../help/help.php:156 ../help/help.php:159 help/help.php:162
+#: ../help/help.php:165 ../help/help.php:168 171 ../help/help.php:174
+#, php-format
+msgid "%s"
+msgstr "%s"
+
+#: ../help/help.php:114
+msgid "How to Add Subscription box to website?"
+msgstr "Üyelik kutusunu web siteme nasıl eklerim?"
+
+#: ../help/help.php:123
+msgid "How to Import or Export Email Addresses?"
+msgstr "E-posta adreslerini içeri veya dışarı nasıl aktarırım?"
+
+#: ../help/help.php:126
+msgid "General Plugin Settings"
+msgstr "Genel Eklenti Ayarları"
+
+#: ../help/help.php:126
+msgid ""
+" (How to modify the existing emails content like Opt-in mail, Welcome mail, "
+"Admin mails)"
+msgstr ""
+"(Onay e-postası, Hoşgeldin e-postası, Yönetici e-postası gibi mevcut e-"
+"postaları nasıl güncellerim)"
+
+#: ../help/help.php:129
+msgid "How to change/update/translate any texts from Email Subscribers?"
+msgstr ""
+"Email Subscribers'da herhangi bir yazıyı nasıl düzenlerim veya çeviri "
+"yapabilirim?"
+
+#: ../help/help.php:132
+msgid "How to add Unsubscribe link in emails?"
+msgstr "E-postalarıma üyelikten ayrıl linkini nasıl eklerim?"
+
+#: ../help/help.php:135
+msgid "What are Static Templates and Dynamic Templates?"
+msgstr "Statik ve dinamik şablonlar nedir?"
+
+#: ../help/help.php:138
+msgid "How to Compose and Send Static Newsletter Mails?"
+msgstr "Statik haber e-postalarını nasıl hazırlar ve gönderirim ?"
+
+#: ../help/help.php:144
+msgid "How to Send a sample new post notification email to testgroup/myself?"
+msgstr ""
+"Kendime veya test grubuna basit yeni yayın bildirimini nasıl gönderebilirim?"
+
+#: ../help/help.php:153
+msgid "Emails are not being received by Subscribers?"
+msgstr "E-postalar üyelere teslim edilemiyor mu?"
+
+#: ../help/help.php:159
+msgid "How to use Rainmaker’s form in Email Subscribers?"
+msgstr "Rainmaker eklentisini Email Subscribers ile nasıl kullanırım?"
+
+#: ../help/help.php:162
+msgid "How to Schedule Cron Mails?"
+msgstr " Planlanmış gönderimi nasıl yaparım?"
+
+#: ../help/help.php:165
+msgid "How to Schedule Cron Emails in cPanel?"
+msgstr "Cpanel için planlanmış gönderimi nasıl yaparım?"
+
+#: ../help/help.php:168
+msgid "How to Schedule Cron Emails in Parallels Plesk?"
+msgstr "Parallels Plesk için planlanmış gönderimi nasıl yaparım?"
+
+#: ../help/help.php:171
+msgid "What to do if Hosting doesn’t support Cron Jobs?"
+msgstr "Planlanmış gönderimler için hosting desteğim yoksa ne yapmalıyım?"
+
+#: ../help/help.php:174
+msgid "Commonly Asked Questions"
+msgstr "Sıkça Sorulan Sorular."
+
+#: ../sendmail/sendmail.php:51
+msgid "Please select your group."
+msgstr "Lütfen grup seçimi yapınız."
+
+#: ../sendmail/sendmail.php:58
+msgid "Mail sent successfully. "
+msgstr "E-posta başarıyla gönderildi."
+
+#: ../sendmail/sendmail.php:62
+msgid "Click here to check Statistics"
+msgstr "İstatistikleri görmek için buraya tıklayınız"
+
+#: ../sendmail/sendmail.php:104
+msgid "Select Mail Subject from available list"
+msgstr "Mevcut Liste için E-posta Konusunu Seç"
+
+#: ../sendmail/sendmail.php:131
+msgid "Select Mail Type"
+msgstr "E-posta Tipini Seç"
+
+#: ../sendmail/sendmail.php:145
+msgid "Select Subscribers group to Send Mail"
+msgstr "E-posta Göndermek için Abone Grubunu Seç"
+
+#: ../sendmail/sendmail.php:177
+msgid "Recipients : 0 "
+msgstr "Alıcılar : 0"
+
+#: ../sendmail/sendmail.php:179
+#, php-format
+msgid "Recipients : %s"
+msgstr "Alıcılar : %s"
+
+#: ../sendmail/sendmail.php:182
+msgid ""
+"<br><br><strong>Your Recipients count is above 100.<br>We strongly recommend "
+"that you change above Mail Type to Cron and Send Mail via Cron Job.</"
+"strong><br>Click on Help for more information."
+msgstr ""
+"<br><br><strong>E-posta alıcı sayısı 100'ün üzerindedir.<br>Planlanmış iş "
+"gönderimi ile planlama yapmak ve e-posta göndermek için yukarıdaki e-posta "
+"tipini değiştirmenizi öneririz.</strong><br>Daha fazlası için yardım "
+"seçeneğine tıklayınız."
+
+#: ../sendmail/sendmail.php:198
+msgid "Reset"
+msgstr "Sıfırla"
+
+#: ../classes/es-register.php:219
+msgctxt "sendmail-enhanced-select"
+msgid "Please select your mail type."
+msgstr "Lütfen e-posta türünü seçiniz."
+
+#: ../classes/es-register.php:256
+msgctxt "widget-enhanced-select"
+msgid ""
+"Your subscription was successful! Within a few minutes, kindly check the "
+"mail in your mailbox and confirm your subscription. If you can't see the "
+"mail in your mailbox, please check your spam folder."
+msgstr ""
+"Üyeliğiniz tamamlandı! Birkaç dakika içerisinde lütfen e-posta kutunuzu "
+"kontrol ediniz ve üyeliğinizi onaylayınız. Eğer e-postayı gelen kutusunda "
+"göremezseniz, lütfen önemsiz kutusunu kontrol ediniz."
+
+#: ../classes/es-register.php:273
+msgctxt "widget-page-enhanced-select"
+msgid ""
+"Your subscription was successful! Within a few minutes, kindly check the "
+"mail in your mailbox and confirm your subscription. If you can't see the "
+"mail in your mailbox, please check your spam folder."
+msgstr ""
+"Üyeliğiniz tamamlandı! Birkaç dakika içerisinde lütfen e-posta kutunuzu "
+"kontrol ediniz ve üyeliğinizi onaylayınız. Eğer e-postayı gelen kutusunda "
+"göremezseniz, lütfen önemsiz kutusunu kontrol ediniz."
+
+#: ../classes/es-register.php:407
+msgid ""
+"Email Subscribers recommends free plugin <b>Rainmaker</b> to collect leads "
+"instantly"
+msgstr ""
+"Email Subscriber, üye toplamak için hazır formları bulunan ve bedava sunulan "
+"<b>Rainmaker<b> eklentisini öneriyor."
+
+#: ../classes/es-register.php:408
+msgid "Yes, I want this"
+msgstr "Evet, bunu istiorum"
+
+#: ../classes/es-register.php:408
+msgid "No, I don't want it"
+msgstr "Hayır, bunu istemiyorum"
+
+#: ../notification/notification-add.php:32
+msgid "Please select subscribers group."
+msgstr "Lütfen haber listesi grubunu seçiniz."
+
+#: ../notification/notification-add.php:38
+msgid "Please select notification status."
+msgstr "Lütfen bildirim gönderme durumunu seçiniz."
+
+#: ../notification/notification-add.php:44
+#: ../notification/notification-edit.php:60
+msgid ""
+"Please select notification mail subject. Use compose menu to create new."
+msgstr ""
+"Lütfen bildirim E-posta şablonu seçiniz. Yenisini oluşturmak için E-posta "
+"Şablonu menüsünü kullanın."
+
+#: ../notification/notification-add.php:50
+#: ../notification/notification-edit.php:69
+msgid "Please select post categories."
+msgstr "Lütfen Posta kategorilerini seçiniz."
+
+#: ../notification/notification-add.php:107
+msgid "Add Notification"
+msgstr "Bildirim Ekle"
+
+#: ../notification/notification-add.php:108
+#: ../notification/notification-show.php:55
+#: ../notification/notification-edit.php:122 ../roles/roles-add.php:106 ..
+#: settings/settings-edit.php:199 ../sentmail/sentmail-preview.php:29
+#: sentmail/sentmail-show.php:98 ../sentmail/deliverreport-show.php:62
+#: subscribers/view-subscriber-import.php:147 ../subscribers/view-subscriber-
+#: show.php:212 ../subscribers/view-subscriber-export.php:31
+#: ../subscribers/view- subscriber-add.php:116
+#: ../subscribers/view-subscriber-edit.php:115
+#: subscribers/view-subscriber-sync.php:94 ../cron/cron-add.php:75
+#: compose/compose-edit.php:87 ../compose/compose-add.php:76
+#: ../compose/compose- show.php:67 ../compose/compose-preview.php:29
+#: ../sendmail/sendmail.php:96
+msgid "Help"
+msgstr "Yardım"
+
+#: ../notification/notification-add.php:119
+#: ../notification/notification-add.php:143
+#: ../notification/notification-edit.php:133 ../notification/notification-
+#: edit.php:166 ../subscribers/view-subscriber-import.php:191
+#: ../subscribers/view- subscriber-add.php:163
+#: ../subscribers/view-subscriber-edit.php:163 ..
+#: subscribers/view-subscriber-sync.php:120 ../sendmail/sendmail.php:109
+#: sendmail/sendmail.php:136 ../sendmail/sendmail.php:150
+msgid "Select"
+msgstr "Seç"
+
+#: ../notification/notification-add.php:189
+#: ../notification/notification-edit.php:226
+msgid "Check All"
+msgstr "Hepsini Seç"
+
+#: ../notification/notification-add.php:190
+#: ../notification/notification-edit.php:227
+msgid "Uncheck All"
+msgstr "Hiçbirini Seçme"
+
+#: ../notification/notification-add.php:226
+#: ../notification/notification-edit.php:269
+msgid "No Custom Post Types Available"
+msgstr "Gönderi Tipi Mevcut Değil"
+
+#: ../notification/notification-add.php:237
+#: ../notification/notification-edit.php:282
+msgid "Send mail immediately when new post is published"
+msgstr "Yeni yazı yayınladığı anda e-posta gönder"
+
+#: ../notification/notification-add.php:238
+#: ../notification/notification-edit.php:283
+msgid "Add to cron when new post is published and send via cron job"
+msgstr ""
+"Yeni yazı yayınlandığında planlanmış gönderilere ekle ve planlanmış gönderi "
+"ile gönder"
+
+#: ../notification/notification-add.php:239
+#: ../notification/notification-edit.php:284
+msgid "Disable notification"
+msgstr "Bildirimleri durdur"
+
+#: ../notification/notification-show.php:53 ../classes/es-register.php:148 ..
+#: classes/es-register.php:149
+msgid "Notification"
+msgstr "Bildirimler"
+
+#: ../notification/notification-show.php:54
+#: ../notification/notification-edit.php:121 ../compose/compose-edit.php:86
+#: ../compose/compose-show.php:66
+msgid "Add New"
+msgstr "Yeni Ekle"
+
+#: ../notification/notification-show.php:66
+#: ../notification/notification-show.php:74
+msgid "Mail Subject"
+msgstr "EPosta Konusu"
+
+#: ../notification/notification-show.php:67
+#: ../notification/notification-show.php:75
+msgid "Subscribers Group"
+msgstr "Abone Grubu"
+
+#: ../notification/notification-show.php:68
+#: ../notification/notification-show.php:76
+msgid "Categories / Custom Post"
+msgstr "Kategoriler / Farklı Gönderi"
+
+#: ../notification/notification-show.php:69
+#: ../notification/notification-show.php:77
+msgid "Notification Status"
+msgstr "Bildirim Gönderme Durumu"
+
+#: ../notification/notification-show.php:98
+#: ../subscribers/view-subscriber-show. php:357
+#: ../compose/compose-show.php:105 ../compose/compose-preview.php:41
+msgid "Edit"
+msgstr "Düzelt"
+
+#: ../notification/notification-show.php:101
+#: ../subscribers/view-subscriber-show. php:244
+#: ../subscribers/view-subscriber-show.php:362 ../compose/compose-show.
+#: php:106
+msgid "Delete"
+msgstr "Sil"
+
+#: ../notification/notification-show.php:128
+msgid "Send mail immediately when new post is published."
+msgstr "Yeni yazı yayınladığı anda e-posta gönder"
+
+#: ../notification/notification-show.php:130
+msgid "Add to cron and send mail via cron job."
+msgstr "Planlanmış gönderilere ekle ve planlanmış gönderi ile e-posta gönder."
+
+#: ../notification/notification-show.php:141 ../sentmail/sentmail-show.php:165
+#: .. sentmail/deliverreport-show.php:115
+#: ../subscribers/view-subscriber-show.php:385 ../compose/compose-show.php:115
+msgid "No records available."
+msgstr "Kayıt Yok!"
+
+#: ../notification/notification-edit.php:48
+msgid "Please select subscribers group"
+msgstr "Lütfen abone grubunu seçiniz"
+
+#: ../notification/notification-edit.php:54
+msgid "Please select notification status"
+msgstr "Lütfen bildirim durumunu seçiniz"
+
+#: ../notification/notification-edit.php:120
+msgid "Edit Notification"
+msgstr "Bildirim Düzeltme"
+
+#: ../notification/notification-edit.php:129
+#: ../subscribers/view-subscriber-show. php:246
+msgid "Update Subscribers Group"
+msgstr "Abone Grubunu Güncelle"
+
+#. URI of the plugin
+msgid "http://www.storeapps.org/product/email-subscribers"
+msgstr "http://www.storeapps.org/product/email-subscribers"
+
+#. Author of the plugin
+msgid "StoreApps"
+msgstr "Uygulama Mağazası"
+
+#. URI of the plugin
+msgid "http://www.storeapps.org"
+msgstr "http://www.storeapps.org"
+
+#: ../roles/roles-add.php:105
+msgid "Roles and Capabilities"
+msgstr "Roller ve Yetkiler"
+
+#: ../roles/roles-add.php:116
+msgid "Subscribers Menu"
+msgstr "Aboneler Menüsü"
+
+#: ../roles/roles-add.php:120 ../roles/roles-add.php:132
+#: ../roles/roles-add.php:144 ../roles/roles-add.php:156
+#: ../roles/roles-add.php:168 ../roles/roles-add. php:180
+#: ../roles/roles-add.php:192
+msgid "Administrator Only"
+msgstr "Sadece Yönetici"
+
+#: ../roles/roles-add.php:121 ../roles/roles-add.php:133
+#: ../roles/roles-add.php:145 ../roles/roles-add.php:157
+#: ../roles/roles-add.php:169 ../roles/roles-add. php:181
+#: ../roles/roles-add.php:193
+msgid "Administrator/Editor"
+msgstr "Yönetici/Editör"
+
+#: ../roles/roles-add.php:122 ../roles/roles-add.php:134
+#: ../roles/roles-add.php:146 ../roles/roles-add.php:158
+#: ../roles/roles-add.php:170 ../roles/roles-add. php:182
+#: ../roles/roles-add.php:194
+msgid "Administrator/Editor/Author/Contributor"
+msgstr "Yönetici/Editör/Yazar/Katılımcı"
+
+#: ../roles/roles-add.php:128
+msgid "Compose Menu"
+msgstr "Oluştur Menüsü"
+
+#: ../roles/roles-add.php:140
+msgid "Notification Menu"
+msgstr "Bildirimler Menüsü"
+
+#: ../roles/roles-add.php:152
+msgid "Send Email Menu/Cron Menu"
+msgstr "E-posta Gönder Menüsü/Planlanmış E-posta Menüsü"
+
+#: ../roles/roles-add.php:164
+msgid "Settings Menu"
+msgstr "Ayarlar Menüsü"
+
+#: ../roles/roles-add.php:176
+msgid "Sent Mails Menu"
+msgstr "Giden Postalar Menüsü"
+
+#: ../roles/roles-add.php:188
+msgid "Help & Info Menu"
+msgstr "Yardım & Bilgi Menüsü"
+
+#: ../settings/settings-edit.php:116
+msgid "Please enter sender of notifications from name."
+msgstr "Bildirimlerin hangi isimden gönderileceğini giriniz."
+
+#: ../settings/settings-edit.php:121
+msgid "Please enter sender of notifications from email."
+msgstr "Bildirimlerin hangi E-Posta adresinden gönderileceğini giriniz."
+
+#: ../settings/settings-edit.php:198 ../classes/es-register.php:157
+#: ../classes/es- register.php:158
+msgid "Settings"
+msgstr "Ayarlar"
+
+#: ../settings/settings-edit.php:206
+msgid "Sender of notifications"
+msgstr "Bildirimleri Gönderen"
+
+#: ../settings/settings-edit.php:207
+msgid ""
+"Choose a FROM name and FROM email address for all notifications emails from "
+"this plugin."
+msgstr ""
+"Bu eklenti ile gönderilecek bütün bildirimler için gönderen İSİM ve E-POSTA "
+"adresi seçiniz."
+
+#: ../settings/settings-edit.php:217
+msgid "Mail type"
+msgstr "E-posta Tipi"
+
+#: ../settings/settings-edit.php:218
+msgid ""
+"Option 1 & 2 is to send mails with default Wordpress method wp_mail(). "
+"Option 3 & 4 is to send mails with PHP method mail()"
+msgstr ""
+"Seçenek 1 & 2 ile normal WP metodu kullanılarak gönderilecek \n"
+"wp_mail(). Seçenek 3 & 4 ile PHP metodu kullanılarak gönderilecek. mail()"
+
+#: ../settings/settings-edit.php:222
+msgid "1. WP HTML MAIL"
+msgstr "1. WP HTML POSTA"
+
+#: ../settings/settings-edit.php:223
+msgid "2. WP PLAINTEXT MAIL"
+msgstr "2. WP PLAINTEXT POSTA"
+
+#: ../settings/settings-edit.php:224
+msgid "3. PHP HTML MAIL"
+msgstr " 3. PHP HTML POSTA"
+
+#: ../settings/settings-edit.php:225
+msgid "4. PHP PLAINTEXT MAIL"
+msgstr "4. PHP PLAINTEXT POSTA"
+
+#: ../settings/settings-edit.php:232
+msgid "Opt-in option"
+msgstr "Onaylama Seçeneği"
+
+#: ../settings/settings-edit.php:233
+msgid ""
+"Double Opt In, means subscribers need to confirm their email address by an "
+"activation link sent them on a activation email message. Single Opt In, "
+"means subscribers do not need to confirm their email address."
+msgstr ""
+"Çift Onay seçeneğinde, E-Posta Listesine kaydolacak adreslere bir onaylama "
+"mesajı ve kayıttan sonra da hoşgeldin mesajı gönderilir.\n"
+"Tek Onay seçeneğinde, sonradan ayrıca bildirim gönderilmez."
+
+#: ../settings/settings-edit.php:237
+msgid "Double Opt In"
+msgstr "Çift Onay"
+
+#: ../settings/settings-edit.php:238
+#: ../subscribers/view-subscriber-import.php:179
+#: ../subscribers/view-subscriber-show.php:288 ../subscribers/view-subscriber-
+#: add.php:152 ../subscribers/view-subscriber-edit.php:151
+msgid "Single Opt In"
+msgstr "Tek Onay"
+
+#: ../settings/settings-edit.php:244
+msgid "Image Size"
+msgstr "Resim Ölçüsü"
+
+#: ../settings/settings-edit.php:245
+msgid ""
+"Select image size for ###POSTIMAGE### to be shown in post notification email"
+msgstr ""
+"Lütfen yeni yazı bildirim mailindeki ###POSTIMAGE### için resim ölçüsünü "
+"belirleyiniz"
+
+#: ../settings/settings-edit.php:249
+msgid "Full Size"
+msgstr "Tam Boy"
+
+#: ../settings/settings-edit.php:250
+msgid "Medium Size"
+msgstr "Orta Boy"
+
+#: ../settings/settings-edit.php:251
+msgid "Thumbnail"
+msgstr "Küçük Boy"
+
+#: ../settings/settings-edit.php:257
+msgid "Opt-in mail subject (Confirmation mail)"
+msgstr "Onay E-postasının Konusu "
+
+#: ../settings/settings-edit.php:258
+msgid ""
+"Enter the subject for Double Opt In mail. This will send whenever subscriber "
+"added email into our database."
+msgstr ""
+"Çift onay E-posta konusu. E-posta listesine abone olanlara gönderilecektir."
+
+#: ../settings/settings-edit.php:264
+msgid "Opt-in mail content (Confirmation mail)"
+msgstr "Onaylama Metni"
+
+#: ../settings/settings-edit.php:265
+msgid ""
+"Enter the content for Double Opt In mail. This will send whenever subscriber "
+"added email into our database."
+msgstr ""
+"Çift Onay için E-Posta metni giriniz. Bu metin E-Posta listesine eklenenlere "
+"gönderilecektir."
+
+#: ../settings/settings-edit.php:271
+msgid "Opt-in link (Confirmation link)"
+msgstr "Onay Linki"
+
+#: ../settings/settings-edit.php:272
+msgid "Double Opt In confirmation link. You no need to change this value."
+msgstr "Çift Onay linki. Bu değerleri değiştirmeniz gerekmez."
+
+#: ../settings/settings-edit.php:278
+msgid "Text to display after email subscribed successfully"
+msgstr "Başarıyla Haber Listesine eklendikten sonra gönderilecek Metin."
+
+#: ../settings/settings-edit.php:279
+msgid ""
+"This text will display once user clicked email confirmation link from opt-in "
+"(confirmation) email content."
+msgstr ""
+"Bu metin, E-posta mesajındaki onay linkine tıklandığında bir kez "
+"gösterilecektir."
+
+#: ../settings/settings-edit.php:286
+msgid "Subscriber welcome email"
+msgstr "Kaydolanlara Hoşgeldin EPostası"
+
+#: ../settings/settings-edit.php:287
+msgid "To send welcome mail to subscriber, This option must be set to YES."
+msgstr ""
+"Kaydolanlara hoşgeldin E-Postası göndermek için bu seçenek EVET olarak "
+"seçilmelidir."
+
+#: ../settings/settings-edit.php:291 ../settings/settings-edit.php:319 ..
+#: subscribers/view-subscriber-sync.php:108
+msgid "YES"
+msgstr "EVET"
+
+#: ../settings/settings-edit.php:292 ../settings/settings-edit.php:320 ..
+#: subscribers/view-subscriber-sync.php:107
+msgid "NO"
+msgstr "HAYIR"
+
+#: ../settings/settings-edit.php:298
+msgid "Welcome mail subject"
+msgstr "Hoşgeldin E-postası konusu"
+
+#: ../settings/settings-edit.php:299
+msgid ""
+"Enter the subject for subscriber welcome mail. This will send whenever email "
+"subscribed (confirmed) successfully."
+msgstr ""
+"Aboneye hoşgeldin E-Postasının konusunu giriniz. Başarıyla kayıt işlemi "
+"tamamlananlara gönderilecektir."
+
+#: ../settings/settings-edit.php:305
+msgid "Subscriber welcome mail content"
+msgstr "Aboneye hoşgeldin E-Posta içeriği"
+
+#: ../settings/settings-edit.php:306
+msgid ""
+"Enter the content for subscriber welcome mail. This will send whenever email "
+"subscribed (confirmed) successfully.  (Keyword: ###NAME###)"
+msgstr ""
+"Üye olan kişilere hoşgeldin mesaj bildirimi için içerik giriniz. Üyeliği "
+"onaylandığı zaman otomatik olarak gönderilecektir. (Anahtar : ###NAME###)"
+
+#: ../settings/settings-edit.php:314
+msgid "Mail to admin"
+msgstr "Yöneticiye E-posta gönder"
+
+#: ../settings/settings-edit.php:315
+msgid ""
+"To send admin notifications for new subscriber, This option must be set to "
+"YES."
+msgstr ""
+"Site yöneticisine yeni abone bildirimi göndermek için bu seçenek EVET olarak "
+"seçilmelidir."
+
+#: ../settings/settings-edit.php:326
+msgid "Admin email addresses"
+msgstr "Site yöneticisi E-posta adresleri"
+
+#: ../settings/settings-edit.php:327
+msgid ""
+"Enter the admin email addresses that should receive notifications (separate "
+"by comma)."
+msgstr ""
+"Bildirim gönderilecek site yöneticisi E-posta adreslerini (birden fazla ise "
+"virgülle ayırarak) giriniz."
+
+#: ../settings/settings-edit.php:333
+msgid "Admin mail subject"
+msgstr "Site yöneticisi için E-posta konusu"
+
+#: ../settings/settings-edit.php:334
+msgid ""
+"Enter the subject for admin mail. This will send whenever new email added "
+"and confirmed into our database."
+msgstr ""
+"Site yöneticisi için E-posta konusu giriniz. Haber Listesine yeni biri "
+"kaydolduğunda gönderilecektir."
+
+#: ../settings/settings-edit.php:340
+msgid "Admin mail content"
+msgstr "Site Yöneticisi E-posta Metni"
+
+#: ../settings/settings-edit.php:341
+msgid ""
+"Enter the mail content for admin. This will send whenever new email added "
+"and confirmed into our database. (Keyword: ###NAME###, ###EMAIL###)"
+msgstr ""
+"Site yöneticisine bildirim için içerik giriniz. Veritabanına yeni e-posta "
+"eklendiğinde ve onaylandığında otomatik olarak yöneticiye bildirilecektir. "
+"(Anahtar : ###NAME###, ###EMAIL###)"
+
+#: ../settings/settings-edit.php:348
+msgid "Unsubscribe link"
+msgstr "Üyelik iptal linki"
+
+#: ../settings/settings-edit.php:349
+msgid "Unsubscribe link. You no need to change this value."
+msgstr "Üyelik iptal linki. Bu değeri değiştirmeniz gerekmez."
+
+#: ../settings/settings-edit.php:355
+msgid "Unsubscribe text in mail"
+msgstr "Abonelik iptal metni"
+
+#: ../settings/settings-edit.php:356
+msgid ""
+"Enter the text for unsubscribe link. This text is to add unsubscribe link "
+"with newsletter. (Keyword: ###LINK###)"
+msgstr ""
+"Üyelikten ayrılma linki için bir yazı giriniz. Bu yazı gönderilen bültene "
+"üyelikten ayrıl bağlantısı eklemek içindir. (Anahtar : ###LINK###)"
+
+#: ../settings/settings-edit.php:362
+msgid "Text to display after email unsubscribed"
+msgstr "Bir E-posta aboneliği sonlandırıldıktan sonra gösterilecek metin"
+
+#: ../settings/settings-edit.php:363
+msgid ""
+"This text will display once user clicked unsubscribed link from our "
+"newsletter."
+msgstr ""
+"Bu Metin, Haber Bültenlerindeki Kayıt Silme linkine tıklayanlara bir kez "
+"gösterilecektir."
+
+#: ../settings/settings-edit.php:370
+msgid "Message 1"
+msgstr "Mesaj 1"
+
+#: ../settings/settings-edit.php:371
+msgid "Default message to display if any issue on confirmation link."
+msgstr ""
+"Onaylama linkinde herhangi bir sorun olduğunda gösterilecek varsayılan metin"
+
+#: ../settings/settings-edit.php:377
+msgid "Message 2"
+msgstr "Mesaj 2"
+
+#: ../settings/settings-edit.php:378
+msgid "Default message to display if any issue on unsubscribe link."
+msgstr "Kayıt silme linkinde herhangi bir sorun olduğunda gösterilecek metin"
+
+#: ../settings/settings-edit.php:385
+msgid "Sent report subject"
+msgstr "Gönderilen rapor konusu"
+
+#: ../settings/settings-edit.php:386
+msgid "Mail subject for sent mail report."
+msgstr "Gönderilen rapor için e-posta konusu"
+
+#: ../settings/settings-edit.php:392
+msgid "Sent report content"
+msgstr "Gönderilen rapor içeriği"
+
+#: ../settings/settings-edit.php:393
+msgid ""
+"Mail content for sent mail report. (Keyword: ###COUNT###, ###UNIQUE###, "
+"###STARTTIME###, ###ENDTIME###)"
+msgstr ""
+"Gönderilen rapor için e-posta içeriği. (Anahtarlar : ###COUNT###, "
+"###UNIQUE###, ###STARTTIME###, ###ENDTIME###)"
+
+#: ../settings/settings-edit.php:403
+msgid "Save Settings"
+msgstr "Ayarları Kaydet"
+
+#: ../settings/setting-sync.php:15
+msgid "Table sync completed successfully."
+msgstr "Tablo başarıyla eşitlendi."
+
+#: ../settings/setting-sync.php:28
+msgid "Sync plugin tables"
+msgstr "Eklenti tablolarını eşitle"
+
+#: ../settings/setting-sync.php:32
+msgid "Click to sync tables"
+msgstr "Eşitleme tabloları için tıklayın"
+
+#: ../sentmail/sentmail-preview.php:28 ../compose/compose-preview.php:28
+msgid "Preview Mail"
+msgstr "E-posta Önizleme"
+
+#: ../sentmail/sentmail-preview.php:43
+msgid "Back"
+msgstr "Geri"
+
+#: ../sentmail/sentmail-show.php:42
+msgid "Successfully deleted all reports except latest 10."
+msgstr "En son 10 rapor hariç hepsi başarıyla silindi."
+
+#: ../sentmail/sentmail-show.php:85 ../sentmail/deliverreport-show.php:49
+msgid " &lt;&lt; "
+msgstr " &lt;&lt; "
+
+#: ../sentmail/sentmail-show.php:86 ../sentmail/deliverreport-show.php:50
+msgid " &gt;&gt; "
+msgstr " &gt;&gt; "
+
+#: ../sentmail/sentmail-show.php:97 ../classes/es-register.php:163
+#: ../classes/es- register.php:164
+msgid "Sent Mails"
+msgstr "Giden E-Postalar"
+
+#: ../sentmail/sentmail-show.php:108 ../sentmail/sentmail-show.php:121
+msgid "View Reports"
+msgstr "Raporlara Gözat"
+
+#: ../sentmail/sentmail-show.php:109 ../sentmail/sentmail-show.php:122 ..
+#: compose/compose-show.php:107
+msgid "Preview"
+msgstr "Önizleme"
+
+#: ../sentmail/sentmail-show.php:110 ../sentmail/sentmail-show.php:123
+msgid "Source"
+msgstr "Kaynak"
+
+#: ../sentmail/sentmail-show.php:111 ../sentmail/sentmail-show.php:124 ..
+#: sentmail/deliverreport-show.php:75 ../sentmail/deliverreport-show.php:87
+#: subscribers/view-subscriber-show.php:313
+#: ../subscribers/view-subscriber-show. php:327
+#: ../compose/compose-edit.php:109 ../compose/compose-add.php:98
+#: compose/compose-show.php:79 ../compose/compose-show.php:87
+msgid "Status"
+msgstr "Durum"
+
+#: ../sentmail/sentmail-show.php:112 ../sentmail/sentmail-show.php:125 ..
+#: sentmail/deliverreport-show.php:76 ../sentmail/deliverreport-show.php:88
+#: compose/compose-show.php:80 ../compose/compose-show.php:88
+msgid "Type"
+msgstr "Tür"
+
+#: ../sentmail/sentmail-show.php:113 ../sentmail/sentmail-show.php:126
+msgid "Start Date"
+msgstr "Başlama Tarihi"
+
+#: ../sentmail/sentmail-show.php:114 ../sentmail/sentmail-show.php:127
+msgid "End Date"
+msgstr "Bitiş Tarihi"
+
+#: ../sentmail/sentmail-show.php:115 ../sentmail/sentmail-show.php:128
+msgid "Total"
+msgstr "Toplam"
+
+#: ../sentmail/sentmail-show.php:116 ../sentmail/sentmail-show.php:129 ..
+#: subscribers/view-subscriber-show.php:316
+#: ../subscribers/view-subscriber-show. php:330
+#: ../subscribers/view-subscriber-export.php:41 ../subscribers/view-
+#: subscriber-export.php:49
+msgid "Action"
+msgstr "Eylem"
+
+#: ../sentmail/deliverreport-show.php:13
+msgid "Oops.. Unexpected error occurred. Please try again."
+msgstr "Afedersiniz... Beklenmedik bir hata oldu, tekrar deneyiniz."
+
+#: ../sentmail/deliverreport-show.php:61
+msgid "Delivery Report"
+msgstr "Teslimat Raporu"
+
+#: ../sentmail/deliverreport-show.php:72 ../sentmail/deliverreport-show.php:84
+#: .. subscribers/view-subscriber-show.php:310
+#: ../subscribers/view-subscriber-show. php:324
+#: ../subscribers/view-subscriber-export.php:38 ../subscribers/view-
+#: subscriber-export.php:46
+msgid "Sno"
+msgstr "Sıra"
+
+#: ../sentmail/deliverreport-show.php:73 ../sentmail/deliverreport-show.php:85
+msgid "Email"
+msgstr "E-posta"
+
+#: ../sentmail/deliverreport-show.php:74 ../sentmail/deliverreport-show.php:86
+msgid "Sent Date"
+msgstr "Gönderim Tarihi"
+
+#: ../sentmail/deliverreport-show.php:77 ../sentmail/deliverreport-show.php:89
+msgid "Viewed Status"
+msgstr "Görülme Durumu"
+
+#: ../sentmail/deliverreport-show.php:78 ../sentmail/deliverreport-show.php:90
+msgid "Viewed Date"
+msgstr "Görülme Tarihi"
+
+#: ../sentmail/deliverreport-show.php:79 ../sentmail/deliverreport-show.php:91
+msgid "Database ID"
+msgstr "Veritabanı No"
+
+#: ../subscribers/view-subscriber-import.php:96
+#: ../subscribers/view-subscriber- import.php:125
+msgid "Click here"
+msgstr "Buraya tıklayınız"
+
+#: ../subscribers/view-subscriber-import.php:176
+#: ../subscribers/view-subscriber- show.php:285
+#: ../subscribers/view-subscriber-add.php:149 ../subscribers/view-
+#: subscriber-edit.php:148
+msgid "Confirmed"
+msgstr "Onaylandı"
+
+#: ../subscribers/view-subscriber-import.php:177
+#: ../subscribers/view-subscriber- show.php:286
+#: ../subscribers/view-subscriber-add.php:150 ../subscribers/view-
+#: subscriber-edit.php:149
+msgid "Unconfirmed"
+msgstr "Onaylanmadı"
+
+#: ../subscribers/view-subscriber-import.php:178
+#: ../subscribers/view-subscriber- show.php:287
+#: ../subscribers/view-subscriber-add.php:151 ../subscribers/view-
+#: subscriber-edit.php:150
+msgid "Unsubscribed"
+msgstr "Üyelik İptal Edildi"
+
+#: ../subscribers/view-subscriber-show.php:16 ../compose/compose-show.php:13
+#: .. sendmail/sendmail.php:17
+msgid "Click Here"
+msgstr "Buraya Tıklayınız"
+
+#: ../subscribers/view-subscriber-show.php:74
+msgid "Confirmation email resent successfully."
+msgstr "Onay E-Postası başarıyla yeniden gönderildi."
+
+#: ../subscribers/view-subscriber-show.php:99
+#: ../subscribers/view-subscriber-show. php:138
+#: ../subscribers/view-subscriber-show.php:176
+msgid "Oops, No record was selected."
+msgstr "Afedersiniz, bir kayıt seçilmedi."
+
+#: ../subscribers/view-subscriber-show.php:167
+msgid "Oops, New group name was not selected."
+msgstr "Afedersiniz, yeni grup ismi seçilmedi."
+
+#: ../subscribers/view-subscriber-show.php:207
+msgid "View Subscribers"
+msgstr "Abonelere Gözat"
+
+#: ../subscribers/view-subscriber-show.php:243
+msgid "Bulk Actions"
+msgstr "Toplu Eylemler"
+
+#: ../subscribers/view-subscriber-show.php:245 ../subscribers/view-subscriber-
+#: show.php:370
+msgid "Resend Confirmation"
+msgstr "Yeniden Onay Gönder"
+
+#: ../subscribers/view-subscriber-show.php:249
+msgid "Select Group"
+msgstr "Grup Seç"
+
+#: ../subscribers/view-subscriber-show.php:263
+msgid "Apply"
+msgstr "Uygula"
+
+#: ../subscribers/view-subscriber-show.php:267
+msgid "All Groups"
+msgstr "Tüm Gruplar"
+
+#: ../subscribers/view-subscriber-show.php:284
+msgid "All Status"
+msgstr "Tüm Durumlar"
+
+#: ../subscribers/view-subscriber-show.php:312 ../subscribers/view-subscriber-
+#: show.php:326 ../classes/es-register.php:494 ../classes/es-loadwidget.php:24
+msgid "Name"
+msgstr "Adınız"
+
+#: ../subscribers/view-subscriber-show.php:314 ../subscribers/view-subscriber-
+#: show.php:328
+msgid "Group"
+msgstr "Grup"
+
+#: ../subscribers/view-subscriber-add.php:35
+#: ../subscribers/view-subscriber-edit. php:53
+msgid "Please enter subscriber email address."
+msgstr "Lütfen abone E-Posta adresini giriniz."
+
+#: ../subscribers/view-subscriber-add.php:48
+msgid "Please select or create your group for this email."
+msgstr ""
+"Lütfen bu E-Posta için bir grup seçiniz veya yeni bir grup oluşturunuz."
+
+#: ../subscribers/view-subscriber-add.php:55
+msgid ""
+"Error: Special characters (['^$%&*()}{@#~?><>,|=_+\\\"]) are not allowed in "
+"the group name."
+msgstr ""
+"Hata: Grup isimlerinde özel karakterlere (['^$%&*()}{@#~?><>,|=_+\\\"]) izin "
+"verilmemektedir."
+
+#: ../subscribers/view-subscriber-edit.php:63
+msgid "Error: Special characters are not allowed in the group name."
+msgstr "Hata : Grup isimlerinde özel karakterlere izin verilmemektedir."
+
+#: ../subscribers/view-subscriber-sync.php:35
+msgid "Please select default group to newly registered user."
+msgstr "Lütfen bir grup seçiniz veya yeni bir grup oluşturunuz."
+
+#: ../subscribers/view-subscriber-sync.php:90
+msgid "Sync Email"
+msgstr "E-postayı Eşitle"
+
+#: ../cron/cron-add.php:23
+msgid "Please enter valid mail count."
+msgstr "Lütfen geçerli E-posta sayısını giriniz."
+
+#: ../cron/cron-add.php:33
+msgid "Cron details successfully updated."
+msgstr "Planlanmış gönderim detayları başarıyla güncellendi."
+
+#: ../cron/cron-add.php:74
+msgid "Cron Details"
+msgstr "Planlama Detayları"
+
+#: ../cron/cron-add.php:78
+msgid "Cron job URL"
+msgstr "Planlanmış gönderim URL"
+
+#: ../cron/cron-add.php:82
+msgid "Mail Count"
+msgstr "E-posta Sayısı"
+
+#: ../cron/cron-add.php:86
+msgid "Admin Report"
+msgstr "Admin Raporu"
+
+#: ../cron/cron-add.php:97
+msgid "How to setup auto emails using CRON Job through the cPanel or Plesk?"
+msgstr ""
+"cPanel veya Plesk içerisinde otomatik Planlanmış Gönderim nasıl yapılır?"
+
+#: ../cron/cron-add.php:99
+msgid ""
+"<a target=\"_blank\" href=\"http://www.storeapps.org/docs/es-how-to-schedule-"
+"cron-emails-in-parallels-plesk/\">Setup cron job in Plesk</a>"
+msgstr ""
+"<a target=\"_blank\" href=\"http://www.storeapps.org/docs/es-how-to-schedule-"
+"cron-emails-in-parallels-plesk/\">Plesk Planlanmış Gönderim Ayarları</a>"
+
+#: ../cron/cron-add.php:100
+msgid ""
+"<a target=\"_blank\" href=\"http://www.storeapps.org/docs/es-how-to-schedule-"
+"cron-emails-in-cpanel/\">Setup cron job in cPanal</a>"
+msgstr ""
+" <a target=\"_blank\" href=\"http://www.storeapps.org/docs/es-how-to-"
+"schedule-cron-emails-in-cpanel/\">Cpanel için Planlanmış Gönderim Ayarları"
+
+#: ../cron/cron-add.php:101
+msgid ""
+"<a target=\"_blank\" href=\"http://www.storeapps.org/docs/es-what-to-do-if-"
+"hosting-doesnt-support-cron-jobs/\">Hosting doesnt support cron jobs?</a>"
+msgstr ""
+"<a target=\"_blank\" href=\"http://www.storeapps.org/docs/es-what-to-do-if-"
+"hosting-doesnt-support-cron-jobs/\">Hostinginiz Planlanmış Gönderileri "
+"Desteklemiyor mu?</a>"
+
+#: ../compose/compose-edit.php:47 ../compose/compose-add.php:30
+msgid "Please enter template heading."
+msgstr "Lütfen şablon için başlık giriniz."
+
+#: ../compose/compose-edit.php:85 ../compose/compose-add.php:75 ..
+#: compose/compose-show.php:65
+msgid "Compose Mail"
+msgstr "E-posta Oluştur"
+
+#: ../compose/compose-edit.php:92 ../compose/compose-add.php:81
+msgid "Static Template (For Newsletter Email)"
+msgstr "Statik Şablon (Yeni E-posta Bülteni İçin)"
+
+#: ../compose/compose-edit.php:93 ../compose/compose-add.php:82
+msgid "Dynamic Template (For Notification Email)"
+msgstr "Dinamik Şablonlar (Bildirim E-postaları İçin)"
+
+#: ../compose/compose-edit.php:97 ../compose/compose-add.php:86
+msgid "Enter Mail Subject"
+msgstr "E-posta Konusunu Giriniz"
+
+#: ../compose/compose-edit.php:111 ../compose/compose-add.php:100
+msgid "Published"
+msgstr "Yayınlandı"
+
+#: ../compose/compose-edit.php:113 ../compose/compose-add.php:102
+msgid "Please select your mail status"
+msgstr "Lütfen e-posta durumunu seçiniz"
+
+#: ../compose/compose-show.php:78 ../compose/compose-show.php:86
+msgid "Email subject"
+msgstr "E-posta Konusu"
+
+#: ../export/export-email-address.php:32 ../export/export-email-address.php:36
+#: .. export/export-email-address.php:39
+msgid "Unexpected url submit has been detected"
+msgstr "Beklenmedik URL gönderimi belirlendi"
+
+#: ../job/es-unsubscribe.php:53 ../job/es-unsubscribe.php:60
+#: ../job/es-optin.php:56 ../job/es-optin.php:66
+msgid ""
+"Oops.. We are getting some technical error. Please try again or contact "
+"admin."
+msgstr ""
+"Afedersiniz.. Teknik bir sorun yaşıyoruz. Lütfen tekrar deneyin veya site "
+"yönetimine E-posta gönderin."
+
+#: ../job/es-optin.php:59
+msgid "This email address has already been confirmed."
+msgstr "E-Posta adresi seçilmedi."
+
+#: ../help/help.php:46
+msgid "Welcome to Email Subscribers!"
+msgstr "Email Subscribers'e Hoşgeldiniz!"
+
+#: ../help/help.php:47
+msgid ""
+"Thanks for installing and we hope you will enjoy using Email Subscribers."
+msgstr ""
+"Email Subscribers yüklediğiniz için teşekkür ederiz ve iyi vakit geçirmenizi "
+"temenni ederiz."
+
+#: ../help/help.php:51
+msgid "For more help and tips..."
+msgstr "Daha fazla yardım ve ipucu için..."
+
+#: ../help/help.php:95
+msgid "Frequently Asked Questions"
+msgstr "Sıkça Sorulan Sorular"
+
+#: ../help/help.php:141
+msgid ""
+"How to Configure and Send notification emails to subscribers when new posts "
+"are published?"
+msgstr ""
+"Yeni bir yazı yayınlandığında abonelere bildirimleri nasıl ayarlarım ve "
+"gönderirim?"
+
+#: ../help/help.php:147
+msgid "How to check Sent mails?"
+msgstr "Gönderilmiş bültenler nasıl kontrol edilir?"
+
+#: ../help/help.php:150
+msgid "How to Add/Update Existing Subscribers Group?"
+msgstr "Mevcut abone gurubuna nasıl ekleme yaparım veya güncellerim?"
+
+#: ../help/help.php:156
+msgid "How to show subscribe form inside a popup?"
+msgstr "Üyelik formunu nasıl açılır pencerede gösterebilirim?"
+
+#: ../sendmail/sendmail.php:39
+msgid "Please select your mail subject."
+msgstr "Lütfen E-posta konunuzu seçiniz."
+
+#: ../sendmail/sendmail.php:45
+msgid "Please select your mail type."
+msgstr "Lütfen E-posta tipinizi belirleyiniz."
+
+#: ../sendmail/sendmail.php:68
+msgid "Oops.. We are getting some error. mail not sending."
+msgstr "Afedersiniz, Bir hata oluşuyor, E-Posta gönderilemiyor!"
+
+#: ../sendmail/sendmail.php:95 ../sendmail/sendmail.php:193
+#: ../sendmail/sendmail. php:195 ../classes/es-register.php:151
+#: ../classes/es-register.php:152
+msgid "Send Email"
+msgstr "E-posta Gönder"
+
+#: ../sendmail/sendmail.php:137
+msgid "Send mail immediately"
+msgstr "Anında e-posta gönder"
+
+#: ../sendmail/sendmail.php:138
+msgid "Send mail via cron job"
+msgstr "Planlanmış gönderim ile e-posta gönder"
+
+#: ../classes/es-common.php:8
+msgid "<span style=\"color:#006600;font-weight:bold;\">Confirmed</span>"
+msgstr "<span style=\"color:#006600;font-weight:bold;\">Onaylandı</span>"
+
+#: ../classes/es-common.php:11
+msgid "<span style=\"color:#FF0000\">Unconfirmed</span>"
+msgstr "<span style=\"color:#FF0000\">Onaylanmadı</span>"
+
+#: ../classes/es-common.php:14
+msgid "<span style=\"color:#999900\">Unsubscribed</span>"
+msgstr "<span style=\"color:#999900\">Abonelik İptal Edildi</span>"
+
+#: ../classes/es-common.php:17
+msgid "<span style=\"color:#0000FF\">Single Opt In</span>"
+msgstr "<span style=\"color:#0000FF\">Çift Seçenek Girişi</span>"
+
+#: ../classes/es-common.php:20
+msgid "<span style=\"color:#00CC00;font-weight:bold\">Viewed</span>"
+msgstr "<span style=\"color:#00CC00;font-weight:bold\">Bakıldı</span>"
+
+#: ../classes/es-common.php:23
+msgid "<span style=\"color:#999900;\">Nodata</span>"
+msgstr "<span style=\"color:#999900;\">Bilgi Yok</span>"
+
+#: ../classes/es-common.php:26
+msgid "<span style=\"color:#FF0000\">Disable</span>"
+msgstr "<span style=\"color:#FF0000\">Devredışı</span>"
+
+#: ../classes/es-common.php:29
+msgid "<span style=\"color:#FF0000\">In Queue</span>"
+msgstr "<span style=\"color:#FF0000\">Sırada</span>"
+
+#: ../classes/es-common.php:32
+msgid "<span style=\"color:#00FF00;font-weight:bold;\">Sent</span>"
+msgstr "<span style=\"color:#00FF00;font-weight:bold;\">Gönderildi</span>"
+
+#: ../classes/es-common.php:35
+msgid "<span style=\"color:#ffd700;font-weight:bold;\">Cron Mail</span>"
+msgstr ""
+"<span style=\"color:#ffd700;font-weight:bold;\">Planlanmış Gönderi</span>"
+
+#: ../classes/es-common.php:38
+msgid "<span style=\"color:#993399;\">Instant Mail</span>"
+msgstr "<span style=\"color:#993399;\">Anında Gönderi</span>"
+
+#. Name of the plugin
+#: ../classes/es-register.php:139 ../classes/es-register.php:140
+msgid "Email Subscribers"
+msgstr "Email Subscribers"
+
+#: ../classes/es-register.php:142 ../classes/es-register.php:143
+msgid "Subscribers"
+msgstr "Aboneler"
+
+#: ../classes/es-register.php:145 ../classes/es-register.php:146
+msgid "Compose"
+msgstr "Oluştur"
+
+#: ../classes/es-register.php:154
+msgid "Cron"
+msgstr "Planlama"
+
+#: ../classes/es-register.php:155
+msgid "Cron Mail"
+msgstr "Planlanmış E-posta"
+
+#: ../classes/es-register.php:160 ../classes/es-register.php:161
+msgid "Roles"
+msgstr "Yetkiler"
+
+#: ../classes/es-register.php:166
+msgid "Help & Info"
+msgstr "Yardım & Bilgi"
+
+#: ../classes/es-register.php:167
+msgid "<span style=\"color:#f18500;font-weight:bolder;\">Help & Info"
+msgstr "<span style=\"color:#f18500;font-weight:bolder;\">Yardım & Bilgi"
+
+#: ../classes/es-register.php:178
+msgctxt "view-subscriber-enhanced-select"
+msgid "Please enter subscriber email address."
+msgstr "Lütfen abone e-posta adresi giriniz."
+
+#: ../classes/es-register.php:179
+msgctxt "view-subscriber-enhanced-select"
+msgid "Please select subscriber email status."
+msgstr "Lütfen abone e-posta durumunu seçiniz"
+
+#: ../classes/es-register.php:180
+msgctxt "view-subscriber-enhanced-select"
+msgid "Please select or create group for this subscriber."
+msgstr "Bu abone için bir grup seçiniz veya oluşturunuz."
+
+#: ../classes/es-register.php:181
+msgctxt "view-subscriber-enhanced-select"
+msgid "Do you want to delete this record?"
+msgstr "Bu kaydı silmek istiyor musunuz?"
+
+#: ../classes/es-register.php:182
+msgctxt "view-subscriber-enhanced-select"
+msgid "Please select the bulk action."
+msgstr "Lütfen toplu işlem seçiniz."
+
+#: ../classes/es-register.php:183
+msgctxt "view-subscriber-enhanced-select"
+msgid "Do you want to delete selected record(s)?"
+msgstr "Seçilen kaydı ve kayıtları silmek istiyor musunuz?"
+
+#: ../classes/es-register.php:184
+msgctxt "view-subscriber-enhanced-select"
+msgid "Are you sure you want to delete?"
+msgstr "Silmek istediğinizden emin misiniz?"
+
+#: ../classes/es-register.php:185
+msgctxt "view-subscriber-enhanced-select"
+msgid ""
+"Do you want to resend confirmation email? \\nAlso please note, this will "
+"update subscriber current status to 'Unconfirmed'."
+msgstr ""
+"Onay mailini tekrar göndermek ister misiniz? \\nAyrıca lütfen not ediniz. Bu "
+"seçenek abonelik durumunu \"Onaylanmadı\" olarak ayarlayacaktır."
+
+#: ../classes/es-register.php:186
+msgctxt "view-subscriber-enhanced-select"
+msgid "Please select new subscriber group."
+msgstr "Lütfen yeni abone grubu seçiniz."
+
+#: ../classes/es-register.php:187
+msgctxt "view-subscriber-enhanced-select"
+msgid "Do you want to update subscribers group?"
+msgstr "Abonelerin grubunu güncellemek istiyor musunuz?"
+
+#: ../classes/es-register.php:188
+msgctxt "view-subscriber-enhanced-select"
+msgid "Do you want to export the emails?"
+msgstr "E-posta adreslerini dışarı aktarmak istiyor musunuz?"
+
+#: ../classes/es-register.php:189
+msgctxt "view-subscriber-enhanced-select"
+msgid ""
+"Please select only csv file. Please check official website for csv "
+"structure.."
+msgstr ""
+"Lütfen sadece CSV dosyası seçiniz. Lütfen CSV dosya yapısı için resmi site "
+"adresini ziyaret ediniz."
+
+#: ../classes/es-register.php:197
+msgctxt "compose-enhanced-select"
+msgid "Please enter name for configuration."
+msgstr "Lütfen ayarlar için isim giriniz."
+
+#: ../classes/es-register.php:198
+msgctxt "compose-enhanced-select"
+msgid "Please select template for this configuration."
+msgstr "Lütfen ayarlar için bir şablon seçiniz."
+
+#: ../classes/es-register.php:199
+msgctxt "compose-enhanced-select"
+msgid "Do you want to delete this record?"
+msgstr "Bu kaydı silmek istiyor musunuz?"
+
+#: ../classes/es-register.php:207
+msgctxt "notification-enhanced-select"
+msgid "Please select subscribers group."
+msgstr "Lütfen abonelerin grubunu seçiniz."
+
+#: ../classes/es-register.php:208
+msgctxt "notification-enhanced-select"
+msgid ""
+"Please select notification mail subject. Use compose menu to create new."
+msgstr ""
+"Lütfen bildirim e-postasının konusunu seçiniz. Yeni oluşturmak için oluştur "
+"menüsünü kullanınız."
+
+#: ../classes/es-register.php:209
+msgctxt "notification-enhanced-select"
+msgid "Please select notification status."
+msgstr "Lütfen bildirim durumunu seçiniz."
+
+#: ../classes/es-register.php:210
+msgctxt "notification-enhanced-select"
+msgid "Do you want to delete this record?"
+msgstr "Bu kaydı silmek istiyor musunuz?"
+
+#: ../classes/es-register.php:218
+msgctxt "sendmail-enhanced-select"
+msgid "Please select your mail subject."
+msgstr "Lütfen e-posta konusunu seçiniz."
+
+#: ../classes/es-register.php:220
+msgctxt "sendmail-enhanced-select"
+msgid "Are you sure you want to send email to all selected email address?"
+msgstr ""
+"Tüm seçili e-posta adreslerine bildirim göndermek istediğinizden emin "
+"misiniz?"
+
+#: ../classes/es-register.php:228
+msgctxt "sentmail-enhanced-select"
+msgid "Do you want to delete this record?"
+msgstr "Bu kaydı silmek istiyor musunuz?"
+
+#: ../classes/es-register.php:229
+msgctxt "sentmail-enhanced-select"
+msgid "Do you want to delete all records except latest 10?"
+msgstr "Son 10 kayıt haricindeki tüm kayıtları silmek istiyor musunuz?"
+
+#: ../classes/es-register.php:237
+msgctxt "cron-enhanced-select"
+msgid "Please select enter number of mails you want to send per hour/trigger."
+msgstr "Lütfen her saat başı gönderilecek e-posta adedini seçiniz."
+
+#: ../classes/es-register.php:238
+msgctxt "cron-enhanced-select"
+msgid "Please enter the mail count, only number."
+msgstr "Lütfen e-posta sayısını giriniz.(Sadece rakamlar)"
+
+#: ../classes/es-register.php:251
+msgctxt "widget-enhanced-select"
+msgid "Please enter email address."
+msgstr "Lütfen geçerli bir e-posta adresi giriniz."
+
+#: ../classes/es-register.php:252
+msgctxt "widget-enhanced-select"
+msgid "Please provide a valid email address."
+msgstr "Lütfen geçerli bir e-posta adresi giriniz."
+
+#: ../classes/es-register.php:253
+msgctxt "widget-enhanced-select"
+msgid "loading..."
+msgstr "Lütfen bekleyiniz..."
+
+#: ../classes/es-register.php:254
+msgctxt "widget-enhanced-select"
+msgid "Cannot create XMLHTTP instance"
+msgstr "XMLHTTP örneği oluşturulamıyor"
+
+#: ../classes/es-register.php:255
+msgctxt "widget-enhanced-select"
+msgid "Subscribed successfully."
+msgstr "Üyelik tamamlandı."
+
+#: ../classes/es-register.php:257
+msgctxt "widget-enhanced-select"
+msgid "Email Address already exists."
+msgstr "E-posta adresi zaten eklenmiş."
+
+#: ../classes/es-register.php:258
+msgctxt "widget-enhanced-select"
+msgid "Oops.. Unexpected error occurred."
+msgstr "Beklenmeyen bir hata oluştu."
+
+#: ../classes/es-register.php:259
+msgctxt "widget-enhanced-select"
+msgid "Invalid email address."
+msgstr "Geçersiz mail adresi."
+
+#: ../classes/es-register.php:260
+msgctxt "widget-enhanced-select"
+msgid "Please try after some time."
+msgstr "Lütfen biraz sonra tekrar deneyiniz."
+
+#: ../classes/es-register.php:261
+msgctxt "widget-enhanced-select"
+msgid "There was a problem with the request."
+msgstr "Bir problem oluştu."
+
+#: ../classes/es-register.php:268
+msgctxt "widget-page-enhanced-select"
+msgid "Please enter email address."
+msgstr "Lütfen mail adresinizi giriniz."
+
+#: ../classes/es-register.php:269
+msgctxt "widget-page-enhanced-select"
+msgid "Please provide a valid email address."
+msgstr "Lütfen geçerli bir mail adresi giriniz."
+
+#: ../classes/es-register.php:270
+msgctxt "widget-page-enhanced-select"
+msgid "loading..."
+msgstr "Lütfen bekleyiniz..."
+
+#: ../classes/es-register.php:271
+msgctxt "widget-page-enhanced-select"
+msgid "Cannot create XMLHTTP instance"
+msgstr "XMLHTTP örneği oluşturulamıyor"
+
+#: ../classes/es-register.php:272
+msgctxt "widget-page-enhanced-select"
+msgid "Subscribed successfully."
+msgstr "Üyelik tamamlandı."
+
+#: ../classes/es-register.php:274
+msgctxt "widget-page-enhanced-select"
+msgid "Email Address already exists."
+msgstr "E-posta adresi zaten kayıtlı."
+
+#: ../classes/es-register.php:275
+msgctxt "widget-page-enhanced-select"
+msgid "Oops.. Unexpected error occurred."
+msgstr "Afedersiniz, Beklenmeyen bir hata oluştu."
+
+#: ../classes/es-register.php:276
+msgctxt "widget-page-enhanced-select"
+msgid "Invalid email address."
+msgstr "Geçersiz mail adresi."
+
+#: ../classes/es-register.php:277
+msgctxt "widget-page-enhanced-select"
+msgid "Please try after some time."
+msgstr "Lütfen bir süre sonra tekrar deneyiniz."
+
+#: ../classes/es-register.php:278
+msgctxt "widget-page-enhanced-select"
+msgid "There was a problem with the request."
+msgstr "İstediğiniz işlemde bir problem vardı."
+
+#: ../classes/es-register.php:499 ../classes/es-loadwidget.php:29
+msgid "Email *"
+msgstr "E-posta Adresiniz*"
+
+#: ../classes/es-register.php:504 ../classes/es-loadwidget.php:34
+msgid "Subscribe"
+msgstr "Üye Ol"
+
+#: ../classes/es-register.php:539
+msgid "Widget Title"
+msgstr "Bileşen Adı"
+
+#: ../classes/es-register.php:543
+msgid "Display Name Field"
+msgstr "İsim Alanını Göster"
+
+#: ../classes/es-register.php:550
+msgid "Short Description"
+msgstr "Kısa Açıklama"
+
+#: ../classes/es-register.php:552
+msgid "Short description about your subscription form."
+msgstr "Kayıt formunuz hakkında kısa açıklama."
+
+#: ../classes/es-register.php:555
+msgid "Subscriber Group"
+msgstr "Abone Grubu"

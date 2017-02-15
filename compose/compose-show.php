@@ -1,144 +1,135 @@
-<?php if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); } ?>
 <?php
+
+if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { 
+	die('You are not allowed to call this page directly.');
+}
+
 $es_c_email_subscribers_ver = get_option('email-subscribers');
-if ($es_c_email_subscribers_ver <> "2.9")
-{
+if ($es_c_email_subscribers_ver <> "2.9") {
 	?>
 	<div class="error fade">
 		<p>
 		Note: You have recently upgraded the plugin and your tables are not sync. 
-		Please <a title="Sync plugin tables." href="<?php echo ES_ADMINURL; ?>?page=es-settings&amp;ac=sync"><?php _e('Click Here', 'email-subscribers'); ?></a> to sync the table. 
-		This is mandatory and it will not affect your data.
+		Please <a title="Sync plugin tables." href="<?php echo ES_ADMINURL; ?>?page=es-settings&amp;ac=sync"><?php echo __( 'Click Here', ES_TDOMAIN ); ?></a> to sync the table. This is mandatory and it will not affect your data.
 		</p>
 	</div>
 	<?php
 }
 
 // Form submitted, check the data
-if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes')
-{
+if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 	$did = isset($_GET['did']) ? $_GET['did'] : '0';
 	es_cls_security::es_check_number($did);
-	
+
 	$es_success = '';
 	$es_success_msg = FALSE;
-	
+
 	// First check if ID exist with requested ID
 	$result = es_cls_compose::es_template_count($did);
-	if ($result != '1')
-	{
-		?><div class="error fade"><p><strong><?php _e('Oops, selected details doesnt exist.', 'email-subscribers'); ?></strong></p></div><?php
-	}
-	else
-	{
+	if ($result != '1') {
+		?><div class="error fade">
+			<p><strong>
+				<?php echo __( 'Oops, selected details does not exists.', ES_TDOMAIN ); ?>
+			</strong></p>
+		</div><?php
+	} else {
 		// Form submitted, check the action
-		if (isset($_GET['ac']) && $_GET['ac'] == 'del' && isset($_GET['did']) && $_GET['did'] != '')
-		{
+		if (isset($_GET['ac']) && $_GET['ac'] == 'del' && isset($_GET['did']) && $_GET['did'] != '') {
 			//	Just security thingy that wordpress offers us
 			check_admin_referer('es_form_show');
-			
+
 			//	Delete selected record from the table
 			es_cls_compose::es_template_delete($did);
-			
+
 			//	Set success message
 			$es_success_msg = TRUE;
-			$es_success = __('Selected record was successfully deleted.', 'email-subscribers');
+			$es_success = __( 'Selected record deleted.', ES_TDOMAIN );
 		}
 	}
 	
-	if ($es_success_msg == TRUE)
-	{
-		?><div class="updated fade"><p><strong><?php echo $es_success; ?></strong></p></div><?php
+	if ($es_success_msg == TRUE) {
+		?><div class="notice notice-success is-dismissible">
+			<p><strong>
+				<?php echo $es_success; ?>
+			</strong></p>
+		</div><?php
 	}
 }
+
 ?>
-<script language="javaScript" src="<?php echo ES_URL; ?>compose/compose.js"></script>
+
 <div class="wrap">
-  <div id="icon-plugins" class="icon32"></div>
-    <h2><?php _e(ES_PLUGIN_DISPLAY, 'email-subscribers'); ?></h2>
-	<h3><?php _e('Compose Mail', 'email-subscribers'); ?>  
-	<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-compose&amp;ac=add"><?php _e('Add New', 'email-subscribers'); ?></a></h3>
-    <div class="tool-box">
-	<?php
-	$myData = array();
-	$myData = es_cls_compose::es_template_select(0);
-	?>
-	<form name="frm_es_display" method="post">
-      <table width="100%" class="widefat" id="straymanage">
-        <thead>
-          <tr>
-			<th scope="col"><?php _e('Email subject', 'email-subscribers'); ?></th>
-			<th scope="col"><?php _e('Status', 'email-subscribers'); ?></th>
-            <th scope="col"><?php _e('Type', 'email-subscribers'); ?></th>
-			<th scope="col"><?php _e('Action', 'email-subscribers'); ?></th>
-          </tr>
-        </thead>
-		<tfoot>
-          <tr>
-			<th scope="col"><?php _e('Email subject', 'email-subscribers'); ?></th>
-			<th scope="col"><?php _e('Status', 'email-subscribers'); ?></th>
-            <th scope="col"><?php _e('Type', 'email-subscribers'); ?></th>
-			<th scope="col"><?php _e('Action', 'email-subscribers'); ?></th>
-          </tr>
-        </tfoot>
-		<tbody>
-			<?php 
-			$i = 0;
-			$displayisthere = FALSE;
-			if(count($myData) > 0)
-			{
-				$i = 1;
-				foreach ($myData as $data)
-				{
-					?>
-					<tr class="<?php if ($i&1) { echo'alternate'; } else { echo ''; }?>">
-					  	<td><?php echo esc_html(stripslashes($data['es_templ_heading'])); ?></td>
-						<!--XTEC ************ MODIFICAT - Localization support -->
-						<!-- 2015.10.01 @dgras-->
-						<td><?php echo __($data['es_templ_status'], 'email-subscribers'); ?></td>
-						<td><?php echo __($data['es_email_type'], 'email-subscribers'); ?></td>
-						<!--************ ORIGINAL	-->
-<!--
-						<td><?php echo $data['es_templ_status']; ?></td>
-						<td><?php echo $data['es_email_type']; ?></td>
--->
-						<!--************ FI-->
-						<td>
-						<a title="Edit" href="<?php echo ES_ADMINURL; ?>?page=es-compose&amp;ac=edit&amp;did=<?php echo $data['es_templ_id']; ?>"><?php _e('Edit', 'email-subscribers'); ?></a> 
-						| <a onClick="javascript:_es_delete('<?php echo $data['es_templ_id']; ?>')" href="javascript:void(0);"><?php _e('Delete', 'email-subscribers'); ?></a>
-						| <a title="Preview" href="<?php echo ES_ADMINURL; ?>?page=es-compose&amp;ac=preview&amp;did=<?php echo $data['es_templ_id']; ?>"><?php _e('Preview', 'email-subscribers'); ?></a>
-						</td>
+	<h2 style="margin-bottom:1em;">
+		<?php echo __( 'Compose', ES_TDOMAIN ); ?>  
+		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-compose&amp;ac=add"><?php echo __( 'Add New', ES_TDOMAIN ); ?></a>
+		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
+	</h2>
+	<div class="tool-box">
+		<?php
+			$myData = array();
+			$myData = es_cls_compose::es_template_select(0);
+		?>
+		<form name="frm_es_display" method="post">
+			<table width="100%" class="widefat" id="straymanage">
+				<thead>
+					<tr>
+						<th scope="col"><?php echo __( 'Email subject', ES_TDOMAIN ); ?></th>
+						<th scope="col" style="display:none;"><?php echo __( 'Status', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Type', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Actions', ES_TDOMAIN ); ?></th>
 					</tr>
-					<?php
-					$i = $i+1;
-				}
-			}
-			else
-			{
-				?><tr><td colspan="4" align="center"><?php _e('No records available.', 'email-subscribers'); ?></td></tr><?php 
-			}
-			?>
-		</tbody>
-        </table>
-		<?php wp_nonce_field('es_form_show'); ?>
-		<input type="hidden" name="frm_es_display" value="yes"/>
-      </form>	
-	  <div class="tablenav">
-		  <h2>
-			<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-compose&amp;ac=add"><?php _e('Add New', 'email-subscribers'); ?></a>
-			<a class="button add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php _e('Help', 'email-subscribers'); ?></a>
-		  </h2>
-	  </div>
-	  <div style="height:10px;"></div>
-<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
-<!-- 2015.10.01 @dgras-->
-<?php if(is_xtec_super_admin()) : ?>
-	<p class="description"><?php echo ES_OFFICIAL; ?></p>
-<?php endif; ?>
-<!--************ ORIGINAL	-->
-<!--
-	<p class="description"><?php echo ES_OFFICIAL; ?></p>
--->
-<!--************ FI-->
+				</thead>
+				<tfoot>
+					<tr>
+						<th scope="col"><?php echo __( 'Email subject', ES_TDOMAIN ); ?></th>
+						<th scope="col" style="display:none;"><?php echo __( 'Status', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Type', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Actions', ES_TDOMAIN ); ?></th>
+					</tr>
+				</tfoot>
+				<tbody>
+					<?php 
+						$i = 0;
+						$displayisthere = FALSE;
+						if(count($myData) > 0) {
+							$i = 1;
+							foreach ($myData as $data) {
+							?>
+								<tr class="<?php if ($i&1) { echo'alternate'; } else { echo ''; }?>">
+									<td><?php echo esc_html(stripslashes($data['es_templ_heading'])); ?></td>
+									<td style="display:none;"><?php echo $data['es_templ_status']; ?></td>
+									<td><?php echo $data['es_email_type']; ?></td>
+									<td>
+										<a title="Edit" href="<?php echo ES_ADMINURL; ?>?page=es-compose&amp;ac=edit&amp;did=<?php echo $data['es_templ_id']; ?>"><?php echo __( 'Edit', ES_TDOMAIN ); ?></a> 
+										| <a onClick="javascript:_es_delete('<?php echo $data['es_templ_id']; ?>')" href="javascript:void(0);"><?php echo __( 'Delete', ES_TDOMAIN ); ?></a>
+										| <a title="Preview" href="<?php echo ES_ADMINURL; ?>?page=es-compose&amp;ac=preview&amp;did=<?php echo $data['es_templ_id']; ?>"><?php echo __( 'Preview', ES_TDOMAIN ); ?></a>
+									</td>
+								</tr>
+							<?php
+								$i = $i+1;
+							}
+						} else {
+							?><tr>
+								<td colspan="4" align="center"><?php echo __( 'No records available.', ES_TDOMAIN ); ?></td>
+							</tr><?php 
+						}
+					?>
+				</tbody>
+			</table>
+			<?php wp_nonce_field('es_form_show'); ?>
+			<input type="hidden" name="frm_es_display" value="yes"/>
+		</form>
 	</div>
+	<div style="height:10px;"></div>
+
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ ORIGINAL	-->
+	<!--
+	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	-->
+	<!--************ FI-->
 </div>
