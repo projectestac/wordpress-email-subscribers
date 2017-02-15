@@ -98,7 +98,14 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 								<tr class="<?php if ($i&1) { echo'alternate'; } else { echo ''; }?>">
 									<td><?php echo esc_html(stripslashes($data['es_templ_heading'])); ?></td>
 									<td style="display:none;"><?php echo $data['es_templ_status']; ?></td>
+									<!-- XTEC ************ MODIFICAT - Add language support -->
+									<!-- 2017.02.16 @xaviernietosanchez -->
+									<!-- ************ ORIGINAL -->
+									<td><?php _e( $data['es_email_type'], ES_TDOMAIN ); ?></td>
+									<!--
 									<td><?php echo $data['es_email_type']; ?></td>
+									-->
+									<!-- ************ FI -->
 									<td>
 										<a title="Edit" href="<?php echo ES_ADMINURL; ?>?page=es-compose&amp;ac=edit&amp;did=<?php echo $data['es_templ_id']; ?>"><?php echo __( 'Edit', ES_TDOMAIN ); ?></a> 
 										| <a onClick="javascript:_es_delete('<?php echo $data['es_templ_id']; ?>')" href="javascript:void(0);"><?php echo __( 'Delete', ES_TDOMAIN ); ?></a>

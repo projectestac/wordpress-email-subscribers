@@ -173,7 +173,16 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 									<?php echo __( 'Select CSV file', ES_TDOMAIN ); ?>
 									<p class="description">
 										<?php echo __( 'Check CSV structure ', ES_TDOMAIN ); ?>
+
+										<!-- XTEC ************ MODIFICAT - Replace link to help -->
+										<!-- 2017.02.15 @xaviernietosanchez -->
+										<a target="_blank" href="http://agora.xtec.cat/moodle/moodle/mod/glossary/view.php?id=1741&mode=entry&hook=2501"><?php echo __( 'from here', ES_TDOMAIN ); ?></a>
+										<!-- ************ ORIGINAL -->
+										<!--
 										<a target="_blank" href="http://www.icegram.com/documentation/es-how-to-import-or-export-email-addresses/"><?php echo __( 'from here', ES_TDOMAIN ); ?></a>
+										-->
+										<!-- ************ FI -->
+
 									</p>
 								</label>
 							</th>

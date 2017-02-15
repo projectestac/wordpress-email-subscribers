@@ -90,8 +90,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 				<!--XTEC ************ MODIFICAT - Localization support-->
 				<!--2015.10.06 @dgras-->
-			  	<option value='Static Template' <?php if($form['es_email_type']=='Static Template') { echo 'selected="selected"' ; } ?>><?php _e('Static Template (For Newsletter Email)', 'email-subscribers') ?></option>
-			  	<option value='Dynamic Template' <?php if($form['es_email_type']=='Dynamic Template') { echo 'selected="selected"' ; } ?>><?php _e('Dynamic Template (For Notification Email)', 'email-subscribers')?></option>
+			  	<option value='Static Template' <?php if($form['es_email_type']=='Static Template') { echo 'selected="selected"' ; } ?>><?php _e('Static Template (For Newsletter Email)', ES_TDOMAIN) ?></option>
+			  	<option value='Dynamic Template' <?php if($form['es_email_type']=='Dynamic Template') { echo 'selected="selected"' ; } ?>><?php _e('Dynamic Template (For Notification Email)', ES_TDOMAIN)?></option>
 				<!--************ ORIGINAL-->
 				<!--				
 				<option value='Static Template' <?php if( $form['es_email_type'] == 'Static Template' ) { echo 'selected="selected"' ; } ?>><?php echo __( 'Static Template (For Newsletter Emails)', ES_TDOMAIN ); ?></option>
@@ -110,7 +110,15 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<?php $settings_body = array( 'textarea_rows' => 25 ); ?>
 			<?php wp_editor(stripslashes($form['es_templ_body']), "es_templ_body", $settings_body);?>
 			<p>
+
+				<!-- XTEC ************ MODIFICAT - Hidden external link -->
+				<!-- 2017.02.15 @xaviernietosanchez -->
+				<?php echo sprintf(__( '%s : ###NAME###, ###EMAIL###, ###DATE###, ###POSTTITLE###, ###POSTLINK###, ###POSTLINK-WITHTITLE###, ###POSTLINK-ONLY###, ###POSTIMAGE###, ###POSTDESC###, ###POSTFULL###', ES_TDOMAIN ), __( 'Available Keywords', ES_TDOMAIN ) ); ?><br />
+				<!-- ************ ORIGINAL -->
+				<!--
 				<?php echo sprintf(__( '%s : ###NAME###, ###EMAIL###, ###DATE###, ###POSTTITLE###, ###POSTLINK###, ###POSTLINK-WITHTITLE###, ###POSTLINK-ONLY###, ###POSTIMAGE###, ###POSTDESC###, ###POSTFULL###', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-what-are-static-templates-and-dynamic-templates/" target="_blank">' . __( 'Available Keywords', ES_TDOMAIN ) . '</a>' ); ?><br />
+				-->
+				<!-- ************ FI -->
 			</p>
 
 			<div class="template_status" style="display:none;">

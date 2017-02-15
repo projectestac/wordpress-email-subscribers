@@ -154,7 +154,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 								<!-- XTEC ************ AFEGIT - Add a comment to help understand the functionality of adding groups -->
 								<!-- 2015.10.12 @dgras-->
-								<p><?php _e('It is necessary to add an email to create a new group.', 'email-subscribers'); ?></p>
+								<p class="description">(<?php _e('It is necessary to add an email to create a new group.', 'email-subscribers', ES_TDOMAIN ); ?>)</p>
 								<!--************ FI-->
 
 							</th>

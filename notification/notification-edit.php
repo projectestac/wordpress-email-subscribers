@@ -152,7 +152,6 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 								}
 								?>
 							</select>
-							
 						</td>
 					</tr>
 					<tr>
@@ -227,9 +226,9 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 						</td>
 					</tr>
 
-					<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+					<!--XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
 					<!-- 2015.10.12 @dgras-->
-					<?php if(is_xtec_super_admin()) : ?>
+					<?php if(is_xtec_super_admin()) { ?>
 					<tr>
 						<th scope="row">
 							<label for="tag-link">
@@ -273,7 +272,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 							?>
 						</td>
 					</tr>
-					-->
+					<?php } ?>
 					<!--************ FI-->
 
 					<tr>
@@ -287,11 +286,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 								<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
 								<!-- 2015.10.12 @dgras-->
-						  		<option value='Enable' <?php if($form['es_note_status']=='Enable') { echo 'selected="selected"' ; } ?>><?php _e('Send mail immediately when new post is published.', 'email-subscribers') ?></option>
+						  		<option value='Enable' <?php if($form['es_note_status']=='Enable') { echo 'selected="selected"' ; } ?>><?php _e('Send mail immediately when new post is published.', ES_TDOMAIN) ?></option>
 								<?php if(is_xtec_super_admin()) : ?>
-									<option value='Cron' <?php if($form['es_note_status']=='Cron') { echo 'selected="selected"' ; } ?>><?php _e('Add to cron when new post is published and send via cron job.', 'email-subscribers') ?></option>
+									<option value='Cron' <?php if($form['es_note_status']=='Cron') { echo 'selected="selected"' ; } ?>><?php _e('Add to cron when new post is published and send via cron job.', ES_TDOMAIN) ?></option>
 								<?php endif; ?>
-						  		<option value='Disable' <?php if($form['es_note_status']=='Disable') { echo 'selected="selected"' ; } ?>><?php _e('Disable notification.', 'email-subscribers')?></option>
+						  		<option value='Disable' <?php if($form['es_note_status']=='Disable') { echo 'selected="selected"' ; } ?>><?php _e('Disable notification.', ES_TDOMAIN)?></option>
 								<!--************ ORIGINAL	-->
 								<!--
 								<option value='Enable' <?php if($form['es_note_status']=='Enable') { echo 'selected="selected"' ; } ?>><?php echo __( 'Send mail immediately when new post is published', ES_TDOMAIN ); ?></option>
@@ -316,9 +315,9 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
 	<!-- 2015.10.01 @dgras-->
-	<?php if(is_xtec_super_admin()) : ?>
+	<?php if(is_xtec_super_admin()) { ?>
 		<p class="description"><?php echo ES_OFFICIAL; ?></p>
-	<?php endif; ?>
+	<?php } ?>
 	<!--************ ORIGINAL	-->
 	<!--
 	<p class="description"><?php echo ES_OFFICIAL; ?></p>
