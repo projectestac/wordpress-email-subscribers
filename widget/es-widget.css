@@ -1,39 +1,26 @@
-.es_caption 
-{
+.es_caption {
 	padding-bottom:5px;
 	padding-top:5px;
 	padding-right:5px;
 }
-.es_msg 
-{
+.es_msg {
 	padding-top:5px;
 	padding-bottom:5px;
 	color:#F00;
 }
-.es_textbox 
-{
-	padding-bottom:inherit;
+.es_textbox {
+	padding-bottom:10px;
 }
-.es_button 
-{
-	padding-top:inherit;
+.es_button {
+	padding-top:10px;
 	padding-bottom:5px;
-        text-align: right;
 }
-.es_textbox_class 
-{
+.es_textbox_class {
 	width:200px;
 }
-.es_textbox_button 
-{
-	width:100px;
+.es_textbox_button {
+	width:130px;
 }
-.es_lablebox
-{
+.es_lablebox {
 	padding-bottom:3px;
-}
-
-.es_form
-{
-        padding:0 30px 0 5px;
 }

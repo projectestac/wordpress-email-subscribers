@@ -1,9 +1,11 @@
-<?php if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { die('You are not allowed to call this page directly.'); } ?>
 <?php
-class es_cls_settings
-{
-	public static function es_setting_select($id = 1)
-	{
+
+if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
+	die('You are not allowed to call this page directly.');
+}
+
+class es_cls_settings {
+	public static function es_setting_select($id = 1) {
 		global $wpdb;
 		$prefix = $wpdb->prefix;
 		$arrRes = array();
@@ -12,26 +14,21 @@ class es_cls_settings
 		$arrRes = $wpdb->get_row($sSql, ARRAY_A);
 		return $arrRes;
 	}
-	
-	public static function es_setting_count($id = "")
-	{
+
+	public static function es_setting_count($id = "") {
 		global $wpdb;
 		$prefix = $wpdb->prefix;
 		$result = '0';
-		if($id > 0)
-		{
+		if($id > 0) {
 			$sSql = $wpdb->prepare("SELECT COUNT(*) AS `count` FROM `".$prefix."es_pluginconfig` WHERE `es_c_id` = %s", array($id));
-		}
-		else
-		{
+		} else {
 			$sSql = "SELECT COUNT(*) AS `count` FROM `".$prefix."es_pluginconfig`";
 		}
 		$result = $wpdb->get_var($sSql);
 		return $result;
 	}
-	
-	public static function es_setting_update($data = array())
-	{
+
+	public static function es_setting_update($data = array()) {
 		global $wpdb;
 		$prefix = $wpdb->prefix;
 		$sSql = $wpdb->prepare("UPDATE `".$prefix."es_pluginconfig` SET 
@@ -51,4 +48,3 @@ class es_cls_settings
 		return "sus";
 	}
 }
-?>

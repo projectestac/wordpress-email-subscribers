@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS es_emaillist (
   es_email_group VARCHAR(255) NOT NULL default 'Public',
   es_email_guid VARCHAR(255) NOT NULL,
   PRIMARY KEY  (es_email_id)
-) ENGINE=MyISAM
+) ENGINE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci*/;
 //************ FI */
 
 -- SQLQUERY ---
