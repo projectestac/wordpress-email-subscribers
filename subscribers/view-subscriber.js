@@ -65,30 +65,26 @@ function _es_search_count_action(cnt) {
 }
 
 function _es_bulkaction() {
-	if(document.frm_es_display.bulk_action.value=="") {
+	if (document.frm_es_display.bulk_action.value=="") {
 		alert(es_view_subscriber_notices.es_subscriber_bulk_action); 
 		document.frm_es_display.bulk_action.focus();
 		return false;
 	}
 
-	if(document.frm_es_display.bulk_action.value == "delete") {
-		if(confirm(es_view_subscriber_notices.es_subscriber_delete_records)) {
-			if(confirm(es_view_subscriber_notices.es_subscriber_confirm_delete)) {
-				document.getElementById("frm_es_bulkaction").value = 'delete';
-				document.getElementById("searchquery_cnt").value = document.frm_es_display.searchquery_cnt.value;
-				document.getElementById("searchquery_group").value = document.frm_es_display.searchquery_group.value;
-				document.getElementById("searchquery_sts").value = document.frm_es_display.searchquery_sts.value;
-				document.getElementById("wp_create_nonce").value = document.frm_es_display.wp_create_nonce.value;
-				document.frm_es_display.action="admin.php?page=es-view-subscribers";
-				document.frm_es_display.submit();
-			} else {
-				return false;
-			}
+	if (document.frm_es_display.bulk_action.value == "delete") {
+		if (confirm(es_view_subscriber_notices.es_subscriber_confirm_delete)) {
+			document.getElementById("frm_es_bulkaction").value = 'delete';
+			document.getElementById("searchquery_cnt").value = document.frm_es_display.searchquery_cnt.value;
+			document.getElementById("searchquery_group").value = document.frm_es_display.searchquery_group.value;
+			document.getElementById("searchquery_sts").value = document.frm_es_display.searchquery_sts.value;
+			document.getElementById("wp_create_nonce").value = document.frm_es_display.wp_create_nonce.value;
+			document.frm_es_display.action="admin.php?page=es-view-subscribers";
+			document.frm_es_display.submit();
 		} else {
 			return false;
 		}
-	} else if(document.frm_es_display.bulk_action.value == "resend") {
-		if(confirm(es_view_subscriber_notices.es_subscriber_resend_email)) {
+	} else if (document.frm_es_display.bulk_action.value == "resend") {
+		if (confirm(es_view_subscriber_notices.es_subscriber_resend_email)) {
 			document.getElementById("frm_es_bulkaction").value = 'resend';
 			document.getElementById("searchquery_cnt").value = document.frm_es_display.searchquery_cnt.value;
 			document.getElementById("searchquery_group").value = document.frm_es_display.searchquery_group.value;
@@ -99,15 +95,33 @@ function _es_bulkaction() {
 		} else {
 			return false;
 		}
-	} else if(document.frm_es_display.bulk_action.value == "groupupdate") {
-		if(document.frm_es_display.es_email_group.value=="") {
+	} else if (document.frm_es_display.bulk_action.value == "groupupdate") {
+		if (document.frm_es_display.es_email_group.value == "") {
 			alert(es_view_subscriber_notices.es_subscriber_new_group);
 			document.frm_es_display.es_email_group.focus();
 			return false;
 		}
 
-		if(confirm(es_view_subscriber_notices.es_subscriber_group_update)) {
+		if (confirm(es_view_subscriber_notices.es_subscriber_group_update)) {
 			document.getElementById("frm_es_bulkaction").value = 'groupupdate';
+			document.getElementById("searchquery_cnt").value = document.frm_es_display.searchquery_cnt.value;
+			document.getElementById("searchquery_group").value = document.frm_es_display.searchquery_group.value;
+			document.getElementById("searchquery_sts").value = document.frm_es_display.searchquery_sts.value;
+			document.getElementById("wp_create_nonce").value = document.frm_es_display.wp_create_nonce.value;
+			document.frm_es_display.action="admin.php?page=es-view-subscribers";
+			document.frm_es_display.submit();
+		} else {
+			return false;
+		}
+	} else if (document.frm_es_display.bulk_action.value == "updatestatus") {
+		if (document.frm_es_display.es_update_status.value == "") {
+			alert(es_view_subscriber_notices.es_subscriber_new_status);
+			document.frm_es_display.es_email_group.focus();
+			return false;
+		}
+
+		if (confirm(es_view_subscriber_notices.es_subscriber_status_update)) {
+			document.getElementById("frm_es_bulkaction").value = 'updatestatus';
 			document.getElementById("searchquery_cnt").value = document.frm_es_display.searchquery_cnt.value;
 			document.getElementById("searchquery_group").value = document.frm_es_display.searchquery_group.value;
 			document.getElementById("searchquery_sts").value = document.frm_es_display.searchquery_sts.value;
@@ -125,6 +139,11 @@ function _es_action_visible(val) {
 		document.getElementById('es_email_group').disabled = false;
 	} else {
 		document.getElementById('es_email_group').disabled = true;
+	}
+	if(val == "updatestatus") {
+		document.getElementById('es_update_status').disabled = false;
+	} else {
+		document.getElementById('es_update_status').disabled = true;
 	}
 }
 

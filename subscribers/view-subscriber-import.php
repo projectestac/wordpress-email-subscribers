@@ -87,7 +87,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 				}
 
 				?>
-				<div class="updated fade">
+				<div class="notice notice-success is-dismissible">
 					<p><strong><?php echo $inserted; ?> <?php echo __( 'email imported.', ES_TDOMAIN ); ?></strong></p>
 					<p><strong><?php echo $duplicate; ?> <?php echo __( 'email already exists.', ES_TDOMAIN ); ?></strong></p>
 					<p><strong><?php echo $invalid; ?> <?php echo __( 'email are invalid.', ES_TDOMAIN ); ?></strong></p>
@@ -119,7 +119,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 	if ($es_error_found == FALSE && isset($es_success[0]) == TRUE) {
 		?>
-		<div class="updated fade">
+		<div class="notice notice-success is-dismissible">
 			<p><strong>
 				<?php echo $es_success; ?><a href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers">
 				<?php echo __( 'Click here', ES_TDOMAIN ); ?></a> <?php echo __( ' to view details.', ES_TDOMAIN ); ?>
@@ -131,21 +131,19 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 	?>
 
 	<style type="text/css">
-	.form-table th {
-		width:260px;
-	}
+		.form-table th {
+			width:300px;
+		}
 	</style>
 
-	<div class="form-wrap">
-		<div id="icon-plugins" class="icon32"></div>
-		<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-		<h3>
+	<div class="wrap">
+		<h2>
 			<?php echo __( 'Import Email Addresses', ES_TDOMAIN ); ?>
 			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php echo __( 'Add New Subscriber', ES_TDOMAIN ); ?></a>
 			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=export"><?php echo __( 'Export', ES_TDOMAIN ); ?></a>
 			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php echo __( 'Sync', ES_TDOMAIN ); ?></a>
 			<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-		</h3>
+		</h2>
 		<div class="tool-box">
 			<form name="form_addemail" id="form_addemail" method="post" action="#" onsubmit="return _es_importemail()" enctype="multipart/form-data">
 				<table class="form-table">
@@ -154,9 +152,9 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 							<th scope="row">
 								<label for="tag-image">
 									<?php echo __( 'Select CSV file', ES_TDOMAIN ); ?>
-									<p>
+									<p class="description">
 										<?php echo __( 'Check CSV structure ', ES_TDOMAIN ); ?>
-										<a target="_blank" href="http://www.icegram.com/documentation/es-how-to-import-or-export-email-address-to-subscriber-list/"><?php echo __( 'from here', ES_TDOMAIN ); ?></a>
+										<a target="_blank" href="http://www.icegram.com/documentation/es-how-to-import-or-export-email-addresses/"><?php echo __( 'from here', ES_TDOMAIN ); ?></a>
 									</p>
 								</label>
 							</th>
@@ -208,7 +206,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 				</table>
 				<input type="hidden" name="es_form_submit" value="yes"/>
 				<p style="padding-top:10px;">
-					<input type="submit" class="button add-new-h2" value="<?php echo __( 'Import', ES_TDOMAIN ); ?>" />
+					<input type="submit" class="button-primary" value="<?php echo __( 'Import', ES_TDOMAIN ); ?>" />
 				</p>
 				<?php wp_nonce_field('es_form_add'); ?>
 			</form>

@@ -4,6 +4,38 @@ Author		: Icegram
 Author URI	: http://www.icegram.com/
 License		: GPLv3
 
+********************************Version 3.2.6************************************************************
+
+* New: WordPress 4.7.1 compatible
+* New: Changed terminologies of admin menus for better accessibility
+* Fix: Sanitize input fields while submitting subscribe form - Thanks to [Callibrator Pentester](http://hackholics.com/)
+* Fix: Made all admin success notices to be dismissible
+* Update: UI improvements
+* Update: Text correction & improvements
+* Update: POT file
+
+********************************Version 3.2.5************************************************************
+
+* New: Added action 'es_message_head' for developers to insert custom CSS into subscribe and unsubscribe message
+* New: Translation for Catalan (ca) language added (Thanks to Jordi)
+* Fix: Exporting subscribers was giving 'Unexpected url submit has been detected' error
+* Update: Translation for Czech (cs_CZ) language updated (Thanks to Tomas & Martin)
+* Update: Translation for Spanish (es_ES) language updated (Thanks to David Bravo)
+* Update: Translation for Lithuanian (lt_LT) language updated (Thanks to Andrius)
+* Update: Translation for Polish (pl_PL) language updated (Thanks to Witold)
+* Update: Translation for Dutch (nl_NL) language removed
+* Update: Translation for Serbian (sr_RS) language removed
+
+********************************Version 3.2.4************************************************************
+
+* New: Bulk update Subscribers Status
+* Fix: Single Opt In subscribers also showing Resend Confirmation link on Subscribers page
+* Fix: Incorrect documentation links
+* Update: Tested upto WordPress 4.7
+* Update: Translation for Czech (cs_CZ) language updated (inside plugin & on translate.wordpress.org) (Thanks to Tomas & Martin)
+* Update: POT file
+* Tweak: Show only one notice while deleting subscribers
+
 ********************************Version 3.2.3************************************************************
 
 * New: New contributor name has been added

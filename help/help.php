@@ -46,21 +46,24 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 		<h1><?php echo __( 'Welcome to Email Subscribers!', ES_TDOMAIN ); ?></h1>
 		<div><?php echo __( 'Thanks for installing and we hope you will enjoy using Email Subscribers.', ES_TDOMAIN ); ?></div>
 		<div class="wrap">
-	        <table class="form-table">
-	             <tr>
-	                <th scope="row"><?php echo __( 'For more help and tips...', ES_TDOMAIN ); ?></th>
-	                <td>
-	                    <form name="klawoo_subscribe" action="#" method="POST" accept-charset="utf-8">
-	                        <input class="es-ltr" type="text" name="email" id="email" placeholder="Email" />
-	                        <input type="hidden" name="list" value="hN8OkYzujUlKgDgfCTEcIA"/>
-	                        <input type="submit" name="submit" id="submit" class="button button-hero" value="Subscribe">
-	                        <br/>
-	                        <div id="klawoo_response"></div>
-	                    </form>
-	                </td>
-	            </tr>
-	        </table>
+			<table class="form-table">
+				<tr>
+					<th scope="row"><?php echo __( 'For more help and tips...', ES_TDOMAIN ); ?></th>
+					<td>
+						<form name="klawoo_subscribe" action="#" method="POST" accept-charset="utf-8">
+							<input class="es-ltr" type="text" name="email" id="email" placeholder="Email" />
+							<input type="hidden" name="list" value="hN8OkYzujUlKgDgfCTEcIA"/>
+							<input type="submit" name="submit" id="submit" class="button button-hero" value="Subscribe">
+							<br/>
+							<div id="klawoo_response"></div>
+						</form>
+					</td>
+				</tr>
+			</table>
 		</div>
+	</div>
+	<div class="wrap" style="text-align:right;">
+		<?php echo sprintf(__( 'Like Email Subscribers? Please consider %s.', ES_TDOMAIN ), '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CPTHCDC382KVA" target="_blank">' . __( 'contributing to us', ES_TDOMAIN ) .'</a>' ); ?>
 	</div>
 
     <script type="text/javascript">
@@ -120,10 +123,10 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			</p>
 		</li>
 		<li class="es_faq">
-			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-import-or-export-email-addresses/" target="_blank">' . __( 'How to Import or Export Email Addresses?', ES_TDOMAIN ) . '</a>' ); ?>
+			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-general-plugin-settings/" target="_blank">' . __( 'General Plugin Settings', ES_TDOMAIN ) . '</a>' . __( ' (How to modify the existing email content like Confirmation email, Welcome email, Admin emails)', ES_TDOMAIN ) ); ?>
 		</li>
 		<li class="es_faq">
-			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-general-plugin-settings/" target="_blank">' . __( 'General Plugin Settings', ES_TDOMAIN ) . '</a>' . __( ' (How to modify the existing emails content like Opt-in mail, Welcome mail, Admin mails)', ES_TDOMAIN ) ); ?>
+			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-import-or-export-email-addresses/" target="_blank">' . __( 'How to Import or Export Email Addresses?', ES_TDOMAIN ) . '</a>' ); ?>
 		</li>
 		<li class="es_faq">
 			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-change-update-translate-any-texts-from-email-subscribers/" target="_blank">' . __( 'How to change/update/translate any texts from Email Subscribers?', ES_TDOMAIN ) . '</a>' ); ?>
@@ -135,22 +138,22 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-what-are-static-templates-and-dynamic-templates/" target="_blank">' . __( 'What are Static Templates and Dynamic Templates?', ES_TDOMAIN ) . '</a>' ); ?>
 		</li>
 		<li class="es_faq">
-			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-compose-and-send-static-newsletter-mails/" target="_blank">' . __( 'How to Compose and Send Static Newsletter Mails?', ES_TDOMAIN ) . '</a>' ); ?>
+			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-compose-and-send-static-newsletter-mails/" target="_blank">' . __( 'How to Compose and Send Newsletter Emails?', ES_TDOMAIN ) . '</a>' ); ?>
 		</li>
 		<li class="es_faq">
-			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-configure-and-send-notification-emails-to-subscribers-when-new-posts-are-published/" target="_blank">' . __( 'How to Configure and Send notification emails to subscribers when new posts are published?', ES_TDOMAIN ) . '</a>' ); ?>
+			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-configure-and-send-notification-emails-to-subscribers-when-new-posts-are-published/" target="_blank">' . __( 'How to Configure and Send Post Notification emails to subscribers when new posts are published?', ES_TDOMAIN ) . '</a>' ); ?>
 		</li>
 		<li class="es_faq">
-			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/how-to-send-a-sample-new-post-notification-email-to-testgroup-myself/" target="_blank">' . __( 'How to Send a sample new post notification email to testgroup/myself?', ES_TDOMAIN ) . '</a>' ); ?>
+			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-send-a-sample-new-post-notification-email-to-testgroup-myself/" target="_blank">' . __( 'How to Send a sample new post notification email to testgroup/myself?', ES_TDOMAIN ) . '</a>' ); ?>
 		</li>
 		<li class="es_faq">
-			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-check-sent-mails/" target="_blank">' . __( 'How to check Sent mails?', ES_TDOMAIN ) . '</a>' ); ?>
+			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-check-sent-emails/" target="_blank">' . __( 'How to check Sent emails reports?', ES_TDOMAIN ) . '</a>' ); ?>
 		</li>
 		<li class="es_faq">
 			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-add-update-existing-subscribers-group/" target="_blank">' . __( 'How to Add/Update Existing Subscribers Group?', ES_TDOMAIN ) . '</a>' ); ?>
 		</li>
 		<li class="es_faq">
-			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-new-post-notification-emails-are-not-being-received-by-subscribers/" target="_blank">' . __( 'Emails are not being received by Subscribers?', ES_TDOMAIN ) . '</a>' ); ?>
+			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-subscribers-are-not-receiving-emails/" target="_blank">' . __( 'Subscribers are not receiving Emails?', ES_TDOMAIN ) . '</a>' ); ?>
 		</li>
 		<li class="es_faq">
 			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-show-subscribe-form-inside-a-popup/" target="_blank">' . __( 'How to show subscribe form inside a popup?', ES_TDOMAIN ) . '</a>' ); ?>
@@ -159,7 +162,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-use-rainmakers-form-in-email-subscribers/" target="_blank">' . __( 'How to use Rainmaker’s form in Email Subscribers?', ES_TDOMAIN ) . '</a>' ); ?>
 		</li>
 		<li class="es_faq">
-			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-schedule-cron-mails/" target="_blank">' . __( 'How to Schedule Cron Mails?', ES_TDOMAIN ) . '</a>' ); ?>
+			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-schedule-cron-emails/" target="_blank">' . __( 'How to Schedule Cron Mails?', ES_TDOMAIN ) . '</a>' ); ?>
 		</li>
 		<li class="es_faq">
 			<?php echo sprintf(__( '%s', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-how-to-schedule-cron-emails-in-cpanel/" target="_blank">' . __( 'How to Schedule Cron Emails in cPanel?', ES_TDOMAIN ) . '</a>' ); ?>

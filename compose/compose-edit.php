@@ -68,7 +68,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 	if ($es_error_found == FALSE && strlen($es_success) > 0) {
 		?>
-		<div class="updated fade">
+		<div class="notice notice-success is-dismissible">
 			<p><strong>
 				<?php echo $es_success; ?>
 			</strong></p>
@@ -79,18 +79,16 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 	?>
 
 	<div class="form-wrap">
-		<div id="icon-plugins" class="icon32"></div>
-		<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-		<h3>
-			<?php echo __( 'Compose Mail', ES_TDOMAIN ); ?>
+		<h2>
+			<?php echo __( 'Edit Email', ES_TDOMAIN ); ?>
 			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-compose&amp;ac=add"><?php echo __( 'Add New', ES_TDOMAIN ); ?></a>
 			<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-		</h3>
+		</h2>
 		<form name="es_form" method="post" action="#" onsubmit="return _es_submit()">
 			<label for="tag-link"><?php echo __( 'Select your Mail Type', ES_TDOMAIN ); ?></label>
 			<select name="es_email_type" id="es_email_type">
-				<option value='Static Template' <?php if( $form['es_email_type'] == 'Static Template' ) { echo 'selected="selected"' ; } ?>><?php echo __( 'Static Template (For Newsletter Email)', ES_TDOMAIN ); ?></option>
-				<option value='Dynamic Template' <?php if( $form['es_email_type'] == 'Dynamic Template' ) { echo 'selected="selected"' ; } ?>><?php echo __( 'Dynamic Template (For Notification Email)', ES_TDOMAIN ); ?></option>
+				<option value='Static Template' <?php if( $form['es_email_type'] == 'Static Template' ) { echo 'selected="selected"' ; } ?>><?php echo __( 'Static Template (For Newsletter Emails)', ES_TDOMAIN ); ?></option>
+				<option value='Dynamic Template' <?php if( $form['es_email_type'] == 'Dynamic Template' ) { echo 'selected="selected"' ; } ?>><?php echo __( 'Dynamic Template (For Post Notification Emails)', ES_TDOMAIN ); ?></option>
 			</select>
 			<p></p>
 
@@ -115,7 +113,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<input type="hidden" name="es_form_submit" value="yes"/>
 			<input type="hidden" name="es_templ_id" id="es_templ_id" value="<?php echo $form['es_templ_id']; ?>"/>
 			<p class="submit">
-				<input type="submit" class="button add-new-h2" value="<?php echo __( 'Save', ES_TDOMAIN ); ?>" />
+				<input type="submit" class="button-primary" value="<?php echo __( 'Save', ES_TDOMAIN ); ?>" />
 			</p>
 			<?php wp_nonce_field('es_form_edit'); ?>
 		</form>

@@ -14,7 +14,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 			$es_success = __( 'Table sync completed successfully.', ES_TDOMAIN );
 			es_cls_registerhook::es_synctables();
-			?><div class="updated fade">
+			?><div class="notice notice-success is-dismissible">
 				<p><strong>
 					<?php echo $es_success; ?>
 				</strong></p>
@@ -29,7 +29,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<input type="hidden" name="es_form_submit" value="yes"/>
 			<div style="padding-top:5px;"></div>
 			<p>
-				<input type="submit" name="publish" lang="publish" class="button add-new-h2" value="<?php echo __( 'Click to sync tables', ES_TDOMAIN ); ?>" />
+				<input type="submit" name="publish" lang="publish" class="button-primary" value="<?php echo __( 'Click to sync tables', ES_TDOMAIN ); ?>" />
 			</p>
 			<?php wp_nonce_field('es_form_sync'); ?>
 		</form>

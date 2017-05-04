@@ -9,11 +9,3 @@ function _es_submit() {
 		return false;
 	}
 }
-
-function _es_redirect() {
-	window.location = "admin.php?page=es-cron";
-}
-
-function _es_help() {
-	window.open("https://wordpress.org/plugins/email-subscribers/faq/");
-}

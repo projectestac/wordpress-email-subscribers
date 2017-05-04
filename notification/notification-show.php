@@ -36,7 +36,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 	}
 
 	if ($es_success_msg == TRUE) {
-		?><div class="updated fade">
+		?><div class="notice notice-success is-dismissible">
 			<p><strong>
 				<?php echo $es_success; ?>
 			</strong></p>
@@ -47,13 +47,11 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 ?>
 
 <div class="wrap">
-	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-	<h3>
-		<?php echo __( 'Notification', ES_TDOMAIN ); ?>  
+	<h2 style="margin-bottom:1em;">
+		<?php echo __( 'Post Notifications', ES_TDOMAIN ); ?>  
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-notification&amp;ac=add"><?php echo __( 'Add New', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-	</h3>
+	</h2>
 	<div class="tool-box">
 		<?php
 		$myData = array();

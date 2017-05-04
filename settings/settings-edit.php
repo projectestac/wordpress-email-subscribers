@@ -177,7 +177,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			</div><?php
 		}
 		if ($es_error_found == FALSE && strlen($es_success) > 0) {
-			?><div class="updated fade">
+			?><div class="notice notice-success is-dismissible">
 				<p><strong>
 					<?php echo $es_success; ?>
 				</strong></p>
@@ -187,25 +187,23 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 	<style>
 		.form-table th {
-    		width: 450px;
+			width: 450px;
 		}
 	</style>
 
-	<div class="form-wrap">
-		<div id="icon-plugins" class="icon32"></div>
-		<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-		<h3>
-			<?php echo __( 'Settings', ES_TDOMAIN ); ?>
+	<div class="wrap">
+		<h2>
+			<?php echo __( 'Email Settings', ES_TDOMAIN ); ?>
 			<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-		</h3>
+		</h2>
 		<form name="es_form" method="post" action="#" onsubmit="return _es_submit()">
 			<table class="form-table">
 				<tbody>
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Sender of notifications', ES_TDOMAIN ); ?>
-								<p class="description"><?php echo __( 'Choose a FROM name and FROM email address for all notifications emails from this plugin.', ES_TDOMAIN ); ?></p>
+							<label for="elp"><?php echo __( 'Sender of Notifications', ES_TDOMAIN ); ?>
 							</label>
+								<p class="description"><?php echo __( 'Choose a FROM name and FROM email address for all the emails to be sent from this plugin.', ES_TDOMAIN ); ?></p>
 						</th>
 						<td>
 							<input name="es_c_fromname" type="text" id="es_c_fromname" value="<?php echo stripslashes($form['es_c_fromname']); ?>" maxlength="225" />
@@ -214,8 +212,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Mail type', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Option 1 & 2 is to send mails with default Wordpress method wp_mail(). Option 3 & 4 is to send mails with PHP method mail()', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Mail Type', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Option 1 & 2 is to send mails with default Wordpress method wp_mail(). Option 3 & 4 is to send mails with PHP method mail().', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td>
 							<select name="es_c_mailtype" id="es_c_mailtype">
@@ -229,8 +227,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					<!-------------------------------------------------------------------------------->
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Opt-in option', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Double Opt In, means subscribers need to confirm their email address by an activation link sent them on a activation email message. Single Opt In, means subscribers do not need to confirm their email address.', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Opt-in Option', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Double Opt In means subscribers need to confirm their email address by an activation link sent them on a activation email message.<br />Single Opt In means subscribers do not need to confirm their email address.', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td>			
 							<select name="es_c_optinoption" id="es_c_optinoption">
@@ -242,7 +240,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					<tr>
 						<th scope="row">
 							<label for="elp"><?php echo __( 'Image Size', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Select image size for ###POSTIMAGE### to be shown in post notification email', ES_TDOMAIN ); ?></p></label>
+							<p class="description"><?php echo __( 'Select image size for ###POSTIMAGE### to be shown in the Post Notification Emails.', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td>
 							<select name="es_c_post_image_size" id="es_c_post_image_size">
@@ -254,37 +252,37 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Opt-in mail subject (Confirmation mail)', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Enter the subject for Double Opt In mail. This will send whenever subscriber added email into our database.', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Double Opt In Mail Subject (Confirmation Email)', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Enter the subject for the confirmation email to be sent Double Opt In whenever a user signs up.', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td><input name="es_c_optinsubject" type="text" id="es_c_optinsubject" value="<?php echo esc_html(stripslashes($form['es_c_optinsubject'])); ?>" size="60" maxlength="225" /></td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php _e('Opt-in mail content (Confirmation mail)', ES_TDOMAIN); ?>
-							<p class="description"><?php _e('Enter the content for Double Opt In mail. This will send whenever subscriber added email into our database.', ES_TDOMAIN); ?> (Keyword: ###NAME###)</p></label>
+							<label for="elp"><?php echo __('Double Opt In Mail Content (Confirmation Email)', ES_TDOMAIN); ?>
+							<p class="description"><?php echo __( 'Enter the content for the confirmation email to be sent for Double Opt In whenever a user signs up. (Keyword: ###NAME###)', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td><textarea size="100" id="es_c_optincontent" rows="10" cols="58" name="es_c_optincontent"><?php echo esc_html(stripslashes($form['es_c_optincontent'])); ?></textarea></td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Opt-in link (Confirmation link)', ES_TDOMAIN ); ?><p class="description">
-							<?php echo __( 'Double Opt In confirmation link. You no need to change this value.', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Double Opt In Confirmation Link', ES_TDOMAIN ); ?><p class="description">
+							<?php echo __( 'It is a readonly field and you are advised not to modify it.', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td><input name="es_c_optinlink" type="text" id="es_c_optinlink" value="<?php echo esc_html(stripslashes($form['es_c_optinlink'])); ?>" size="60" maxlength="225" readonly /></td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Text to display after email subscribed successfully', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'This text will display once user clicked email confirmation link from opt-in (confirmation) email content.', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Text to display after Email is successfully subscribed from Double Opt In (confirmation) Email', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'This text will be displayed once user clicks on email confirmation link from the Double Opt In (confirmation) Email.', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td><textarea size="100" id="es_c_subhtml" rows="4" cols="58" name="es_c_subhtml"><?php echo esc_html(stripslashes($form['es_c_subhtml'])); ?></textarea></td>
 					</tr>
 					<!-------------------------------------------------------------------------------->
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Subscriber welcome email', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'To send welcome mail to subscriber, This option must be set to YES.', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Subscriber Welcome Email', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'To send welcome email to subscriber after successful signup. This option must be set to YES.', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td>			
 						<select name="es_c_usermailoption" id="es_c_usermailoption">
@@ -295,15 +293,15 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Welcome mail subject', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Enter the subject for subscriber welcome mail. This will send whenever email subscribed (confirmed) successfully.', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Subscriber Welcome Email Subject', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Enter the subject for the subscriber welcome email. This will be sent whenever a user\'s email is either confirmed (if Double Opt In) / subscribed (if Single Op In) successfully.', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td><input name="es_c_usermailsubject" type="text" id="es_c_usermailsubject" value="<?php echo esc_html(stripslashes($form['es_c_usermailsubject'])); ?>" size="60" maxlength="225" /></td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Subscriber welcome mail content', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Enter the content for subscriber welcome mail. This will send whenever email subscribed (confirmed) successfully.  (Keyword: ###NAME###)', ES_TDOMAIN ); ?></p>
+							<label for="elp"><?php echo __( 'Subscriber Welcome Email Content', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Enter the content for the subscriber welcome email whenever a user\'s email is either confirmed (if Double Opt In) / subscribed (if Single Opt In) successfully. (Keyword: ###NAME###)', ES_TDOMAIN ); ?></p>
 						</label>
 						</th>
 						<td><textarea size="100" id="es_c_usermailcontant" rows="10" cols="58" name="es_c_usermailcontant"><?php echo esc_html(stripslashes($form['es_c_usermailcontant'])); ?></textarea></td>
@@ -311,8 +309,53 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					<!-------------------------------------------------------------------------------->
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Mail to admin', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'To send admin notifications for new subscriber, This option must be set to YES.', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Unsubscribe Link', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'It is a readonly field and you are advised not to modify it.', ES_TDOMAIN ); ?></p></label>
+						</th>
+						<td><input name="es_c_unsublink" type="text" id="es_c_unsublink" value="<?php echo esc_html(stripslashes($form['es_c_unsublink'])); ?>" size="60" maxlength="225" readonly /></td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="elp"><?php echo __( 'Unsubscribe Text in Email', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Enter the text for the unsubscribe link. This text is added with unsubscribe link in the emails. (Keyword: ###LINK###)', ES_TDOMAIN ); ?></p></label>
+						</th>
+						<td><textarea size="100" id="es_c_unsubtext" rows="4" cols="58" name="es_c_unsubtext"><?php echo esc_html(stripslashes($form['es_c_unsubtext'])); ?></textarea></td>
+					</tr>	
+					<tr>
+						<th scope="row">
+							<label for="elp"><?php echo __( 'Text to display after Email is unsubscribed', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'This text will be displayed once user clicks on unsubscribe link.', ES_TDOMAIN ); ?></p></label>
+						</th>
+						<td><textarea size="100" id="es_c_unsubhtml" rows="4" cols="58" name="es_c_unsubhtml"><?php echo esc_html(stripslashes($form['es_c_unsubhtml'])); ?></textarea></td>
+					</tr>
+					<!-------------------------------------------------------------------------------->
+					<tr>
+						<th scope="row">
+							<label for="elp"><?php echo __( 'Error in Confirmation Link', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Default message to display if there is any issue while clicking on confirmation link from the Double Opt In (confirmation) Emails.', ES_TDOMAIN ); ?></p></label>
+						</th>
+						<td><textarea size="100" id="es_c_message1" rows="4" cols="58" name="es_c_message1"><?php echo esc_html(stripslashes($form['es_c_message1'])); ?></textarea></td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="elp"><?php echo __( 'Error in Unsubscribe Link', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Default message to display if there is any issue while clicking on unsubscribe link from the Emails.', ES_TDOMAIN ); ?></p></label>
+						</th>
+						<td><textarea size="100" id="es_c_message2" rows="4" cols="58" name="es_c_message2"><?php echo esc_html(stripslashes($form['es_c_message2'])); ?></textarea></td>
+					</tr>
+					<!-------------------------------------------------------------------------------->
+					<tr>
+						<th scope="row">
+							<label for="elp"><?php echo __( 'Admin Email Addresses', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Enter the admin email addresses that should receive notifications (separated by comma).', ES_TDOMAIN ); ?></p></label>
+						</th>
+						<td><input name="es_c_adminemail" type="text" id="es_c_adminemail" value="<?php echo esc_html(stripslashes($form['es_c_adminemail'])); ?>" size="60" maxlength="225" /></td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="elp"><?php echo __( 'Notify Admin about New Subscriber', ES_TDOMAIN ); ?>
+								<p class="description"><?php echo __( 'To send admin email notifications for the new subscriber. This option must be set to YES.', ES_TDOMAIN ); ?></p>
+							</label>
 						</th>
 						<td>			
 						<select name="es_c_adminmailoption" id="es_c_adminmailoption">
@@ -323,74 +366,30 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Admin email addresses', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Enter the admin email addresses that should receive notifications (separate by comma).', ES_TDOMAIN ); ?></p></label>
-						</th>
-						<td><input name="es_c_adminemail" type="text" id="es_c_adminemail" value="<?php echo esc_html(stripslashes($form['es_c_adminemail'])); ?>" size="60" maxlength="225" /></td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<label for="elp"><?php echo __( 'Admin mail subject', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Enter the subject for admin mail. This will send whenever new email added and confirmed into our database.', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Admin Email Subject', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Enter the subject for the admin email. This will be sent whenever a new email is added and confirmed.', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td><input name="es_c_adminmailsubject" type="text" id="es_c_adminmailsubject" value="<?php echo esc_html(stripslashes($form['es_c_adminmailsubject'])); ?>" size="60" maxlength="225" /></td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Admin mail content', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Enter the mail content for admin. This will send whenever new email added and confirmed into our database. (Keyword: ###NAME###, ###EMAIL###)', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Admin Email Content', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Enter the email content for the admin email. This will be sent whenever a new email is added and confirmed. (Keyword: ###NAME###, ###EMAIL###)', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td><textarea size="100" id="es_c_adminmailcontant" rows="10" cols="58" name="es_c_adminmailcontant"><?php echo esc_html(stripslashes($form['es_c_adminmailcontant'])); ?></textarea></td>
 					</tr>
 					<!-------------------------------------------------------------------------------->
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Unsubscribe link', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Unsubscribe link. You no need to change this value.', ES_TDOMAIN ); ?></p></label>
-						</th>
-						<td><input name="es_c_unsublink" type="text" id="es_c_unsublink" value="<?php echo esc_html(stripslashes($form['es_c_unsublink'])); ?>" size="60" maxlength="225" readonly /></td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<label for="elp"><?php echo __( 'Unsubscribe text in mail', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Enter the text for unsubscribe link. This text is to add unsubscribe link with newsletter. (Keyword: ###LINK###)', ES_TDOMAIN ); ?></p></label>
-						</th>
-						<td><textarea size="100" id="es_c_unsubtext" rows="4" cols="58" name="es_c_unsubtext"><?php echo esc_html(stripslashes($form['es_c_unsubtext'])); ?></textarea></td>
-					</tr>	
-					<tr>
-						<th scope="row">
-							<label for="elp"><?php echo __( 'Text to display after email unsubscribed', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'This text will display once user clicked unsubscribed link from our newsletter.', ES_TDOMAIN ); ?></p></label>
-						</th>
-						<td><textarea size="100" id="es_c_unsubhtml" rows="4" cols="58" name="es_c_unsubhtml"><?php echo esc_html(stripslashes($form['es_c_unsubhtml'])); ?></textarea></td>
-					</tr>
-					<!-------------------------------------------------------------------------------->
-					<tr>
-						<th scope="row">
-							<label for="elp"><?php echo __( 'Message 1', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Default message to display if any issue on confirmation link.', ES_TDOMAIN ); ?></p></label>
-						</th>
-						<td><textarea size="100" id="es_c_message1" rows="4" cols="58" name="es_c_message1"><?php echo esc_html(stripslashes($form['es_c_message1'])); ?></textarea></td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<label for="elp"><?php echo __( 'Message 2', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Default message to display if any issue on unsubscribe link.', ES_TDOMAIN ); ?></p></label>
-						</th>
-						<td><textarea size="100" id="es_c_message2" rows="4" cols="58" name="es_c_message2"><?php echo esc_html(stripslashes($form['es_c_message2'])); ?></textarea></td>
-					</tr>
-					<!-------------------------------------------------------------------------------->
-					<tr>
-						<th scope="row">
-							<label for="elp"><?php echo __( 'Sent report subject', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Mail subject for sent mail report.', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Sent Report Subject', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Enter the subject for the sent email report. It will be mailed to Admin.', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td><input name="es_c_sentreport_subject" type="text" id="es_c_sentreport_subject" value="<?php echo esc_html(stripslashes($form['es_c_sentreport_subject'])); ?>" size="60" maxlength="225" /></td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="elp"><?php echo __( 'Sent report content', ES_TDOMAIN ); ?>
-							<p class="description"><?php echo __( 'Mail content for sent mail report. (Keyword: ###COUNT###, ###UNIQUE###, ###STARTTIME###, ###ENDTIME###)', ES_TDOMAIN ); ?></p></label>
+							<label for="elp"><?php echo __( 'Sent Report Content', ES_TDOMAIN ); ?>
+							<p class="description"><?php echo __( 'Enter the content for the sent mail report. It will be mailed to Admin. (Keyword: ###COUNT###, ###UNIQUE###, ###STARTTIME###, ###ENDTIME###)', ES_TDOMAIN ); ?></p></label>
 						</th>
 						<td><textarea size="100" id="es_c_sentreport" rows="8" cols="58" name="es_c_sentreport"><?php echo esc_html(stripslashes($form['es_c_sentreport'])); ?></textarea></td>
 					</tr>
@@ -400,7 +399,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<input type="hidden" name="es_form_submit" value="yes"/>
 			<input type="hidden" name="es_c_id" id="es_c_id" value="<?php echo $form['es_c_id']; ?>"/>
 			<p style="padding-top:10px;">
-				<input type="submit" name="publish" class="button add-new-h2" value="<?php echo __( 'Save Settings', ES_TDOMAIN ); ?>" />
+				<input type="submit" name="publish" class="button-primary" value="<?php echo __( 'Save Settings', ES_TDOMAIN ); ?>" />
 			</p>
 			<?php wp_nonce_field('es_form_edit'); ?>
     	</form>

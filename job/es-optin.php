@@ -14,6 +14,7 @@ if( (isset($_GET['es'])) && ($_GET['es'] == "optin") ) {
 	<head>
 		<title><?php echo $blogname; ?></title>
 		<meta http-equiv="refresh" content="10; url=<?php echo $home_url; ?>" charset="<?php echo esc_attr( get_option( 'blog_charset' ) ); ?>" />
+		<?php do_action( 'es_message_head' ); ?>
 	</head>
 	<body>
 		<div class="es_successfully_subscribed">

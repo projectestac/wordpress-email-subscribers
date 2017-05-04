@@ -17,7 +17,7 @@ class es_cls_common {
 				$returnstring = __( '<span style="color:#0000FF">Single Opt In</span>', ES_TDOMAIN );
 				break;
 			case "Viewed":
-				$returnstring = __( '<span style="color:#00CC00;font-weight:bold">Viewed</span>', ES_TDOMAIN );
+				$returnstring = __( '<span style="color:#00CC00;font-weight:bold;">Viewed</span>', ES_TDOMAIN );
 				break;
 			case "Nodata":
 				$returnstring = __( '<span style="color:#999900;">Nodata</span>', ES_TDOMAIN );

@@ -22,12 +22,10 @@ if ($result != '1') {
 ?>
 
 <div class="wrap">
-	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-	<h3>
+	<h2 style="margin-bottom:1em;">
 		<?php echo __( 'Preview Mail', ES_TDOMAIN ); ?>
 		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-	</h3>
+	</h2>
 	<div class="tool-box">
 		<div style="padding:15px;background-color:#FFFFFF;">
 			<?php
@@ -38,7 +36,7 @@ if ($result != '1') {
 			?>
 		</div>
 		<p>
-			<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-compose&ac=edit&did=<?php echo $did; ?>"><?php echo __( 'Edit', ES_TDOMAIN ); ?></a>
+			<a class="button-primary" href="<?php echo ES_ADMINURL; ?>?page=es-compose&ac=edit&did=<?php echo $did; ?>"><?php echo __( 'Edit', ES_TDOMAIN ); ?></a>
 		</p>
 		<p class="description"><?php echo ES_OFFICIAL; ?></p>
 	</div>

@@ -20,9 +20,9 @@ if ( $es_c_email_subscribers_ver != "2.9" ) {
 }
 
 // Form submitted, check the data
+$search_group = isset($_POST['searchquery_group']) ? $_POST['searchquery_group'] : 'ALL';
 $search_sts = isset($_POST['searchquery_sts']) ? $_POST['searchquery_sts'] : '';
 $search_count = isset($_POST['searchquery_cnt']) ? $_POST['searchquery_cnt'] : '1';
-$search_group = isset($_POST['searchquery_group']) ? $_POST['searchquery_group'] : 'ALL';
 
 if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 	$did = isset($_GET['did']) ? $_GET['did'] : '0';
@@ -31,7 +31,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 	$es_success = '';
 	$es_success_msg = FALSE;
 
-	if ( (isset($_POST['frm_es_bulkaction']) && $_POST['frm_es_bulkaction'] != 'delete') && ($_POST['frm_es_bulkaction'] != 'resend' && $_POST['frm_es_bulkaction'] != 'groupupdate') && ($_POST['frm_es_bulkaction'] != 'search_sts' && $_POST['frm_es_bulkaction'] != 'search_cnt') && ($_POST['frm_es_bulkaction'] != 'search_group') ) {
+	if ( (isset($_POST['frm_es_bulkaction']) && $_POST['frm_es_bulkaction'] != 'delete') && ($_POST['frm_es_bulkaction'] != 'resend' && $_POST['frm_es_bulkaction'] != 'groupupdate') && ($_POST['frm_es_bulkaction'] != 'updatestatus') && ($_POST['frm_es_bulkaction'] != 'search_sts' && $_POST['frm_es_bulkaction'] != 'search_cnt') && ($_POST['frm_es_bulkaction'] != 'search_group') ) {
 
 		//	Just security thingy that wordpress offers us
 		check_admin_referer('es_form_show');
@@ -41,7 +41,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 		if ($result != '1') {
 			?><div class="error fade">
 				<p><strong>
-					<?php echo __( 'Oops, selected details does not exists.', ES_TDOMAIN ); ?>
+					<?php echo __( 'Selected details does not exists.', ES_TDOMAIN ); ?>
 				</strong></p>
 			</div><?php
 		} else {
@@ -71,7 +71,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 					es_cls_sendmail::es_prepare_optin("single", $did, $idlist = "");
 					es_cls_dbquery::es_view_subscriber_upd_status("Unconfirmed", $did);
 					$es_success_msg = TRUE;
-					$es_success  = __( 'Confirmation email resent successfully.', ES_TDOMAIN );
+					$es_success  = __( 'Confirmation emails Resent Successfully.', ES_TDOMAIN );
 				}
 			}
 		}
@@ -96,7 +96,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 				?>
 				<div class="error fade">
 					<p><strong>
-						<?php echo __( 'Oops, No record was selected.', ES_TDOMAIN ); ?>
+						<?php echo __( 'No record was selected.', ES_TDOMAIN ); ?>
 					</strong></p>
 				</div>
 				<?php
@@ -130,12 +130,12 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 					es_cls_sendmail::es_prepare_optin("group", 0, $idlist);
 					es_cls_dbquery::es_view_subscriber_upd_status("Unconfirmed", $idlist);
 					$es_success_msg = TRUE;
-					$es_success = __('Confirmation email(s) Resent Successfully.', ES_TDOMAIN );
+					$es_success = __( 'Confirmation emails Resent Successfully.', ES_TDOMAIN );
 				} else {
 					?>
 					<div class="error fade">
 						<p><strong>
-							<?php echo __( 'Oops, No record was selected.', ES_TDOMAIN ); ?>
+							<?php echo __( 'No record was selected.', ES_TDOMAIN ); ?>
 						</strong></p>
 					</div>
 					<?php
@@ -144,7 +144,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 		} elseif (isset($_POST['frm_es_bulkaction']) && $_POST['frm_es_bulkaction'] == 'groupupdate') {
 
 			$chk_delete = isset($_POST['chk_delete']) ? $_POST['chk_delete'] : '';
-			if(!empty($chk_delete)) {			
+			if(!empty($chk_delete)) {
 				$es_email_group = isset($_POST['es_email_group']) ? $_POST['es_email_group'] : '';
 				if ($es_email_group != "") {
 					$count = count($chk_delete);
@@ -159,12 +159,12 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 					}
 					es_cls_dbquery::es_view_subscriber_upd_group($es_email_group, $idlist);
 					$es_success_msg = TRUE;
-					$es_success = __( 'Selected subscribers group updated.', ES_TDOMAIN );
+					$es_success = __( 'Subscribers Group updated.', ES_TDOMAIN );
 				} else {
 					?>
 					<div class="error fade">
 						<p><strong>
-							<?php echo __( 'Oops, New group name was not selected.', ES_TDOMAIN ); ?>
+							<?php echo __( 'Please select New group to update.', ES_TDOMAIN ); ?>
 						</strong></p>
 					</div>
 					<?php
@@ -173,23 +173,58 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 				?>
 				<div class="error fade">
 					<p><strong>
-						<?php echo __( 'Oops, No record was selected.', ES_TDOMAIN ); ?>
+						<?php echo __( 'No record was selected.', ES_TDOMAIN ); ?>
 					</strong></p>
 				</div>
 				<?php
 			}
-		} elseif (isset($_POST['frm_es_bulkaction']) && $_POST['frm_es_bulkaction'] == 'search_sts') {
-			// Nothing
-		} elseif (isset($_POST['frm_es_bulkaction']) && $_POST['frm_es_bulkaction'] == 'search_cnt') {
-			// Nothing
-		} elseif (isset($_POST['frm_es_bulkaction']) && $_POST['frm_es_bulkaction'] == 'search_group') {
-			// Nothing
+		} elseif (isset($_POST['frm_es_bulkaction']) && $_POST['frm_es_bulkaction'] == 'updatestatus') {
+
+			$chk_delete = isset($_POST['chk_delete']) ? $_POST['chk_delete'] : '';
+
+			if(!empty($chk_delete)) {
+				$es_email_status = isset($_POST['es_update_status']) ? $_POST['es_update_status'] : '';
+				if (!empty($es_email_status)) {
+					$count = count($chk_delete);
+					$idstatus = "";
+					for ($i=0; $i < $count; $i++) { 
+						$update_id = $chk_delete[$i];
+						if ($i < 1) {
+							$idstatus = $update_id;
+						} else {
+							$idstatus = $idstatus . ", " . $update_id;
+						}
+					}
+					// es_cls_dbquery::es_bulk_update_subscriber_status($es_email_status, $idstatus);
+					es_cls_dbquery::es_view_subscriber_upd_status($es_email_status, $idstatus);
+					$es_success_msg = TRUE;
+					$es_success = __( 'Subscribers Status updated.', ES_TDOMAIN );
+				} else {
+					?>
+					<div class="error fade">
+						<p><strong>
+							<?php echo __( 'Please select New Status to update.', ES_TDOMAIN ); ?>
+						</strong></p>
+					</div>
+					<?php
+				}
+			} else {
+				?>
+				<div class="error fade">
+					<p><strong>
+						<?php echo __( 'No record was selected.', ES_TDOMAIN ); ?>
+					</strong></p>
+				</div>
+				<?php
+			}
+
+
 		}
 	}
 	
 	if ($es_success_msg == TRUE) {
 		?>
-		<div class="updated fade">
+		<div class="notice notice-success is-dismissible">
 			<p><strong>
 				<?php echo $es_success; ?>
 			</strong></p>
@@ -201,16 +236,14 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 ?>
 
 <div class="wrap">
-	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-	<h3>
-		<?php echo __( 'View Subscribers', ES_TDOMAIN ); ?>
+	<h2 style="margin-bottom:1em;">
+		<?php echo __( 'Subscribers', ES_TDOMAIN ); ?>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php echo __( 'Add New Subscriber', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=import"><?php echo __( 'Import', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=export"><?php echo __( 'Export', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php echo __( 'Sync', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-	</h3>
+	</h2>
 	<div class="tool-box">
 		<form name="frm_es_display" method="post" onsubmit="return _es_bulkaction()">
 			<?php
@@ -244,6 +277,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 						<option value="delete"><?php echo __( 'Delete', ES_TDOMAIN ); ?></option>
 						<option value="resend"><?php echo __( 'Resend Confirmation', ES_TDOMAIN ); ?></option>
 						<option value="groupupdate"><?php echo __( 'Update Subscribers Group', ES_TDOMAIN ); ?></option>
+						<option value="updatestatus"><?php echo __( 'Update Subscribers Status', ES_TDOMAIN ); ?></option>
 					</select>
 					<select name="es_email_group" id="es_email_group" disabled="disabled">
 						<option value=''><?php echo __( 'Select Group', ES_TDOMAIN ); ?></option>
@@ -259,6 +293,13 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 							}
 						}
 						?>
+					</select>
+					<select name="es_update_status" id="es_update_status" disabled="disabled">
+						<option value=""><?php echo __( 'All Status', ES_TDOMAIN ); ?></option>
+						<option value="Confirmed"><?php echo __( 'Confirmed', ES_TDOMAIN ); ?></option>
+						<option value="Unconfirmed"><?php echo __( 'Unconfirmed', ES_TDOMAIN ); ?></option>
+						<option value="Unsubscribed"><?php echo __( 'Unsubscribed', ES_TDOMAIN ); ?></option>
+						<option value="Single Opt In"><?php echo __( 'Single Opt In', ES_TDOMAIN ); ?></option>
 					</select>
 					<input type="submit" value="<?php echo __( 'Apply', ES_TDOMAIN ); ?>" class="button action" id="doaction" name="doaction">
 				</span>
@@ -312,7 +353,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 						<th scope="col"><?php echo __( 'Name', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Status', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Group', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Submission Date<br>(YYYY-MM-DD)', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Signup Date<br>(YYYY-MM-DD)', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Action', ES_TDOMAIN ); ?></th>
 					</tr>
 				</thead>
@@ -326,7 +367,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 						<th scope="col"><?php echo __( 'Name', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Status', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Group', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Submission Date<br>(YYYY-MM-DD)', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Signup Date<br>(YYYY-MM-DD)', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Action', ES_TDOMAIN ); ?></th>
 					</tr>
 				</tfoot>
@@ -363,7 +404,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 												</a>
 											</span>
 											<?php
-											if($data['es_email_status'] != "Confirmed") {
+											if($data['es_email_status'] != "Confirmed" && $data['es_email_status'] != "Single Opt In" ) {
 												?>
 												<span class="edit"> 
 													| <a onClick="javascript:_es_resend('<?php echo $data['es_email_id']; ?>')" href="javascript:void(0);">
