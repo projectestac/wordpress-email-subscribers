@@ -16,7 +16,7 @@ class es_cls_widget {
 		$es = $es . '<div>';
 		$es = $es . '<form class="es_shortcode_form">';
 
-		if( $es_desc <> "" ) {
+		if( $es_desc != "" ) {
 			$es = $es . '<div class="es_caption">'.$es_desc.'</div>';
 		}
 		$es = $es . '<div class="es_msg"><span id="es_msg_pg"></span></div>';

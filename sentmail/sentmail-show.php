@@ -42,7 +42,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 		$es_success = __( 'Successfully deleted all reports except latest 10.', ES_TDOMAIN );
 	}	
 	if ($es_success_msg == TRUE) {
-		?><div class="updated fade">
+		?><div class="notice notice-success is-dismissible">
 			<p><strong>
 				<?php echo $es_success; ?>
 			</strong></p>
@@ -91,12 +91,13 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 ?>
 
 <div class="wrap">
-	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-	<h3>
-		<?php echo __( 'Sent Mails', ES_TDOMAIN ); ?>
+	<h2>
+		<?php echo __( 'Reports', ES_TDOMAIN ); ?>
 		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-	</h3>
+	</h2>
+	<p class="description">
+		<?php echo __( 'It will show reports for all Newsletters & Post Notification emails sent.', ES_TDOMAIN ); ?>
+	</p>
 	<div class="tablenav">
 		<div class="alignright" style="padding-bottom:10px;"><?php echo $page_links; ?></div>
 	</div>
@@ -172,13 +173,13 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 			<div class="tablenav" style="padding-top:10px;">
 				<div class="alignleft">
 					<input type="hidden" name="action" id="action" value="optimize-table">
-					<input type="submit" value="<?php echo __( 'Optimize Table & Delete Records', ES_TDOMAIN ); ?>" class="button action" id="doaction" name="">
+					<input type="submit" value="<?php echo __( 'Optimize Table & Delete Records', ES_TDOMAIN ); ?>" class="button-primary action" id="doaction" name="">
 				</div>
 				<div class="alignright"><?php echo $page_links; ?></div>
 			</div>
 			<input type="hidden" name="frm_es_bulkaction" value=""/>
 		</form>
-		<?php if ($fulltotal > 30 ) { ?>
+		<?php if ( $fulltotal > 30 ) { ?>
 			<div class="error fade">
 				<p>
 					<?php echo __( 'Note: Please click on <strong>Optimize Table & Delete Records</strong> button to delete all reports except latest 10.', ES_TDOMAIN ); ?>

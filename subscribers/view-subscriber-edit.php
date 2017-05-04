@@ -87,7 +87,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 	}
 
 	if ($es_error_found == FALSE && strlen($es_success) > 0) {
-		?><div class="updated fade">
+		?><div class="notice notice-success is-dismissible">
 			<p><strong>
 				<?php echo $es_success; ?>
 			</strong></p>
@@ -102,25 +102,23 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 	}
 	</style>
 
-	<div class="form-wrap">
-		<div id="icon-plugins" class="icon32"></div>
-		<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
+	<div class="wrap">
+		<h2>
+			<?php echo __( 'Edit Subscriber', ES_TDOMAIN ); ?>
+			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php echo __( 'Add New Subscriber', ES_TDOMAIN ); ?></a>
+			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=import"><?php echo __( 'Import', ES_TDOMAIN ); ?></a>
+			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=export"><?php echo __( 'Export', ES_TDOMAIN ); ?></a>
+			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php echo __( 'Sync', ES_TDOMAIN ); ?></a>
+			<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
+		</h2>
 		<form name="form_addemail" method="post" action="#" onsubmit="return _es_addemail()">
-			<h3 class="title">
-				<?php echo __( 'Edit Subscriber', ES_TDOMAIN ); ?>
-				<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php echo __( 'Add New Subscriber', ES_TDOMAIN ); ?></a>
-				<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=import"><?php echo __( 'Import', ES_TDOMAIN ); ?></a>
-				<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=export"><?php echo __( 'Export', ES_TDOMAIN ); ?></a>
-				<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php echo __( 'Sync', ES_TDOMAIN ); ?></a>
-				<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-			</h3>
 			<div class="tool-box">
 				<table class="form-table">
 					<tbody>
 						<tr>
 							<th scope="row">
 								<label for="tag-image">
-									<?php echo __( 'Edit Subscriber\'s Full Name', ES_TDOMAIN ); ?>
+									<?php echo __( 'Subscriber\'s Full Name', ES_TDOMAIN ); ?>
 								</label>
 							</th>
 							<td>
@@ -130,7 +128,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 						<tr>
 							<th scope="row">
 								<label for="tag-image">
-									<?php echo __( 'Edit Subscriber\'s Email Address', ES_TDOMAIN ); ?>
+									<?php echo __( 'Subscriber\'s Email Address', ES_TDOMAIN ); ?>
 								</label>
 							</th>
 							<td>
@@ -189,7 +187,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<input type="hidden" name="es_form_submit" value="yes"/>
 			<input type="hidden" name="es_email_id" id="es_email_id" value="<?php echo $form['es_email_id']; ?>"/>
 			<p style="padding-top:5px;">
-				<input class="button add-new-h2" value="<?php echo __( 'Save', ES_TDOMAIN ); ?>" type="submit" />
+				<input class="button-primary" value="<?php echo __( 'Save', ES_TDOMAIN ); ?>" type="submit" />
 			</p>
 			<?php wp_nonce_field('es_form_edit'); ?>
 		</form>

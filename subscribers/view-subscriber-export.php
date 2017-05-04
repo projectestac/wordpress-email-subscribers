@@ -6,7 +6,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 $home_url = home_url('/');
 
-// Total Subscribers (with all statues)
+// Total Subscribers (with all status)
 $cnt_subscriber = 0;
 $cnt_subscriber = es_cls_dbquery::es_view_subscriber_count(0);
 
@@ -21,15 +21,13 @@ $cnt_comment_author = $wpdb->get_var( "SELECT count(DISTINCT comment_author_emai
 ?>
 
 <div class="wrap">
-	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-	<h3>
+	<h2 style="margin-bottom:1em;">
 		<?php echo __( 'Export Email Addresses', ES_TDOMAIN ); ?>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php echo __( 'Add New Subscriber', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=import"><?php echo __( 'Import', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php echo __( 'Sync', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-	</h3>
+	</h2>
 	<div class="tool-box">
 		<form name="frm_es_subscriberexport" method="post">
 			<table width="100%" class="widefat" id="straymanage">

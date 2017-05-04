@@ -145,23 +145,23 @@ class es_cls_registerhook {
 		add_submenu_page('email-subscribers', __( 'Compose', ES_TDOMAIN ), 
 			__( 'Compose', ES_TDOMAIN ), $es_roles_mail, 'es-compose', array( 'es_cls_intermediate', 'es_compose' ));
 
-		add_submenu_page('email-subscribers', __( 'Notification', ES_TDOMAIN ), 
-			__( 'Notification', ES_TDOMAIN ), $es_roles_notification, 'es-notification', array( 'es_cls_intermediate', 'es_notification' ));
+		add_submenu_page('email-subscribers', __( 'Post Notifications', ES_TDOMAIN ), 
+			__( 'Post Notifications', ES_TDOMAIN ), $es_roles_notification, 'es-notification', array( 'es_cls_intermediate', 'es_notification' ));
 
-		add_submenu_page('email-subscribers', __( 'Send Email', ES_TDOMAIN ), 
-			__( 'Send Email', ES_TDOMAIN ), $es_roles_sendmail, 'es-sendemail', array( 'es_cls_intermediate', 'es_sendemail' ));
+		add_submenu_page('email-subscribers', __( 'Newsletters', ES_TDOMAIN ), 
+			__( 'Newsletters', ES_TDOMAIN ), $es_roles_sendmail, 'es-sendemail', array( 'es_cls_intermediate', 'es_sendemail' ));
 
-		add_submenu_page('email-subscribers', __( 'Cron', ES_TDOMAIN ), 
-			__( 'Cron Mail', ES_TDOMAIN ), $es_roles_sendmail, 'es-cron', array( 'es_cls_intermediate', 'es_cron' ));
+		add_submenu_page('email-subscribers', __( 'Cron Settings', ES_TDOMAIN ), 
+			__( 'Cron Settings', ES_TDOMAIN ), $es_roles_sendmail, 'es-cron', array( 'es_cls_intermediate', 'es_cron' ));
 
-		add_submenu_page('email-subscribers', __( 'Settings', ES_TDOMAIN ), 
-			__( 'Settings', ES_TDOMAIN ), $es_roles_setting, 'es-settings', array( 'es_cls_intermediate', 'es_settings' ));
+		add_submenu_page('email-subscribers', __( 'Email Settings', ES_TDOMAIN ), 
+			__( 'Email Settings', ES_TDOMAIN ), $es_roles_setting, 'es-settings', array( 'es_cls_intermediate', 'es_settings' ));
 
-		add_submenu_page('email-subscribers', __( 'Roles', ES_TDOMAIN ), 
-			__( 'Roles', ES_TDOMAIN ), 'administrator', 'es-roles', array( 'es_cls_intermediate', 'es_roles' ));
+		add_submenu_page('email-subscribers', __( 'User Roles', ES_TDOMAIN ), 
+			__( 'User Roles', ES_TDOMAIN ), 'administrator', 'es-roles', array( 'es_cls_intermediate', 'es_roles' ));
 
-		add_submenu_page('email-subscribers', __( 'Sent Mails', ES_TDOMAIN ), 
-			__( 'Sent Mails', ES_TDOMAIN ), $es_roles_sentmail, 'es-sentmail', array( 'es_cls_intermediate', 'es_sentmail' ));
+		add_submenu_page('email-subscribers', __( 'Reports', ES_TDOMAIN ), 
+			__( 'Reports', ES_TDOMAIN ), $es_roles_sentmail, 'es-sentmail', array( 'es_cls_intermediate', 'es_sentmail' ));
 
 		add_submenu_page('email-subscribers', __( 'Help & Info', ES_TDOMAIN ), 
 			__( '<span style="color:#f18500;font-weight:bolder;">Help & Info', ES_TDOMAIN ), $es_roles_help, 'es-general-information', array( 'es_cls_intermediate', 'es_information' ));
@@ -180,11 +180,12 @@ class es_cls_registerhook {
 						'es_subscriber_group'           => _x( 'Please select or create group for this subscriber.', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
 						'es_subscriber_delete_record'   => _x( 'Do you want to delete this record?', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
 						'es_subscriber_bulk_action'     => _x( 'Please select the bulk action.', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
-						'es_subscriber_delete_records'  => _x( 'Do you want to delete selected record(s)?', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
-						'es_subscriber_confirm_delete'  => _x( 'Are you sure you want to delete?', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
+						'es_subscriber_confirm_delete'  => _x( 'Are you sure you want to delete selected records?', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
 						'es_subscriber_resend_email'    => _x( 'Do you want to resend confirmation email? \nAlso please note, this will update subscriber current status to \'Unconfirmed\'.', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
 						'es_subscriber_new_group'       => _x( 'Please select new subscriber group.', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
+						'es_subscriber_new_status'	=> _x( 'Please select new status for subscribers', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
 						'es_subscriber_group_update'    => _x( 'Do you want to update subscribers group?', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
+						'es_subscriber_status_update'	=> _x( 'Do you want to update subscribers status?', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
 						'es_subscriber_export'          => _x( 'Do you want to export the emails?', 'view-subscriber-enhanced-select', ES_TDOMAIN ),
 						'es_subscriber_csv_file'        => _x( 'Please select only csv file. Please check official website for csv structure..', 'view-subscriber-enhanced-select', ES_TDOMAIN )
 					);

@@ -9,7 +9,7 @@ if( (isset($_GET['es'])) && ($_GET['es'] == "cron") ) {
 	$es_c_cronguid = isset($_GET['guid']) ? $_GET['guid'] : '';  
 	$es_c_cronguid = trim($es_c_cronguid);
 
-	if($es_c_cronguid <> "") {
+	if($es_c_cronguid != "") {
 		$security1 = strlen($es_c_cronguid);
 		$es_c_cronguid_noslash = str_replace("-", "", $es_c_cronguid);
 		$security2 = strlen($es_c_cronguid_noslash);

@@ -55,12 +55,10 @@ if ($sentguid == '') {
 ?>
 
 <div class="wrap">
-	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-	<h3>
+	<h2>
 		<?php echo __( 'Delivery Report', ES_TDOMAIN ); ?>
 		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-	</h3>
+	</h2>
 	<div class="tablenav">
 		<div class="alignright" style="padding-bottom:10px;"><?php echo $page_links; ?></div>
 	</div>
@@ -119,7 +117,6 @@ if ($sentguid == '') {
 			</table>
 			<?php wp_nonce_field('es_form_show'); ?>
 			<input type="hidden" name="frm_es_display" value="yes"/>
-			<div style="padding-top:10px;"></div>
 			<div class="tablenav">
 				<div class="alignright">
 					<?php echo $page_links; ?>

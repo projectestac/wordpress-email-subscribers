@@ -30,7 +30,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 		if ($es_error_found == FALSE) {
 			update_option('es_cron_mailcount', $es_cron_mailcount );
 			update_option('es_cron_adminmail', $es_cron_adminmail );
-			$es_success = __( 'Cron details successfully updated.', ES_TDOMAIN );
+			$es_success = __( 'Successfully updated.', ES_TDOMAIN );
 		}
 	}
 
@@ -60,45 +60,73 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 	}
 	if ($es_error_found == FALSE && strlen($es_success) > 0) {
 		?>
-		<div class="updated fade">
+		<div class="notice notice-success is-dismissible">
 			<p><strong><?php echo $es_success; ?></strong></p>
 		</div>
 		<?php
 	}
 	?>
 
-	<div class="form-wrap">
-		<div id="icon-plugins" class="icon32"></div>
-		<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-		<h3>
-			<?php echo __( 'Cron Details', ES_TDOMAIN ); ?>
+	<style>
+		.form-table th {
+			width: 50%;
+		}
+	</style>
+
+	<div class="wrap">
+		<h2>
+			<?php echo __( 'Cron Settings', ES_TDOMAIN ); ?>
 			<a class="add-new-h2" target="_blank" type="button" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-		</h3>
+		</h2>
 		<form name="es_form" method="post" action="#" onsubmit="return _es_submit()">
-			<label for="tag-link"><?php echo __( 'Cron job URL', ES_TDOMAIN ); ?></label>
-			<input name="es_cron_url" type="text" id="es_cron_url" value="<?php echo $es_cron_url; ?>" maxlength="225" size="75" readonly />
-			<p><?php echo __( 'This is your cron job URL. It is a readonly field and you are advised not to modify it.', ES_TDOMAIN ); ?></p>
-			
-			<label for="tag-link"><?php echo __( 'Mail Count', ES_TDOMAIN ); ?></label>
-			<input name="es_cron_mailcount" type="text" id="es_cron_mailcount" value="<?php echo $es_cron_mailcount; ?>" maxlength="3" />
-			<p><?php echo __( 'Enter number of mails you want to send per hour/trigger (Your web host has limits. We suggest 50 emails per hour to be safe).', ES_TDOMAIN ); ?></p>
-			
-			<label for="tag-link"><?php echo __( 'Admin Report', 'email-subscribers' ); ?></label>
-			<textarea size="100" id="es_cron_adminmail" rows="7" cols="72" name="es_cron_adminmail"><?php echo esc_html(stripslashes($es_cron_adminmail)); ?></textarea>
-			<p><?php echo __( 'Send above mail to admin whenever cron URL is triggered from your server.<br />(Available Keywords: ###DATE###, ###SUBJECT###, ###COUNT###)', ES_TDOMAIN ); ?></p>
+			<table class="form-table">
+				<tbody>
+					<tr>
+						<th scope="row">
+							<label for="tag-image"><?php echo __( 'Cron job URL', ES_TDOMAIN ); ?>
+								<p class="description"><?php echo __( 'This is your Cron Job URL. It is a readonly field and you are advised not to modify it.', ES_TDOMAIN ); ?></p>
+							</label>
+						</th>
+						<td>
+							<input type="text" name="es_cron_url" id="es_cron_url" value="<?php echo $es_cron_url; ?>" size="68" readonly />
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="tag-image"><?php echo __( 'Mail Count', ES_TDOMAIN ); ?>								
+								<p class="description"><?php echo __( 'Number of mails you want to trigger per hour.', ES_TDOMAIN ); ?></p>
+							</label>
+						</th>
+						<td>
+							<input type="number" name="es_cron_mailcount" id="es_cron_mailcount" value="<?php echo $es_cron_mailcount; ?>" maxlength="3" />
+							<p class="description"><?php echo __( '(Your web host has limits. We suggest 50 emails per hour to be safe)', ES_TDOMAIN ) ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="tag-image"><?php echo __( 'Admin Report', 'email-subscribers' ); ?>
+								<p class="description"><?php echo __( 'Email to admin whenever cron URL is triggered from your server. (Keywords: ###DATE###, ###SUBJECT###, ###COUNT###)', ES_TDOMAIN ); ?></p>
+							</label>
+						</th>
+						<td>
+							<textarea size="100" id="es_cron_adminmail" rows="7" cols="72" name="es_cron_adminmail"><?php echo esc_html(stripslashes($es_cron_adminmail)); ?></textarea>
+						</td>
+					</tr>
+				</tbody>
+			</table>			
 			<input type="hidden" name="es_form_submit" value="yes"/>
 			<p class="submit">
-				<input name="publish" lang="publish" class="button add-new-h2" value="<?php echo __( 'Save', ES_TDOMAIN ); ?>" type="submit" />
+				<input type="submit" name="publish" lang="publish" class="button-primary" value="<?php echo __( 'Save', ES_TDOMAIN ); ?>" />
 			</p>
 			<?php wp_nonce_field('es_form_add'); ?>
 		</form>
 	</div>
 	<div class="tool-box">
-		<h3><?php echo __( 'How to setup auto emails using CRON Job through the cPanel or Plesk?', ES_TDOMAIN ); ?></h3>
-		<li><?php echo __( '<a target="_blank" href="http://www.icegram.com/documentation/es-how-to-schedule-cron-mails/">What is Cron?</a>', ES_TDOMAIN ); ?></li>
+		<h3><?php echo __( 'What is Cron (auto emails) and how to setup Cron Job?', ES_TDOMAIN ); ?></h3>
+		<li><?php echo __( '<a target="_blank" href="http://www.icegram.com/documentation/es-how-to-schedule-cron-emails/">What is Cron?</a>', ES_TDOMAIN ); ?></li>
 		<li><?php echo __( '<a target="_blank" href="http://www.icegram.com/documentation/es-how-to-schedule-cron-emails-in-parallels-plesk/">Setup cron job in Plesk</a>', ES_TDOMAIN ); ?></li>
 		<li><?php echo __( '<a target="_blank" href="http://www.icegram.com/documentation/es-how-to-schedule-cron-emails-in-cpanel/">Setup cron job in cPanal</a>', ES_TDOMAIN ); ?></li>
-		<li><?php echo __( '<a target="_blank" href="http://www.icegram.com/documentation/es-what-to-do-if-hosting-doesnt-support-cron-jobs/">Hosting doesnt support cron jobs?</a>', ES_TDOMAIN ); ?></li><br>
+		<li><?php echo __( '<a target="_blank" href="http://www.icegram.com/documentation/es-what-to-do-if-hosting-doesnt-support-cron-jobs/">Hosting does not support cron jobs?</a>', ES_TDOMAIN ); ?></li><br>
 	</div>
 	<p class="description"><?php echo ES_OFFICIAL; ?></p>
 </div>

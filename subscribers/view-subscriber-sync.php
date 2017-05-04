@@ -68,7 +68,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 	if ($es_error_found == FALSE && isset($es_success[0]) == TRUE) {
 		?>
-		<div class="updated fade">
+		<div class="notice notice-success is-dismissible">
 			<p><strong><?php echo $es_success; ?></strong></p>
 		</div>
 		<?php
@@ -77,22 +77,20 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 	?>
 
 	<style type="text/css">
-	.form-table th {
-		width:300px;
-	}
+		.form-table th {
+			width:350px;
+		}
 	</style>
 
-	<div class="form-wrap">
-		<div id="icon-plugins" class="icon32"></div>
-		<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
+	<div class="wrap">
+		<h2>
+			<?php echo __( 'Sync Email', ES_TDOMAIN ); ?>
+			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php echo __( 'Add New Subscriber', ES_TDOMAIN ); ?></a>
+			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=import"><?php echo __( 'Import', ES_TDOMAIN ); ?></a>
+			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=export"><?php echo __( 'Export', ES_TDOMAIN ); ?></a>
+			<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
+		</h2>
 		<form name="form_addemail" method="post" action="#" onsubmit="return _es_addemail()">
-			<h3 class="title">
-				<?php echo __( 'Sync Email', ES_TDOMAIN ); ?>
-				<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php echo __( 'Add New Subscriber', ES_TDOMAIN ); ?></a>
-				<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=import"><?php echo __( 'Import', ES_TDOMAIN ); ?></a>
-				<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=export"><?php echo __( 'Export', ES_TDOMAIN ); ?></a>
-				<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-			</h3>
 			<div class="tool-box">
 				<table class="form-table">
 					<tbody>
@@ -141,7 +139,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			</div>
 			<input type="hidden" name="es_form_submit" value="yes"/>
 			<p style="padding-top:5px;">
-				<input type="submit" class="button add-new-h2" value="<?php echo __( 'Sync', ES_TDOMAIN ); ?>" />
+				<input type="submit" class="button-primary" value="<?php echo __( 'Sync', ES_TDOMAIN ); ?>" />
 			</p>
 			<?php wp_nonce_field('es_form_add'); ?>
 		</form>

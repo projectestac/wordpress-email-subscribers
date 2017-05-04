@@ -4,8 +4,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Author URI: http://www.icegram.com/
 Tags: email marketing, email newsletter form, email signup, email widget, newsletter, newsletter signup, subscribe, subscription form, bulk emails, signup form, list builder, lead generation
 Requires at least: 3.4
-Tested up to: 4.6.1
-Stable tag: 3.2.3
+Tested up to: 4.7.1
+Stable tag: 3.2.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.htmlss
 
@@ -149,9 +149,11 @@ If you like Email Subscribers, please leave a [5 star](https://wordpress.org/sup
 * Turkish (tr_TR) - [Erkan ORUÇ](http://designerkan.com/)
 * French (fr_FR) - [Serge](https://profiles.wordpress.org/kalyx)
 * Lithuanian (lt_LT) - Andrius
+* Catalan (ca) - Jordi
 
 **Translations on [translate.wordpress.org](https://translate.wordpress.org/)**
 
+* Czech - Tomas , Martin ([(cs_CZ)](https://translate.wordpress.org/locale/cs/default/wp-plugins/email-subscribers))
 * Italian - [daepa](https://profiles.wordpress.org/daepa/) ([it_IT](https://translate.wordpress.org/locale/it/default/wp-plugins/email-subscribers))
 * Lithuanian - [kubandrius](https://profiles.wordpress.org/kubandrius/) ([lt_LT](https://translate.wordpress.org/locale/lt/default/wp-plugins/email-subscribers))
 
@@ -194,7 +196,7 @@ Refer [here](http://www.icegram.com/documentation/es-how-to-add-subscription-box
 
 Refer [here](http://www.icegram.com/documentation/es-how-to-import-or-export-email-address-to-subscriber-list/).
 
-= 4. How to modify Opt-in mail, Welcome mail, Admin mail contents? =
+= 4. How to modify the existing email content like Confirmation email, Welcome email, Admin emails? =
 
 Refer [here](http://www.icegram.com/documentation/es-general-plugin-settings/).
 
@@ -210,29 +212,29 @@ Refer [here](http://www.icegram.com/documentation/es-how-to-add-unsubscribe-link
 
 Refer [here](http://www.icegram.com/documentation/es-what-are-static-templates-and-dynamic-templates/).
 
-= 8. How to Compose and Send Static Newsletter Mails =
+= 8. How to Compose and Send Newsletter Emails =
 
 Refer [here](http://www.icegram.com/documentation/es-how-to-compose-and-send-static-newsletter-mails/).
 
-= 9. How to Configure and Send notification emails to subscribers when new posts are published? =
+= 9. How to Configure and Send Post Notification emails to subscribers when new posts are published? =
 
 Refer [here](http://www.icegram.com/documentation/es-how-to-configure-and-send-notification-emails-to-subscribers-when-new-posts-are-published/).
 
 = 10. How to Send a sample new post notification email to testgroup/myself? =
 
-Refer [here](http://www.icegram.com/documentation/how-to-send-a-sample-new-post-notification-email-to-testgroup-myself/).
+Refer [here](http://www.icegram.com/documentation/es-how-to-send-a-sample-new-post-notification-email-to-testgroup-myself/).
 
-= 11. How to check Sent mails? =
+= 11. How to check Sent emails reports? =
 
-Refer [here](http://www.icegram.com/documentation/es-how-to-check-sent-mails/).
+Refer [here](http://www.icegram.com/documentation/es-how-to-check-sent-emails/).
 
 = 12. How to Add/Update Existing Subscribers Group? =
 
 Refer [here](http://www.icegram.com/documentation/es-how-to-add-update-existing-subscribers-group/).
 
-= 13. Emails are not being received by Subscribers =
+= 13. Subscribers are not receiving Emails =
 
-Check steps from [here](http://www.icegram.com/documentation/es-new-post-notification-emails-are-not-being-received-by-subscribers/).
+Check steps from [here](http://www.icegram.com/documentation/es-subscribers-are-not-receiving-emails/).
 
 = 14. How to show subscribe form inside a popup? = 
 
@@ -242,9 +244,9 @@ Refer [here](http://www.icegram.com/documentation/es-how-to-show-subscribe-form-
 
 Refer [here](http://www.icegram.com/documentation/es-how-to-use-rainmakers-form-in-email-subscribers/).
 
-= 16. How to Schedule Cron mails/auto mails? =
+= 16. How to Schedule Cron Emails/auto mails? =
 
-Refer [here](http://www.icegram.com/documentation/es-how-to-schedule-cron-mails/).
+Refer [here](http://www.icegram.com/documentation/es-how-to-schedule-cron-emails/).
 
 = 17. How to Schedule Cron Emails/auto emails for Email Subscribers in cPanel? =
 
@@ -294,7 +296,7 @@ Use [Email Subscribers - Group Selector](https://wordpress.org/plugins/email-sub
 
 5. Send Mail Admin page
 
-6. Cron Job Detailes Admin page (Schedule mail)
+6. Cron Job Detailes Admin page (Schedule email)
 
 7. Settings Admin page
 
@@ -305,6 +307,38 @@ Use [Email Subscribers - Group Selector](https://wordpress.org/plugins/email-sub
 10. Delivery Report Admin page
 
 == Changelog ==
+
+= 3.2.6 (18.01.2017) =
+
+* New: WordPress 4.7.1 compatible
+* New: Changed terminologies of admin menus for better accessibility
+* Fix: Sanitize input fields while submitting subscribe form - Thanks to [Callibrator Pentester](http://hackholics.com/)
+* Fix: Made all admin success notices to be dismissible
+* Update: UI improvements
+* Update: Text correction & improvements
+* Update: POT file
+
+= 3.2.5 (05.01.2017) =
+
+* New: Added action 'es_message_head' for developers to insert custom CSS into subscribe and unsubscribe message
+* New: Translation for Catalan (ca) language added (Thanks to Jordi)
+* Fix: Exporting subscribers was giving 'Unexpected url submit has been detected' error
+* Update: Translation for Czech (cs_CZ) language updated (Thanks to Tomas & Martin)
+* Update: Translation for Spanish (es_ES) language updated (Thanks to David Bravo)
+* Update: Translation for Lithuanian (lt_LT) language updated (Thanks to Andrius)
+* Update: Translation for Polish (pl_PL) language updated (Thanks to Witold)
+* Update: Translation for Dutch (nl_NL) language removed
+* Update: Translation for Serbian (sr_RS) language removed
+
+= 3.2.4 (08.12.2016) =
+
+* New: Bulk update Subscribers Status
+* Fix: Single Opt In subscribers also showing Resend Confirmation link on Subscribers page
+* Fix: Incorrect documentation links
+* Update: Tested upto WordPress 4.7
+* Update: Translation for Czech (cs_CZ) language updated (inside plugin & on translate.wordpress.org) (Thanks to Tomas & Martin)
+* Update: POT file
+* Tweak: Show only one notice while deleting subscribers
 
 = 3.2.3 (27.10.2016) =
 
@@ -557,6 +591,38 @@ Use [Email Subscribers - Group Selector](https://wordpress.org/plugins/email-sub
 * First version
 
 == Upgrade Notice ==
+
+= 3.2.6 (18.01.2017) =
+
+* New: WordPress 4.7.1 compatible
+* New: Changed terminologies of admin menus for better accessibility
+* Fix: Sanitize input fields while submitting subscribe form - Thanks to [Callibrator Pentester](http://hackholics.com/)
+* Fix: Made all admin success notices to be dismissible
+* Update: UI improvements
+* Update: Text correction & improvements
+* Update: POT file
+
+= 3.2.5 (05.01.2017) =
+
+* New: Added action 'es_message_head' for developers to insert custom CSS into subscribe and unsubscribe message
+* New: Translation for Catalan (ca) language added (Thanks to Jordi)
+* Fix: Exporting subscribers was giving 'Unexpected url submit has been detected' error
+* Update: Translation for Czech (cs_CZ) language updated (Thanks to Tomas & Martin)
+* Update: Translation for Spanish (es_ES) language updated (Thanks to David Bravo)
+* Update: Translation for Lithuanian (lt_LT) language updated (Thanks to Andrius)
+* Update: Translation for Polish (pl_PL) language updated (Thanks to Witold)
+* Update: Translation for Dutch (nl_NL) language removed
+* Update: Translation for Serbian (sr_RS) language removed
+
+= 3.2.4 (08.12.2016) =
+
+* New: Bulk update Subscribers Status
+* Fix: Single Opt In subscribers also showing Resend Confirmation link on Subscribers page
+* Fix: Incorrect documentation links
+* Update: Tested upto WordPress 4.7
+* Update: Translation for Czech (cs_CZ) language updated (inside plugin & on translate.wordpress.org) (Thanks to Tomas & Martin)
+* Update: POT file
+* Tweak: Show only one notice while deleting subscribers
 
 = 3.2.3 (27.10.2016) =
 

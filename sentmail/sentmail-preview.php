@@ -22,16 +22,14 @@ if ($result != '1') {
 ?>
 
 <div class="wrap">
-	<div id="icon-plugins" class="icon32"></div>
-	<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-	<h3>
+	<h2 style="margin-bottom:1em;">
 		<?php echo __( 'Preview Mail', ES_TDOMAIN ); ?>
 		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-	</h3>
+	</h2>
 	<div class="tool-box">
 		<div style="padding:15px;background-color:#FFFFFF;">
 		<?php
-			$preview =  array();
+			$preview = array();
 			$preview = es_cls_sentmail::es_sentmail_select($did, 0, 0);
 			$preview = str_replace('###NAME###', "Username", $preview);
 			$preview = str_replace('###EMAIL###', "Useremail", $preview);
@@ -40,7 +38,7 @@ if ($result != '1') {
 		</div>
 		<div class="tablenav">
 			<h2>
-				<a class="button add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-sentmail&pagenum=<?php echo $pagenum; ?>"><?php echo __( 'Back', ES_TDOMAIN ); ?></a>
+				<a class="button-primary" href="<?php echo ES_ADMINURL; ?>?page=es-sentmail&pagenum=<?php echo $pagenum; ?>"><?php echo __( 'Back', ES_TDOMAIN ); ?></a>
 			</h2>
 		</div>
 		<div style="height:10px;"></div>

@@ -104,13 +104,19 @@ class es_cls_dbquery {
 		global $wpdb;
 		$prefix = $wpdb->prefix;
 		$result = 0;
+
 		if (!filter_var($data["es_email_mail"], FILTER_VALIDATE_EMAIL)) {
 			return "invalid";
 		}
 
+		$es_subscriber_name = sanitize_text_field($data["es_email_name"]);
+		$es_subscriber_status = sanitize_text_field($data["es_email_status"]);
+		$es_subscriber_group = sanitize_text_field($data["es_email_group"]);
+		$es_subscriber_email = sanitize_email($data["es_email_mail"]);
+
 		$CurrentDate = date('Y-m-d G:i:s');
 		if($action == "insert") {
-			$sSql = "SELECT * FROM `".$prefix."es_emaillist` where es_email_mail='".$data["es_email_mail"]."' and es_email_group='".trim($data["es_email_group"])."'";
+			$sSql = "SELECT * FROM `".$prefix."es_emaillist` where es_email_mail='".$es_subscriber_email."' and es_email_group='".trim($es_subscriber_group)."'";
 			$result = $wpdb->get_var($sSql);
 			if ( $result > 0) {
 				return "ext";
@@ -118,8 +124,8 @@ class es_cls_dbquery {
 				$guid = es_cls_common::es_generate_guid(60);
 				$sql = $wpdb->prepare("INSERT INTO `".$prefix."es_emaillist` 
 						(`es_email_name`,`es_email_mail`, `es_email_status`, `es_email_created`, `es_email_viewcount`, `es_email_group`, `es_email_guid`)
-						VALUES(%s, %s, %s, %s, %d, %s, %s)", array(trim($data["es_email_name"]), trim($data["es_email_mail"]), 
-						trim($data["es_email_status"]), $CurrentDate, 0, trim($data["es_email_group"]), $guid));
+						VALUES(%s, %s, %s, %s, %d, %s, %s)", array(trim($es_subscriber_name), trim($es_subscriber_email), 
+						trim($es_subscriber_status), $CurrentDate, 0, trim($es_subscriber_group), $guid));
 				$wpdb->query($sql);
 
 				/* Added from ES v3.1.5 - If subscribing via Rainmaker
@@ -135,7 +141,7 @@ class es_cls_dbquery {
 
 					$es_settings = es_cls_settings::es_setting_select();
 					$subscribers = array();
-					$subscribers = self::es_view_subscriber_one($data["es_email_mail"]);
+					$subscribers = self::es_view_subscriber_one($es_subscriber_email);
 
 					if( did_action( 'rainmaker_post_lead' ) >= 1 ) {
 						if ( (!empty($es_settings['es_c_optinoption'])) && ($es_settings['es_c_optinoption'] == 'Double Opt In') ) {
@@ -148,15 +154,15 @@ class es_cls_dbquery {
 				return "sus";
 			}
 		} elseif($action == "update") {
-			$sSql = "SELECT * FROM `".$prefix."es_emaillist` where es_email_mail='".$data["es_email_mail"]."'"; 
-			$sSql = $sSql . " and es_email_group='".trim($data["es_email_group"])."' and es_email_id <> ".$data["es_email_id"];
+			$sSql = "SELECT * FROM `".$prefix."es_emaillist` where es_email_mail='".$es_subscriber_email."'"; 
+			$sSql = $sSql . " and es_email_group='".trim($es_subscriber_group)."' and es_email_id != ".$data["es_email_id"];
 			$result = $wpdb->get_var($sSql);
 			if ( $result > 0) {
 				return "ext";
 			} else {
 				$sSql = $wpdb->prepare("UPDATE `".$prefix."es_emaillist` SET `es_email_name` = %s, `es_email_mail` = %s,
-						`es_email_status` = %s, `es_email_group` = %s WHERE es_email_id = %d LIMIT 1", array($data["es_email_name"], $data["es_email_mail"], 
-						$data["es_email_status"], $data["es_email_group"], $data["es_email_id"]));
+						`es_email_status` = %s, `es_email_group` = %s WHERE es_email_id = %d LIMIT 1", array($es_subscriber_name, $es_subscriber_email, 
+						$es_subscriber_status, $es_subscriber_group, $data["es_email_id"]));
 				$wpdb->query($sSql);
 				return "sus";
 			}
@@ -168,7 +174,7 @@ class es_cls_dbquery {
 		$prefix = $wpdb->prefix;
 		$arrRes = array();
 		$sSql = "SELECT * FROM `".$prefix."es_emaillist` where es_email_mail <> '' ";
-		if($idlist <> "") {
+		if($idlist != "") {
 			$sSql = $sSql . " and es_email_id in (" . $idlist. ");";
 		}
 		$arrRes = $wpdb->get_results($sSql, ARRAY_A);
@@ -264,10 +270,10 @@ class es_cls_dbquery {
 				return "ext";
 			} else {
 				$action = "";
-				$form['es_email_name'] = $data["es_email_name"];
-				$form['es_email_mail'] = $data["es_email_mail"];
-				$form['es_email_group'] = $data["es_email_group"];
-				$form['es_email_status'] = $data["es_email_status"];
+				$form['es_email_name'] = sanitize_text_field($data["es_email_name"]);
+				$form['es_email_mail'] = sanitize_email($data["es_email_mail"]);
+				$form['es_email_group'] = sanitize_text_field($data["es_email_group"]);
+				$form['es_email_status'] = sanitize_text_field($data["es_email_status"]);
 				$form['es_email_id'] = $arrRes[0]["es_email_id"];
 				$action = es_cls_dbquery::es_view_subscriber_ins($form, $action = "update");
 				return $action;

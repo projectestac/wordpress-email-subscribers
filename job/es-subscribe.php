@@ -30,7 +30,7 @@ if( (isset($_GET['es'])) && ($_GET['es'] == "subscribe") ) {
 		$es_group = "Public";
 	}
 
-	if($es_email <> "")	{
+	if($es_email != "")	{
 		if (!filter_var($es_email, FILTER_VALIDATE_EMAIL)) {
 			echo "invalid-email";
 		} else {

@@ -57,7 +57,7 @@ if ($sendmailsubmit == 'yes') {
 		$es_success_msg = TRUE;
 		$es_success = __( 'Mail sent successfully. ', ES_TDOMAIN );
 		if ($es_success_msg == TRUE) {
-			?><div class="updated fade">
+			?><div class="notice notice-success is-dismissible">
 				<p><strong>
 			  		<?php echo $es_success; ?><a href="<?php echo ES_ADMINURL; ?>?page=es-sentmail"><?php echo __( 'Click here to check Statistics', ES_TDOMAIN ); ?></a>
 				</strong></p>
@@ -88,116 +88,115 @@ if ($es_error_found == TRUE && isset($es_errors[0]) == TRUE) {
 </style>
 
 <div class="wrap">
-	<div class="form-wrap">
-		<div id="icon-plugins" class="icon32"></div>
-		<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-		<h3>
-			<?php echo __( 'Send Email', ES_TDOMAIN ); ?>
-			<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-		</h3>
-		<form name="es_form" method="post" action="#" onsubmit="return _es_submit()">
-			<table class="form-table">
-				<tbody>
-					<tr>
-						<th scope="row">
-							<label for="tag-image">
-								<?php echo __( 'Select Mail Subject from available list', ES_TDOMAIN ); ?>
-							</label>
-						</th>
-						<td>
-							<select name="es_templ_heading" id="es_templ_heading">
-								<option value=''><?php echo __( 'Select', ES_TDOMAIN ); ?></option>
-								<?php
-									$subject = array();
-									$subject = es_cls_compose::es_template_select_type($type = "Static Template");
-									$thisselected = "";
-									if(count($subject) > 0) {
-										$i = 1;
-										foreach ($subject as $sub) {
-											if($sub["es_templ_id"] == $es_templ_heading) { 
-												$thisselected = "selected='selected'" ; 
-											}
-											?><option value='<?php echo $sub["es_templ_id"]; ?>' <?php echo $thisselected; ?>><?php echo esc_html(stripslashes($sub["es_templ_heading"])); ?></option><?php
-											$thisselected = "";
-										}
-									}
-								?>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<label for="tag-image">
-								<?php echo __( 'Select Mail Type', ES_TDOMAIN ); ?>
-							</label>
-						</th>
-						<td>
-							<select name="es_sent_type" id="es_sent_type">
-								<option value=''><?php echo __( 'Select', ES_TDOMAIN ); ?></option>
-								<option value='Instant Mail' <?php if($es_sent_type == 'Instant Mail') { echo "selected='selected'" ; } ?>><?php echo __( 'Send mail immediately', ES_TDOMAIN ); ?></option>
-								<option value='Cron Mail' <?php if($es_sent_type == 'Cron Mail') { echo "selected='selected'" ; } ?>><?php echo __( 'Send mail via cron job', ES_TDOMAIN ); ?></option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<label for="tag-image">
-								<?php echo __( 'Select Subscribers group to Send Mail', ES_TDOMAIN ); ?>
-							</label>
-						</th>
-						<td>
-							<select name="es_email_group" id="es_email_group" onChange="_es_mailgroup(this.options[this.selectedIndex].value)">
-								<option value=''><?php echo __( 'Select', ES_TDOMAIN ); ?></option>
-								<?php
-									$groups = array();
-									$thisselected = "";
-									$groups = es_cls_dbquery::es_view_subscriber_group();
-									if(count($groups) > 0) {
-										$i = 1;
-										foreach ($groups as $group) {
-											if(stripslashes($group["es_email_group"]) == stripslashes($es_email_group)) { 
-												$thisselected = "selected='selected'" ; 
-											}
-											?><option value="<?php echo esc_html($group["es_email_group"]); ?>" <?php echo $thisselected; ?>><?php echo stripslashes($group["es_email_group"]); ?></option><?php
-											$thisselected = "";
-										}
-									}
-								?>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">
-						</th>
-						<td>
+	<h2>
+		<?php echo __( 'Newsletters', ES_TDOMAIN ); ?>
+		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
+	</h2>
+	<p class="description">
+		<?php echo __( 'Use this to send newsletter emails to your subscribers.', ES_TDOMAIN ); ?>
+	</p>
+	<form name="es_form" method="post" action="#" onsubmit="return _es_submit()">
+		<table class="form-table">
+			<tbody>
+				<tr>
+					<th scope="row">
+						<label for="tag-image">
+							<?php echo __( 'Select Mail Subject from available list', ES_TDOMAIN ); ?>
+						</label>
+					</th>
+					<td>
+						<select name="es_templ_heading" id="es_templ_heading">
+							<option value=''><?php echo __( 'Select', ES_TDOMAIN ); ?></option>
 							<?php
-								$subscribers_count = array();
-								$subscribers_count = es_cls_dbquery::es_subscriber_count_in_group($es_email_group);
-								if( $subscribers_count == '0' ) {
-									echo __( 'Recipients : 0 ', ES_TDOMAIN );
-								} else {
-									echo sprintf(__( 'Recipients : %s', ES_TDOMAIN ), $subscribers_count );
-								}
-								if( $subscribers_count > '100' && $es_sent_type == 'Instant Mail' ) {
-									echo __( '<br><br><strong>Your Recipients count is above 100.<br>We strongly recommend that you change above Mail Type to Cron and Send Mail via Cron Job.</strong><br>Click on Help for more information.', ES_TDOMAIN );
+								$subject = array();
+								$subject = es_cls_compose::es_template_select_type($type = "Static Template");
+								$thisselected = "";
+								if(count($subject) > 0) {
+									$i = 1;
+									foreach ($subject as $sub) {
+										if($sub["es_templ_id"] == $es_templ_heading) { 
+											$thisselected = "selected='selected'" ; 
+										}
+										?><option value='<?php echo $sub["es_templ_id"]; ?>' <?php echo $thisselected; ?>><?php echo esc_html(stripslashes($sub["es_templ_heading"])); ?></option><?php
+										$thisselected = "";
+									}
 								}
 							?>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<?php $nonce = wp_create_nonce( 'sendmail-nonce' ); ?>
-			<input type="hidden" name="sendmailsubmit" id="sendmailsubmit" value=""/>
-			<input type="hidden" name="wp_create_nonce" id="wp_create_nonce" value="<?php echo $nonce; ?>"/>
-			<?php if( $subscribers_count != 0 ) { ?>
-				<input type="submit" name="Submit" class="send button add-new-h2" value="<?php echo __( 'Send Email', ES_TDOMAIN ); ?>" style="width:160px;" />&nbsp;
-			<?php } else { ?>
-				<input type="submit" name="Submit" disabled="disabled" class="send button add-new-h2" value="<?php echo __( 'Send Email', ES_TDOMAIN ); ?>" style="width:160px;" />&nbsp;
-			<?php } ?>
-			<?php wp_nonce_field('es_form_submit'); ?>
-			<input type="button" class="button add-new-h2" onclick="_es_redirect()" value="<?php echo __( 'Reset', ES_TDOMAIN ); ?>" />
-		</form>
-	</div>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">
+						<label for="tag-image">
+							<?php echo __( 'Select Mail Type', ES_TDOMAIN ); ?>
+						</label>
+					</th>
+					<td>
+						<select name="es_sent_type" id="es_sent_type">
+							<option value=''><?php echo __( 'Select', ES_TDOMAIN ); ?></option>
+							<option value='Instant Mail' <?php if($es_sent_type == 'Instant Mail') { echo "selected='selected'" ; } ?>><?php echo __( 'Send mail immediately', ES_TDOMAIN ); ?></option>
+							<option value='Cron Mail' <?php if($es_sent_type == 'Cron Mail') { echo "selected='selected'" ; } ?>><?php echo __( 'Send mail via cron job', ES_TDOMAIN ); ?></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">
+						<label for="tag-image">
+							<?php echo __( 'Select Subscribers group to Send Mail', ES_TDOMAIN ); ?>
+						</label>
+					</th>
+					<td>
+						<select name="es_email_group" id="es_email_group" onChange="_es_mailgroup(this.options[this.selectedIndex].value)">
+							<option value=''><?php echo __( 'Select', ES_TDOMAIN ); ?></option>
+							<?php
+								$groups = array();
+								$thisselected = "";
+								$groups = es_cls_dbquery::es_view_subscriber_group();
+								if(count($groups) > 0) {
+									$i = 1;
+									foreach ($groups as $group) {
+										if(stripslashes($group["es_email_group"]) == stripslashes($es_email_group)) { 
+											$thisselected = "selected='selected'" ; 
+										}
+										?><option value="<?php echo esc_html($group["es_email_group"]); ?>" <?php echo $thisselected; ?>><?php echo stripslashes($group["es_email_group"]); ?></option><?php
+										$thisselected = "";
+									}
+								}
+							?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">
+					</th>
+					<td>
+						<?php
+							$subscribers_count = array();
+							$subscribers_count = es_cls_dbquery::es_subscriber_count_in_group($es_email_group);
+							if( $subscribers_count == '0' ) {
+								echo __( 'Recipients : 0 ', ES_TDOMAIN );
+							} else {
+								echo sprintf(__( 'Recipients : %s', ES_TDOMAIN ), $subscribers_count );
+							}
+							if( $subscribers_count > '100' && $es_sent_type == 'Instant Mail' ) {
+								echo __( '<br><br><strong>Your Recipients count is above 100.<br>We strongly recommend that you change above Mail Type to Cron and Send Mail via Cron Job.</strong><br>Click on Help for more information.', ES_TDOMAIN );
+							}
+						?>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<?php $nonce = wp_create_nonce( 'sendmail-nonce' ); ?>
+		<input type="hidden" name="sendmailsubmit" id="sendmailsubmit" value=""/>
+		<input type="hidden" name="wp_create_nonce" id="wp_create_nonce" value="<?php echo $nonce; ?>"/>
+		<?php if( $subscribers_count != 0 ) { ?>
+			<input type="submit" name="Submit" class="send button-primary" style="width:160px;" value="<?php echo __( 'Send Email', ES_TDOMAIN ); ?>" />&nbsp;
+		<?php } else { ?>
+			<input type="submit" name="Submit" disabled="disabled" class="send button add-new-h2" style="width:160px;" value="<?php echo __( 'Send Email', ES_TDOMAIN ); ?>" />&nbsp;
+		<?php } ?>
+		<?php wp_nonce_field('es_form_submit'); ?>
+		<input type="button" class="button-primary" onclick="_es_redirect()" value="<?php echo __( 'Reset', ES_TDOMAIN ); ?>" />
+	</form>
 	<div style="padding-top:10px;"></div>
 	<p class="description"><?php echo ES_OFFICIAL; ?></p>
 </div>

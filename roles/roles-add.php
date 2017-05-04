@@ -89,7 +89,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 		if ($es_error_found == FALSE && isset($es_success[0]) == TRUE) {
 			?>
-			<div class="updated fade">
+			<div class="notice notice-success is-dismissible">
 				<p><strong>
 					<?php echo $es_success; ?>
 				</strong></p>
@@ -98,14 +98,18 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 		}
 	?>
 
-	<div class="form-wrap">
-		<div id="icon-plugins" class="icon32"></div>
-		<h2><?php echo __( ES_PLUGIN_DISPLAY, ES_TDOMAIN ); ?></h2>
-		<h3 class="title">
-			<?php echo __( 'Roles and Capabilities', ES_TDOMAIN ); ?>
+	<style>
+		.form-table th {
+			width: 250px;
+		}
+	</style>
+
+	<div class="wrap">
+		<h2>
+			<?php echo __( 'User Roles', ES_TDOMAIN ); ?>
 			<a class="add-new-h2" target="_blank" type="button" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
-		</h3>
-		<p>
+		</h2>
+		<p class="description">
 			<?php echo __( 'Select user roles who can access following menus. Only Admin can change this.', ES_TDOMAIN ); ?>
 		</p>
 		<form name="form_roles" method="post" action="#">
@@ -137,7 +141,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="tag-image"><?php echo __( 'Notification Menu', ES_TDOMAIN ); ?></label>
+							<label for="tag-image"><?php echo __( 'Post Notifications Menu', ES_TDOMAIN ); ?></label>
 						</th>
 						<td>
 							<select name="es_roles_notification" id="es_roles_notification">
@@ -149,7 +153,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="tag-image"><?php echo __( 'Send Email Menu/Cron Menu', ES_TDOMAIN ); ?></label>
+							<label for="tag-image"><?php echo __( 'Newsletters + Cron Settings Menu', ES_TDOMAIN ); ?></label>
 						</th>
 						<td>
 							<select name="es_roles_sendmail" id="es_roles_sendmail">
@@ -161,7 +165,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="tag-image"><?php echo __( 'Settings Menu', ES_TDOMAIN ); ?></label>
+							<label for="tag-image"><?php echo __( 'Email Settings Menu', ES_TDOMAIN ); ?></label>
 						</th>
 						<td>
 							<select name="es_roles_setting" id="es_roles_setting">
@@ -173,7 +177,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="tag-image"><?php echo __( 'Sent Mails Menu', ES_TDOMAIN ); ?></label>
+							<label for="tag-image"><?php echo __( 'Reports Menu', ES_TDOMAIN ); ?></label>
 						</th>
 						<td>
 							<select name="es_roles_sentmail" id="es_roles_sentmail">
@@ -199,7 +203,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			</table>
 			<input type="hidden" name="es_form_submit" value="yes"/>
 			<p style="padding-top:5px;">
-				<input name="publish" lang="publish" class="button add-new-h2" value="<?php echo __( 'Save', ES_TDOMAIN ); ?>" type="submit" />
+				<input type="submit" name="publish" lang="publish" class="button-primary" value="<?php echo __( 'Save', ES_TDOMAIN ); ?>" />
 			</p>
 			<div style="height:10px;"></div>
 	  		<?php wp_nonce_field('es_roles_add'); ?>
