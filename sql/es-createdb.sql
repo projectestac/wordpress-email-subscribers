@@ -1,3 +1,17 @@
+/*//XTEC ************ MODIFICAT - Changed default group from Public to Portada
+//2016.03.29 @sarjona */
+CREATE TABLE IF NOT EXISTS es_emaillist (
+  es_email_id INT unsigned NOT NULL AUTO_INCREMENT,
+  es_email_name VARCHAR(255) NOT NULL,
+  es_email_mail VARCHAR(255) NOT NULL,
+  es_email_status VARCHAR(25) NOT NULL default 'Unconfirmed',
+  es_email_created datetime NOT NULL default '0000-00-00 00:00:00',
+  es_email_viewcount VARCHAR(100) NOT NULL,
+  es_email_group VARCHAR(255) NOT NULL default 'Portada',
+  es_email_guid VARCHAR(255) NOT NULL,
+  PRIMARY KEY  (es_email_id)
+) ENGINE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci*/;
+/*//************ ORIGINAL
 CREATE TABLE IF NOT EXISTS es_emaillist (
   es_email_id INT unsigned NOT NULL AUTO_INCREMENT,
   es_email_name VARCHAR(255) NOT NULL,
@@ -9,6 +23,7 @@ CREATE TABLE IF NOT EXISTS es_emaillist (
   es_email_guid VARCHAR(255) NOT NULL,
   PRIMARY KEY  (es_email_id)
 ) ENGINE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci*/;
+//************ FI */
 
 -- SQLQUERY ---
 

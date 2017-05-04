@@ -241,7 +241,19 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php echo __( 'Add New Subscriber', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=import"><?php echo __( 'Import', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=export"><?php echo __( 'Export', ES_TDOMAIN ); ?></a>
+
+		<!-- XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+		<!-- 2017.02.15 @xaviernietosanchez -->
+		<?php if ( is_xtec_super_admin() ) { ?>
+		<!-- ************ FI -->
+
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php echo __( 'Sync', ES_TDOMAIN ); ?></a>
+
+		<!-- XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+		<!-- 2017.02.15 @xaviernietosanchez -->
+		<?php } ?>
+		<!-- ************ FI -->
+
 		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
 	</h2>
 	<div class="tool-box">
@@ -441,5 +453,16 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 		</form>
 	</div>
 	<div style="height:10px;"></div>
+
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+		  <?php if(is_xtec_super_admin()) : ?>
+			  <p class="description"><?php echo ES_OFFICIAL; ?></p>
+		  <?php endif; ?>
+	<!--************ ORIGINAL	-->
+	<!--
 	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	-->
+	<!--************ FI-->
+
 </div>

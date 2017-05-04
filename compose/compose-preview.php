@@ -38,6 +38,16 @@ if ($result != '1') {
 		<p>
 			<a class="button-primary" href="<?php echo ES_ADMINURL; ?>?page=es-compose&ac=edit&did=<?php echo $did; ?>"><?php echo __( 'Edit', ES_TDOMAIN ); ?></a>
 		</p>
+
+		<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+		<!-- 2015.10.01 @dgras-->
+		<?php if(is_xtec_super_admin()) : ?>
+			<p class="description"><?php echo ES_OFFICIAL; ?></p>
+		<?php endif; ?>
+		<!--************ ORIGINAL	-->
+		<!--
 		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+		-->
+		<!--************ FI-->
 	</div>
 </div>

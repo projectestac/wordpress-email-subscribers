@@ -27,7 +27,16 @@ if( (isset($_GET['es'])) && ($_GET['es'] == "subscribe") ) {
 	);
 
 	if($es_group == "") {
+
+		//XTEC ************ MODIFICAT - Changed default group from Public to Portada
+		//2016.03.29 @sarjona
+		$es_group = 'Portada';
+		//************ ORIGINAL
+		/*
 		$es_group = "Public";
+		*/
+		//************ FI
+
 	}
 
 	if($es_email != "")	{

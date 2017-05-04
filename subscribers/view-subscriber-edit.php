@@ -108,7 +108,19 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php echo __( 'Add New Subscriber', ES_TDOMAIN ); ?></a>
 			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=import"><?php echo __( 'Import', ES_TDOMAIN ); ?></a>
 			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=export"><?php echo __( 'Export', ES_TDOMAIN ); ?></a>
+
+			<!-- XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+			<!-- 2017.02.15 @xaviernietosanchez -->
+			<?php if ( is_xtec_super_admin() ) { ?>
+			<!-- ************ FI -->
+
 			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php echo __( 'Sync', ES_TDOMAIN ); ?></a>
+
+			<!-- XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+			<!-- 2017.02.15 @xaviernietosanchez -->
+			<?php } ?>
+			<!-- ************ FI -->
+			
 			<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
 		</h2>
 		<form name="form_addemail" method="post" action="#" onsubmit="return _es_addemail()">
@@ -143,10 +155,22 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 							</th>
 							<td>
 								<select name="es_email_status" id="es_email_status">
+
+									<!--XTEC ************ MODIFICAT - Localization support -->
+									<!-- 2015.10.01 @dgras-->
+									<option value='Confirmed' <?php if($form['es_email_status']=='Confirmed') { echo 'selected="selected"' ; } ?>><?php _e('Confirmed', 'email-subscribers') ?></option>
+									<option value='Unconfirmed' <?php if($form['es_email_status']=='Unconfirmed') { echo 'selected="selected"' ; } ?>><?php _e('Unconfirmed', 'email-subscribers') ?></option>
+									<option value='Unsubscribed' <?php if($form['es_email_status']=='Unsubscribed') { echo 'selected="selected"' ; } ?>><?php _e('Unsubscribed', 'email-subscribers') ?></option>
+									<option value='Single Opt In' <?php if($form['es_email_status']=='Single Opt In') { echo 'selected="selected"' ; } ?>><?php _e('Single Opt In', 'email-subscribers') ?></option>
+									<!--************ ORIGINAL	-->
+									<!--
 									<option value='Confirmed' <?php if($form['es_email_status'] == 'Confirmed') { echo 'selected="selected"' ; } ?>><?php echo __( 'Confirmed', ES_TDOMAIN ); ?></option>
 									<option value='Unconfirmed' <?php if($form['es_email_status'] =='Unconfirmed') { echo 'selected="selected"' ; } ?>><?php echo __( 'Unconfirmed', ES_TDOMAIN ); ?></option>
 									<option value='Unsubscribed' <?php if($form['es_email_status'] == 'Unsubscribed') { echo 'selected="selected"' ; } ?>><?php echo __( 'Unsubscribed', ES_TDOMAIN ); ?></option>
 									<option value='Single Opt In' <?php if($form['es_email_status'] == 'Single Opt In') { echo 'selected="selected"' ; } ?>><?php echo __( 'Single Opt In', ES_TDOMAIN ); ?></option>
+									-->
+									<!--************ FI-->
+
 								</select>
 							</td>
 						</tr>
@@ -193,5 +217,16 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 		</form>
 	</div>
 	<div style="height:10px;"></div>
+
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ ORIGINAL	-->
+	<!--
 	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	-->
+	<!--************ FI-->
+
 </div>

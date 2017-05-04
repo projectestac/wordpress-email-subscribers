@@ -195,6 +195,12 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 							</p>
 						</td>
 					</tr>
+
+					<!--XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+					<!-- 2015.10.12 @dgras-->
+					<?php if(is_xtec_super_admin()) { ?>
+					<!-- ************ FI -->
+
 	 				<tr>
 		 				<th scope="row">
 							<label for="tag-link"><?php echo __( 'Select your Custom Post Type', ES_TDOMAIN ); ?>
@@ -232,15 +238,34 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 							?>
 						</td>
 	 				</tr>
+
+					<!--XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+					<!-- 2015.10.12 @dgras-->
+					<?php } ?>
+					<!-- ************ FI -->
+
 					<tr>
 						<th scope="row">
 							<label for="tag-link"><?php echo __( 'Select Notification Status', ES_TDOMAIN ); ?></label>
 						</th>
 						<td>
 							<select name="es_note_status" id="es_note_status">
+								
+								<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+								<!-- 2015.10.12 @dgras-->
+							  	<option value='Enable' selected="selected"><?php _e("Send mail immediately when new post is published.", ES_TDOMAIN) ?></option>
+								<?php if(is_xtec_super_admin()) : ?>
+							  		<option value='Cron'><?php _e("Add to cron when new post is published and send via cron job.", ES_TDOMAIN) ?></option>
+								<?php endif; ?>
+								<option value='Disable'><?php _e("Disable notification.", ES_TDOMAIN)?></option>
+								<!--************ ORIGINAL	-->
+								<!--
 								<option value='Enable' selected="selected"><?php echo __( 'Send mail immediately when new post is published', ES_TDOMAIN ); ?></option>
 								<option value='Cron'><?php echo __( 'Add to cron when new post is published and send via cron job', ES_TDOMAIN );?></option>
 								<option value='Disable'><?php echo __( 'Disable notification', ES_TDOMAIN ); ?></option>
+								-->
+								<!--************ FI-->
+
 							</select>
 						</td>
 					</tr>
@@ -253,5 +278,15 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 		  <?php wp_nonce_field('es_form_add'); ?>
 	    </form>
 	</div>
+
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ ORIGINAL	-->
+	<!--
 	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	-->
+	<!--************ FI-->
 </div>

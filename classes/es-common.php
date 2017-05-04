@@ -106,12 +106,33 @@ class es_cls_common {
 	}
 	
 	public static function es_sent_report_subject() {
+
+		//XTEC ************ MODIFICAT - Localization support
+		//2015.10.13 @dgras
+		$report = "Butlletí Informe enviament";
+		//************ ORIGINAL
+		/*
 		$report = "Newsletter Sent Report";
+		*/
+		//************ FI
+
 		return $report;
 	}
 
 	public static function es_sent_report_plain() {
 		$report = "";
+
+		//XTEC ************ MODIFICAT - Localization support
+		//2015.10.13 @dgras
+		$report = $report. "Hola Administrador,\n\n";
+		$report = $report. "El missatge ha estat enviat amb èxit a ###COUNT### de correu electrònic(s). Trobareu els detalls a continuació.\n\n";
+		$report = $report. "Id únic: ###UNIQUE### \n";
+		$report = $report. "Hora d'inici: ###STARTTIME### \n";
+		$report = $report. "Hora de finalització: ###ENDTIME### \n";
+		$report = $report. "Per a més informació, accediu al tauler i aneu al menú de Correus enviats a subscriptors. \n\n";
+		$report = $report. "Gràcies \n";
+		//************ ORIGINAL
+		/*
 		$report = $report. "Hi Admin,\n\n";
 		$report = $report. "Mail has been sent successfully to ###COUNT### email(s). Please find the details below.\n\n";
 		$report = $report. "Unique ID : ###UNIQUE### \n";
@@ -119,11 +140,26 @@ class es_cls_common {
 		$report = $report. "End Time: ###ENDTIME### \n";
 		$report = $report. "For more information, Login to your Dashboard and go to Sent Mails menu in Email Subscribers. \n\n";
 		$report = $report. "Thank You. \n";
+		*/
+		//************ FI
+
 		return $report;
 	}
 	
 	public static function es_sent_report_html() {
 		$report = "";
+
+		//XTEC ************ MODIFICAT - Localization support
+		//2015.10.13 @dgras
+		$report = $report. "Hola Administrador, <br/><br/>";
+		$report = $report. "El missatge ha estat enviat amb èxit a ###COUNT### de correu electrònic(s). Trobareu els detalls a continuació.<br/><br/>";
+		$report = $report. "Id únic : ###UNIQUE### <br/>";
+		$report = $report. "Hora d'inici: ###STARTTIME### <br/>";
+		$report = $report. "Hora de finalització: ###ENDTIME### <br/>";
+		$report = $report. "Per a més informació, accediu al tauler i aneu al menú de Correus enviats a subscriptors. <br/><br/>";
+		$report = $report. "Gràcies <br/>";
+		//************ ORIGINAL
+		/*
 		$report = $report. "Hi Admin, <br/><br/>";
 		$report = $report. "Mail has been sent successfully to ###COUNT### email(s). Please find the details below.<br/><br/>";
 		$report = $report. "Unique ID : ###UNIQUE### <br/>";
@@ -131,6 +167,9 @@ class es_cls_common {
 		$report = $report. "End Time: ###ENDTIME### <br/>";
 		$report = $report. "For more information, Login to your Dashboard and go to Sent Mails menu in Email Subscribers. <br/><br/>";
 		$report = $report. "Thank You. <br/>";
+		*/
+		//************ FI
+
 		return $report;
 	}
 	

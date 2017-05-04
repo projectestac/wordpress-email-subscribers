@@ -42,6 +42,17 @@ if ($result != '1') {
 			</h2>
 		</div>
 		<div style="height:10px;"></div>
+
+		<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+		<!-- 2015.10.01 @dgras-->
+		<?php if(is_xtec_super_admin()) : ?>
+			<p class="description"><?php echo ES_OFFICIAL; ?></p>
+		<?php endif; ?>
+		<!--************ ORIGINAL	-->
+		<!--
 		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+		-->
+		<!--************ FI-->
+
 	</div>
 </div>

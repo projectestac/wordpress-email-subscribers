@@ -4,7 +4,14 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
   die('You are not allowed to call this page directly.');
 }
 
+//XTEC ************ MODIFICAT - To fix bug when exporting CSV
+//2015.12.07 @sarjona
+$home_url = preg_replace('/^http:/i', 'https:', home_url('/'));
+//************ ORIGINAL
+/*
 $home_url = home_url('/');
+*/
+//************ FI
 
 // Total Subscribers (with all status)
 $cnt_subscriber = 0;
@@ -25,7 +32,19 @@ $cnt_comment_author = $wpdb->get_var( "SELECT count(DISTINCT comment_author_emai
 		<?php echo __( 'Export Email Addresses', ES_TDOMAIN ); ?>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php echo __( 'Add New Subscriber', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=import"><?php echo __( 'Import', ES_TDOMAIN ); ?></a>
+
+		<!-- XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+		<!-- 2017.02.15 @xaviernietosanchez -->
+		<?php if ( is_xtec_super_admin() ) { ?>
+		<!-- ************ FI -->
+
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php echo __( 'Sync', ES_TDOMAIN ); ?></a>
+
+		<!-- XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+		<!-- 2017.02.15 @xaviernietosanchez -->
+		<?php } ?>
+		<!-- ************ FI -->
+
 		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
 	</h2>
 	<div class="tool-box">
@@ -71,5 +90,16 @@ $cnt_comment_author = $wpdb->get_var( "SELECT count(DISTINCT comment_author_emai
 		</form>
 	</div>
 	<div style="height:10px;"></div>
+
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+	  <p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ ORIGINAL	-->
+	<!--
 	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	-->
+	<!--************ FI-->
+
 </div>
