@@ -779,25 +779,21 @@ class es_cls_registerhook {
 				echo '<div class="notice notice-warning"><p style="letter-spacing: 0.6px;">'.$admin_notice_text_for_gdpr_consent.'<a target="_blank" style="display:inline-block" class="es-gdpr-admin-btn" href="'.$url.'">'.__( 'Steps to enable', ES_TDOMAIN ).'</a><a style="display:inline-block" class="es-gdpr-admin-btn es-gdpr-admin-btn-secondary" href="?dismiss_admin_notice=1&option_name=es_gdpr_consent_notify">'.__( 'Ok, got it', ES_TDOMAIN ).'</a></p></div>';
 		}
 
-		// XTEC ************ AFEGIT - Only show to xtecadmin
-		// 2017.02.15 @xaviernietosanchez
-		if ( is_xtec_super_admin() ) {
-		// ************ FI
 
-		$es_rm_notice_email_subscribers = get_option( 'es_rm_notice_email_subscribers' );
+		// XTEC ************ ELIMINAT - Delete advertising
+        // 2018.04.17 @nacho
 
-		if ( in_array('icegram-rainmaker/icegram-rainmaker.php', $active_plugins) || array_key_exists('icegram-rainmaker/icegram-rainmaker.php', $active_plugins) || !empty($es_rm_notice_email_subscribers) ) {
-			return;
-		} else {
-			$url = wp_nonce_url(self_admin_url('update.php?action=install-plugin&plugin=' . 'icegram-rainmaker'), 'install-plugin_' . 'icegram-rainmaker');
-				$admin_notice_text_for_rm = __( 'Email Subscribers recommends free plugin <b>Rainmaker</b> to collect leads instantly', ES_TDOMAIN );
-				echo '<div class="notice notice-warning"><p>'.$admin_notice_text_for_rm.'<a style="display:inline-block" class="es-admin-btn" href="'.$url.'">'.__( 'Yes, I want this', ES_TDOMAIN ).'</a><a style="display:inline-block" class="es-admin-btn es-admin-btn-secondary" href="?dismiss_admin_notice=1&option_name=es_rm_notice">'.__( 'No, I don\'t want it', ES_TDOMAIN ).'</a></p></div>';
-		}
+        /*
+        $es_rm_notice_email_subscribers = get_option( 'es_rm_notice_email_subscribers' );
+        if ( in_array('icegram-rainmaker/icegram-rainmaker.php', $active_plugins) || array_key_exists('icegram-rainmaker/icegram-rainmaker.php', $active_plugins) || !empty($es_rm_notice_email_subscribers) ) {
+            return;
+        } else {
+            $url = wp_nonce_url(self_admin_url('update.php?action=install-plugin&plugin=' . 'icegram-rainmaker'), 'install-plugin_' . 'icegram-rainmaker');
+                $admin_notice_text_for_rm = __( 'Email Subscribers recommends free plugin <b>Rainmaker</b> to collect leads instantly', ES_TDOMAIN );
+                echo '<div class="notice notice-warning"><p>'.$admin_notice_text_for_rm.'<a style="display:inline-block" class="es-admin-btn" href="'.$url.'">'.__( 'Yes, I want this', ES_TDOMAIN ).'</a><a style="display:inline-block" class="es-admin-btn es-admin-btn-secondary" href="?dismiss_admin_notice=1&option_name=es_rm_notice">'.__( 'No, I don\'t want it', ES_TDOMAIN ).'</a></p></div>';
+        }*/
 
-		// XTEC ************ AFEGIT - Only show to xtecadmin
-		// 2017.02.15 @xaviernietosanchez
-		}
-		// ************ FI
+        // ************ FI
 	}
 
 	// Function to dismiss any admin notice
