@@ -1,5 +1,10 @@
 <?php
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; 
+}
+
 class es_cls_widget {
 	public static function load_subscription($arr) {
 		$es_name = trim($arr['es_name']);
@@ -13,33 +18,43 @@ class es_cls_widget {
 			$es_includes = true;
 		}
 
-		$es = $es . '<div>';
-		$es = $es . '<form class="es_shortcode_form">';
+		// Compatibility for GDPR
+		$active_plugins = (array) get_option('active_plugins', array());
+		if (is_multisite()) {
+			$active_plugins = array_merge($active_plugins, get_site_option('active_sitewide_plugins', array()));
+		}
+
+		$es .= '<div>';
+		$es .= '<form class="es_shortcode_form" data-es_form_id="es_shortcode_form">';
 
 		if( $es_desc != "" ) {
-			$es = $es . '<div class="es_caption">'.$es_desc.'</div>';
+			$es .= '<div class="es_caption">'.$es_desc.'</div>';
 		}
-		$es = $es . '<div class="es_msg"><span id="es_msg_pg"></span></div>';
 		if( $es_name == "YES" ) {
-			$es = $es . '<div class="es_lablebox">'.__('Name', 'email-subscribers').'</div>';
-			$es = $es . '<div class="es_textbox">';
-				$es = $es . '<input class="es_textbox_class" name="es_txt_name_pg" id="es_txt_name_pg" value="" maxlength="225" type="text">';
-			$es = $es . '</div>';
+			$es .= '<div class="es_lablebox"><label class="es_shortcode_form_name">'.__( 'Name', ES_TDOMAIN ).'</label></div>';
+			$es .= '<div class="es_textbox">';
+				$es .= '<input type="text" id="es_txt_name_pg" class="es_textbox_class" name="es_txt_name_pg" value="" maxlength="40">';
+			$es .= '</div>';
 		}
-		$es = $es . '<div class="es_lablebox">'.__('Email *', 'email-subscribers').'</div>';
-		$es = $es . '<div class="es_textbox">';
-			$es = $es . '<input class="es_textbox_class" name="es_txt_email_pg" id="es_txt_email_pg" onkeypress="if(event.keyCode==13) es_submit_pages('.$url.')" value="" maxlength="225" type="text">';
-		$es = $es . '</div>';
-		$es = $es . '<div class="es_button">';
-			$es = $es . '<input class="es_textbox_button" name="es_txt_button_pg" id="es_txt_button_pg" onClick="return es_submit_pages('.$url.')" value="'.__('Subscribe', 'email-subscribers').'" type="button">';
-		$es = $es . '</div>';
+		$es .= '<div class="es_lablebox"><label class="es_shortcode_form_email">'.__( 'Email *', ES_TDOMAIN ).'</label></div>';
+		$es .= '<div class="es_textbox">';
+			$es .= '<input type="email" id="es_txt_email_pg" class="es_textbox_class" name="es_txt_email_pg" maxlength="40" required>';
+		$es .= '</div>';
+		if (( in_array('gdpr/gdpr.php', $active_plugins) || array_key_exists('gdpr/gdpr.php', $active_plugins) )) {
+			$es .= GDPR::get_consent_checkboxes();
+		}
+		$es .= '<div class="es_button">';
+			$es .= '<input type="submit" id="es_txt_button_pg" class="es_textbox_button es_submit_button" name="es_txt_button_pg" value="'.__( 'Subscribe', ES_TDOMAIN ).'">';
+		$es .= '</div>';
+		$es .= '<div class="es_msg" id="es_shortcode_msg"><span id="es_msg_pg"></span></div>';
 		if( $es_name != "YES" ) {
-			$es = $es . '<input name="es_txt_name_pg" id="es_txt_name_pg" value="" type="hidden">';
+			$es .= '<input type="hidden" id="es_txt_name_pg" name="es_txt_name_pg" value="">';
 		}
-		$es = $es . '<input name="es_txt_group_pg" id="es_txt_group_pg" value="'.$es_group.'" type="hidden">';
+		$es .= '<input type="hidden" id="es_txt_group_pg" name="es_txt_group_pg" value="'.$es_group.'">';
+		$es .= wp_nonce_field( 'es-subscribe', 'es-subscribe', true, false );
 
-		$es = $es . '</form>';
-		$es = $es . '</div>';
+		$es .= '</form>';
+		$es .= '</div>';
 		return $es;
 	}
 }

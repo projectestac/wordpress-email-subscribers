@@ -1,7 +1,8 @@
 <?php
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
-	die('You are not allowed to call this page directly.');
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; 
 }
 
 // Form submitted, check the data
@@ -62,9 +63,6 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 		margin-left:2px;
 		margin-right:2px;
 	}
-	.current {
-		background: none repeat scroll 0 0 #BBBBBB;
-	}
 </style>
 
 <?php
@@ -108,9 +106,9 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 					<tr>
 						<th scope="col"><?php echo __( 'View Reports', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Preview', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Source', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Status', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Type', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Status', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Sent', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Start Date', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'End Date', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Total', ES_TDOMAIN ); ?></th>
@@ -121,9 +119,9 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 					<tr>
 						<th scope="col"><?php echo __( 'View Reports', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Preview', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Source', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Status', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Type', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Status', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Sent', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Start Date', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'End Date', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Total', ES_TDOMAIN ); ?></th>
@@ -144,19 +142,35 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 									</a>
 								</td>
 								<td>
-									<a title="Mail Preview" href="<?php echo ES_ADMINURL; ?>?page=es-sentmail&amp;ac=preview&amp;did=<?php echo $data['es_sent_id']; ?>&amp;pagenum=<?php echo $pagenum; ?>">
-										<img alt="Delete" src="<?php echo ES_URL; ?>images/preview.gif" />
+									<a title="Email Preview" target="_blank" href="<?php echo ES_ADMINURL; ?>?page=es-sentmail&amp;ac=preview&amp;did=<?php echo $data['es_sent_id']; ?>&amp;pagenum=<?php echo $pagenum; ?>">
+										<span class="dashicons dashicons-search"></span>
 									</a>
 								</td>
 								<td><?php echo $data['es_sent_source']; ?></td>
 								<td><?php echo es_cls_common::es_disp_status($data['es_sent_status']); ?></td>
 								<td><?php echo es_cls_common::es_disp_status($data['es_sent_type']); ?></td>
-								<td><?php echo $data['es_sent_starttime']; ?></td>
-								<td><?php echo $data['es_sent_endtime']; ?></td>
+								<td>
+									<?php
+										if ( $data['es_sent_starttime'] != '0000-00-00 00:00:00' ) {
+											echo get_date_from_gmt($data['es_sent_starttime'],'Y-m-d H:i:s');
+										} else {
+											echo $data['es_sent_starttime'];
+										}
+									?>
+								</td>
+								<td>
+									<?php
+										if ( $data['es_sent_endtime'] != '0000-00-00 00:00:00' ) {
+											echo get_date_from_gmt($data['es_sent_endtime'],'Y-m-d H:i:s');
+										} else {
+											echo $data['es_sent_endtime'];
+										}
+									?>
+								</td>
 								<td><?php echo $data['es_sent_count']; ?></td>
 								<td>
 									<a title="Delete Record" onClick="javascript:_es_delete('<?php echo $data['es_sent_id']; ?>')" href="javascript:void(0);">
-									<img alt="Delete" src="<?php echo ES_URL; ?>images/delete.gif" /></a>
+									<span class="dashicons dashicons-no"></span>
 								</td>
 							</tr>
 							<?php
@@ -179,14 +193,27 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 			</div>
 			<input type="hidden" name="frm_es_bulkaction" value=""/>
 		</form>
-		<?php if ( $fulltotal > 30 ) { ?>
-			<div class="error fade">
-				<p>
-					<?php echo __( 'Note: Please click on <strong>Optimize Table & Delete Records</strong> button to delete all reports except latest 10.', ES_TDOMAIN ); ?>
-				</p>
-			</div>
-		<?php } ?>
+		<?php
+			if ( $fulltotal > 30 ) {
+				?>
+				<div class="error fade">
+					<p>
+						<?php echo __( 'Note: Please click on <strong>Optimize Table & Delete Records</strong> button to delete all reports except latest 10.', ES_TDOMAIN ); ?>
+					</p>
+				</div>
+				<?php
+			}
+
+			foreach ( $myData as $my_data ) {
+				if ( $my_data['es_sent_status'] == 'In Queue' ) {
+					?>
+					<br>
+					<p>
+						<?php echo __( '<strong>Note:</strong> If you delete record for the emails with Status = <span style="color:#FF0000;">In Queue</span>, then cron job in queue will be deleted too and email will not be sent.', ES_TDOMAIN ); ?>
+					</p>
+					<?php
+				}				
+			}
+		?>
 	</div>
-	<div style="height:10px;"></div>
-	<p class="description"><?php echo ES_OFFICIAL; ?></p>
 </div>

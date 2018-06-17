@@ -1,86 +1,84 @@
 ﻿// For Widget
-function es_submit_page(url) {
-	es_email = document.getElementById("es_txt_email");
-	es_name = document.getElementById("es_txt_name");
-	es_group = document.getElementById("es_txt_group");
-    if( es_email.value == "" ) {
-        alert(es_widget_notices.es_email_notice);
-        es_email.focus();
-        return false;    
-    }
-	if( es_email.value!="" && ( es_email.value.indexOf("@",0) == -1 || es_email.value.indexOf(".",0) == -1 )) {
-        alert(es_widget_notices.es_incorrect_email);
-        es_email.focus();
-        es_email.select();
-        return false;
-    }
+jQuery.fn.bindFirst = function(name, fn) {
+	// bind as you normally would
+	// don't want to miss out on any jQuery magic
+	this.bind(name, fn);
+	var events = this.data('events') || jQuery._data(this[0], 'events');
+	var handlers = events[name];
+	// take out the handler we just inserted from the end
+	var handler = handlers.splice(handlers.length - 1)[0];
+	// move it at the beginning
+	handlers.splice(0, 0, handler);
+};
 
-	document.getElementById("es_msg").innerHTML = es_widget_notices.es_load_more;
-	var date_now = "";
-    var mynumber = Math.random();
-	var str= "es_email="+ encodeURI(es_email.value) + "&es_name=" + encodeURI(es_name.value) + "&es_group=" + encodeURI(es_group.value) + "&timestamp=" + encodeURI(date_now) + "&action=" + encodeURI(mynumber);
-	es_submit_request(url+'/?es=subscribe', str);
-}
+//ES
+var WES = function() {}
 
-var http_req = false;
-function es_submit_request(url, parameters) {
-	http_req = false;
-	if (window.XMLHttpRequest) {
-		http_req = new XMLHttpRequest();
-		if (http_req.overrideMimeType) {
-			http_req.overrideMimeType('text/html');
-		}
-	} else if (window.ActiveXObject) {
-		try {
-			http_req = new ActiveXObject("Msxml2.XMLHTTP");
-		} catch (e) {
-			try {
-				http_req = new ActiveXObject("Microsoft.XMLHTTP");
-			} catch (e) {
-				
-			}
-		}
-	}
-	if (!http_req) {
-		alert(es_widget_notices.es_ajax_error);
-		return false;
-	}
-	http_req.onreadystatechange = eemail_submitresult;
-	http_req.open('POST', url, true);
-	http_req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	// http_req.setRequestHeader("Content-length", parameters.length);
-	// http_req.setRequestHeader("Connection", "close");
-	http_req.send(parameters);
-}
+WES.prototype = {
 
-function eemail_submitresult() {
-	//alert(http_req.readyState);
-	//alert(http_req.responseText);
-	if (http_req.readyState == 4) {
-		if (http_req.status == 200) {
-		 	if (http_req.readyState==4 || http_req.readyState=="complete") { 
-				if((http_req.responseText).trim() == "subscribed-successfully") {
-					document.getElementById("es_msg").innerHTML = es_widget_notices.es_success_message;
-					document.getElementById("es_txt_email").value="";
-				} else if((http_req.responseText).trim() == "subscribed-pending-doubleoptin") {
-					alert(es_widget_notices.es_success_notice);
-					document.getElementById("es_msg").innerHTML = es_widget_notices.es_success_message;
-					document.getElementById("es_txt_email").value="";
-					document.getElementById("es_txt_name").value="";
-				} else if((http_req.responseText).trim() == "already-exist") {
-					document.getElementById("es_msg").innerHTML = es_widget_notices.es_email_exists;
-				} else if((http_req.responseText).trim() == "unexpected-error") {
-					document.getElementById("es_msg").innerHTML = es_widget_notices.es_error;
-				} else if((http_req.responseText).trim() == "invalid-email") {
-					document.getElementById("es_msg").innerHTML = es_widget_notices.es_invalid_email;
-				} else {
-					document.getElementById("es_msg").innerHTML = es_widget_notices.es_try_later;
-					document.getElementById("es_txt_email").value="";
-					document.getElementById("es_txt_name").value="";
-				}
-			}
-		} else {
-			alert(es_widget_notices.es_problem_request);
+	init : function(form){
+		jQuery(form).bindFirst('submit', function(e){
+			window.WES.addSubscriber(e, jQuery(e.target));
+		}); // submit Event
+	},
+
+	addSubscriber : function(e, form){
+		var form = form || undefined;
+		e.preventDefault();
+		if(typeof(form) !== 'undefined'){
+			var fm_parent = form.closest('.es_widget_form');
+			var formData = {};
+			var formData = window.ES.prepareFormData(e, form, formData);
+			formData['es'] = 'subscribe';
+			formData['action'] = 'es_add_subscriber';
+			var action_url = es_widget_notices.es_ajax_url;
+			jQuery(form).trigger( 'addSubscriber.es', [formData] );
+			jQuery.ajax({
+				type: 'POST',
+				url: action_url,
+				data: formData,
+				dataType: 'json',
+				success: function(response) {
+					if( response && typeof response.error !== 'undefined' && response.error === "" ) {
+						es_msg_text = es_widget_notices.es_try_later;
+						console.log(response, 'response.error');
+					} else if ( response && response.error === 'unexpected-error' ) {
+						es_msg_text = es_widget_notices.es_error;
+					} else if ( response && response.error === 'invalid-email' ) {
+						es_msg_text = es_widget_notices.es_invalid_email;
+					} else if ( response && response.success === 'already-exist' ) {
+						es_msg_text = es_widget_notices.es_email_exists;
+					} else if ( response && response.error === 'no-email-address' ) {
+						es_msg_text = es_widget_notices.es_email_notice;
+					} else if( response.success && response.success === 'subscribed-pending-doubleoptin' ) {
+						es_msg_text = es_widget_notices.es_success_notice;
+						jQuery(form)[0].reset();
+					} else if( response && response.success === 'subscribed-successfully' ) {
+						es_msg_text = es_widget_notices.es_success_message;
+						jQuery(form)[0].reset();
+					}
+					jQuery(form).find('.es_msg span').text(es_msg_text).show();
+				},
+				error: function(err) {
+					console.log(err, 'error');
+				},
+			});
 		}
-	}
-}
+	},
+
+	prepareFormData: function (e, form, formData){
+		jQuery.each((jQuery(form).serializeArray() || {}), function(i, field){
+				formData['esfpx_'+ field.name] = field.value;
+		});
+		return formData;
+	},
+
+};
+
+jQuery(document).ready(function() {
+	// TODO :: check this later incase of undefined
+	window.WES = new WES();
+	jQuery('.es_widget_form').each(function(i, v){
+		window.WES.init(v);
+	});
+});

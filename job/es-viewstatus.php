@@ -1,7 +1,8 @@
 <?php
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
-	die( 'You are not allowed to call this page directly.' );
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; 
 }
 
 if( ( isset($_GET['es']) ) && $_GET['es'] == "viewstatus" ) {

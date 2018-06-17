@@ -1,7 +1,8 @@
 <?php
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
-	die('You are not allowed to call this page directly.');
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 if( (isset($_GET['es'])) && ($_GET['es'] == "optin") ) {
@@ -39,8 +40,7 @@ if( (isset($_GET['es'])) && ($_GET['es'] == "optin") ) {
 			}
 
 			// Load default message
-			$data = array();
-			$data = es_cls_settings::es_setting_select(1);
+			$es_c_message2 = get_option( 'ig_es_unsuberror' );
 
 			if($noerror) {
 				$resultcheck = es_cls_dbquery::es_view_subscriber_jobstatus("Confirmed", $form['db'], $form['guid'], $form['email']);
@@ -48,20 +48,21 @@ if( (isset($_GET['es'])) && ($_GET['es'] == "optin") ) {
 					$result = es_cls_dbquery::es_view_subscriber_job("Confirmed", $form['db'], $form['guid'], $form['email']);
 					if($result) {
 						es_cls_sendmail::es_prepare_welcome($form['db']);
-						$message = esc_html(stripslashes($data['es_c_subhtml']));
+						$es_c_subhtml = get_option( 'ig_es_successmsg' );
+						$message = esc_html(stripslashes($es_c_subhtml));
 						$message = str_replace("\r\n", "<br />", $message);
 					} else {
-						$message = esc_html(stripslashes($data['es_c_message2']));
+						$message = esc_html(stripslashes($es_c_message2));
 					}
 					if($message == "") {
 						$message = __( 'Oops.. We are getting some technical error. Please try again or contact admin.', ES_TDOMAIN );
 					}
 				} else {
 					$message = __( 'This email address has already been confirmed.', ES_TDOMAIN );
-				}			
+				}
 				echo $message;
 			} else {
-				$message = esc_html(stripslashes($data['es_c_message2']));
+				$message = esc_html(stripslashes($es_c_message2));
 				$message = str_replace("\r\n", "<br />", $message);
 				if($message == "") {
 					$message = __( 'Oops.. We are getting some technical error. Please try again or contact admin.', ES_TDOMAIN );

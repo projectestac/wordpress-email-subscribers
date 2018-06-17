@@ -1,7 +1,8 @@
 <?php
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
-	die('You are not allowed to call this page directly.');
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; 
 }
 
 $sentguid = isset($_GET['sentguid']) ? $_GET['sentguid'] : '';
@@ -27,9 +28,6 @@ if ($sentguid == '') {
 		margin-left:2px;
 		margin-right:2px;
 	}
-	.current {
-		background: none repeat scroll 0 0 #BBBBBB;
-	}
 </style>
 
 <?php
@@ -52,6 +50,9 @@ if ($sentguid == '') {
 		'show_all' => False,
 		'current' => $pagenum
 	) );
+
+	$total_email_sent = es_cls_delivery::es_delivery_count($sentguid);
+	$email_viewed_count = es_cls_delivery::es_delivery_viewed_count($sentguid);
 ?>
 
 <div class="wrap">
@@ -60,6 +61,7 @@ if ($sentguid == '') {
 		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
 	</h2>
 	<div class="tablenav">
+		<div class="alignleft" style="padding-bottom:10px;"><?php echo 'Viewed ' . $email_viewed_count . '/' .$total_email_sent; ?></div>
 		<div class="alignright" style="padding-bottom:10px;"><?php echo $page_links; ?></div>
 	</div>
 	<div class="tool-box">
@@ -69,24 +71,22 @@ if ($sentguid == '') {
 					<tr>
 						<th width="3%" scope="col"><?php echo __( 'Sno', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Email', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Sent Date', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Status', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Type', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Sent', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Sent Date', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Viewed Status', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Viewed Date', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Database ID', ES_TDOMAIN ); ?></th>
 					</tr>
 				</thead>
 				<tfoot>
 					<tr>
 						<th width="3%" scope="col"><?php echo __( 'Sno', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Email', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Sent Date', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Status', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Type', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Sent', ES_TDOMAIN ); ?></th>
+						<th scope="col"><?php echo __( 'Sent Date', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Viewed Status', ES_TDOMAIN ); ?></th>
 						<th scope="col"><?php echo __( 'Viewed Date', ES_TDOMAIN ); ?></th>
-						<th scope="col"><?php echo __( 'Database ID', ES_TDOMAIN ); ?></th>
 					</tr>
 				</tfoot>
 				<tbody>
@@ -99,12 +99,27 @@ if ($sentguid == '') {
 								<tr class="<?php if ($i&1) { echo 'alternate'; } else { echo ''; }?>">
 									<td align="left"><?php echo $i; ?></td>
 									<td><?php echo $data['es_deliver_emailmail']; ?></td>
-									<td><?php echo $data['es_deliver_sentdate']; ?></td>
 									<td><?php echo es_cls_common::es_disp_status($data['es_deliver_sentstatus']); ?></td>
 									<td><?php echo es_cls_common::es_disp_status($data['es_deliver_senttype']); ?></td>
+									<td>
+										<?php
+											if ( $data['es_deliver_sentdate'] != '0000-00-00 00:00:00' ) {
+												echo get_date_from_gmt($data['es_deliver_sentdate'],'Y-m-d H:i:s');
+											} else {
+												echo $data['es_deliver_sentdate'];
+											}
+										?>
+									</td>
 									<td><?php echo es_cls_common::es_disp_status($data['es_deliver_status']); ?></td>
-									<td><?php echo $data['es_deliver_viewdate']; ?></td>
-									<td><?php echo $data['es_deliver_emailid']; ?></td>
+									<td>
+										<?php
+											if ( $data['es_deliver_viewdate'] != '0000-00-00 00:00:00' ) {
+												echo get_date_from_gmt($data['es_deliver_viewdate'],'Y-m-d H:i:s');
+											} else {
+												echo $data['es_deliver_viewdate'];											
+											}
+										?>
+									</td>
 								</tr>
 								<?php
 									$i = $i+1;
@@ -124,6 +139,4 @@ if ($sentguid == '') {
 			</div>
 		</form>
 	</div>
-	<div style="height:10px;"></div>
-	<p class="description"><?php echo ES_OFFICIAL; ?></p>
 </div>

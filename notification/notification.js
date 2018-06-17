@@ -35,3 +35,8 @@ function _es_delete(id) {
 		document.frm_es_display.submit();
 	}
 }
+
+function _es_change(option){
+	var img = option.getAttribute('data-img');
+	document.getElementsByClassName("es-templ-img")[0].innerHTML = img;
+}
