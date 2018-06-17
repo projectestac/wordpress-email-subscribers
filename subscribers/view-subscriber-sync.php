@@ -1,7 +1,8 @@
 <?php
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
-	die('You are not allowed to call this page directly.');
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 ?>
@@ -12,7 +13,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 	$es_errors = array();
 	$es_success = '';
 	$es_error_found = FALSE;
-	
+
 	$es_registered = "";
 	$es_registered_group = "";
 
@@ -38,7 +39,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 		//	No errors found, we can add this Group to the table
 		if ($es_error_found == FALSE) {
-			update_option( 'es_c_emailsubscribers', $form );	// what will happent to option??
+			update_option( 'ig_es_sync_wp_users', $form );	// what will happent to option??
 
 			// Reset the form fields
 			$form = array(
@@ -50,7 +51,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 		}
 	}
 
-	$es_c_emailsubscribers = get_option( 'es_c_emailsubscribers', 'norecord' );
+	$es_c_emailsubscribers = get_option( 'ig_es_sync_wp_users', 'norecord' );
 	if($es_c_emailsubscribers != 'norecord' && $es_c_emailsubscribers != "") {
 
 		$es_sync_unserialized_data = maybe_unserialize($es_c_emailsubscribers);
@@ -123,8 +124,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 									if(count($groups) > 0) {
 										$i = 1;
 										foreach ($groups as $group) {
-											if($group["es_email_group"] == $es_registered_group) { 
-												$thisselected = "selected='selected'" ; 
+											if($group["es_email_group"] == $es_registered_group) {
+												$thisselected = "selected='selected'" ;
 											}
 											?><option value='<?php echo $group["es_email_group"]; ?>' <?php echo $thisselected; ?>><?php echo $group["es_email_group"]; ?></option><?php
 											$thisselected = "";
@@ -144,6 +145,4 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<?php wp_nonce_field('es_form_add'); ?>
 		</form>
 	</div>
-	<div style="height:10px;"></div>
-	<p class="description"><?php echo ES_OFFICIAL; ?></p>
 </div>

@@ -1,5 +1,10 @@
 <?php
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; 
+}
+
 class es_cls_common {
 	public static function es_disp_status($value) {
 		$returnstring = "";
@@ -23,7 +28,7 @@ class es_cls_common {
 				$returnstring = __( '<span style="color:#999900;">Nodata</span>', ES_TDOMAIN );
 				break;
 			case "Disable":
-				$returnstring = __( '<span style="color:#FF0000">Disable</span>', ES_TDOMAIN );
+				$returnstring = __( '<span style="color:#FF0000">Disabled</span>', ES_TDOMAIN );
 				break;
 			case "In Queue":
 				$returnstring = __( '<span style="color:#FF0000">In Queue</span>', ES_TDOMAIN );
@@ -31,11 +36,11 @@ class es_cls_common {
 			case "Sent":
 				$returnstring = __( '<span style="color:#00FF00;font-weight:bold;">Sent</span>', ES_TDOMAIN );
 				break;
-			case "Cron Mail":
-				$returnstring = __( '<span style="color:#ffd700;font-weight:bold;">Cron Mail</span>', ES_TDOMAIN );
-				break;	
-			case "Instant Mail":
-				$returnstring = __( '<span style="color:#993399;">Instant Mail</span>', ES_TDOMAIN );
+			case "Cron":
+				$returnstring = __( '<span style="color:#20b2aa;font-weight:bold;">via Cron</span>', ES_TDOMAIN );
+				break;
+			case "Immediately":
+				$returnstring = __( '<span style="color:#993399;">Immediately</span>', ES_TDOMAIN );
 				break;
 			default:
        			$returnstring = $value;
@@ -106,31 +111,31 @@ class es_cls_common {
 	}
 	
 	public static function es_sent_report_subject() {
-		$report = "Newsletter Sent Report";
+		$report = "Your email has been sent";
 		return $report;
 	}
 
 	public static function es_sent_report_plain() {
 		$report = "";
-		$report = $report. "Hi Admin,\n\n";
-		$report = $report. "Mail has been sent successfully to ###COUNT### email(s). Please find the details below.\n\n";
-		$report = $report. "Unique ID : ###UNIQUE### \n";
-		$report = $report. "Start Time: ###STARTTIME### \n";
-		$report = $report. "End Time: ###ENDTIME### \n";
-		$report = $report. "For more information, Login to your Dashboard and go to Sent Mails menu in Email Subscribers. \n\n";
-		$report = $report. "Thank You. \n";
+		$report .= "Hi Admin,\n\n";
+		$report .= "Email has been sent successfully to {{COUNT}} email(s). Please find the details below:\n\n";
+		$report .= "Unique ID: {{UNIQUE}}\n";
+		$report .= "Start Time: {{STARTTIME}}\n";
+		$report .= "End Time: {{ENDTIME}}\n";
+		$report .= "For more information, login to your dashboard and go to Reports menu in Email Subscribers.\n\n";
+		$report .= "Thank You.";
 		return $report;
 	}
 	
 	public static function es_sent_report_html() {
 		$report = "";
-		$report = $report. "Hi Admin, <br/><br/>";
-		$report = $report. "Mail has been sent successfully to ###COUNT### email(s). Please find the details below.<br/><br/>";
-		$report = $report. "Unique ID : ###UNIQUE### <br/>";
-		$report = $report. "Start Time: ###STARTTIME### <br/>";
-		$report = $report. "End Time: ###ENDTIME### <br/>";
-		$report = $report. "For more information, Login to your Dashboard and go to Sent Mails menu in Email Subscribers. <br/><br/>";
-		$report = $report. "Thank You. <br/>";
+		$report .= "Hi Admin,<br/><br/>";
+		$report .= "Email has been sent successfully to {{COUNT}} email(s). Please find the details below:<br/><br/>";
+		$report .= "Unique ID: {{UNIQUE}}<br/>";
+		$report .= "Start Time: {{STARTTIME}}<br/>";
+		$report .= "End Time: {{ENDTIME}}<br/>";
+		$report .= "For more information, login to your dashboard and go to Reports menu in Email Subscribers.<br/><br/>";
+		$report .= "Thank You.";
 		return $report;
 	}
 	
@@ -138,6 +143,7 @@ class es_cls_common {
 		$string = "/[\'^$%&*()}{@#~?><>,|=_+\"]/";
 		return $string;
 	}
+	
 }
 
 class es_cls_security {

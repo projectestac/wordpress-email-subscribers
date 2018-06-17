@@ -1,7 +1,8 @@
 <?php
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
-	die('You are not allowed to call this page directly.');
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; 
 }
 
 ?>
@@ -35,21 +36,21 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			'es_email_mail' => $data[0]['es_email_mail'],
 			'es_email_status' => $data[0]['es_email_status'],
 			'es_email_group' => $data[0]['es_email_group'],
-			'es_email_id' => $data[0]['es_email_id']
+			'es_email_id' => $data[0]['es_email_id'],
+			'es_nonce' => ''
 		);
 	}
 
 	// Form submitted, check the data
-	if (isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes') {
-
-		// Just security thingy that wordpress offers us
-		check_admin_referer('es_form_edit');
+	if ( isset($_POST['es_form_submit']) && $_POST['es_form_submit'] == 'yes' && !empty( $_POST['es-subscribe'] ) ) {
 
 		$form['es_email_status'] = isset($_POST['es_email_status']) ? $_POST['es_email_status'] : '';
 		$form['es_email_name'] = isset($_POST['es_email_name']) ? $_POST['es_email_name'] : '';
 		$form['es_email_mail'] = isset($_POST['es_email_mail']) ? $_POST['es_email_mail'] : '';
+		// Just security thingy that wordpress offers us
+		$form['es_nonce'] = $_POST['es-subscribe'];
 
-		if ($form['es_email_mail'] == '') {
+		if ( $form['es_email_mail'] == '' ) {
 			$es_errors[] = __( 'Please enter subscriber email address.', ES_TDOMAIN );
 			$es_error_found = TRUE;
 		}
@@ -57,7 +58,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 		$form['es_email_group'] = isset($_POST['es_email_group']) ? $_POST['es_email_group'] : '';
 		$form['es_email_id'] = isset($_POST['es_email_id']) ? $_POST['es_email_id'] : '0';
 
-		if($form['es_email_group'] != "") {
+		if( $form['es_email_group'] != "" ) {
 			$special_letters = es_cls_common::es_special_letters();
 			if (preg_match($special_letters, $form['es_email_group'])) {
 				$es_errors[] = __( 'Error: Special characters are not allowed in the group name.', ES_TDOMAIN );
@@ -189,9 +190,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<p style="padding-top:5px;">
 				<input class="button-primary" value="<?php echo __( 'Save', ES_TDOMAIN ); ?>" type="submit" />
 			</p>
-			<?php wp_nonce_field('es_form_edit'); ?>
+			<?php wp_nonce_field( 'es-subscribe', 'es-subscribe' ); ?>
 		</form>
 	</div>
-	<div style="height:10px;"></div>
-	<p class="description"><?php echo ES_OFFICIAL; ?></p>
 </div>

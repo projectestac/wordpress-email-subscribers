@@ -35,3 +35,8 @@ function _es_submit() {
 		return false;
 	}
 }
+
+function _es_change(option){
+	var img = option.getAttribute('data-img');
+	document.getElementsByClassName("es-templ-img")[0].innerHTML = img;
+}

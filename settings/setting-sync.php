@@ -1,7 +1,8 @@
 <?php
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
-	die('You are not allowed to call this page directly.');
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; 
 }
 
 ?>
@@ -34,5 +35,4 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<?php wp_nonce_field('es_form_sync'); ?>
 		</form>
 	</div>
-	<p class="description"><?php echo ES_OFFICIAL; ?></p>
 </div>

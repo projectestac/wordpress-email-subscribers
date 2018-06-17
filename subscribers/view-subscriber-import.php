@@ -1,7 +1,8 @@
 <?php
 
-if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
-	die('You are not allowed to call this page directly.');
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; 
 }
 
 ?>
@@ -18,7 +19,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 		'es_email_name' => '',
 		'es_email_status' => '',
 		'es_email_group' => '',
-		'es_email_mail' => ''
+		'es_email_mail' => '',
+		'es_nonce' => ''
 	);
 
 	// Form submitted, check the data
@@ -33,11 +35,11 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 		
 		$es_email_status = isset($_POST['es_email_status']) ? $_POST['es_email_status'] : '';
 		$es_email_group = isset($_POST['es_email_group']) ? $_POST['es_email_group'] : '';
-		if ($es_email_group == '') {
+		if ( $es_email_group == '' ) {
 			$es_email_group = isset($_POST['es_email_group_txt']) ? $_POST['es_email_group_txt'] : '';
 		}
 
-		if($es_email_group <> "") {
+		if( $es_email_group != "" ) {
 			$special_letters = es_cls_common::es_special_letters();
 			if (preg_match($special_letters, $es_email_group)) {
 				$es_errors[] = __( 'Error: Special characters ([\'^$%&*()}{@#~?><>,|=_+\"]) are not allowed in the Group name.', ES_TDOMAIN );
@@ -68,6 +70,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 					$form["es_email_name"] = trim($csv[$i][1]);
 					$form["es_email_group"] = $es_email_group;
 					$form["es_email_status"] = $es_email_status;
+					$form['es_nonce'] = wp_create_nonce( 'es-subscribe' );
 					$action = es_cls_dbquery::es_view_subscriber_ins($form, "insert");
 					if( $action == "sus" ) {
 						$inserted = $inserted + 1;
@@ -82,7 +85,8 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 						'es_email_name' => '',
 						'es_email_status' => '',
 						'es_email_group' => '',
-						'es_email_mail' => ''
+						'es_email_mail' => '',
+						'es_nonce' => ''
 					);
 				}
 
@@ -154,7 +158,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 									<?php echo __( 'Select CSV file', ES_TDOMAIN ); ?>
 									<p class="description">
 										<?php echo __( 'Check CSV structure ', ES_TDOMAIN ); ?>
-										<a target="_blank" href="http://www.icegram.com/documentation/es-how-to-import-or-export-email-addresses/"><?php echo __( 'from here', ES_TDOMAIN ); ?></a>
+										<a target="_blank" href="https://www.icegram.com/documentation/es-how-to-import-or-export-email-addresses/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page"><?php echo __( 'from here', ES_TDOMAIN ); ?></a>
 									</p>
 								</label>
 							</th>
@@ -212,6 +216,4 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			</form>
 		</div>
 	</div>
-	<div style="height:10px;"></div>
-	<p class="description"><?php echo ES_OFFICIAL; ?></p>
 </div>
