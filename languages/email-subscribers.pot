@@ -1,2118 +1,1790 @@
-# Loco Gettext template
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Email Subscribers & Newsletters 3.5.1\n"
-"Report-Msgid-Bugs-To: https://www.icegram.com/contact/\n"
-"POT-Creation-Date: 2017-07-26 12:00:36+00:00\n"
-"POT-Revision-Date: Wed May 23 2018 11:02:58 GMT+0530 (IST)\n"
+"Project-Id-Version: Email Subscribers & Newsletters\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-15 12:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: \n"
-"Language-Team: Icegram <hello@icegram.com>Language:\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
 "Language: \n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-Basepath: .\n"
-"X-Poedit-SearchPath-0: ..\n"
-"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
-"__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
-"_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
-"esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
-"esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
-"X-Generator: Loco - https://localise.biz/"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.0; wp-5.1"
 
-#: ../classes/es-common.php:13
-msgid "<span style=\"color:#006600;font-weight:bold;\">Confirmed</span>"
-msgstr ""
-
-#: ../classes/es-common.php:16
-msgid "<span style=\"color:#FF0000\">Unconfirmed</span>"
-msgstr ""
-
-#: ../classes/es-common.php:19
-msgid "<span style=\"color:#999900\">Unsubscribed</span>"
-msgstr ""
-
-#: ../classes/es-common.php:22
-msgid "<span style=\"color:#0000FF\">Single Opt In</span>"
-msgstr ""
-
-#: ../classes/es-common.php:25
-msgid "<span style=\"color:#00CC00;font-weight:bold;\">Viewed</span>"
-msgstr ""
-
-#: ../classes/es-common.php:28
-msgid "<span style=\"color:#999900;\">Nodata</span>"
-msgstr ""
-
-#: ../classes/es-common.php:31
-msgid "<span style=\"color:#FF0000\">Disabled</span>"
-msgstr ""
-
-#: ../classes/es-common.php:34
-msgid "<span style=\"color:#FF0000\">In Queue</span>"
-msgstr ""
-
-#: ../classes/es-common.php:37
-msgid "<span style=\"color:#00FF00;font-weight:bold;\">Sent</span>"
-msgstr ""
-
-#: ../classes/es-common.php:40
-msgid "<span style=\"color:#20b2aa;font-weight:bold;\">via Cron</span>"
-msgstr ""
-
-#: ../classes/es-common.php:43
-msgid "<span style=\"color:#993399;\">Immediately</span>"
-msgstr ""
-
-#: ../classes/es-loadwidget.php:34 ../classes/es-register.php:1096 ..
-#: /subscribers/view-subscriber-show.php:289
-msgid "Name"
-msgstr ""
-
-#: ../classes/es-loadwidget.php:39 ../classes/es-register.php:1101
-msgid "Email *"
-msgstr ""
-
-#: ../classes/es-loadwidget.php:47 ../classes/es-register.php:1109 ../help/help.
-#: php:202
-msgid "Subscribe"
-msgstr ""
-
-#: ../classes/es-register.php:162 ../classes/es-register.php:163 ../classes/es-
-#: register.php:839
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:135
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-widget.php:11
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-old-widget.php:11
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-old-widget.php:12
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-form-widget.php:11
 msgid "Email Subscribers"
 msgstr ""
 
-#: ../classes/es-register.php:165 ../classes/es-register.php:166 ..
-#: /subscribers/view-subscriber-show.php:242
-msgid "Subscribers"
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:138
+msgid "Dashboard"
 msgstr ""
 
-#: ../classes/es-register.php:168 ../classes/es-register.php:169 ../classes/es-
-#: register.php:827 ../classes/es-register.php:828 ../classes/es-register.php:833
-msgid "Templates"
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:139
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:84
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:66
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:290
+msgid "Lists"
 msgstr ""
 
-#: ../classes/es-register.php:171 ../classes/es-register.php:172 ../help/help.php:
-#: 370 ../notification/notification-show.php:52
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:140
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:80
 msgid "Post Notifications"
 msgstr ""
 
-#: ../classes/es-register.php:174 ../classes/es-register.php:175 ../help/help.php:
-#: 360 ../sendmail/sendmail.php:93 ../settings/settings-edit.php:324
-msgid "Newsletters"
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:141
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:186
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:187
+msgid "Broadcast"
 msgstr ""
 
-#: ../classes/es-register.php:177 ../classes/es-register.php:178 ..
-#: /settings/settings-edit.php:42
-msgid "Settings"
-msgstr ""
-
-#: ../classes/es-register.php:180 ../classes/es-register.php:181 ..
-#: /sentmail/sentmail-show.php:93
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:142
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:85
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:20
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:43
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:82
 msgid "Reports"
 msgstr ""
 
-#: ../classes/es-register.php:183
-msgid "Help & Info"
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:143
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:81
+msgid "Audience"
 msgstr ""
 
-#: ../classes/es-register.php:184
-msgid "<span style=\"color:#f18500;font-weight:bolder;\">Help & Info</span>"
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:144
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:83
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:36
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:49
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-newsletters.php:76
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:234
+msgid "Campaigns"
 msgstr ""
 
-#: ../classes/es-register.php:195
-msgctxt "view-subscriber-enhanced-select"
-msgid "Please enter subscriber email address."
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:145
+msgid "Settings"
 msgstr ""
 
-#: ../classes/es-register.php:196
-msgctxt "view-subscriber-enhanced-select"
-msgid "Please select subscriber email status."
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:146
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:82
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:19
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:20
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:66
+msgid "Forms"
 msgstr ""
 
-#: ../classes/es-register.php:197
-msgctxt "view-subscriber-enhanced-select"
-msgid "Please select or create group for this subscriber."
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:147
+msgid "Tools"
 msgstr ""
 
-#: ../classes/es-register.php:198
-msgctxt "view-subscriber-enhanced-select"
-msgid "Do you want to delete this record?"
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/class-email-subscribers-admin.php:148
+msgid "Template Preview"
 msgstr ""
 
-#: ../classes/es-register.php:199
-msgctxt "view-subscriber-enhanced-select"
-msgid "Please select the bulk action."
-msgstr ""
-
-#: ../classes/es-register.php:200
-msgctxt "view-subscriber-enhanced-select"
-msgid "Are you sure you want to delete selected records?"
-msgstr ""
-
-#: ../classes/es-register.php:201
-msgctxt "view-subscriber-enhanced-select"
-msgid ""
-"Do you want to resend confirmation email? Also please note, this will update "
-"subscriber current status to 'Unconfirmed'."
-msgstr ""
-
-#: ../classes/es-register.php:202
-msgctxt "view-subscriber-enhanced-select"
-msgid "Please select new subscriber group."
-msgstr ""
-
-#: ../classes/es-register.php:203
-msgctxt "view-subscriber-enhanced-select"
-msgid "Please select new status for subscribers"
-msgstr ""
-
-#: ../classes/es-register.php:204
-msgctxt "view-subscriber-enhanced-select"
-msgid "Do you want to update subscribers group?"
-msgstr ""
-
-#: ../classes/es-register.php:205
-msgctxt "view-subscriber-enhanced-select"
-msgid "Do you want to update subscribers status?"
-msgstr ""
-
-#: ../classes/es-register.php:206
-msgctxt "view-subscriber-enhanced-select"
-msgid ""
-"Please select only csv file. Please check official website for csv structure."
-"."
-msgstr ""
-
-#: ../classes/es-register.php:214
-msgctxt "notification-enhanced-select"
-msgid "Please select subscribers group."
-msgstr ""
-
-#: ../classes/es-register.php:215
-msgctxt "notification-enhanced-select"
-msgid "Please select notification mail subject. Use templates menu to create new."
-msgstr ""
-
-#: ../classes/es-register.php:216
-msgctxt "notification-enhanced-select"
-msgid "Please select notification status."
-msgstr ""
-
-#: ../classes/es-register.php:217
-msgctxt "notification-enhanced-select"
-msgid "Do you want to delete this record?"
-msgstr ""
-
-#: ../classes/es-register.php:225
-msgctxt "sendmail-enhanced-select"
-msgid "Please select your mail subject."
-msgstr ""
-
-#: ../classes/es-register.php:226
-msgctxt "sendmail-enhanced-select"
-msgid "Please select your mail type."
-msgstr ""
-
-#: ../classes/es-register.php:227
-msgctxt "sendmail-enhanced-select"
-msgid ""
-"Have you double checked your selected group? If so, let's go ahead and send "
-"this."
-msgstr ""
-
-#: ../classes/es-register.php:235
-msgctxt "sentmail-enhanced-select"
-msgid "Do you want to delete this record?"
-msgstr ""
-
-#: ../classes/es-register.php:236
-msgctxt "sentmail-enhanced-select"
-msgid "Do you want to delete all records except latest 10?"
-msgstr ""
-
-#: ../classes/es-register.php:244
-msgctxt "cron-enhanced-select"
-msgid "Please select enter number of mails you want to send per hour/trigger."
-msgstr ""
-
-#: ../classes/es-register.php:245
-msgctxt "cron-enhanced-select"
-msgid "Please enter the mail count, only number."
-msgstr ""
-
-#: ../classes/es-register.php:258
-msgctxt "widget-enhanced-select"
-msgid "Please enter email address"
-msgstr ""
-
-#: ../classes/es-register.php:259
-msgctxt "widget-enhanced-select"
-msgid "Successfully Subscribed."
-msgstr ""
-
-#: ../classes/es-register.php:260
-msgctxt "widget-enhanced-select"
-msgid ""
-"Your subscription was successful! Kindly check your mailbox and confirm your "
-"subscription. If you don't see the email within a few minutes, check the "
-"spam/junk folder."
-msgstr ""
-
-#: ../classes/es-register.php:261
-msgctxt "widget-enhanced-select"
-msgid "Email Address already exists!"
-msgstr ""
-
-#: ../classes/es-register.php:262
-msgctxt "widget-enhanced-select"
-msgid "Oops.. Unexpected error occurred."
-msgstr ""
-
-#: ../classes/es-register.php:263
-msgctxt "widget-enhanced-select"
-msgid "Invalid email address"
-msgstr ""
-
-#: ../classes/es-register.php:264
-msgctxt "widget-enhanced-select"
-msgid "Please try after some time"
-msgstr ""
-
-#: ../classes/es-register.php:272
-msgctxt "widget-page-enhanced-select"
-msgid "Please enter email address"
-msgstr ""
-
-#: ../classes/es-register.php:273
-msgctxt "widget-page-enhanced-select"
-msgid "Successfully Subscribed."
-msgstr ""
-
-#: ../classes/es-register.php:274
-msgctxt "widget-page-enhanced-select"
-msgid ""
-"Your subscription was successful! Kindly check your mailbox and confirm your "
-"subscription. If you don't see the email within a few minutes, check the "
-"spam/junk folder."
-msgstr ""
-
-#: ../classes/es-register.php:275
-msgctxt "widget-page-enhanced-select"
-msgid "Email Address already exists!"
-msgstr ""
-
-#: ../classes/es-register.php:276
-msgctxt "widget-page-enhanced-select"
-msgid "Oops.. Unexpected error occurred."
-msgstr ""
-
-#: ../classes/es-register.php:277
-msgctxt "widget-page-enhanced-select"
-msgid "Invalid email address"
-msgstr ""
-
-#: ../classes/es-register.php:278
-msgctxt "widget-page-enhanced-select"
-msgid "Please try after some time"
-msgstr ""
-
-#: ../classes/es-register.php:739
-msgid ""
-"<b>Want readymade email templates?</b> Also want to <b>clean your "
-"subscribers list?</b> Come check our Pro plan."
-msgstr ""
-
-#: ../classes/es-register.php:740
-msgid "Check Pro plan"
-msgstr ""
-
-#: ../classes/es-register.php:740
-msgid "Not interested."
-msgstr ""
-
-#: ../classes/es-register.php:778
-msgid ""
-"<b style=\"letter-spacing:0.4px;\">To honour GDPR, kindly enable the 'Consent "
-"Checkbox' in the subscription form.</b>"
-msgstr ""
-
-#: ../classes/es-register.php:779
-msgid "Steps to enable"
-msgstr ""
-
-#: ../classes/es-register.php:779
-msgid "Ok, got it"
-msgstr ""
-
-#: ../classes/es-register.php:804
-msgid ""
-"If you like <strong>Email Subscribers</strong>, please consider leaving us a "
-"<a target=\"_blank\" href=\"https://wordpress.org/support/plugin/email-"
-"subscribers/reviews/?filter=5#new-post\">&#9733;&#9733;&#9733;&#9733;&#9733;"
-"</a> rating. A huge thank you from Icegram in advance!"
-msgstr ""
-
-#: ../classes/es-register.php:818
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-email-subscribers.php:121
 #, php-format
-msgid "Email Subscribers version: <strong>%s</strong>"
+msgid ""
+"WordPress Cron is disable on your site. Email notifications from Email "
+"Subscribers plugin will not be sent automatically. <a href=\"%s\" "
+"target=\"_blank\" >Here's how you can enable it.</a>"
 msgstr ""
 
-#: ../classes/es-register.php:829 ../classes/es-register.php:830
-msgid "Add new Template"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-email-subscribers.php:122
+#, php-format
+msgid "Or schedule Cron in <a href=\"%s\" target=\"_blank\">cPanel</a>"
 msgstr ""
 
-#: ../classes/es-register.php:831
-msgid "Edit Templates"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-email-subscribers.php:123
+#, php-format
+msgid ""
+"Or use <strong><a href=\"%s\" target=\"_blank\">Email Subscribners Pro</a>"
+"</strong> for automatic Cron support"
 msgstr ""
 
-#: ../classes/es-register.php:832
-msgid "New Templates"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-email-subscribers.php:124
+msgid "OK, I Got it!"
 msgstr ""
 
-#: ../classes/es-register.php:834
-msgid "View Templates"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:89
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:234
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:484
+msgid "Subscribed"
 msgstr ""
 
-#: ../classes/es-register.php:835
-msgid "Search Templates"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:90
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:485
+msgid "Unconfirmed"
 msgstr ""
 
-#: ../classes/es-register.php:836
-msgid "No Templates found"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:91
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:234
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:486
+msgid "Unsubscribed"
 msgstr ""
 
-#: ../classes/es-register.php:837
-msgid "No Templates found in Trash"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:106
+msgid "Disable email notification"
 msgstr ""
 
-#: ../classes/es-register.php:840
-msgid "Thumbnail (For Visual Representation only)"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:107
+msgid "Send email immediately"
 msgstr ""
 
-#: ../classes/es-register.php:841
-msgid "Set thumbnail"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:108
+msgid "Send email via cron job"
 msgstr ""
 
-#: ../classes/es-register.php:878
-msgid "Template Type"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:251
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:273
+msgid "Select Status"
 msgstr ""
 
-#: ../classes/es-register.php:879 ../settings/settings-edit.php:123
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:252
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:561
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:754
+msgid "Enable"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:253
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:562
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:755
+msgid "Disable"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:292
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-newsletters.php:121
+msgid "Select Template"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:321
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:182
+msgid "Active"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:322
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:182
+msgid "Inactive"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:408
+msgid "No Custom Post Types Available"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:429
+msgid "Single Opt-In"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:430
+msgid "Double Opt-In"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:438
+msgid "Full Size"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:439
+msgid "Medium Size"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-common.php:440
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-templates-table.php:192
 msgid "Thumbnail"
 msgstr ""
 
-#: ../classes/es-register.php:927 ../sentmail/sentmail-show.php:108 ..
-#: /sentmail/sentmail-show.php:121
-msgid "Preview"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/class-es-mailer.php:101
+msgid "Welcome !"
 msgstr ""
 
-#: ../classes/es-register.php:944
-msgid "Available Keyword for Post Notification: {{POSTTITLE}}"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/es-backward.php:99
+msgid "Confirm Your Subscription!"
 msgstr ""
 
-#: ../classes/es-register.php:947
-msgid "Select your Email Template Type"
+#: ../../../../wpRepos/gitlab/email-subscribers/public/class-email-subscribers-public.php:109
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:377
+msgid "Please enter email address"
 msgstr ""
 
-#: ../classes/es-register.php:949
-msgid "Newsletter"
+#: ../../../../wpRepos/gitlab/email-subscribers/public/class-email-subscribers-public.php:110
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:378
+msgid "You need to wait for sometime before subscribing again"
 msgstr ""
 
-#: ../classes/es-register.php:950
-msgid "Post Notification"
+#: ../../../../wpRepos/gitlab/email-subscribers/public/class-email-subscribers-public.php:111
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:379
+msgid "Successfully Subscribed."
 msgstr ""
 
-#: ../classes/es-register.php:997
-msgid "Preview Template"
+#: ../../../../wpRepos/gitlab/email-subscribers/public/class-email-subscribers-public.php:112
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:380
+msgid ""
+"Your subscription was successful! Kindly check your mailbox and confirm your "
+"subscription. If you don't see the email within a few minutes, check the "
+"spam/junk folder."
 msgstr ""
 
-#: ../classes/es-register.php:1011
+#: ../../../../wpRepos/gitlab/email-subscribers/public/class-email-subscribers-public.php:113
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:381
+msgid "Email Address already exists!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/public/class-email-subscribers-public.php:114
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:382
+msgid "Oops.. Unexpected error occurred."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/public/class-email-subscribers-public.php:115
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:383
+msgid "Invalid email address"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/public/class-email-subscribers-public.php:116
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:385
+msgid "Please try after some time"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:10
+msgid "Help & Info"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:15
+msgid "Feature Overview"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:17
+msgid ""
+"Collect customer emails by adding a subscription box (Widget/Shortcode/PHP "
+"Code)."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:18
+msgid "Configure double Opt-In and Single Opt-In facility for subscribers."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:19
+msgid "Send automatic welcome email to subscribers."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:20
+msgid ""
+"Send new post notification emails to subscribers when new posts are "
+"published on your website."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:21
+msgid "Send email notification to admin when a new user signs up."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:22
+msgid "Automatically add Unsubscribe link in the email."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:23
+msgid "Easily migrate subscribers from another app using Import & Export."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:24
+msgid ""
+"Use HTML editor to create broadcast (Newsletters) and post notifications."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:25
+msgid "Send broadcast to different lists."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:26
+msgid "Get detailed sent email reports."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:27
+msgid "Supports localization and internationalization."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:33
+msgid "Additional form settings"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:35
+msgid "How to Redirect Subscribers to a new page/url after successful sign up?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:36
+msgid "How to add captcha in Subscribe form of Email Subscribers?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:40
+msgid "General Plugin Configuration"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:42
+msgid "Modify "
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:42
+msgid "default text, email contents"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:43
+msgid ""
+" (like Confirmation, Welcome, Admin emails), Cron Settings and Assign User "
+"Roles"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:44
+msgid "How does Sync work?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:45
+msgid "How to Import or Export Email Addresses?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:46
+msgid "How to Add/Update Existing Subscribers List & Status?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:47
+msgid "How to change/update/translate any texts from the plugin?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:48
+msgid "How to add Unsubscribe link in emails?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:49
+msgid "How to check sent emails?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:57
+msgid "Newsletters"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:59
+msgid "Create and Send Newsletter Emails"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:60
+msgid "Keywords in the Newsletters"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:64
+msgid "Cron Job Setup"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:66
+msgid "What is Cron and how to Schedule Cron Emails?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:67
+msgid "Schedule Cron Emails in cPanel"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:68
+msgid "Schedule Cron Emails in Parallels Plesk"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:69
+msgid "Hosting doesn’t support Cron Jobs?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:73
+msgid "[GDPR] Email Subscribers"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:75
+msgid "How to enable consent checkbox in the subscribe form?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:76
+msgid "What data Email Subscribers stores on your end?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:82
+msgid "Create and Send Post Notification Emails when new posts are published"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:83
+msgid "Keywords in the Post Notifications"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:84
+msgid "Send a test post notification email to myself/testgroup"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:88
+msgid "Troubleshooting Steps"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:90
+msgid "Subscribers are not receiving Emails?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:91
+msgid "CSS Help"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:92
+msgid "FAQ's"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:97
+msgid "Want to do more? Here's how.."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:100
+msgid "Show your subscribe form inside attractive popups"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:102
+msgid ""
+"Don't limit your subscriber form to a widget. Embed it within popups, hello "
+"bars, slide-ins, sidebars, full screen popups etc."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:103
+msgid ""
+"Using Email Subscribers you can achieve this easily with our <b>free</b> "
+"plugin <a target=\"_blank\" class=\"es-cta\" href=\"https://wordpress."
+"org/plugins/icegram/\">Icegram</a>"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:104
+msgid ""
+"Icegram's beautiful designs instantly capture user attention and help "
+"increase sign-ups to your WordPress website."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:105
+msgid ""
+"How to <a href=\"https://www.icegram.com/documentation/es-how-to-show-"
+"subscribe-form-inside-a-popup/?"
+"utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page\" "
+"target=\"_blank\">show subscribe form inside a popup</a>"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:108
+msgid "Get beautiful and elegant form styles"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:110
+msgid ""
+"Email subscribers easily integrates with another <b>free</b> plugin <a "
+"class=\"es-cta\" target=\"_blank\" href=\"https://wordpress."
+"org/plugins/icegram-rainmaker/\">Rainmaker</a>"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:111
+msgid ""
+"Rainmaker extends the core features of Email Subscribers and provides "
+"elegant form styles."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:112
+msgid ""
+"These styles are well designed and beautify your subscription form making it "
+"more appealing."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/help.php:113
+msgid ""
+"How to <a href=\"https://www.icegram.com/documentation/es-how-to-use-"
+"rainmakers-form-in-email-subscribers/?"
+"utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page\" "
+"target=\"_blank\">add Rainmaker’s form in Email Subscribers</a>"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:203
+msgid "Get more with Email Subscribers Pro / Max"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:208
+msgid "month"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:209
+msgid "Get Pro Monthly"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:213
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:218
+msgid "year"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:214
+msgid "Get Pro Annual"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:219
+msgid "Get Max Annual"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:224
+msgid "All features of Email Subscribers free plugin + everything below:"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:227
+msgid "Protect your list from bot attacks"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:228
+msgid "Use "
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:228
+msgid "captcha"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:228
+msgid ""
+"to protect your email list from bots. The simple maths captcha helps "
+"identifying bots from humans and eliminates spam signups."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:231
+msgid "Check email status & increase email success rate"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:232
+msgid "Double check the status of the emails addresses and increase "
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:232
+msgid "email success rate"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:232
+msgid "of your email campaign. "
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:240
+msgid "Fullproof email deliverability"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:241
+msgid ""
+"Reduce the risk of emails ending in trash or spam. Increase email "
+"deliverability by double checking emails for their "
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:241
+msgid "spam score"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:241
+msgid "before hitting send."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:244
+msgid "Track email leads in Google"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:245
+msgid "Insert "
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:245
+msgid "UTM tracking"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:245
+msgid ""
+"in all your email CTA’s and track the effectiveness of your emails directly "
+"within Google. Know which/ how many leads landed up from your emails and "
+"tweak emails for better performance."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:253
+msgid "Save time, use readymade email templates"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:254
+msgid ""
+"Don’t waste time on HTML or CSS. Pick one from the many <strong>ready to use "
+"elegant templates</strong> to send your next email campaign."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:257
+msgid "Customize confirmation and unsubscribe page"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/pricing.php:258
+msgid ""
+"Communicate with subscribers. Redirect them to beautifully designed <strong>"
+"confirmation and unsubscribe pages</strong> on your website."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:59
+msgid "Here's a quick look at changes within the plugin:"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:60
 #, php-format
 msgid ""
-"%s for Post Notification: {{NAME}}, {{EMAIL}}, {{DATE}}, {{POSTTITLE}}, "
-"{{POSTLINK}}, {{POSTIMAGE}}, {{POSTDESC}}, {{POSTAUTHOR}}, {{POSTLINK-"
-"WITHTITLE}}, {{POSTLINK-ONLY}}, {{POSTFULL}}"
+"1. Newsletters are now <b>Broadcasts</b>. Broadcasts and Post notifications "
+"are now merged in <a href=\"%s\" target=\"_blank\">Campaigns</a>"
 msgstr ""
 
-#: ../classes/es-register.php:1011 ../classes/es-register.php:1012
-msgid "Available Keywords"
-msgstr ""
-
-#: ../classes/es-register.php:1012
-#, php-format
-msgid "<br/><br/>%s for Newsletter: {{NAME}}, {{EMAIL}}"
-msgstr ""
-
-#: ../classes/es-register.php:1149
-msgid "Widget Title"
-msgstr ""
-
-#: ../classes/es-register.php:1153
-msgid "Short description about subscription form"
-msgstr ""
-
-#: ../classes/es-register.php:1157
-msgid "Display Name Field"
-msgstr ""
-
-#: ../classes/es-register.php:1159 ../settings/settings-edit.php:142 ..
-#: /settings/settings-edit.php:217 ../subscribers/view-subscriber-sync.php:107
-msgid "YES"
-msgstr ""
-
-#: ../classes/es-register.php:1160 ../settings/settings-edit.php:143 ..
-#: /settings/settings-edit.php:218 ../subscribers/view-subscriber-sync.php:106
-msgid "NO"
-msgstr ""
-
-#: ../classes/es-register.php:1164
-msgid "Subscriber Group"
-msgstr ""
-
-#: ../export/export-email-address.php:50 ../export/export-email-address.php:54
-msgid "Unexpected url submit has been detected!"
-msgstr ""
-
-#: ../help/help.php:190
-msgid "Welcome to Email Subscribers!"
-msgstr ""
-
-#: ../help/help.php:191
-msgid "Thanks for installing and we hope you will enjoy using this plugin."
-msgstr ""
-
-#: ../help/help.php:192
-msgid ""
-"By default, subscribers subscribed via Email Subscribers, will receive email "
-"updates when you post a new blog. You can turn these updates off like this:"
-msgstr ""
-
-#: ../help/help.php:193
-msgid ""
-"Email Subscribers -> Post Notification -> Edit -> Select Notification Status "
-"when a new post is published -> Disable -> Save."
-msgstr ""
-
-#: ../help/help.php:197
-msgid ""
-"Stay in touch with us. We send out plugin help, tips, periodic updates and "
-"even the occasional discounts."
-msgstr ""
-
-#: ../help/help.php:205
-#, php-format
-msgid "I have read and agreed to your %s."
-msgstr ""
-
-#: ../help/help.php:205
-msgid "Privacy Policy"
-msgstr ""
-
-#: ../help/help.php:214
-#, php-format
-msgid "Version: %s"
-msgstr ""
-
-#: ../help/help.php:217
-msgid "Questions? Need Help?"
-msgstr ""
-
-#: ../help/help.php:218
-msgid "Contact Us"
-msgstr ""
-
-#: ../help/help.php:223
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:61
 #, php-format
 msgid ""
-"<b>Like Email Subscribers?</b> If yes, then consider %s to support further "
-"developments."
+"2. Subscribers are now called <b>Contacts</b> and part of an <a href=\"%s\" "
+"target=\"_blank\">Audience</a>"
 msgstr ""
 
-#: ../help/help.php:223
-msgid "donating to us"
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:62
+#, php-format
+msgid "3. Groups are now called <a href=\"%s\" target=\"_blank\">Lists</a>"
 msgstr ""
 
-#: ../help/help.php:258
-msgid "Description"
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:63
+#, php-format
+msgid "4. Find <a href=\"%s\" target=\"_blank\">Forms</a> here"
 msgstr ""
 
-#: ../help/help.php:260
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:65
+msgid "Explore all changes"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:67
+msgid "Welcome to the Email Subscribers Community!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:68
 msgid ""
 "Email Subscribers is a complete newsletter plugin which lets you collect "
 "leads, send automated new blog post notification emails, create & send "
 "newsletters and manage all this in one single place."
 msgstr ""
 
-#: ../help/help.php:262
-msgid "Feature Overview"
-msgstr ""
-
-#: ../help/help.php:265
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:69
 msgid ""
-"Collect customer emails by adding a subscription box (Widget/Shortcode/PHP "
-"Code)."
+"We hope our plugin adds to your success <img draggable=\"false\" "
+"class=\"emoji\" alt=\"🏆\" src=\"https://s.w."
+"org/images/core/emoji/11/svg/1f3c6.svg\">"
 msgstr ""
 
-#: ../help/help.php:268
-msgid "Configure double Opt-In and Single Opt-In facility for subscribers."
-msgstr ""
-
-#: ../help/help.php:271
-msgid "Send automatic welcome email to subscribers."
-msgstr ""
-
-#: ../help/help.php:274
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:70
 msgid ""
-"Send new post notification emails to subscribers when new posts are "
-"published on your website."
+"To get started, we did some initial setup to save your time <img "
+"draggable=\"false\" class=\"emoji\" alt=\"😊\" src=\"https://s.w."
+"org/images/core/emoji/11/svg/1f60a.svg\">"
 msgstr ""
 
-#: ../help/help.php:277
-msgid "Schedule email (Cron job) or send them manually."
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:72
+msgid ""
+"1. Created a lead collecting form and added it the default widget area in "
+"your WP admin"
 msgstr ""
 
-#: ../help/help.php:280
-msgid "Send email notification to admin when a new user signs up."
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:73
+msgid "2. Created a \"Test\" subscriber list and added \""
 msgstr ""
 
-#: ../help/help.php:283
-msgid "Automatically add Unsubscribe link in the email."
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:73
+msgid "\" to it."
 msgstr ""
 
-#: ../help/help.php:286
-msgid "Easily migrate subscribers from another app using Import & Export."
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:74
+msgid ""
+"3. Sent a test post notification, test broadcasts to the test subscriber "
+"list."
 msgstr ""
 
-#: ../help/help.php:289
-msgid "Use HTML editor to create newsletters and post notifications."
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:75
+msgid "4. Created a first form."
 msgstr ""
 
-#: ../help/help.php:292
-msgid "Send newsletters to different groups."
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:80
+msgid "Here are some quick links"
 msgstr ""
 
-#: ../help/help.php:295
-msgid "Get detailed sent email reports."
-msgstr ""
-
-#: ../help/help.php:298
-msgid "Control user access (User Roles and Capabilities)."
-msgstr ""
-
-#: ../help/help.php:301
-msgid "Supports localization and internationalization."
-msgstr ""
-
-#: ../help/help.php:308
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:89
 msgid "Add Subscribe form"
 msgstr ""
 
-#: ../help/help.php:310 ../help/help.php:321 ../help/help.php:324 ../help/help.
-#: php:336 ../help/help.php:339 ../help/help.php:342 ../help/help.php:345 ..
-#: /help/help.php:348 ../help/help.php:351 ../help/help.php:363 ../help/help.php:
-#: 366 ../help/help.php:373 ../help/help.php:376 ../help/help.php:379 ..
-#: /help/help.php:387 ../help/help.php:390 ../help/help.php:393 ../help/help.php:
-#: 396 ../help/help.php:402 ../help/help.php:405 ../help/help.php:408 ..
-#: /help/help.php:416 ../help/help.php:419 ../help/help.php:434 ../help/help.php:
-#: 437
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:90
+msgid "Use any of the following 3 methods :"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:92
+msgid ""
+"Shortcode in any page/post : <code>[email-subscribers-form id=\"{form-id}\"]"
+"</code> "
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:93
+msgid ""
+"Go to Appearance -> Widgets. Click on widget Email subscribers and drag it "
+"to the widget area"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:94
+msgid "Paste below PHP code to your desired location :"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:104
+msgid ""
+"Build your list and succeed with email marketing <div>in 5 short weeks</div>"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:111
+msgid ""
+"Do you want to build your list, keep off spam, write emails that people open "
+"and click through? Do you want to build your brand and nurture an amazing "
+"tribe?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:112
+msgid "Enter your name and email on the form to get it all."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:122
 #, php-format
-msgid "%s"
+msgid "I have read and agreed to your %s."
 msgstr ""
 
-#: ../help/help.php:310
-msgid "How to Add Subscription box to website?"
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:122
+msgid "Privacy Policy"
 msgstr ""
 
-#: ../help/help.php:313
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:124
+#: ../../../../wpRepos/gitlab/email-subscribers/public/partials/class-es-shortcode.php:191
+msgid "Subscribe"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:133
+msgid ""
+"<span style=\"color:#ff6f7b\">Join our</span> Email Subscribers Secret Club!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:134
+msgid ""
+"Be a part of development, share your valuable feedback and get early access "
+"to our upcoming <strong>Email Subscribers 5.0</>"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:145
+msgid "Questions? Need Help?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:146
+msgid "Contact Us"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/admin/partials/dashboard.php:147
 #, php-format
-msgid ""
-"Use any of the following 3 methods :<br>\n"
-"								a) Shortcode in any page/post : <strong>[email-subscribers "
-"namefield=\"YES\" desc=\"\" group=\"Public\"]</strong> <i>Or</i><br>\n"
-"								b) Go to Appearance -> Widgets. Click on widget Email subscribers "
-"and drag it to the sidebar on the right <i>Or</i><br>\n"
-"								c) Copy and past this php code to your desired template location : "
-"<strong>%s</strong>"
+msgid "Version: %s"
 msgstr ""
 
-#: ../help/help.php:318
-msgid "Additional form settings"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:19
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:20
+msgid "Campaign"
 msgstr ""
 
-#: ../help/help.php:321
-msgid "How to Redirect Subscribers to a new page/url after successful sign up?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:50
+msgid "Create Post Notification"
 msgstr ""
 
-#: ../help/help.php:324
-msgid "How to add captcha in Subscribe form of Email Subscribers?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:51
+msgid "Send Broadcast"
 msgstr ""
 
-#: ../help/help.php:330
-msgid "General Plugin Configuration"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:52
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-newsletters.php:77
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:238
+msgid "Manage Templates"
 msgstr ""
 
-#: ../help/help.php:333
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:158
+msgid "No Campaigns Found."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:333
+msgid "You are not allowed to delete campaign."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:337
+msgid "Campaign has been deleted successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:356
+msgid "Campaign(s) have been deleted successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-campaigns-table.php:361
+msgid "Please check campaign(s) to delete."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-cron.php:132
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:404
+msgid "Campaign Sent!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:15
+msgid "Import Subscribers"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:111
 #, php-format
-msgid "Modify %s"
+msgid "Total %d contacts have been imported successfully!"
 msgstr ""
 
-#: ../help/help.php:333
-msgid "default text, email contents"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:114
+msgid "Contacts are alredy exists."
 msgstr ""
 
-#: ../help/help.php:333
-msgid ""
-" (like Confirmation, Welcome, Admin emails), Cron Settings and Assign User "
-"Roles"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:122
+msgid "Error: Please Select List"
 msgstr ""
 
-#: ../help/help.php:336
-msgid "How does Sync work?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:126
+msgid "Error: Please select status"
 msgstr ""
 
-#: ../help/help.php:339
-msgid "How to Import or Export Email Addresses?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:130
+msgid "Error: Please Upload only CSV File"
 msgstr ""
 
-#: ../help/help.php:342
-msgid "How to Add/Update Existing Subscribers Group & Status?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:134
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:138
+msgid "Error: Please Upload File"
 msgstr ""
 
-#: ../help/help.php:345
-msgid "How to change/update/translate any texts from the plugin?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:157
+msgid "Select CSV file"
 msgstr ""
 
-#: ../help/help.php:348
-msgid "How to add Unsubscribe link in emails?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:159
+msgid "Check CSV structure"
 msgstr ""
 
-#: ../help/help.php:351
-msgid "How to check sent emails?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:171
+msgid "Select status"
 msgstr ""
 
-#: ../help/help.php:363
-msgid "Create and Send Newsletter Emails"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:183
+msgid "Select list"
 msgstr ""
 
-#: ../help/help.php:366
-msgid "Keywords in the Newsletters"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:206
+msgid "Audience > Import Contacts"
 msgstr ""
 
-#: ../help/help.php:373
-msgid "Create and Send Post Notification Emails when new posts are published"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:207
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:103
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-sync-wp-user.php:70
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:54
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:120
+msgid "Add New Contact"
 msgstr ""
 
-#: ../help/help.php:376
-msgid "Keywords in the Post Notifications"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:208
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:50
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-sync-wp-user.php:71
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:55
+msgid "Export Contacts"
 msgstr ""
 
-#: ../help/help.php:379
-msgid "Send a test post notification email to myself/testgroup"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-import-subscribers.php:209
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:105
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:212
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-sync-wp-user.php:72
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:58
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:121
+msgid "Manage Lists"
 msgstr ""
 
-#: ../help/help.php:384
-msgid "Cron Job Setup"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-templates-table.php:45
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-templates-table.php:49
+msgid "Available Keywords"
 msgstr ""
 
-#: ../help/help.php:387
-msgid "What is Cron and how to Schedule Cron Emails?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-templates-table.php:49
+msgid "for Newsletter:"
 msgstr ""
 
-#: ../help/help.php:390
-msgid "Schedule Cron Emails in cPanel"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-templates-table.php:87
+msgid "Preview Template"
 msgstr ""
 
-#: ../help/help.php:393
-msgid "Schedule Cron Emails in Parallels Plesk"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-templates-table.php:191
+msgid "Template Type"
 msgstr ""
 
-#: ../help/help.php:396
-msgid "Hosting doesn’t support Cron Jobs?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-widget.php:11
+msgid "Email Subscribers Widget"
 msgstr ""
 
-#: ../help/help.php:399
-msgid "Troubleshooting Steps"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-widget.php:49
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-sync-wp-user.php:110
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:315
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:357
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:393
+msgid "Yes"
 msgstr ""
 
-#: ../help/help.php:402
-msgid "Subscribers are not receiving Emails?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-widget.php:49
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:58
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-sync-wp-user.php:109
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:319
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:358
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:394
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:96
+msgid "No"
 msgstr ""
 
-#: ../help/help.php:405
-msgid "CSS Help"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:27
+msgid "No data available"
 msgstr ""
 
-#: ../help/help.php:408
-msgid "FAQ's"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:59
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:21
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:107
+msgid "Contacts"
 msgstr ""
 
-#: ../help/help.php:413
-msgid "[GDPR] Email Subscribers"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:60
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:264
+msgid "Total Contacts"
 msgstr ""
 
-#: ../help/help.php:416 ../help/help.php:434
-msgid "How to enable consent checkbox in the subscribe form?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:61
+msgid "Export"
 msgstr ""
 
-#: ../help/help.php:419
-msgid "What data Email Subscribers stores on your end?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:70
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:427
+msgid "All Contacts"
 msgstr ""
 
-#: ../help/help.php:431
-msgid "[GDPR] Email Subscribers - Group Selector"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:71
+msgid "Subscribed Contacts"
 msgstr ""
 
-#: ../help/help.php:437
-msgid "What data Email Subscribers - Group Selector stores on your end?"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:72
+msgid "Unsubscribed Contacts"
 msgstr ""
 
-#: ../help/help.php:446
-msgid "Want to do more? Here's how.."
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:89
+msgid "Download"
 msgstr ""
 
-#: ../help/help.php:449
-msgid "Allow Subscribers to get subscribed to any group"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:102
+msgid "Audience > Export Contacts"
 msgstr ""
 
-#: ../help/help.php:454
-msgid "Using our <b>free</b> "
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:104
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:56
+msgid "Import Contacts"
 msgstr ""
 
-#: ../help/help.php:455
-msgid "Group Selector"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:192
+msgid "Export the Subscribers"
 msgstr ""
 
-#: ../help/help.php:456
-msgid ""
-"plugin, you can extend Email Subscribers Form functionality by providing an "
-"grouping option right next to the form."
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:222
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:223
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:425
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:276
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:634
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:365
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:549
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:131
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:134
+#: ../../../../wpRepos/gitlab/email-subscribers/public/partials/class-es-shortcode.php:138
+#: ../../../../wpRepos/gitlab/email-subscribers/public/partials/class-es-shortcode.php:138
+msgid "Name"
 msgstr ""
 
-#: ../help/help.php:459
-msgid "The user can then subscribe to whichever group most appeals to them."
-msgstr ""
-
-#: ../help/help.php:462
-msgid "For example: Subscribe either to Updates or to Offers."
-msgstr ""
-
-#: ../help/help.php:466
-msgid "Show your subscribe form inside attractive popups"
-msgstr ""
-
-#: ../help/help.php:471
-msgid ""
-"Don't limit your subscriber form to a widget. Embed it within popups, hello "
-"bars, slide-ins, sidebars, full screen popups etc."
-msgstr ""
-
-#: ../help/help.php:474
-msgid ""
-"Using Email Subscribers you can achieve this easily with our <b>free</b> "
-"plugin "
-msgstr ""
-
-#. Author of the plugin/theme
-#: ../help/help.php:475
-msgid "Icegram"
-msgstr ""
-
-#: ../help/help.php:478
-msgid ""
-"Icegram's beautiful designs instantly capture user attention and help "
-"increase sign-ups to your WordPress website."
-msgstr ""
-
-#: ../help/help.php:481 ../help/help.php:501
-#, php-format
-msgid "How to %s"
-msgstr ""
-
-#: ../help/help.php:481
-msgid "show subscribe form inside a popup"
-msgstr ""
-
-#: ../help/help.php:485
-msgid "Get beautiful and elegant form styles"
-msgstr ""
-
-#: ../help/help.php:491
-msgid "Email subscribers easily integrates with another <b>free</b> plugin "
-msgstr ""
-
-#: ../help/help.php:492
-msgid "Rainmaker"
-msgstr ""
-
-#: ../help/help.php:495
-msgid ""
-"Rainmaker extends the core features of Email Subscribers and provides "
-"elegant form styles."
-msgstr ""
-
-#: ../help/help.php:498
-msgid ""
-"These styles are well designed and beautify your subscription form making it "
-"more appealing."
-msgstr ""
-
-#: ../help/help.php:501
-msgid "add Rainmaker’s form in Email Subscribers"
-msgstr ""
-
-#: ../job/es-optin.php:58 ../job/es-optin.php:68 ../job/es-unsubscribe.php:54 ..
-#: /job/es-unsubscribe.php:61
-msgid ""
-"Oops.. We are getting some technical error. Please try again or contact "
-"admin."
-msgstr ""
-
-#: ../job/es-optin.php:61
-msgid "This email address has already been confirmed."
-msgstr ""
-
-#: ../notification/notification-add.php:33
-msgid "Please select subscribers group."
-msgstr ""
-
-#: ../notification/notification-add.php:39
-msgid "Please select notification status."
-msgstr ""
-
-#: ../notification/notification-add.php:45 ../notification/notification-edit.php:61
-msgid "Please select notification mail subject. Use templates menu to create new."
-msgstr ""
-
-#: ../notification/notification-add.php:51 ../notification/notification-edit.php:67
-msgid "Please select post categories."
-msgstr ""
-
-#: ../notification/notification-add.php:71
-msgid "Notification successfully created. "
-msgstr ""
-
-#: ../notification/notification-add.php:112
-msgid "Add Notification"
-msgstr ""
-
-#: ../notification/notification-add.php:113 ../notification/notification-edit.php:
-#: 124 ../notification/notification-show.php:54 ../sendmail/sendmail.php:94 ..
-#: /sentmail/deliverreport-show.php:61 ../sentmail/sentmail-preview.php:28 ..
-#: /sentmail/sentmail-show.php:94 ../settings/settings-edit.php:43 ..
-#: /subscribers/view-subscriber-add.php:118 ../subscribers/view-subscriber-edit.
-#: php:113 ../subscribers/view-subscriber-export.php:51 ../subscribers/view-
-#: subscriber-import.php:149 ../subscribers/view-subscriber-show.php:247 ..
-#: /subscribers/view-subscriber-sync.php:92 ../templates/template-preview.php:33
-msgid "Help"
-msgstr ""
-
-#: ../notification/notification-add.php:121
-msgid "Select Subscribers Group"
-msgstr ""
-
-#: ../notification/notification-add.php:125 ../notification/notification-add.php:
-#: 149 ../notification/notification-edit.php:136 ../notification/notification-
-#: edit.php:169 ../sendmail/sendmail.php:111 ../sendmail/sendmail.php:138 ..
-#: /sendmail/sendmail.php:152 ../subscribers/view-subscriber-add.php:166 ..
-#: /subscribers/view-subscriber-edit.php:162 ../subscribers/view-subscriber-
-#: import.php:193 ../subscribers/view-subscriber-sync.php:119
-msgid "Select"
-msgstr ""
-
-#: ../notification/notification-add.php:143 ../notification/notification-edit.php:
-#: 163
-msgid "Select Notification Email Subject"
-msgstr ""
-
-#: ../notification/notification-add.php:144 ../notification/notification-edit.php:
-#: 164
-msgid "(Use templates menu to create new)"
-msgstr ""
-
-#: ../notification/notification-add.php:168 ../notification/notification-edit.php:
-#: 191
-msgid "Select Post Categories"
-msgstr ""
-
-#: ../notification/notification-add.php:196 ../notification/notification-edit.php:
-#: 226
-msgid "Check All"
-msgstr ""
-
-#: ../notification/notification-add.php:197 ../notification/notification-edit.php:
-#: 227
-msgid "Uncheck All"
-msgstr ""
-
-#: ../notification/notification-add.php:203 ../notification/notification-edit.php:
-#: 234
-msgid "Select your Custom Post Type"
-msgstr ""
-
-#: ../notification/notification-add.php:204 ../notification/notification-edit.php:
-#: 235
-msgid "(Optional)"
-msgstr ""
-
-#: ../notification/notification-add.php:233 ../notification/notification-edit.php:
-#: 269
-msgid "No Custom Post Types Available"
-msgstr ""
-
-#: ../notification/notification-add.php:240 ../notification/notification-edit.php:
-#: 276
-msgid "Select Notification Status when a new post is published"
-msgstr ""
-
-#: ../notification/notification-add.php:244 ../notification/notification-edit.php:
-#: 280 ../notification/notification-show.php:130 ../sendmail/sendmail.php:139
-msgid "Send email immediately"
-msgstr ""
-
-#: ../notification/notification-add.php:245 ../notification/notification-edit.php:
-#: 281 ../notification/notification-show.php:132
-msgid "Add to cron and send email via cron job"
-msgstr ""
-
-#: ../notification/notification-add.php:246 ../notification/notification-edit.php:
-#: 282
-msgid "Disable email notification"
-msgstr ""
-
-#: ../notification/notification-add.php:254 ../notification/notification-edit.php:
-#: 291 ../subscribers/view-subscriber-edit.php:191
-msgid "Save"
-msgstr ""
-
-#: ../notification/notification-edit.php:20 ../notification/notification-show.php:
-#: 21 ../sentmail/sentmail-preview.php:18 ../sentmail/sentmail-show.php:22 ..
-#: /subscribers/view-subscriber-edit.php:22
-msgid "Oops, selected details does not exists."
-msgstr ""
-
-#: ../notification/notification-edit.php:49
-msgid "Please select subscribers group"
-msgstr ""
-
-#: ../notification/notification-edit.php:55
-msgid "Please select notification status"
-msgstr ""
-
-#: ../notification/notification-edit.php:89
-msgid "Notification successfully updated. "
-msgstr ""
-
-#: ../notification/notification-edit.php:122
-msgid "Edit Notification"
-msgstr ""
-
-#: ../notification/notification-edit.php:123 ../notification/notification-show.
-#: php:53
-msgid "Add New"
-msgstr ""
-
-#: ../notification/notification-edit.php:132 ../subscribers/view-subscriber-show.
-#: php:303
-msgid "Update Subscribers Group"
-msgstr ""
-
-#: ../notification/notification-show.php:35 ../sentmail/sentmail-show.php:36
-msgid "Selected record deleted."
-msgstr ""
-
-#: ../notification/notification-show.php:57
-msgid ""
-"Use this to setup and send notification emails to your subscribers when a "
-"new post is published in your blog."
-msgstr ""
-
-#: ../notification/notification-show.php:68 ../notification/notification-show.php:
-#: 76
-msgid "Email Subject"
-msgstr ""
-
-#: ../notification/notification-show.php:69 ../notification/notification-show.php:
-#: 77
-msgid "Subscribers Group"
-msgstr ""
-
-#: ../notification/notification-show.php:70 ../notification/notification-show.php:
-#: 78
-msgid "Post Categories / Custom Post Types"
-msgstr ""
-
-#: ../notification/notification-show.php:71 ../notification/notification-show.php:
-#: 79
-msgid "Notification Status"
-msgstr ""
-
-#: ../notification/notification-show.php:100 ../subscribers/view-subscriber-show.
-#: php:417 ../templates/template-preview.php:36
-msgid "Edit"
-msgstr ""
-
-#: ../notification/notification-show.php:103 ../subscribers/view-subscriber-show.
-#: php:301 ../subscribers/view-subscriber-show.php:422
-msgid "Delete"
-msgstr ""
-
-#: ../notification/notification-show.php:143 ../sentmail/deliverreport-show.php:
-#: 128 ../sentmail/sentmail-show.php:180 ../subscribers/view-subscriber-show.php:
-#: 456
-msgid "No records available."
-msgstr ""
-
-#: ../sendmail/sendmail.php:18 ../subscribers/view-subscriber-show.php:17
-msgid "Click Here"
-msgstr ""
-
-#: ../sendmail/sendmail.php:40
-msgid "Please select your mail subject."
-msgstr ""
-
-#: ../sendmail/sendmail.php:46
-msgid "Please select your mail type."
-msgstr ""
-
-#: ../sendmail/sendmail.php:52
-msgid "Please select your group."
-msgstr ""
-
-#: ../sendmail/sendmail.php:59
-msgid "Email sent successfully. "
-msgstr ""
-
-#: ../sendmail/sendmail.php:63
-msgid "Click here to check Statistics"
-msgstr ""
-
-#: ../sendmail/sendmail.php:69
-msgid "Oops.. We are getting some error. mail not sending."
-msgstr ""
-
-#: ../sendmail/sendmail.php:97
-msgid "Use this to send newsletter emails to your subscribers."
-msgstr ""
-
-#: ../sendmail/sendmail.php:106
-msgid "Select Email Subject from available list"
-msgstr ""
-
-#: ../sendmail/sendmail.php:133
-msgid "Select Email Type"
-msgstr ""
-
-#: ../sendmail/sendmail.php:140
-msgid "Send email via cron job"
-msgstr ""
-
-#: ../sendmail/sendmail.php:147
-msgid "Select Subscribers group to Send Email"
-msgstr ""
-
-#: ../sendmail/sendmail.php:179
-msgid "Recipients : 0 "
-msgstr ""
-
-#: ../sendmail/sendmail.php:181
-#, php-format
-msgid "Recipients : %s"
-msgstr ""
-
-#: ../sendmail/sendmail.php:184
-msgid ""
-"<br><br><strong>Your Recipients count is above 100.<br>We strongly recommend "
-"that you change above Mail Type to Cron and Send Mail via Cron Job."
-"</strong><br>Click on Help for more information."
-msgstr ""
-
-#: ../sendmail/sendmail.php:196 ../sendmail/sendmail.php:198
-msgid "Send Email"
-msgstr ""
-
-#: ../sendmail/sendmail.php:201
-msgid "Reset"
-msgstr ""
-
-#: ../sentmail/deliverreport-show.php:14
-msgid "Oops.. Unexpected error occurred. Please try again."
-msgstr ""
-
-#: ../sentmail/deliverreport-show.php:47 ../sentmail/sentmail-show.php:83
-msgid " &lt;&lt; "
-msgstr ""
-
-#: ../sentmail/deliverreport-show.php:48 ../sentmail/sentmail-show.php:84
-msgid " &gt;&gt; "
-msgstr ""
-
-#: ../sentmail/deliverreport-show.php:60
-msgid "Delivery Report"
-msgstr ""
-
-#: ../sentmail/deliverreport-show.php:72 ../sentmail/deliverreport-show.php:83 ..
-#: /subscribers/view-subscriber-export.php:58 ../subscribers/view-subscriber-
-#: export.php:66
-msgid "Sno"
-msgstr ""
-
-#: ../sentmail/deliverreport-show.php:73 ../sentmail/deliverreport-show.php:84
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:223
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:271
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:369
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:550
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:140
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:97
+#: ../../../../wpRepos/gitlab/email-subscribers/public/partials/class-es-shortcode.php:169
 msgid "Email"
 msgstr ""
 
-#: ../sentmail/deliverreport-show.php:74 ../sentmail/deliverreport-show.php:85 ..
-#: /sentmail/sentmail-show.php:110 ../sentmail/sentmail-show.php:123 ..
-#: /subscribers/view-subscriber-show.php:290
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:224
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:98
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:261
 msgid "Status"
 msgstr ""
 
-#: ../sentmail/deliverreport-show.php:75 ../sentmail/deliverreport-show.php:86 ..
-#: /sentmail/sentmail-show.php:111 ../sentmail/sentmail-show.php:124
-msgid "Sent"
+#. __( 'List', 'email-subscribers' ),
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-export-subscribers.php:225
+msgid "Created On"
 msgstr ""
 
-#: ../sentmail/deliverreport-show.php:76 ../sentmail/deliverreport-show.php:87
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:42
+msgid "Audience > Lists"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:83
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:502
+msgid "You do not have permission to edit list"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:85
+msgid "Please add list name"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:128
+msgid "List has been added successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:169
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:506
+msgid "List has been updated successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:206
+msgid "Add New"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:208
+msgid "Edit List"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:426
+msgid "Active Contacts"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:428
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:636
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:552
+msgid "Created"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:455
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:663
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:582
+msgid "Delete"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:518
+msgid "You do not have permission to delete list"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:523
+msgid "List has been deleted successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:538
+msgid "List(s) have been deleted successfully"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-lists-table.php:541
+msgid "Please select list"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-newsletters.php:46
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:51
+msgid "Please select template."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-newsletters.php:49
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:43
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:774
+msgid "Please select list."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-newsletters.php:75
+msgid "Campaigns > Broadcast"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-newsletters.php:127
+msgid "Content of the selected template will be broadcasted."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-newsletters.php:133
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:247
+msgid "Select List"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-newsletters.php:139
+msgid "Contacts from the selected list will be notified."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-tools.php:53
+msgid "Please add email"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-tools.php:160
+#, php-format
+msgid "Test email to %s"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-sync-wp-user.php:12
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:57
+msgid "Sync"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-sync-wp-user.php:69
+msgid "Audience > Sync Contacts"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-sync-wp-user.php:84
+msgid "Please select List"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-sync-wp-user.php:104
+msgid "Sync newly registered users to subscribers list"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-sync-wp-user.php:117
+msgid "Select list to add newly registered users to"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-sync-wp-user.php:130
+msgid "Sync Now"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:85
+msgid "You do not have permission to edit this form."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:88
+msgid "Please add form name."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:93
+msgid "Please select list(s) in which contact will be subscribed."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:138
+msgid "Form has been added successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:183
+msgid "Form has been updated successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:192
+msgid "Sorry, form not found"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:226
+msgid "New Form"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:228
+msgid "Edit Form"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:245
+msgid "Form Name"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:253
+msgid "Description"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:261
+msgid "Form Fields"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:266
+msgid "Field"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:267
+msgid "Show?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:268
+msgid "Required?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:291
+msgid "Contacts will be added into selected list(s)"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:309
+msgid "Allow contact to choose list(s)"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:310
+msgid "Allow contacts to choose list(s) in which they want to subscribe."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:635
+msgid "Shortcode"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:709
+msgid "You do not have permission to delete this form."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:716
+msgid "Form has been deleted successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:731
+msgid "Form(s) have been deleted successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:734
+msgid "Please select form(s) to delete."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-forms-table.php:767
+msgid "No Forms avaliable."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:59
+msgid "Please select categories."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:78
+msgid "Post notification has been added successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:191
+msgid "Post notification has been updated successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:218
+msgid "Campaigns > New Post Notification"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:221
+msgid "Campigns > Edit Post Notification"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:248
+msgid ""
+"Contacts from the selected list will be notified about new post notification."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:259
+msgid "Select template"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:260
+msgid "Content of the selected template will be sent out as post notification."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:285
+msgid "Select Post Category"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:286
+msgid ""
+"Notification will be sent out when any post from selected categories will be "
+"published."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:299
+msgid "Select custom post type(s)"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-post-notifications.php:300
+msgid ""
+"(Optional) Select custom post type for which you want to send notification."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:20
+msgid "Contact"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:53
+msgid "Audience > Contacts"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:145
+msgid "Please Select List"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:184
+msgid "Contact has been added successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:188
+msgid "Contact already exist."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:322
+msgid "Contact updated successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:327
+msgid "Edit Contact"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:358
+msgid "No list found"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:373
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:551
+msgid "List(s)"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:583
+msgid "Move To List"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:584
+msgid "Change Status"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:667
+msgid "Contact have been updated successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:684
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:742
+msgid "Contact(s) have been deleted successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:730
+msgid "Please select subscribers to update."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:753
+msgid "Please select status."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:763
+msgid "Status has been changed successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:783
+msgid "Contact(s) have been moved to list successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-subscribers-table.php:793
+msgid "No contacts avaliable."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:127
+msgid "Sender"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:141
+msgid ""
+"Choose a FROM email address for all the emails to be sent from this plugin"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:143
+msgid "Email Address"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:151
+msgid "Email Addresses"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:153
+msgid ""
+"Enter the admin email addresses that should receive notifications (separated "
+"by comma)."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:159
+msgid "Email Type"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:160
+msgid "Select whether to send HTML or Plain Text email."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:168
+msgid "Opt-in Type"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:177
+msgid "Image Size"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:192
+msgid "Show Unsubscribe Message In Email Footer"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:193
+msgid ""
+"Add text which you want your contact to see in footer to unsubscribe. Use "
+"{{UNSUBSCRIBE-LINK}} keyword to add unsubscribe link."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:200
+msgid "Subscription Success/ Error Messages"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:207
+msgid "You have been subscribed successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:209
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:239
+msgid "Success Message"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:210
+msgid ""
+"Show this message if contact is successfully subscribed from Double Opt-In "
+"(Confirmation) Email"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:218
+msgid ""
+"Oops.. Your request couldn't be completed. This email address seems to be "
+"already subscribed / blocked."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:220
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:251
+msgid "Error Message"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:221
+msgid ""
+"Show this message if any error occured after clicking confirmation link from "
+"Double Opt-In (Confirmation) Email."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:229
+msgid "Unsubscribe Success/ Error Messages"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:237
+msgid ""
+"Thank You, You have been successfully unsubscribed. You will no longer hear "
+"from us."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:240
+msgid ""
+"Once contact clicks on unsubscribe link, he/she will be redirected to a page "
+"where this message will be shown."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:252
+msgid ""
+"Show this message if any error occured after clicking on unsubscribe link."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:280
+msgid "Welcome Email"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:290
+msgid "Enable?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:291
+msgid "Send welcome email to new contact after signup."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:301
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:329
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:367
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:406
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:259
+msgid "Subject"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:311
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:340
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:375
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:417
+msgid "Content"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:319
+msgid "Confirmation Email"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:341
+msgid ""
+"If Double Optin is set, contact will receive confirmation email with above "
+"content. You can use {{NAME}}, {{EMAIL}}, {{SUBSCRIBE-LINK}} keywords"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:349
+msgid "Admin Notification On New Subscription"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:354
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:390
+msgid "Notify?"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:360
+msgid "Set this option to \"Yes\" to notify admin(s) for new contact signup."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:369
+msgid ""
+"Subject for the admin email whenever a new contact signs up and is confirmed"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:370
+msgid "New email subscription"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:377
+msgid ""
+"Content for the admin email whenever a new subscriber signs up and is "
+"confirmed. Available Keywords: {{NAME}}, {{EMAIL}}, {{LIST}}"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:385
+msgid "Admin Notification On Every Campaign Sent"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:396
+msgid "Set this option to \"Yes\" to notify admin(s) on every campaign sent."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:418
+msgid ""
+"Send report to admin(s) whenever campaign is successfully sent to all "
+"contacts. Available Keywords: {{DATE}}, {{SUBJECT}}, {{COUNT}}"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:433
+msgid "Cron URL"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:444
+msgid "Maximum Emails Send In An Hour"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:445
+msgid "Total emails your host can send in an hour."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:454
+msgid "Blocked Domain(s)"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-admin-settings.php:456
+msgid ""
+"System won't allow email addresses which ends with any of domain availble in "
+"above lists. Add list of domain(s) one per line to block."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-old-widget.php:72
+msgid "Widget Title"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-old-widget.php:76
+msgid "Short description about subscription form"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-old-widget.php:80
+msgid "Display Name Field"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-old-widget.php:82
+msgid "YES"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-old-widget.php:83
+msgid "NO"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-old-widget.php:87
+msgid "Subscriber Group"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-form-widget.php:11
+msgid "Email Subscribers Form"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:384
+msgid "Invalid name"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:386
+msgid "Oops...unable to add subscriber"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:387
+msgid "You do not have permission to add subscriber"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:388
+msgid "Please select the list"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-handle-subscription.php:389
+msgid "Invalid Captcha"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:19
+msgid "Report"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:48
+#, php-format
+msgid ""
+"<a href='%s' target='_blank' class='page-title-action es-imp-button'>Send "
+"Queued Emails Now</a>"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:50
+msgid ""
+"<span class='page-title-action button-disabled'>Send Queued Emails Now</span>"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:51
+msgid "<br /><span class='es-helper'>No emails found in queue</span>"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:99
 msgid "Sent Date"
 msgstr ""
 
-#: ../sentmail/deliverreport-show.php:77 ../sentmail/deliverreport-show.php:88
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:100
 msgid "Viewed Status"
 msgstr ""
 
-#: ../sentmail/deliverreport-show.php:78 ../sentmail/deliverreport-show.php:89
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:101
 msgid "Viewed Date"
 msgstr ""
 
-#: ../sentmail/sentmail-preview.php:27
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:154
+msgid "Viewed"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:154
+msgid "No Data"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:167
+msgid "No Reports avaliable."
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:203
+msgid "Completed"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:260
+msgid "Type"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:262
+msgid "Start Date"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:263
+msgid "End Date"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:362
+msgid "You do not have permission to view notification"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:374
+msgid "You do not have permission to delete notification"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:379
+msgid "Report has been deleted successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:388
+msgid "You do not have permission to preview notification"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:406
+msgid "Reports have been deleted successfully!"
+msgstr ""
+
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:427
 msgid "Preview Email"
 msgstr ""
 
-#: ../sentmail/sentmail-preview.php:31
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/admin/class-es-reports-table.php:430
 msgid ""
 "This is how the email you sent may look. <br>Note: Different email services "
 "(like gmail, yahoo etc) display email content differently. So there could be "
 "a slight variation on how your customer will view the email content."
 msgstr ""
 
-#: ../sentmail/sentmail-preview.php:53
-msgid "Back"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/notices/class-es-admin-notices.php:97
+msgid "Action failed. Please refresh the page and retry."
 msgstr ""
 
-#: ../sentmail/sentmail-show.php:43
-msgid "Successfully deleted all reports except latest 10."
-msgstr ""
-
-#: ../sentmail/sentmail-show.php:97
-msgid "It will show reports for all Newsletters & Post Notification emails sent."
-msgstr ""
-
-#: ../sentmail/sentmail-show.php:107 ../sentmail/sentmail-show.php:120
-msgid "View Reports"
-msgstr ""
-
-#: ../sentmail/sentmail-show.php:109 ../sentmail/sentmail-show.php:122
-msgid "Type"
-msgstr ""
-
-#: ../sentmail/sentmail-show.php:112 ../sentmail/sentmail-show.php:125
-msgid "Start Date"
-msgstr ""
-
-#: ../sentmail/sentmail-show.php:113 ../sentmail/sentmail-show.php:126
-msgid "End Date"
-msgstr ""
-
-#: ../sentmail/sentmail-show.php:114 ../sentmail/sentmail-show.php:127
-msgid "Total"
-msgstr ""
-
-#: ../sentmail/sentmail-show.php:115 ../sentmail/sentmail-show.php:128 ..
-#: /subscribers/view-subscriber-export.php:61 ../subscribers/view-subscriber-
-#: export.php:69 ../subscribers/view-subscriber-show.php:293
-msgid "Action"
-msgstr ""
-
-#: ../sentmail/sentmail-show.php:190
-msgid "Optimize Table & Delete Records"
-msgstr ""
-
-#: ../sentmail/sentmail-show.php:201
-msgid ""
-"Note: Please click on <strong>Optimize Table & Delete Records</strong> "
-"button to delete all reports except latest 10."
-msgstr ""
-
-#: ../sentmail/sentmail-show.php:212
-msgid ""
-"<strong>Note:</strong> If you delete record for the emails with Status = "
-"<span style=\"color:#FF0000;\">In Queue</span>, then cron job in queue will be "
-"deleted too and email will not be sent."
-msgstr ""
-
-#: ../settings/setting-sync.php:16
-msgid "Table sync completed successfully."
-msgstr ""
-
-#: ../settings/setting-sync.php:29
-msgid "Sync plugin tables"
-msgstr ""
-
-#: ../settings/setting-sync.php:33
-msgid "Click to sync tables"
-msgstr ""
-
-#: ../settings/settings-edit.php:23
-msgid "Admin"
-msgstr ""
-
-#: ../settings/settings-edit.php:24
-msgid "Signup Confirmation"
-msgstr ""
-
-#: ../settings/settings-edit.php:25
-msgid "Cron"
-msgstr ""
-
-#: ../settings/settings-edit.php:26
-msgid "User Roles"
-msgstr ""
-
-#: ../settings/settings-edit.php:67
-msgid "Save Settings"
-msgstr ""
-
-#: ../settings/settings-edit.php:78
-msgid "Sender of Notifications"
-msgstr ""
-
-#: ../settings/settings-edit.php:79
-msgid ""
-"Choose a FROM name and FROM email address for all the emails to be sent from "
-"this plugin."
-msgstr ""
-
-#: ../settings/settings-edit.php:89
-msgid "Email Type"
-msgstr ""
-
-#: ../settings/settings-edit.php:90
-msgid ""
-"Option 1 & 2 is to send emails with default Wordpress method wp_mail(). "
-"Option 3 & 4 is to send emails with PHP method mail()."
-msgstr ""
-
-#: ../settings/settings-edit.php:94
-msgid "1. WP HTML MAIL"
-msgstr ""
-
-#: ../settings/settings-edit.php:95
-msgid "2. WP PLAINTEXT MAIL"
-msgstr ""
-
-#: ../settings/settings-edit.php:96
-msgid "3. PHP HTML MAIL"
-msgstr ""
-
-#: ../settings/settings-edit.php:97
-msgid "4. PHP PLAINTEXT MAIL"
-msgstr ""
-
-#: ../settings/settings-edit.php:104
-msgid "Opt-In Type"
-msgstr ""
-
-#: ../settings/settings-edit.php:105
-msgid ""
-"Double Opt-In : In this type, the subscriber is sent an activation link as "
-"soon as they subscribe to your list. They have to confirm their subscription "
-"by clicking on the activation link.<br />Single Opt-In : In this type, the "
-"subscriber is not asked to confirm their email address. They are subscribed "
-"directly in the list."
-msgstr ""
-
-#: ../settings/settings-edit.php:109
-msgid "Double Opt In"
-msgstr ""
-
-#: ../settings/settings-edit.php:110 ../subscribers/view-subscriber-add.php:155 ..
-#: /subscribers/view-subscriber-edit.php:150 ../subscribers/view-subscriber-
-#: import.php:181 ../subscribers/view-subscriber-show.php:326 ../subscribers/view-
-#: subscriber-show.php:356
-msgid "Single Opt In"
-msgstr ""
-
-#: ../settings/settings-edit.php:116
-msgid "Image Size"
-msgstr ""
-
-#: ../settings/settings-edit.php:117
-msgid ""
-"Select image size for {{POSTIMAGE}} to be shown in the Post Notification "
-"Emails."
-msgstr ""
-
-#: ../settings/settings-edit.php:121
-msgid "Full Size"
-msgstr ""
-
-#: ../settings/settings-edit.php:122
-msgid "Medium Size"
-msgstr ""
-
-#: ../settings/settings-edit.php:129
-msgid "Admin Email Addresses"
-msgstr ""
-
-#: ../settings/settings-edit.php:130
-msgid ""
-"Enter the admin email addresses that should receive notifications (separated "
-"by comma)."
-msgstr ""
-
-#: ../settings/settings-edit.php:136
-msgid "Notify Admin when a new subscriber signs up"
-msgstr ""
-
-#: ../settings/settings-edit.php:137
-msgid ""
-"To send admin email notifications for the new subscriber. This option must "
-"be set to YES."
-msgstr ""
-
-#: ../settings/settings-edit.php:149
-msgid "Admin Email Subject on new subscriber sign up"
-msgstr ""
-
-#: ../settings/settings-edit.php:150
-msgid ""
-"Subject for the admin email whenever a new subscriber signs up and is "
-"confirmed."
-msgstr ""
-
-#: ../settings/settings-edit.php:156
-msgid "Admin Email Content on new subscriber signs up"
-msgstr ""
-
-#: ../settings/settings-edit.php:157
-msgid ""
-"Content for the admin email whenever a new subscriber signs up and is "
-"confirmed.<br />Available Keywords: {{NAME}}, {{EMAIL}}, {{GROUP}}"
-msgstr ""
-
-#: ../settings/settings-edit.php:164
-msgid "Sent Report Subject"
-msgstr ""
-
-#: ../settings/settings-edit.php:165
-msgid "Subject for the email report which will be sent to admin."
-msgstr ""
-
-#: ../settings/settings-edit.php:171
-msgid "Sent Report Content"
-msgstr ""
-
-#: ../settings/settings-edit.php:172
-msgid ""
-"Content for the email report which will be sent to admin.<br />Available "
-"Keywords: {{COUNT}}, {{UNIQUE}}, {{STARTTIME}}, {{ENDTIME}}"
-msgstr ""
-
-#: ../settings/settings-edit.php:183
-msgid "Double Opt-In Email Subject (Confirmation Email)"
-msgstr ""
-
-#: ../settings/settings-edit.php:184
-msgid ""
-"Subject for the confirmation email to be sent for Double Opt-In whenever a "
-"subscriber signs up."
-msgstr ""
-
-#: ../settings/settings-edit.php:190
-msgid "Double Opt-In Email Content (Confirmation Email)"
-msgstr ""
-
-#: ../settings/settings-edit.php:191
-msgid ""
-"Content for the confirmation email to be sent for Double Opt-In whenever a "
-"subscriber signs up.<br />Available Keywords: {{NAME}}, {{LINK}}"
-msgstr ""
-
-#: ../settings/settings-edit.php:197
-msgid "Double Opt-In Confirmation Link"
-msgstr ""
-
-#: ../settings/settings-edit.php:198
-msgid "It is a readonly field and you are advised not to modify it."
-msgstr ""
-
-#: ../settings/settings-edit.php:204
-msgid ""
-"Text to display after an email address is successfully subscribed from "
-"Double Opt-In (Confirmation) Email"
-msgstr ""
-
-#: ../settings/settings-edit.php:205
-msgid ""
-"This text will be displayed once user clicks on email confirmation link from "
-"the Double Opt In (confirmation) Email."
-msgstr ""
-
-#: ../settings/settings-edit.php:212
-msgid "Send Welcome Email to New Subscribers after Sign Up?"
-msgstr ""
-
-#: ../settings/settings-edit.php:213
-msgid ""
-"To send welcome email to subscriber after successful signup. This option "
-"must be set to YES."
-msgstr ""
-
-#: ../settings/settings-edit.php:224
-msgid "Subject for Welcome Email"
-msgstr ""
-
-#: ../settings/settings-edit.php:225
-msgid ""
-"Subject for the subscriber welcome email. This will be sent whenever a "
-"user's email is either confirmed (if Double Opt-In) / subscribed (if Single "
-"Opt-In) successfully."
-msgstr ""
-
-#: ../settings/settings-edit.php:231
-msgid "Email Content for Welcome Email"
-msgstr ""
-
-#: ../settings/settings-edit.php:232
-msgid ""
-"Content for the subscriber welcome email whenever a user's email is either "
-"confirmed (if Double Opt In) / subscribed (if Single Opt In) successfully."
-"<br />Available Keywords: {{NAME}}, {{GROUP}}, {{LINK}}"
-msgstr ""
-
-#: ../settings/settings-edit.php:240
-msgid "Unsubscribe Link"
-msgstr ""
-
-#: ../settings/settings-edit.php:241
-msgid ""
-"This unsubscribe link is automatically added to all the emails that are sent "
-"from this plugin. It is a readonly field and you are advised not to modify "
-"it."
-msgstr ""
-
-#: ../settings/settings-edit.php:247
-msgid "Unsubscribe Text in Email"
-msgstr ""
-
-#: ../settings/settings-edit.php:248
-msgid ""
-"The text for the unsubscribe link. This text is automatically added with "
-"unsubscribe link in the emails.<br />Available Keyword: {{LINK}}"
-msgstr ""
-
-#: ../settings/settings-edit.php:254
-msgid "Text to display after an email address is unsubscribed"
-msgstr ""
-
-#: ../settings/settings-edit.php:255
-msgid ""
-"This text will be displayed once user clicks on unsubscribe link from the "
-"email."
-msgstr ""
-
-#: ../settings/settings-edit.php:262
-msgid "Error in the Subscribe / Confirmation Link"
-msgstr ""
-
-#: ../settings/settings-edit.php:263
-msgid ""
-"Default message to display if there is any issue while clicking on subscribe "
-"/ confirmation link from the Double Opt-In (Confirmation) emails."
-msgstr ""
-
-#: ../settings/settings-edit.php:269
-msgid "Error in the Unsubscribe Link"
-msgstr ""
-
-#: ../settings/settings-edit.php:270
-msgid ""
-"Default message to display if there is any issue while clicking on "
-"unsubscribe link from the emails."
-msgstr ""
-
-#: ../settings/settings-edit.php:282
-msgid "Select user roles who can access following menus. Only Admin can change this."
-msgstr ""
-
-#: ../settings/settings-edit.php:288
-msgid "Subscribers Menu"
-msgstr ""
-
-#: ../settings/settings-edit.php:292 ../settings/settings-edit.php:304 ..
-#: /settings/settings-edit.php:316 ../settings/settings-edit.php:328 ..
-#: /settings/settings-edit.php:340
-msgid "Administrator Only"
-msgstr ""
-
-#: ../settings/settings-edit.php:293 ../settings/settings-edit.php:305 ..
-#: /settings/settings-edit.php:317 ../settings/settings-edit.php:329 ..
-#: /settings/settings-edit.php:341
-msgid "Administrator/Editor"
-msgstr ""
-
-#: ../settings/settings-edit.php:294 ../settings/settings-edit.php:306 ..
-#: /settings/settings-edit.php:318 ../settings/settings-edit.php:330 ..
-#: /settings/settings-edit.php:342
-msgid "Administrator/Editor/Author/Contributor"
-msgstr ""
-
-#: ../settings/settings-edit.php:300
-msgid "Templates Menu"
-msgstr ""
-
-#: ../settings/settings-edit.php:312
-msgid "Post Notifications Menu"
-msgstr ""
-
-#: ../settings/settings-edit.php:336
-msgid "Reports Menu"
-msgstr ""
-
-#: ../settings/settings-edit.php:353
-msgid "Cron job URL"
-msgstr ""
-
-#: ../settings/settings-edit.php:354
-msgid ""
-"This is your Cron Job URL. It is a readonly field and you are advised not to "
-"modify it."
-msgstr ""
-
-#: ../settings/settings-edit.php:363
-msgid "Email Count"
-msgstr ""
-
-#: ../settings/settings-edit.php:364
-msgid "Number of emails that you want to trigger per hour."
-msgstr ""
-
-#: ../settings/settings-edit.php:369
-msgid "(Your web host has limits. We suggest 50 emails per hour to be safe.)"
-msgstr ""
-
-#: ../settings/settings-edit.php:374
-msgid "Cron Report"
-msgstr ""
-
-#: ../settings/settings-edit.php:375
-msgid ""
-"Email to admin whenever a cron URL is triggered from your server.<br "
-"/>Available Keywords: {{DATE}}, {{SUBJECT}}, {{COUNT}}"
-msgstr ""
-
-#: ../settings/settings-edit.php:385
-msgid "What is Cron (auto emails) and how to setup Cron Job?"
-msgstr ""
-
-#: ../settings/settings-edit.php:386
-msgid ""
-"<a target=\"_blank\" href=\"https://www.icegram.com/documentation/es-how-to-"
-"schedule-cron-emails/?"
-"utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page\">What is "
-"Cron?</a>"
-msgstr ""
-
-#: ../settings/settings-edit.php:387
-msgid ""
-"<a target=\"_blank\" href=\"https://www.icegram.com/documentation/es-how-to-"
-"schedule-cron-emails-in-cpanel/?"
-"utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page\">Setup cron "
-"job in cPanel</a>"
-msgstr ""
-
-#: ../settings/settings-edit.php:388
-msgid ""
-"<a target=\"_blank\" href=\"https://www.icegram.com/documentation/es-how-to-"
-"schedule-cron-emails-in-parallels-plesk/?"
-"utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page\">Setup cron "
-"job in Plesk</a>"
-msgstr ""
-
-#: ../settings/settings-edit.php:389
-msgid ""
-"<a target=\"_blank\" href=\"https://www.icegram.com/documentation/es-what-to-do-"
-"if-hosting-doesnt-support-cron-jobs/?"
-"utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page\">Hosting "
-"does not support cron jobs?</a>"
-msgstr ""
-
-#: ../settings/settings-edit.php:504
-msgid "Please enter sender of notifications from name."
-msgstr ""
-
-#: ../settings/settings-edit.php:509
-msgid "Please enter sender of notifications from email."
-msgstr ""
-
-#: ../settings/settings-edit.php:553
-msgid "Please enter valid mail count."
-msgstr ""
-
-#: ../settings/settings-edit.php:566
-msgid "Settings Saved."
-msgstr ""
-
-#: ../settings/settings-edit.php:569
-msgid "Oops, unable to update."
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:39 ../subscribers/view-subscriber-edit.
-#: php:54
-msgid "Please enter subscriber email address."
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:52
-msgid "Please select or create your group for this email."
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:59
-msgid ""
-"Error: Special characters (['^$%&*()}{@#~?><>,|=_+\\\"]) are not allowed in "
-"the group name."
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:69
-msgid "Subscriber has been saved."
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:71
-msgid "Subscriber already exists."
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:74
-msgid "Invalid Email."
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:114 ../subscribers/view-subscriber-edit.
-#: php:109 ../subscribers/view-subscriber-export.php:48 ../subscribers/view-
-#: subscriber-import.php:146 ../subscribers/view-subscriber-show.php:243 ..
-#: /subscribers/view-subscriber-sync.php:89
-msgid "Add New Subscriber"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:115 ../subscribers/view-subscriber-edit.
-#: php:110 ../subscribers/view-subscriber-export.php:49 ../subscribers/view-
-#: subscriber-import.php:213 ../subscribers/view-subscriber-show.php:244 ..
-#: /subscribers/view-subscriber-sync.php:90
-msgid "Import"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:116 ../subscribers/view-subscriber-edit.
-#: php:111 ../subscribers/view-subscriber-import.php:147 ../subscribers/view-
-#: subscriber-show.php:245 ../subscribers/view-subscriber-sync.php:91
-msgid "Export"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:117 ../subscribers/view-subscriber-edit.
-#: php:112 ../subscribers/view-subscriber-export.php:50 ../subscribers/view-
-#: subscriber-import.php:148 ../subscribers/view-subscriber-show.php:246 ..
-#: /subscribers/view-subscriber-sync.php:143
-msgid "Sync"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:127
-msgid "Enter Subscriber's Full name"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:137
-msgid "Enter Subscriber's Email Address"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:147
-msgid "Select Subscriber's Status"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:152 ../subscribers/view-subscriber-edit.
-#: php:147 ../subscribers/view-subscriber-import.php:178 ../subscribers/view-
-#: subscriber-show.php:323 ../subscribers/view-subscriber-show.php:353
-msgid "Confirmed"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:153 ../subscribers/view-subscriber-edit.
-#: php:148 ../subscribers/view-subscriber-import.php:179 ../subscribers/view-
-#: subscriber-show.php:324 ../subscribers/view-subscriber-show.php:354
-msgid "Unconfirmed"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:154 ../subscribers/view-subscriber-edit.
-#: php:149 ../subscribers/view-subscriber-import.php:180 ../subscribers/view-
-#: subscriber-show.php:325 ../subscribers/view-subscriber-show.php:355
-msgid "Unsubscribed"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:162
-msgid "Select (or) Create Group for Subscriber"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:178 ../subscribers/view-subscriber-
-#: import.php:205
-msgid "(or)"
-msgstr ""
-
-#: ../subscribers/view-subscriber-add.php:187
-msgid "Add Subscriber"
-msgstr ""
-
-#: ../subscribers/view-subscriber-edit.php:64
-msgid "Error: Special characters are not allowed in the group name."
-msgstr ""
-
-#: ../subscribers/view-subscriber-edit.php:74
-msgid "Subscriber details updated."
-msgstr ""
-
-#: ../subscribers/view-subscriber-edit.php:76
-msgid "Subscriber already exists for this group."
-msgstr ""
-
-#: ../subscribers/view-subscriber-edit.php:108
-msgid "Edit Subscriber"
-msgstr ""
-
-#: ../subscribers/view-subscriber-edit.php:122
-msgid "Subscriber's Full Name"
-msgstr ""
-
-#: ../subscribers/view-subscriber-edit.php:132
-msgid "Subscriber's Email Address"
-msgstr ""
-
-#: ../subscribers/view-subscriber-edit.php:142
-msgid "Update Subscriber's Status"
-msgstr ""
-
-#: ../subscribers/view-subscriber-edit.php:157
-msgid "Update Subscriber's Group"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:12
-msgid ""
-"Oops! Looks like you are not the site administrator.<br><br>Only the site "
-"administrator can export subscriber list."
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:14
-msgid "Go back to Subscribers dashboard"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:47
-msgid "Export Email Addresses"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:59 ../subscribers/view-subscriber-
-#: export.php:67
-msgid "Type of List to Export"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:60 ../subscribers/view-subscriber-
-#: export.php:68
-msgid "Total Emails Count"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:74
-msgid "1"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:75
-msgid "All Subscribers"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:77 ../subscribers/view-subscriber-
-#: export.php:83 ../subscribers/view-subscriber-export.php:89 ../subscribers/view-
-#: subscriber-export.php:95 ../subscribers/view-subscriber-export.php:101
-msgid "Click to Export in CSV"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:80
-msgid "2"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:81
-msgid "Active Subscribers (Status: Confirmed & Single Opt In)"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:86
-msgid "3"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:87
-msgid "Inactive Subscribers (Status: Unconfirmed & Unsubscribed)"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:92
-msgid "4"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:93
-msgid "WordPress Registered Users"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:98
-msgid "5"
-msgstr ""
-
-#: ../subscribers/view-subscriber-export.php:99
-msgid "Commented Authors"
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:45
-msgid ""
-"Error: Special characters (['^$%&*()}{@#~?><>,|=_+\\\"]) are not allowed in "
-"the Group name."
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:95
-msgid "email imported."
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:96
-msgid "email already exists."
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:97
-msgid "email are invalid."
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:100 ../subscribers/view-subscriber-
-#: import.php:129
-msgid "Click here"
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:100 ../subscribers/view-subscriber-
-#: import.php:129
-msgid " to view details."
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:108
-msgid "File Upload Failed."
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:145
-msgid "Import Email Addresses"
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:158
-msgid "Select CSV file"
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:160
-msgid "Check CSV structure "
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:161
-msgid "from here"
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:172
-msgid "Select Subscribers Email Status"
-msgstr ""
-
-#: ../subscribers/view-subscriber-import.php:188
-msgid "Select (or) Create Group for Subscribers"
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:45
-msgid "Selected details does not exists."
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:56 ../subscribers/view-subscriber-show.
-#: php:95
-msgid "Record deleted."
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:67
-msgid "To send confirmation email, please change the Opt-in option to Double Opt In."
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:75 ../subscribers/view-subscriber-show.
-#: php:134
-msgid "Confirmation emails resent successfully."
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:100 ../subscribers/view-subscriber-
-#: show.php:139 ../subscribers/view-subscriber-show.php:178 ../subscribers/view-
-#: subscriber-show.php:217
-msgid "No record was selected."
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:115
-msgid "To send confirmation mail, please change the Opt-in option to Double Opt In."
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:164
-msgid "Subscribers Group updated."
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:169
-msgid "Please select New group to update."
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:203
-msgid "Subscribers Status updated."
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:208
-msgid "Please select New Status to update."
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:256
-msgid "Total Subscribers: "
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:258
+#. %d: interval
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/upgrade/class-es-background-process.php:171
 #, php-format
-msgid "Active Subscribers: %s"
+msgid "Every %d minutes"
 msgstr ""
 
-#: ../subscribers/view-subscriber-show.php:288
-msgid "Email Address"
+#: ../../../../wpRepos/gitlab/email-subscribers/public/partials/cron-message.php:33
+msgid "Total Emails Sent"
 msgstr ""
 
-#: ../subscribers/view-subscriber-show.php:291
-msgid "Group"
+#: ../../../../wpRepos/gitlab/email-subscribers/public/partials/cron-message.php:37
+msgid "Total Emails In Queue"
 msgstr ""
 
-#: ../subscribers/view-subscriber-show.php:292
-msgid "Signup Date & Time<br>(Y-M-D H:I:S)"
+#: ../../../../wpRepos/gitlab/email-subscribers/public/partials/class-es-shortcode.php:136
+msgid "Enter Name"
 msgstr ""
 
-#: ../subscribers/view-subscriber-show.php:300
-msgid "Bulk Actions"
+#: ../../../../wpRepos/gitlab/email-subscribers/public/partials/class-es-shortcode.php:168
+msgid "Enter Email Address"
 msgstr ""
 
-#: ../subscribers/view-subscriber-show.php:302 ../subscribers/view-subscriber-
-#: show.php:413
-msgid "Resend Confirmation"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/notices/views/html-notice-update.php:19
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/notices/views/html-notice-updating.php:19
+msgid "Email Subscribers data update"
 msgstr ""
 
-#: ../subscribers/view-subscriber-show.php:304
-msgid "Update Subscribers Status"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/notices/views/html-notice-update.php:19
+msgid "We need to update your data store to the latest version."
 msgstr ""
 
-#: ../subscribers/view-subscriber-show.php:307
-msgid "Select Group"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/notices/views/html-notice-update.php:23
+msgid "Run the updater"
 msgstr ""
 
-#: ../subscribers/view-subscriber-show.php:322
-msgid "Select Status"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/notices/views/html-notice-update.php:29
+msgid "Are you sure you wish to run the updater now?"
 msgstr ""
 
-#: ../subscribers/view-subscriber-show.php:328
-msgid "Apply"
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/notices/views/html-notice-updated.php:12
+msgid "Dismiss"
 msgstr ""
 
-#: ../subscribers/view-subscriber-show.php:335
-msgid "All Groups"
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:352
-msgid "All Status"
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:359
-msgid "1 to 500 emails"
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:360
-msgid "501 to 1000"
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:361
-msgid "1001 to 1500"
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:362
-msgid "1501 to 2000"
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:363
-msgid "2001 to 4000"
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:364
-msgid "4001 to 6000"
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:365
-msgid "6001 to 10000"
-msgstr ""
-
-#: ../subscribers/view-subscriber-show.php:366
-msgid "Display All"
-msgstr ""
-
-#: ../subscribers/view-subscriber-sync.php:36
-msgid "Please select default group to newly registered user."
-msgstr ""
-
-#: ../subscribers/view-subscriber-sync.php:50
-msgid "Emails Successfully Synced."
-msgstr ""
-
-#: ../subscribers/view-subscriber-sync.php:88
-msgid "Sync Email"
-msgstr ""
-
-#: ../subscribers/view-subscriber-sync.php:101
-msgid "Sync newly registered users to subscribers list"
-msgstr ""
-
-#: ../subscribers/view-subscriber-sync.php:114
-msgid "Select group to add newly registered users to"
-msgstr ""
-
-#: ../templates/template-preview.php:32
-msgid "Template Preview"
-msgstr ""
-
-#: ../templates/template-preview.php:40
-msgid "This is how your email may look."
-msgstr ""
-
-#: ../templates/template-preview.php:42
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/notices/views/html-notice-updated.php:14
 msgid ""
-"<br><br>This Post Notification preview has replaced keywords from your last "
-"published blog post."
+"Email Subscribers data update complete. Thank you for updating to the latest "
+"version!"
 msgstr ""
 
-#: ../templates/template-preview.php:44
-msgid ""
-"<br><br>Note: Different email services (like gmail, yahoo etc) display email "
-"content differently. So there could be a slight variation on how your "
-"customer will view the email content."
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/notices/views/html-notice-updating.php:19
+msgid "Your database is being updated in the background."
 msgstr ""
 
-#. Plugin Name of the plugin/theme
+#: ../../../../wpRepos/gitlab/email-subscribers/includes/notices/views/html-notice-updating.php:21
+msgid "Taking a while? Click here to run it now."
+msgstr ""
+
+#. Name of the plugin
 msgid "Email Subscribers & Newsletters"
 msgstr ""
 
-#. URI of the plugin
-msgid "https://www.icegram.com"
-msgstr ""
-
-#. Description of the plugin/theme
+#. Description of the plugin
 msgid ""
 "Add subscription forms on website, send HTML newsletters & automatically "
 "notify subscribers about new blog posts once it is published."
 msgstr ""
 
-#: ../email-subscribers.php:95
-msgctxt "timezone date format"
-msgid "Y-m-d H:i:s"
+#. URI of the plugin
+#. Author URI of the plugin
+msgid "https://www.icegram.com/"
+msgstr ""
+
+#. Author of the plugin
+msgid "Icegram"
 msgstr ""
