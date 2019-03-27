@@ -87,8 +87,18 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 		<form name="es_form" method="post" action="#" onsubmit="return _es_submit()">
 			<label for="tag-link"><?php echo __( 'Select your Mail Type', ES_TDOMAIN ); ?></label>
 			<select name="es_email_type" id="es_email_type">
+
+				<!--XTEC ************ MODIFICAT - Localization support-->
+				<!--2015.10.06 @dgras-->
+			  	<option value='Static Template' <?php if($form['es_email_type']=='Static Template') { echo 'selected="selected"' ; } ?>><?php _e('Static Template (For Newsletter Email)', ES_TDOMAIN) ?></option>
+			  	<option value='Dynamic Template' <?php if($form['es_email_type']=='Dynamic Template') { echo 'selected="selected"' ; } ?>><?php _e('Dynamic Template (For Notification Email)', ES_TDOMAIN)?></option>
+				<!--************ ORIGINAL-->
+				<!--				
 				<option value='Static Template' <?php if( $form['es_email_type'] == 'Static Template' ) { echo 'selected="selected"' ; } ?>><?php echo __( 'Static Template (For Newsletter Emails)', ES_TDOMAIN ); ?></option>
 				<option value='Dynamic Template' <?php if( $form['es_email_type'] == 'Dynamic Template' ) { echo 'selected="selected"' ; } ?>><?php echo __( 'Dynamic Template (For Post Notification Emails)', ES_TDOMAIN ); ?></option>
+				-->
+				<!--************ FI-->
+
 			</select>
 			<p></p>
 
@@ -100,13 +110,30 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<?php $settings_body = array( 'textarea_rows' => 25 ); ?>
 			<?php wp_editor(stripslashes($form['es_templ_body']), "es_templ_body", $settings_body);?>
 			<p>
+
+				<!-- XTEC ************ MODIFICAT - Hidden external link -->
+				<!-- 2017.02.15 @xaviernietosanchez -->
+				<?php echo sprintf(__( '%s : ###NAME###, ###EMAIL###, ###DATE###, ###POSTTITLE###, ###POSTLINK###, ###POSTLINK-WITHTITLE###, ###POSTLINK-ONLY###, ###POSTIMAGE###, ###POSTDESC###, ###POSTFULL###', ES_TDOMAIN ), __( 'Available Keywords', ES_TDOMAIN ) ); ?><br />
+				<!-- ************ ORIGINAL -->
+				<!--
 				<?php echo sprintf(__( '%s : ###NAME###, ###EMAIL###, ###DATE###, ###POSTTITLE###, ###POSTLINK###, ###POSTLINK-WITHTITLE###, ###POSTLINK-ONLY###, ###POSTIMAGE###, ###POSTDESC###, ###POSTFULL###', ES_TDOMAIN ), '<a href="http://www.icegram.com/documentation/es-what-are-static-templates-and-dynamic-templates/" target="_blank">' . __( 'Available Keywords', ES_TDOMAIN ) . '</a>' ); ?><br />
+				-->
+				<!-- ************ FI -->
 			</p>
 
 			<div class="template_status" style="display:none;">
 				<label for="tag-link"><?php echo __( 'Status', ES_TDOMAIN ); ?></label>
 				<select name="es_templ_status" id="es_templ_status">
+
+					<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+					<!-- 2015.10.01 @dgras-->
+		  		  	<option value='Published' <?php if($form['es_templ_status']=='Published') { echo 'selected="selected"' ; } ?> ><?php _e('Published', 'email-subscribers'); ?></option>
+					<!--************ ORIGINAL	-->
+					<!--
 					<option value='Published' <?php if( $form['es_templ_status'] == 'Published' ) { echo 'selected="selected"' ; } ?>><?php echo __( 'Published', ES_TDOMAIN ); ?></option>
+					-->
+					<!--************ FI-->
+
 				</select>
 				<p><?php echo __( 'Please select your mail status', ES_TDOMAIN ); ?></p>
 			</div>
@@ -118,5 +145,16 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 			<?php wp_nonce_field('es_form_edit'); ?>
 		</form>
 	</div>
+
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ ORIGINAL	-->
+	<!--
 	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	-->
+	<!--************ FI-->
+
 </div>

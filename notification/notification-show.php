@@ -2,7 +2,7 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; 
+	exit;
 }
 
 // Form submitted, check the data
@@ -49,7 +49,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 
 <div class="wrap">
 	<h2>
-		<?php echo __( 'Post Notifications', ES_TDOMAIN ); ?>  
+		<?php echo __( 'Post Notifications', ES_TDOMAIN ); ?>
 		<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-notification&amp;ac=add"><?php echo __( 'Add New', ES_TDOMAIN ); ?></a>
 		<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
 	</h2>
@@ -97,7 +97,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 									?>
 									<div class="row-actions">
 										<span class="edit">
-											<a title="Edit" href="<?php echo ES_ADMINURL; ?>?page=es-notification&amp;ac=edit&amp;did=<?php echo $data['es_note_id']; ?>"><?php echo __( 'Edit', ES_TDOMAIN ); ?></a> 
+											<a title="Edit" href="<?php echo ES_ADMINURL; ?>?page=es-notification&amp;ac=edit&amp;did=<?php echo $data['es_note_id']; ?>"><?php echo __( 'Edit', ES_TDOMAIN ); ?></a>
 										</span>
 										<span class="trash">
 											| <a onClick="javascript:_es_delete('<?php echo $data['es_note_id']; ?>')" href="javascript:void(0);"><?php echo __( 'Delete', ES_TDOMAIN ); ?></a>
@@ -108,7 +108,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 									<?php echo stripslashes($data['es_note_group']); ?>
 								</td>
 								<td>
-									<?php 
+									<?php
 									$es_note_cat = str_replace("## -- ##", ", ", stripslashes($data['es_note_cat']));
 									$es_note_cat = str_replace("##", "", $es_note_cat);
 									$es_note_cat = str_replace("{T}", "", $es_note_cat);
@@ -125,7 +125,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 									?>
 								</td>
 								<td>
-									<?php 
+									<?php
 									if ($data['es_note_status'] == "Enable") {
 										echo __( 'Send email immediately', ES_TDOMAIN );
 									} elseif ($data['es_note_status'] == "Cron") {
@@ -140,7 +140,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 							$i = $i+1;
 						}
 					} else {
-						?><tr><td colspan="4" align="center"><?php echo __( 'No records available.', ES_TDOMAIN ); ?></td></tr><?php 
+						?><tr><td colspan="4" align="center"><?php echo __( 'No records available.', ES_TDOMAIN ); ?></td></tr><?php
 					}
 					?>
 				</tbody>
@@ -149,4 +149,11 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 			<input type="hidden" name="frm_es_display" value="yes"/>
 		</form>
 	</div>
+	<div style="height:10px;"></div>
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ FI-->
 </div>

@@ -2,7 +2,7 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; 
+	exit;
 }
 
 ?>
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$extension = pathinfo( $_FILES['es_csv_name']['name'], PATHINFO_EXTENSION );
 
 		$tmpname = $_FILES['es_csv_name']['tmp_name'];
-		
+
 		$es_email_status = isset($_POST['es_email_status']) ? $_POST['es_email_status'] : '';
 		$es_email_group = isset($_POST['es_email_group']) ? $_POST['es_email_group'] : '';
 		if ( $es_email_group == '' ) {
@@ -52,7 +52,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 		}
 
 		if ( $es_email_group == '' ) {
+
+			//XTEC ************ MODIFICAT - Changed default group from Public to Portada
+			//2016.03.29 @sarjona
+			$es_email_group = 'Portada';
+			//************ ORIGINAL
+			/*
 			$es_email_group = "Public";
+			*/
+			//************ FI
+
 		}
 
 		if( $extension === 'csv' ) {
@@ -145,7 +154,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php echo __( 'Import Email Addresses', ES_TDOMAIN ); ?>
 			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=add"><?php echo __( 'Add New Subscriber', ES_TDOMAIN ); ?></a>
 			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=export"><?php echo __( 'Export', ES_TDOMAIN ); ?></a>
+
+			<!-- XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+			<!-- 2017.02.15 @xaviernietosanchez -->
+			<?php if ( is_xtec_super_admin() ) { ?>
+			<!-- ************ FI -->
+
 			<a class="add-new-h2" href="<?php echo ES_ADMINURL; ?>?page=es-view-subscribers&amp;ac=sync"><?php echo __( 'Sync', ES_TDOMAIN ); ?></a>
+
+			<!-- XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+			<!-- 2017.02.15 @xaviernietosanchez -->
+			<?php } ?>
+			<!-- ************ FI -->
+
 			<a class="add-new-h2" target="_blank" href="<?php echo ES_FAV; ?>"><?php echo __( 'Help', ES_TDOMAIN ); ?></a>
 		</h2>
 		<div class="tool-box">
@@ -158,7 +179,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<?php echo __( 'Select CSV file', ES_TDOMAIN ); ?>
 									<p class="description">
 										<?php echo __( 'Check CSV structure ', ES_TDOMAIN ); ?>
-										<a target="_blank" href="https://www.icegram.com/documentation/es-how-to-import-or-export-email-addresses/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page"><?php echo __( 'from here', ES_TDOMAIN ); ?></a>
+										<!-- XTEC ************ MODIFICAT - Replace link to help -->
+										<!-- 2017.02.15 @xaviernietosanchez -->
+										<a target="_blank" href="http://agora.xtec.cat/moodle/moodle/mod/glossary/view.php?id=1741&mode=entry&hook=2501"><?php echo __( 'from here', ES_TDOMAIN ); ?></a>
+										<!-- ************ FI -->
 									</p>
 								</label>
 							</th>
@@ -216,4 +240,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</form>
 		</div>
 	</div>
+	<div style="height:10px;"></div>
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ FI-->
 </div>

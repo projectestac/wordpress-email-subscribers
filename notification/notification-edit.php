@@ -2,7 +2,7 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; 
+	exit;
 }
 
 ?>
@@ -70,7 +70,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$form['es_note_id'] = isset($_POST['es_note_id']) ? $_POST['es_note_id'] : '';
 
 		//	No errors found, we can add this Group to the table
-		if ($es_error_found == FALSE) {	
+		if ($es_error_found == FALSE) {
 			$action = false;
 			$listcategory = "";
 			$total = count($es_note_cat);
@@ -154,7 +154,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									}
 									?>
 								</select>
-								
+
 							</td>
 						</tr>
 						<tr>
@@ -174,7 +174,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									if(count($subject) > 0) {
 										$i = 1;
 										foreach ($subject as $sub) {
-											if($sub["es_templ_id"] == $form['es_note_templ']) { 
+											if($sub["es_templ_id"] == $form['es_note_templ']) {
 												$thisselected = "selected='selected'" ;
 											}
 											?><option data-img='<?php echo $sub["es_templ_thumbnail"]; ?>' value='<?php echo $sub["es_templ_id"]; ?>' <?php echo $thisselected; ?>><?php echo $sub["es_templ_heading"]; ?></option><?php
@@ -198,7 +198,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								$count = 0;
 								$col = 3;
 								$checked = "";
-								echo "<table border='0' cellspacing='0'><tr>"; 
+								echo "<table border='0' cellspacing='0'><tr>";
 								foreach($categories as $category) {
 									echo "<td style='padding-top:4px;padding-bottom:4px;padding-right:10px;'>";
 									if (strpos($form['es_note_cat'],'##'.wp_specialchars_decode(stripslashes($category->cat_name),ENT_QUOTES).'##') !== false) {
@@ -212,7 +212,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									echo $category->cat_name;
 									if($col > 1) {
 										$col = $col-1;
-										echo "</td><td>"; 
+										echo "</td><td>";
 									} elseif($col = 1) {
 										$col = $col-1;
 										echo "</td></tr><tr>";;
@@ -228,6 +228,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 								</p>
 							</td>
 						</tr>
+						<!--XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+					    <!-- 2015.10.12 @dgras  19.03.27 @svallde2-->
+					    <?php if(is_xtec_super_admin()) { ?>
+					    <!--************ FI-->
 						<tr>
 							<th scope="row">
 								<label for="tag-link">
@@ -237,14 +241,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</th>
 							<td>
 								<?php
-								$args = array('public'=> true, 'exclude_from_search'=> false, '_builtin' => false); 
+								$args = array('public'=> true, 'exclude_from_search'=> false, '_builtin' => false);
 								$output = 'names';
 								$operator = 'and';
 								$post_types = get_post_types($args,$output,$operator);
 								if( !empty( $post_types ) ) {
 									$col = 3;
-									echo "<table border='0' cellspacing='0'><tr>"; 
-									foreach($post_types as $post_type) {     
+									echo "<table border='0' cellspacing='0'><tr>";
+									foreach($post_types as $post_type) {
 										echo "<td style='padding-top:4px;padding-bottom:4px;padding-right:10px;'>";
 										if (strpos($form['es_note_cat'],'##{T}'.$post_type.'{T}##') !== false) {
 											$checked = 'checked="checked"';
@@ -256,7 +260,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 										<?php echo $post_type;
 										if($col > 1) {
 											$col = $col-1;
-											echo "</td><td>"; 
+											echo "</td><td>";
 										} elseif($col = 1) {
 											$col = $col-1;
 											echo "</td></tr><tr>";;
@@ -271,15 +275,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 								?>
 							</td>
 						</tr>
+                            <!--XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+                            <!-- 2015.10.12 @dgras 19.03.27 @svallde2-->
+                        <?php } ?>
+                        <!--************ FI-->
 						<tr>
 							<th scope="row">
 								<label for="tag-link"><?php echo __( 'Select Notification Status when a new post is published', ES_TDOMAIN ); ?></label>
 							</th>
 							<td>
 								<select name="es_note_status" id="es_note_status">
-									<option value='Enable' <?php if($form['es_note_status']=='Enable') { echo 'selected="selected"' ; } ?>><?php echo __( 'Send email immediately', ES_TDOMAIN ); ?></option>
-									<option value='Cron' <?php if($form['es_note_status']=='Cron') { echo 'selected="selected"' ; } ?>><?php echo __( 'Add to cron and send email via cron job', ES_TDOMAIN ); ?></option>
-									<option value='Disable' <?php if($form['es_note_status']=='Disable') { echo 'selected="selected"' ; } ?>><?php echo __( 'Disable email notification', ES_TDOMAIN ); ?></option>
+                                    <!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+                                    <!-- 2015.10.12 @dgras 19.03.27 @svallde2-->
+                                    <option value='Enable' <?php if($form['es_note_status']=='Enable') { echo 'selected="selected"' ; } ?>><?php _e('Send mail immediately when new post is published.', ES_TDOMAIN) ?></option>
+                                    <?php if(is_xtec_super_admin()) : ?>
+                                        <option value='Cron' <?php if($form['es_note_status']=='Cron') { echo 'selected="selected"' ; } ?>><?php _e('Add to cron when new post is published and send via cron job.', ES_TDOMAIN) ?></option>
+                                    <?php endif; ?>
+                                    <option value='Disable' <?php if($form['es_note_status']=='Disable') { echo 'selected="selected"' ; } ?>><?php _e('Disable notification.', ES_TDOMAIN)?></option>
+                                    <!--************ FI-->
 								</select>
 							</td>
 						</tr>

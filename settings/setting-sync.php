@@ -2,7 +2,7 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; 
+	exit;
 }
 
 ?>
@@ -35,4 +35,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php wp_nonce_field('es_form_sync'); ?>
 		</form>
 	</div>
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ FI-->
 </div>

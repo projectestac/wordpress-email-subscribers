@@ -127,6 +127,32 @@ if ($es_error_found == TRUE && isset($es_errors[0]) == TRUE) {
 						</select>
 					</td>	
 				</tr>
+
+				<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+				<!-- 2015.10.12 @dgras-->
+				<?php if(is_xtec_super_admin()) : ?>
+
+				<tr>
+					<th scope="row">
+						<label for="elp">
+							<?php _e('Mail Type', 'email-subscribers'); ?>
+							<p class="description"><?php _e('Select your mail type.', 'email-subscribers'); ?></p>
+						</label>
+					</th>
+					<td>
+						<select name="es_sent_type" id="es_sent_type">
+							<option value=''><?php _e('Select') ?></option>
+							<option value='Instant Mail' <?php if($es_sent_type == 'Instant Mail') { echo "selected='selected'" ; } ?>><?php _e('Send mail immediately.') ?></option>
+							<option value='Cron Mail' <?php if($es_sent_type == 'Cron Mail') { echo "selected='selected'" ; } ?>><?php _e('Send mail via cron job.') ?></option>
+						</select>
+					</td>
+				</tr>
+				<?php else: ?>
+					<input type="hidden" name="es_sent_type" id="es_sent_type" value='Instant Mail' />
+				<?php endif; ?>
+
+				<!--************ ORIGINAL	-->
+				<!--
 				<tr>
 					<th scope="row">
 						<label for="tag-image">
@@ -141,6 +167,9 @@ if ($es_error_found == TRUE && isset($es_errors[0]) == TRUE) {
 						</select>
 					</td>
 				</tr>
+				-->
+				<!--************ FI-->
+
 				<tr>
 					<th scope="row">
 						<label for="tag-image">
@@ -200,8 +229,24 @@ if ($es_error_found == TRUE && isset($es_errors[0]) == TRUE) {
 		<?php wp_nonce_field('es_form_submit'); ?>
 		<input type="button" class="button-primary" onclick="_es_redirect()" value="<?php echo __( 'Reset', ES_TDOMAIN ); ?>" />
 	</form>
+<<<<<<< HEAD
 	</div>
 	<div clas="es-preview" style="float: right;width: 19%;">
 		<div class="es-templ-img"></div>
 	</div>
+=======
+	<div style="padding-top:10px;"></div>
+
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ ORIGINAL	-->
+	<!--
+	<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	-->
+	<!--************ FI-->
+
+>>>>>>> Added XTEC Customizations
 </div>

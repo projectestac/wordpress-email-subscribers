@@ -779,6 +779,25 @@ class es_cls_registerhook {
 				echo '<div class="notice notice-warning"><p style="letter-spacing: 0.6px;">'.$admin_notice_text_for_gdpr_consent.'<a target="_blank" style="display:inline-block" class="es-gdpr-admin-btn" href="'.$url.'">'.__( 'Steps to enable', ES_TDOMAIN ).'</a><a style="display:inline-block" class="es-gdpr-admin-btn es-gdpr-admin-btn-secondary" href="?dismiss_admin_notice=1&option_name=es_gdpr_consent_notify">'.__( 'Ok, got it', ES_TDOMAIN ).'</a></p></div>';
 		}
 
+		// XTEC ************ AFEGIT - Only show to xtecadmin
+		// 2017.02.15 @xaviernietosanchez
+		if ( is_xtec_super_admin() ) {
+		// ************ FI
+
+		$es_rm_notice_email_subscribers = get_option( 'es_rm_notice_email_subscribers' );
+
+		if ( in_array('icegram-rainmaker/icegram-rainmaker.php', $active_plugins) || array_key_exists('icegram-rainmaker/icegram-rainmaker.php', $active_plugins) || !empty($es_rm_notice_email_subscribers) ) {
+			return;
+		} else {
+			$url = wp_nonce_url(self_admin_url('update.php?action=install-plugin&plugin=' . 'icegram-rainmaker'), 'install-plugin_' . 'icegram-rainmaker');
+				$admin_notice_text_for_rm = __( 'Email Subscribers recommends free plugin <b>Rainmaker</b> to collect leads instantly', ES_TDOMAIN );
+				echo '<div class="notice notice-warning"><p>'.$admin_notice_text_for_rm.'<a style="display:inline-block" class="es-admin-btn" href="'.$url.'">'.__( 'Yes, I want this', ES_TDOMAIN ).'</a><a style="display:inline-block" class="es-admin-btn es-admin-btn-secondary" href="?dismiss_admin_notice=1&option_name=es_rm_notice">'.__( 'No, I don\'t want it', ES_TDOMAIN ).'</a></p></div>';
+		}
+
+		// XTEC ************ AFEGIT - Only show to xtecadmin
+		// 2017.02.15 @xaviernietosanchez
+		}
+		// ************ FI
 	}
 
 	// Function to dismiss any admin notice
@@ -1087,18 +1106,31 @@ class es_widget_register extends WP_Widget {
 		}
 		?>
 
-		<div>
-			<form class="es_widget_form" data-es_form_id="es_widget_form">
-				<?php if( $es_desc != "" ) { ?>
-					<div class="es_caption"><?php echo $es_desc; ?></div>
+		<!-- XTEC ************ MODIFICAT - Added Placeholder
+		2015.05.10 @jmeler -->
+                <div class="es_form">
+			<form class="es_widget_form">
+			<?php if( $es_desc <> "" ) { ?>
+				<div class="es_caption"><?php echo $es_desc; ?></div>
 				<?php } ?>
 				<?php if( $es_name == "YES" ) { ?>
-					<div class="es_lablebox"><label class="es_widget_form_name"><?php echo __( 'Name', ES_TDOMAIN ); ?></label></div>
-					<div class="es_textbox">
-						<input type="text" id="es_txt_name" class="es_textbox_class" name="es_txt_name" value="" maxlength="40">
-					</div>
+				<!-- XTEC ************ MODIFICAT - Added Placeholder
+		                2015.05.10 @jmeler -->
+		                <div class="es_textbox">
+		                    <input class="es_textbox_class" name="es_txt_name" id="es_txt_name" placeholder="<?php _e('Name', 'email-subscribers'); ?>" value="" maxlength="225" type="text">
+				</div>
 				<?php } ?>
-				<div class="es_lablebox"><label class="es_widget_form_email"><?php echo __( 'Email *', ES_TDOMAIN ); ?></label></div>
+
+				<!-- XTEC ************ MODIFICAT - Added Placeholder
+		                2015.05.10 @jmeler -->
+		                <div class="es_textbox">
+					<input class="es_textbox_class" name="es_txt_email" id="es_txt_email" placeholder="<?php _e('Email *', 'email-subscribers'); ?>" onkeypress="if(event.keyCode==13) es_submit_page('<?php echo $url; ?>')" value="" maxlength="225" type="text">
+				</div>
+		                <div class="es_button">
+					<input class="button small radius" name="es_txt_button" id="es_txt_button" onClick="return es_submit_page('<?php echo $url; ?>')" value="<?php _e('Subscribe', 'email-subscribers'); ?>" type="button">
+				</div>
+				<!-- ************ ORIGINAL
+				<div class="es_lablebox"><?php _e('Email *', 'email-subscribers'); ?></div>
 				<div class="es_textbox">
 					<input type="email" id="es_txt_email" class="es_textbox_class" name="es_txt_email"  value="" maxlength="40" required>
 				</div>
@@ -1111,6 +1143,9 @@ class es_widget_register extends WP_Widget {
 				<div class="es_msg" id="es_widget_msg">
 					<span id="es_msg"></span>
 				</div>
+	                        *******************FI -->
+
+
 				<?php if( $es_name != "YES" ) { ?>
 					<input type="hidden" id="es_txt_name" name="es_txt_name" value="">
 				<?php } ?>

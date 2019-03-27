@@ -2,7 +2,7 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; 
+	exit;
 }
 
 $sentguid = isset($_GET['sentguid']) ? $_GET['sentguid'] : '';
@@ -90,7 +90,7 @@ if ($sentguid == '') {
 					</tr>
 				</tfoot>
 				<tbody>
-					<?php 
+					<?php
 						$i = 0;
 						if(count($myData) > 0) {
 							$i = 1;
@@ -116,7 +116,7 @@ if ($sentguid == '') {
 											if ( $data['es_deliver_viewdate'] != '0000-00-00 00:00:00' ) {
 												echo get_date_from_gmt($data['es_deliver_viewdate'],'Y-m-d H:i:s');
 											} else {
-												echo $data['es_deliver_viewdate'];											
+												echo $data['es_deliver_viewdate'];
 											}
 										?>
 									</td>
@@ -125,7 +125,7 @@ if ($sentguid == '') {
 									$i = $i+1;
 							}
 						} else {
-							?><tr><td colspan="8" align="center"><?php echo __( 'No records available.', ES_TDOMAIN ); ?></td></tr><?php 
+							?><tr><td colspan="8" align="center"><?php echo __( 'No records available.', ES_TDOMAIN ); ?></td></tr><?php
 						}
 					?>
 				</tbody>
@@ -139,4 +139,11 @@ if ($sentguid == '') {
 			</div>
 		</form>
 	</div>
+	<div style="height:10px;"></div>
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ FI-->
 </div>

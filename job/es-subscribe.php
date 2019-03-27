@@ -10,7 +10,7 @@ class es_cls_job_subscribe {
 	public function __construct() {
 		add_action( 'wp_ajax_es_add_subscriber', array( $this, 'es_add_subscriber' ) );
 		add_action( 'wp_ajax_nopriv_es_add_subscriber', array( $this, 'es_add_subscriber' ) );
-	}
+    }
 
 	public function es_add_subscriber() {
 
@@ -46,7 +46,8 @@ class es_cls_job_subscribe {
 								);
 
 			if( $es_subscriber_group == '' ) {
-				$es_subscriber_group = 'Public';
+                //XTEC ************ MODIFICAT - Changed default group from Public to Portada - 9.03.27 @svallde2
+                $es_subscriber_group = 'Portada';
 			}
 
 			if ( $es_subscriber_email != '' ) {
@@ -82,7 +83,7 @@ class es_cls_job_subscribe {
 								es_cls_sendmail::es_sendmail("welcome", $template = 0, $subscribers, "welcome", 0);
 							}
 							$es_response['success'] = 'subscribed-successfully';
-						} 
+						}
 					} elseif( $action == "ext" ) {
 						$es_response['success'] = 'already-exist';
 					} elseif( $action == "invalid" ) {

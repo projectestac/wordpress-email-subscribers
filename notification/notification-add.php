@@ -2,7 +2,7 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; 
+	exit;
 }
 
 ?>
@@ -159,68 +159,73 @@ if ( ! defined( 'ABSPATH' ) ) {
 											<?php
 										}
 									}
-									?>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">
-								<label for="tag-link"><?php echo __( 'Select Post Categories', ES_TDOMAIN ); ?></label>
-							</th>
-							<td>
-								<?php
-								$args = array( 'hide_empty' => 0, 'orderby' => 'name', 'order' => 'ASC' );
-								$categories = get_categories($args);
-								$count = 0;
-								$col = 3;
-								echo "<table border='0' cellspacing='0'><tr>"; 
-								foreach($categories as $category) {
-									echo "<td style='padding-top:4px;padding-bottom:4px;padding-right:10px;'>";
-									?>
-									<input type="checkbox" value="<?php echo htmlspecialchars($category->cat_name, ENT_QUOTES); ?>" id="es_note_cat[]" name="es_note_cat[]">
-									<?php
-									echo $category->cat_name;
-									if($col > 1) {
-										$col = $col-1;
-										echo "</td><td>"; 
-									} elseif($col = 1) {
-										$col = $col-1;
-										echo "</td></tr><tr>";;
-										$col = 3;
-									}
-									$count = $count + 1;
-								}
-								echo "</tr></table>";
 								?>
-								<p class="select_all" style="margin-left: 0.7em;">
-									<input type="button" name="CheckAll" class="button add-new-h2" value="<?php echo __( 'Check All', ES_TDOMAIN ); ?>" onClick="_es_checkall('es_form', 'es_note_cat[]', true);">
-									<input type="button" name="UnCheckAll" class="button add-new-h2" value="<?php echo __( 'Uncheck All', ES_TDOMAIN ); ?>" onClick="_es_checkall('es_form', 'es_note_cat[]', false);">
-								</p>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">
-								<label for="tag-link"><?php echo __( 'Select your Custom Post Type', ES_TDOMAIN ); ?>
-									<p class="description"><?php echo __( '(Optional)', ES_TDOMAIN ); ?></p>
-								</label>
-							</th>
-							<td>
-								<?php
-								$args=array('public'=> true, 'exclude_from_search'=> false, '_builtin' => false); 
+							</select>
+						</td>
+					</tr>
+	 				<tr>
+	 					<th scope="row">
+							<label for="tag-link"><?php echo __( 'Select Post Categories', ES_TDOMAIN ); ?></label>
+						</th>
+						<td>
+							<?php
+							$args = array( 'hide_empty' => 0, 'orderby' => 'name', 'order' => 'ASC' );
+							$categories = get_categories($args);
+							$count = 0;
+							$col = 3;
+							echo "<table border='0' cellspacing='0'><tr>";
+							foreach($categories as $category) {
+								echo "<td style='padding-top:4px;padding-bottom:4px;padding-right:10px;'>";
+								?>
+								<input type="checkbox" value='<?php echo $category->cat_name; ?>' id="es_note_cat[]" name="es_note_cat[]">
+								<?php echo $category->cat_name;
+								if($col > 1) {
+									$col = $col-1;
+									echo "</td><td>";
+								} elseif($col = 1) {
+									$col = $col-1;
+									echo "</td></tr><tr>";;
+									$col = 3;
+								}
+								$count = $count + 1;
+							}
+							echo "</tr></table>";
+							?>
+							<p class="select_all" style="margin-left: 0.7em;">
+								<input type="button" name="CheckAll" class="button add-new-h2" value="<?php echo __( 'Check All', ES_TDOMAIN ); ?>" onClick="_es_checkall('es_form', 'es_note_cat[]', true);">
+								<input type="button" name="UnCheckAll" class="button add-new-h2" value="<?php echo __( 'Uncheck All', ES_TDOMAIN ); ?>" onClick="_es_checkall('es_form', 'es_note_cat[]', false);">
+							</p>
+						</td>
+					</tr>
+
+					<!--XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+					<!-- 2015.10.12 @dgras-->
+					<?php if(is_xtec_super_admin()) { ?>
+					<!-- ************ FI -->
+
+	 				<tr>
+		 				<th scope="row">
+							<label for="tag-link"><?php echo __( 'Select your Custom Post Type', ES_TDOMAIN ); ?>
+								<p class="description"><?php echo __( '(Optional)', ES_TDOMAIN ); ?></p>
+							</label>
+						</th>
+						<td>
+							<?php
+								$args=array('public'=> true, 'exclude_from_search'=> false, '_builtin' => false);
 								$output = 'names';
 								$operator = 'and';
 								$post_types=get_post_types($args,$output,$operator);
 								if( !empty( $post_types ) ) {
 									$col = 3;
-									echo "<table border='0' cellspacing='0'><tr>"; 
-									foreach($post_types as $post_type) {     
+									echo "<table border='0' cellspacing='0'><tr>";
+									foreach($post_types as $post_type) {
 										echo "<td style='padding-top:4px;padding-bottom:4px;padding-right:10px;'>";
 										?>
 										<input type="checkbox" value='{T}<?php echo $post_type; ?>{T}' id="es_note_cat[]" name="es_note_cat[]">
 										<?php echo $post_type;
 										if($col > 1) {
 											$col = $col-1;
-											echo "</td><td>"; 
+											echo "</td><td>";
 										} elseif($col = 1) {
 											$col = $col-1;
 											echo "</td></tr><tr>";;
@@ -235,15 +240,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 								?>
 							</td>
 						</tr>
+                            <!--XTEC ************ AFEGIT - Modify the visiblity if the user is not a xtec_super_admin -->
+                            <!-- 2015.10.12 @dgras 19.03.27 @svallde2-->
+                        <?php } ?>
+                        <!-- ************ FI -->
 						<tr>
 							<th scope="row">
 								<label for="tag-link"><?php echo __( 'Select Notification Status when a new post is published', ES_TDOMAIN ); ?></label>
 							</th>
 							<td>
 								<select name="es_note_status" id="es_note_status">
-									<option value='Enable' selected="selected"><?php echo __( 'Send email immediately', ES_TDOMAIN ); ?></option>
-									<option value='Cron'><?php echo __( 'Add to cron and send email via cron job', ES_TDOMAIN );?></option>
-									<option value='Disable'><?php echo __( 'Disable email notification', ES_TDOMAIN ); ?></option>
+                                    <!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+                                    <!-- 2015.10.12 @dgras 19.03.27 @svallde2-->
+                                    <option value='Enable' selected="selected"><?php _e("Send mail immediately when new post is published.", ES_TDOMAIN) ?></option>
+                                    <?php if(is_xtec_super_admin()) : ?>
+                                    <option value='Cron'><?php _e("Add to cron when new post is published and send via cron job.", ES_TDOMAIN) ?></option>
+                                    <?php endif; ?>
+                                    <option value='Disable'><?php _e("Disable notification.", ES_TDOMAIN)?></option>
+                                    <!--************ FI-->
 								</select>
 							</td>
 						</tr>

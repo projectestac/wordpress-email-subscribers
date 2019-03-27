@@ -2,7 +2,7 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; 
+	exit;
 }
 
 $did = isset($_GET['did']) ? $_GET['did'] : '0';
@@ -53,5 +53,13 @@ if ($result != '1') {
 				<a class="button-primary" href="<?php echo ES_ADMINURL; ?>?page=es-sentmail&pagenum=<?php echo $pagenum; ?>"><?php echo __( 'Back', ES_TDOMAIN ); ?></a>
 			</h2>
 		</div>
+		<div style="height:10px;"></div>
+
+		<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+		<!-- 2015.10.01 @dgras-->
+		<?php if(is_xtec_super_admin()) : ?>
+			<p class="description"><?php echo ES_OFFICIAL; ?></p>
+		<?php endif; ?>
+		<!--************ FI-->
 	</div>
 </div>

@@ -2,7 +2,7 @@
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; 
+	exit;
 }
 
 // Form submitted, check the data
@@ -41,7 +41,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 		es_cls_optimize::es_optimize_setdetails();
 		$es_success_msg = TRUE;
 		$es_success = __( 'Successfully deleted all reports except latest 10.', ES_TDOMAIN );
-	}	
+	}
 	if ($es_success_msg == TRUE) {
 		?><div class="notice notice-success is-dismissible">
 			<p><strong>
@@ -129,7 +129,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 					</tr>
 				</tfoot>
 				<tbody>
-					<?php 
+					<?php
 					$i = 0;
 					if(count($myData) > 0) {
 						$i = 1;
@@ -177,7 +177,7 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 								$i = $i+1;
 						}
 					} else {
-						?><tr><td colspan="9" align="center"><?php echo __( 'No records available.', ES_TDOMAIN ); ?></td></tr><?php 
+						?><tr><td colspan="9" align="center"><?php echo __( 'No records available.', ES_TDOMAIN ); ?></td></tr><?php
 					}
 					?>
 				</tbody>
@@ -212,8 +212,16 @@ if (isset($_POST['frm_es_display']) && $_POST['frm_es_display'] == 'yes') {
 						<?php echo __( '<strong>Note:</strong> If you delete record for the emails with Status = <span style="color:#FF0000;">In Queue</span>, then cron job in queue will be deleted too and email will not be sent.', ES_TDOMAIN ); ?>
 					</p>
 					<?php
-				}				
+				}
 			}
 		?>
 	</div>
+	<div style="height:10px;"></div>
+
+	<!--XTEC ************ MODIFICAT - Modify the visiblity if the user is not a xtec_super_admin -->
+	<!-- 2015.10.01 @dgras-->
+	<?php if(is_xtec_super_admin()) : ?>
+		<p class="description"><?php echo ES_OFFICIAL; ?></p>
+	<?php endif; ?>
+	<!--************ FI-->
 </div>

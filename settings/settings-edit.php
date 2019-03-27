@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 // Exit if accessed directly
