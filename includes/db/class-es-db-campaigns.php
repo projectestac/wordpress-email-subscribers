@@ -164,11 +164,9 @@ class ES_DB_Campaigns {
 						$categories = ! empty( $notification['es_note_cat'] ) ? $notification['es_note_cat'] : '';
 						if ( ! empty( $categories ) ) {
 							$categories = explode( '--', $categories );
-							function temp_filter_category( $category ) {
-								return trim( trim( $category, '##' ), '' );
-							}
-
-							$categories = array_filter( $categories, 'temp_filter_category' );
+							$categories = array_filter( $categories,  function ( $category ) {
+                                return trim( trim( $category, '##' ), '' );
+                            });
 
 							$categories = ES_Common::convert_categories_array_to_string( $categories );
 						}
