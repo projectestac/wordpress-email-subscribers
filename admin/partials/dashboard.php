@@ -48,6 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         });
 </script>
 
+
 <?php
 //@nacho: Hidde email_subscribers info
 if (is_xtec_super_admin()) {
