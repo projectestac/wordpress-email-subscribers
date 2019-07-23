@@ -48,6 +48,13 @@ if ( ! defined( 'ABSPATH' ) ) {
         });
 </script>
 
+<?php
+// XTEC ************ AFEGIT - Hidden email_subscribers info
+// 2019.07.23 @nacho
+if (is_xtec_super_admin()) {
+//************ FI
+?>
+
 <div class="wrap">
 	<div class="about-header">
 		<div class="es-upper">
@@ -151,3 +158,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 		
 	</div>
 </div>
+
+<?php
+// XTEC ************ AFEGIT - Hidden email_subscribers info
+// 2019.07.23 @nacho
+}
+//************ FI
+?>
