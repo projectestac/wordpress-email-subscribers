@@ -277,6 +277,9 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			$show_notice = true;
 			$show_notice = apply_filters( 'ig_es_show_wp_cron_notice', $show_notice );
 
+            // XTEC ************ Eliminat - Delete message email subscribers cron
+            // 2019.11.29 @nacho
+            /*
 			if ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON && $notice_option != 'yes' && $show_notice ) {
 				$es_cron_url            = 'https://www.icegram.com/documentation/how-to-enable-the-wordpress-cron/?utm_source=es&utm_medium=in_app&utm_campaign=view_admin_notice';
 				$cpanel_url             = 'https://www.icegram.com/documentation/es-how-to-schedule-cron-emails-in-cpanel/?utm_source=es&utm_medium=in_app&utm_campaign=view_admin_notice';
@@ -288,7 +291,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 						'email-subscribers' ) . '</a></p></div>';
 				$args['html'] = $html;
 				ES_Admin_Notices::add_custom_notice('show_wp_cron', $args );
-			}
+			}*/
+            //************ FI
 
 		}
 

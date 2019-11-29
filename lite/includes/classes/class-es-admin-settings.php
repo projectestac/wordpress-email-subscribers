@@ -511,44 +511,48 @@ class ES_Admin_Settings {
 				'desc'         => __( 'Enter email address to send test email.', 'email-subscribers' )
 			),
 
-			'ig_es_mailer_settings' => array(
-				'type'         => 'html',
-				// 'html'         => ES_Admin_Settings::mailers_html(),
-				'sub_fields'   => array(
-					'mailer'                  => array(
-						'id'   => 'ig_es_mailer_settings[mailer]',
-						'name' => __( 'Select Mailer', 'email-subscribers' ),
-						'type' => 'html',
-						'html' => ES_Admin_Settings::mailers_html(),
-						'desc' => '',
-					),
-					'ig_es_pepipost_api_key'  => array(
-						'type'         => 'password',
-						'options'      => false,
-						'placeholder'  => '',
-						'supplemental' => '',
-						'default'      => '',
-						'id'           => "ig_es_mailer_settings[pepipost][api_key]",
-						'name'         => __( 'Pepipost API key', 'email-subscribers' ),
-						'desc'         => '',
-						'class'        => 'pepipost'
-					),
-					'ig_es_pepipost_docblock' => array(
-						'type' => 'html',
-						'html' => ES_Admin_Settings::pepipost_doc_block(),
-						'id'   => 'ig_es_pepipost_docblock',
-						// 'class'        => 'ig_es_docblock',
-						'name' => ''
-					)
+            // XTEC ************ Eliminat - Disable other mailer settings and configurations
+            // 2019.12.04 @nacho
 
-				),
-				'placeholder'  => '',
-				'supplemental' => '',
-				'default'      => '',
-				'id'           => 'ig_es_mailer_settings',
-				'name'         => __( 'Select a mailer to send mail', 'email-subscribers' ),
-				'desc'         => ''
-			)
+            /*'ig_es_mailer_settings' => array(
+                'type'         => 'html',
+                // 'html'         => ES_Admin_Settings::mailers_html(),
+                'sub_fields'   => array(
+                    'mailer'                  => array(
+                        'id'   => 'ig_es_mailer_settings[mailer]',
+                        'name' => __( 'Select Mailer', 'email-subscribers' ),
+                        'type' => 'html',
+                        'html' => ES_Admin_Settings::mailers_html(),
+                        'desc' => '',
+                    ),
+                    'ig_es_pepipost_api_key'  => array(
+                        'type'         => 'password',
+                        'options'      => false,
+                        'placeholder'  => '',
+                        'supplemental' => '',
+                        'default'      => '',
+                        'id'           => "ig_es_mailer_settings[pepipost][api_key]",
+                        'name'         => __( 'Pepipost API key', 'email-subscribers' ),
+                        'desc'         => '',
+                        'class'        => 'pepipost'
+                    ),
+                    'ig_es_pepipost_docblock' => array(
+                        'type' => 'html',
+                        'html' => ES_Admin_Settings::pepipost_doc_block(),
+                        'id'   => 'ig_es_pepipost_docblock',
+                        // 'class'        => 'ig_es_docblock',
+                        'name' => ''
+                    )
+
+                ),
+                'placeholder'  => '',
+                'supplemental' => '',
+                'default'      => '',
+                'id'           => 'ig_es_mailer_settings',
+                'name'         => __( 'Select a mailer to send mail', 'email-subscribers' ),
+                'desc'         => ''
+            )*/
+            //************ FI
 		);
 
 		$email_sending_settings = apply_filters( 'ig_es_registered_email_sending_settings', $email_sending_settings );
@@ -736,7 +740,7 @@ class ES_Admin_Settings {
 
 	}
 
-	public static function mailers_html() {
+	/*public static function mailers_html() {
 		$html                     = '';
 		$es_email_type            = get_option( 'ig_es_email_type' );
 		$selected_mailer_settings = get_option( 'ig_es_mailer_settings' );
@@ -760,7 +764,7 @@ class ES_Admin_Settings {
 
 		return $html;
 
-	}
+	}*/
 
 	public static function pepipost_doc_block() {
 		$html = '';

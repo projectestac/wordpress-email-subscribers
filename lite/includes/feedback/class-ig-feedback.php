@@ -456,7 +456,10 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 
 					var feedbackButtonID = 'ig-feedback-button-<?php echo $this->plugin; ?>';
 
-					$('#wpwrap').append('<div class="ig-es-feedback-button" id="' + feedbackButtonID + '">Feedback</div>');
+                    // XTEC ************ Eliminat - Delete Feedback button
+                    // 2019.11.29 @nacho
+					//$('#wpwrap').append('<div class="ig-es-feedback-button" id="' + feedbackButtonID + '">Feedback</div>');
+                    //************ FI
 
 					$('#' + feedbackButtonID).on('click', function () {
 

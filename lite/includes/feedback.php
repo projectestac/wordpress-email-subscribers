@@ -92,8 +92,10 @@ function ig_es_render_broadcast_created_feedback_widget() {
 
 	ES_Common::render_feedback_widget( $params );
 }
-
-add_action( 'ig_es_broadcast_created', 'ig_es_render_broadcast_created_feedback_widget' );
+// XTEC ************ Eliminat - Dissable unnecessary popup
+// 2019.12.18 @nacho
+//add_action('ig_es_broadcast_created', 'ig_es_render_broadcast_created_feedback_widget');
+// *********FI
 
 /**
  * Render Broadcast Created feedback widget.

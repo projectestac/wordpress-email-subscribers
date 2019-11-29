@@ -78,7 +78,27 @@ class Email_Subscribers_Admin {
 	public function enqueue_styles() {
 		$screen             = get_current_screen();
 		$screen_id          = $screen ? $screen->id : '';
+		// XTEC ************ Modificat - Added pages to load styles
+        // 2019.12.18 @nacho
 		$enqueue_on_screens = array(
+			'toplevel_page_es_dashboard',
+			'subscripcions_page_es_subscribers',
+			'subscripcions_page_es_lists',
+			'subscripcions_page_es_forms',
+			'subscripcions_page_es_campaigns',
+			'subscripcions_page_es_newsletters',
+			'subscripcions_page_es_notifications',
+			'edit-es_template',
+			'subscripcions_page_es_reports',
+            'subscripcions_page_es_tools',
+			'subscripcions_page_es_settings',
+			'subscripcions_page_es_general_information',
+			'subscripcions_page_es_pricing',
+			'es_template',
+		);
+        //************ ORIGINAL
+        /*
+        $enqueue_on_screens = array(
 			'toplevel_page_es_dashboard',
 			'email-subscribers_page_es_subscribers',
 			'email-subscribers_page_es_lists',
@@ -94,6 +114,9 @@ class Email_Subscribers_Admin {
 			'email-subscribers_page_es_pricing',
 			'es_template',
 		);
+        */
+        //************ FI
+        
 		//all admin notice
 		if ( ! in_array( $screen_id, $enqueue_on_screens, true ) ) {
 			return;
@@ -128,7 +151,29 @@ class Email_Subscribers_Admin {
 	public function enqueue_scripts() {
 		$screen             = get_current_screen();
 		$screen_id          = $screen ? $screen->id : '';
+        // XTEC ************ Modificat - Added pages to load scripts
+        // 2019.12.18 @nacho
 		$enqueue_on_screens = array(
+			'toplevel_page_es_dashboard',
+			'subscripcions_page_es_subscribers',
+			'subscripcions_page_es_lists',
+			'subscripcions_page_es_forms',
+			'subscripcions_page_es_campaigns',
+			'subscripcions_page_es_newsletters',
+			'subscripcions_page_es_notifications',
+			'edit-es_template',
+			'subscripcions_page_es_reports',
+			'subscripcions_page_es_tools',
+			'subscripcions_page_es_settings',
+			'subscripcions_page_es_general_information',
+			'subscripcions_page_es_pricing',
+            'subscripcions_page_es_settings',
+            'subscripcions_page_es_subscribers',
+            'subscripcions_page_es_forms',
+		);
+        //************ ORIGINAL
+        /*
+        $enqueue_on_screens = array(
 			'toplevel_page_es_dashboard',
 			'email-subscribers_page_es_subscribers',
 			'email-subscribers_page_es_lists',
@@ -143,6 +188,8 @@ class Email_Subscribers_Admin {
 			'email-subscribers_page_es_general_information',
 			'email-subscribers_page_es_pricing',
 		);
+        */
+        //************ FI
 		//all admin notice
 		if ( ! in_array( $screen_id, $enqueue_on_screens, true ) ) {
 			return;
@@ -435,91 +482,94 @@ class Email_Subscribers_Admin {
 		$total_contacts   = ES()->contacts_db->count_active_contacts_by_list_id();
 		$total_email_sent = ES_DB_Mailing_Queue::get_notifications_count();
 
-		if ( ( $total_contacts >= 10 || $total_email_sent > 2 ) && 'yes' !== $star_rating_dismiss && 'yes' !== $star_rating_done ) {
-			echo '<div class="notice notice-warning" style="background-color: #FFF;"><p style="letter-spacing: 0.6px;">If you like <strong>Email Subscribers</strong>, please consider leaving us a <a target="_blank" href="?es_dismiss_admin_notice=1&option_name=star_notice_done"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></a> rating. A huge thank you from Icegram in advance! <a style="float:right" class="es-admin-btn es-admin-btn-secondary" href="?es_dismiss_admin_notice=1&option_name=dismiss_star_notice">No, I don\'t like it</a></p></div>';
-		}
-	}
+        // XTEC ************ Eliminat - Delete message to valorate plugin
+        // 2019.11.29 @nacho
+        /*
+        if ( ( $total_contacts >= 10 || $total_email_sent > 2 ) && 'yes' !== $star_rating_dismiss && 'yes' !== $star_rating_done ) {
+            echo '<div class="notice notice-warning" style="background-color: #FFF;"><p style="letter-spacing: 0.6px;">If you like <strong>Email Subscribers</strong>, please consider leaving us a <a target="_blank" href="?es_dismiss_admin_notice=1&option_name=star_notice_done"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></a> rating. A huge thank you from Icegram in advance! <a style="float:right" class="es-admin-btn es-admin-btn-secondary" href="?es_dismiss_admin_notice=1&option_name=dismiss_star_notice">No, I don\'t like it</a></p></div>';
+        }
+        */
+}
 
 
-	function send_test_email() {
-		$message = array(
-			'status'  => 'ERROR',
-			'message' => __( 'Something went wrong', 'email-subscribers' )
-		);
+function send_test_email() {
+    $message = array(
+        'status'  => 'ERROR',
+        'message' => __( 'Something went wrong', 'email-subscribers' )
+    );
 
-		$emails = ig_es_get_request_data( 'emails', array() );
-		if ( is_array( $emails ) && count( $emails ) > 0 ) {
-			$default_list = ES()->lists_db->get_list_by_name( IG_DEFAULT_LIST );
-			$list_id      = $default_list['id'];
-			//add to the default list
-			foreach ( $emails as $email ) {
-				$data       = array(
-					'first_name'   => ES_Common::get_name_from_email( $email ),
-					'email'        => $email,
-					'source'       => 'admin',
-					'form_id'      => 0,
-					'status'       => 'verified',
-					'unsubscribed' => 0,
-					'hash'         => ES_Common::generate_guid(),
-					'created_at'   => ig_get_current_date_time()
-				);
-				$contact_id = ES()->contacts_db->insert( $data );
-				if ( $contact_id ) {
-					$data = array(
-						'list_id'       => array( $list_id ),
-						'contact_id'    => $contact_id,
-						'status'        => 'subscribed',
-						'optin_type'    => IG_SINGLE_OPTIN,
-						'subscribed_at' => ig_get_current_date_time(),
-						'subscribed_ip' => null
-					);
+    $emails = ig_es_get_request_data( 'emails', array() );
+    if ( is_array( $emails ) && count( $emails ) > 0 ) {
+        $default_list = ES()->lists_db->get_list_by_name( IG_DEFAULT_LIST );
+        $list_id      = $default_list['id'];
+        //add to the default list
+        foreach ( $emails as $email ) {
+            $data       = array(
+                'first_name'   => ES_Common::get_name_from_email( $email ),
+                'email'        => $email,
+                'source'       => 'admin',
+                'form_id'      => 0,
+                'status'       => 'verified',
+                'unsubscribed' => 0,
+                'hash'         => ES_Common::generate_guid(),
+                'created_at'   => ig_get_current_date_time()
+            );
+            $contact_id = ES()->contacts_db->insert( $data );
+            if ( $contact_id ) {
+                $data = array(
+                    'list_id'       => array( $list_id ),
+                    'contact_id'    => $contact_id,
+                    'status'        => 'subscribed',
+                    'optin_type'    => IG_SINGLE_OPTIN,
+                    'subscribed_at' => ig_get_current_date_time(),
+                    'subscribed_ip' => null
+                );
 
-					ES_DB_Lists_Contacts::add_lists_contacts( $data );
-				}
-			}
-			$res = ES_Install::create_and_send_default_broadcast();
-			$res = ES_Install::create_and_send_default_post_notification();
+                ES_DB_Lists_Contacts::add_lists_contacts( $data );
+            }
+        }
+        $res = ES_Install::create_and_send_default_broadcast();
+        $res = ES_Install::create_and_send_default_post_notification();
 
-			if ( $res && is_array( $res ) && ! empty( $res['status'] ) ) {
-				if ( 'SUCCESS' === $res['status'] ) {
-					update_option( 'ig_es_onboarding_test_campaign_success', 'yes' );
-				} else {
-					update_option( 'ig_es_onboarding_test_campaign_error', 'yes' );
-				}
-			}
+        if ( $res && is_array( $res ) && ! empty( $res['status'] ) ) {
+            if ( 'SUCCESS' === $res['status'] ) {
+                update_option( 'ig_es_onboarding_test_campaign_success', 'yes' );
+            } else {
+                update_option( 'ig_es_onboarding_test_campaign_error', 'yes' );
+            }
+        }
 
-			update_option( 'ig_es_onboarding_complete', 'yes' );
+        update_option( 'ig_es_onboarding_complete', 'yes' );
 
-			$response = array();
-			$response['dashboard_url'] = admin_url( 'admin.php?page=es_dashboard' );
-			$response['status']        = 'SUCCESS';
-			echo json_encode( $res );
-			exit;
+        $response = array();
+        $response['dashboard_url'] = admin_url( 'admin.php?page=es_dashboard' );
+        $response['status']        = 'SUCCESS';
+        echo json_encode( $res );
+        exit;
 
-		}
-	}
+    }
+}
 
-	//save skip signup option
-	function es_save_onboarding_skip() {
+//save skip signup option
+function es_save_onboarding_skip() {
 
-		$es_skip     = ig_es_get_request_data( 'es_skip' );
-		$option_name = ig_es_get_request_data( 'option_name' );
+    $es_skip     = ig_es_get_request_data( 'es_skip' );
+    $option_name = ig_es_get_request_data( 'option_name' );
 
+    if ( $es_skip == '1' && ! empty( $option_name ) ) {
+        /**
+         * If user logged in then only save option.
+         */
+        $can_access_settings = ES_Common::ig_es_can_access( 'settings' );
+        if ( $can_access_settings ) {
+            update_option( 'ig_es_ob_skip_' . $option_name, 'yes' );
+        }
 
-		if ( $es_skip == '1' && ! empty( $option_name ) ) {
-			/**
-			 * If user logged in then only save option.
-			 */
-			$can_access_settings = ES_Common::ig_es_can_access( 'settings' );
-			if ( $can_access_settings ) {
-				update_option( 'ig_es_ob_skip_' . $option_name, 'yes' );
-			}
+        $referer = wp_get_referer();
 
-			$referer = wp_get_referer();
-
-			wp_safe_redirect( $referer );
-			exit();
-		}
+        wp_safe_redirect( $referer );
+        exit();
+        }
 	}
 
 	public function count_contacts_by_list() {

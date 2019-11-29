@@ -385,16 +385,24 @@ class ES_Forms_Table extends WP_List_Table {
 								}
 								$url = 'https://www.icegram.com/email-subscribers-starter/?utm_source=in_app&utm_medium=es_form_captcha&utm_campaign=es_upsale';
 								?>
-                                <div style=" background-image: linear-gradient(-100deg, rgba(250, 247, 133, 0.4), rgba(250, 247, 133, 0.8) 95%, rgba(250, 247, 133, 0.2)); padding: 10px; width: 35%; border-radius: 1em 0 1em 0; "><?php echo sprintf( __( 'Secure your form and avoid spam signups with Email Subscribers Starter Plan <a target="_blank" style="font-weight: bold; cursor:pointer; text-decoration:none" href="%s">Get started</a>',
+                                <?php
+                                // XTEC ************ AFEGIT - Hidden unnecessary info to all users but xtecadmin
+                                // 2019.12.18 @nacho
+                                if (is_xtec_super_admin()) {
+                                ?>
+                                    <div style=" background-image: linear-gradient(-100deg, rgba(250, 247, 133, 0.4), rgba(250, 247, 133, 0.8) 95%, rgba(250, 247, 133, 0.2)); padding: 10px; width: 35%; border-radius: 1em 0 1em 0; "><?php echo sprintf( __( 'Secure your form and avoid spam signups with Email Subscribers Starter Plan <a target="_blank" style="font-weight: bold; cursor:pointer; text-decoration:none" href="%s">Get started</a>',
 										'email-subscribers' ), $url ) ?></div>
+								<?php
+                                }
+                                // *********FI
+                                ?>
                             </form>
                         </div>
                     </div>
                 </div>
                 <br class="clear">
             </div>
-        </div>
-
+        </div
 		<?php
 
 	}
