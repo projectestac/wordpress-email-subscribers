@@ -63,13 +63,13 @@ Class ES_Common {
 		$site_url = home_url( '/' );
 		$content  = str_replace( "{{SITEURL}}", $site_url, $content );
 
-        /*TODO: Enable it once Pre header issue fix
+		/*TODO: Enable it once Pre header issue fix
 		$meta = ES()->campaigns_db->get_campaign_meta_by_id( $campaign_id );
 		$meta['pre_header'] = !empty($meta['pre_header']) ? $meta['pre_header'] : '';
 		if( !empty( $meta['pre_header'] )){
 			$content = '<span class="es_preheader" style="display: none !important; visibility: hidden; opacity: 0; color: transparent; height: 0; width: 0;">'.$meta['pre_header'].'</span>'.$content;
 		}
-        */
+		*/
 
 		return $content;
 	}
@@ -108,9 +108,13 @@ Class ES_Common {
 	 *
 	 * @since 4.0.0
 	 */
-	public static function prepare_statuses_dropdown_options( $selected = '', $default_label = 'Select Status' ) {
+	public static function prepare_statuses_dropdown_options( $selected = '', $default_label = '' ) {
 
-		$default_status[0] = __( $default_label, 'email-subscribers' );
+		if ( empty( $default_label ) ) {
+			$default_label = __( 'Select Status', 'email-subscribers' );
+		}
+
+		$default_status[0] = $default_label;
 
 		$statuses = self::get_statuses_key_name_map();
 		$statuses = array_merge( $default_status, $statuses );
@@ -1137,43 +1141,6 @@ Class ES_Common {
 		}
 
 		return $screens;
-	}
-
-	/**
-	 * Get total emails can send in this hour.
-	 *
-	 * @since 4.1.15
-	 */
-	public static function total_emails_to_be_sent( $max_send = 100000 ) {
-
-		$current_date = ig_es_get_current_date();
-		$current_hour = ig_es_get_current_hour();
-
-		//Get total emails sent in this hour
-		$email_sent_data = ES_Common::get_ig_option( 'email_sent_data', array() );
-
-		$total_emails_sent = 0;
-		if ( is_array( $email_sent_data ) && ! empty( $email_sent_data[ $current_date ] ) && ! empty( $email_sent_data[ $current_date ][ $current_hour ] ) ) {
-			$total_emails_sent = $email_sent_data[ $current_date ][ $current_hour ];
-		}
-
-		// Get hourly limit
-		$can_total_emails_send_in_hour = ES_Common::get_ig_option( 'hourly_email_send_limit', 300 );
-
-		// Is limit exceed?
-		if ( $total_emails_sent >= $can_total_emails_send_in_hour ) {
-			return 0;
-		}
-
-		// Still, you can send these many emails.
-		$total_emails_can_send_now = $can_total_emails_send_in_hour - $total_emails_sent;
-
-		// We can send more emails but if we get the count, send only those
-		if ( ( $max_send > 0 ) && ( $max_send < $total_emails_can_send_now ) ) {
-			$total_emails_can_send_now = $max_send;
-		}
-
-		return $total_emails_can_send_now;
 	}
 
 	/**

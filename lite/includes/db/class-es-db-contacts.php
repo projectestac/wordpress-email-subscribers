@@ -343,94 +343,6 @@ class ES_DB_Contacts extends ES_DB {
 	}
 
 	/**
-	 * Update Contact Lists
-	 *
-	 * @param $ids
-	 * @param $list_id
-	 *
-	 * @return bool
-	 *
-	 * @since 4.0.0
-	 */
-	public function update_contacts_list( $ids, $list_id ) {
-		global $wpdb;
-
-		$ids_str = $this->prepare_for_in_query( $ids );
-
-		$ig_lists_contacts_table = IG_LISTS_CONTACTS_TABLE;
-
-		//delete all list contact entry
-		$query = "DELETE FROM $ig_lists_contacts_table WHERE contact_id IN ($ids_str) ";
-
-		$wpdb->query( $query );
-
-		$values            = $place_holders = array();
-		$optin_type_option = get_option( 'ig_es_optin_type', true );
-		$optin_type        = 1;
-		if ( in_array( $optin_type_option, array( 'double_opt_in', 'double_optin' ) ) ) {
-			$optin_type = 2;
-		}
-		$subscribed_at = ig_get_current_date_time();
-		$subscribed_ip = '';
-		foreach ( $ids as $contact_id ) {
-			array_push( $values, $list_id, $contact_id, 'subscribed', $optin_type, $subscribed_at, $subscribed_ip );
-			$place_holders[] = "( %d, %d, %s, %s, %s, %s )"; /* In my case, i know they will always be integers */
-		}
-
-		$query = "INSERT INTO $ig_lists_contacts_table (`list_id`, `contact_id`, `status`, `optin_type`, `subscribed_at`, `subscribed_ip` ) VALUES ";
-		$query .= implode( ', ', $place_holders );
-		$sql   = $wpdb->prepare( "$query ", $values );
-		if ( $wpdb->query( $sql ) ) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Add contacts to list
-	 *
-	 * @param $ids
-	 * @param $list_id
-	 *
-	 * @return bool
-	 *
-	 * @since 4.0.0
-	 */
-	public function add_contacts_to_list( $ids, $list_id ) {
-		global $wpdb;
-
-		$ids_str = $this->prepare_for_in_query( $ids );
-
-		$ig_lists_contacts_table = IG_LISTS_CONTACTS_TABLE;
-
-		$delete_list_contact = "DELETE FROM $ig_lists_contacts_table WHERE contact_id IN ($ids_str) AND list_id = %s";
-		$del_query           = $wpdb->prepare( $delete_list_contact, array( $list_id ) );
-		$wpdb->query( $del_query );
-
-		$values            = $place_holders = array();
-		$optin_type_option = get_option( 'ig_es_optin_type', true );
-		$optin_type        = 1;
-		if ( in_array( $optin_type_option, array( 'double_opt_in', 'double_optin' ) ) ) {
-			$optin_type = 2;
-		}
-		$subscribed_at = ig_get_current_date_time();
-		$subscribed_ip = '';
-		foreach ( $ids as $contact_id ) {
-			array_push( $values, $list_id, $contact_id, 'subscribed', $optin_type, $subscribed_at, $subscribed_ip );
-			$place_holders[] = "( %d, %d, %s, %s, %s, %s )"; /* In my case, i know they will always be integers */
-		}
-		$query = "INSERT INTO " . IG_LISTS_CONTACTS_TABLE . " (`list_id`, `contact_id`, `status`, `optin_type`, `subscribed_at`, `subscribed_ip` ) VALUES ";
-		$query .= implode( ', ', $place_holders );
-		$sql   = $wpdb->prepare( "$query ", $values );
-		if ( $wpdb->query( $sql ) ) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
 	 * Edit global status of contact
 	 *
 	 * @param $ids
@@ -613,40 +525,6 @@ class ES_DB_Contacts extends ES_DB {
 	}
 
 	/**
-	 * Batch Insert Contacts
-	 *
-	 * @param $contacts
-	 *
-	 * @since 4.0.0
-	 */
-	public function do_batch_insert( $contacts ) {
-
-		// Prepare a batch of 50 contacts.
-		$batches = array_chunk( $contacts, 50 );
-
-		$columns = $this->get_columns();
-		unset( $columns['id'] );
-		$fields = array_keys( $columns );
-		foreach ( $batches as $batch ) {
-			$values = $place_holders = array();
-			foreach ( $batch as $key => $contact ) {
-
-				$contact = wp_parse_args( $contact, $this->get_column_defaults() );
-
-				$formats = array();
-				foreach ( $columns as $column => $format ) {
-					$values[]  = $contact[ $column ];
-					$formats[] = $format;
-				}
-
-				$place_holders[] = "( " . implode( ', ', $formats ) . " )";
-			}
-
-			ES_DB::do_insert( IG_CONTACTS_TABLE, $fields, $place_holders, $values );
-		}
-	}
-
-	/**
 	 * Get contact id by email
 	 *
 	 * @param $email
@@ -738,7 +616,7 @@ class ES_DB_Contacts extends ES_DB {
 						//}
 					}
 
-					$this->do_batch_insert( $contacts );
+					$this->bulk_insert( $contacts );
 				}
 
 			}
@@ -748,7 +626,7 @@ class ES_DB_Contacts extends ES_DB {
 				$list_name_id_map = ES()->lists_db->get_list_id_name_map( '', true );
 				foreach ( $lists_contacts as $list_name => $contacts ) {
 					if ( ! empty( $list_name_id_map[ $list_name ] ) ) {
-						ES_DB_Lists_Contacts::import_contacts_into_lists( $list_name_id_map[ $list_name ], $contacts );
+						ES()->lists_contacts_db->import_contacts_into_lists( $list_name_id_map[ $list_name ], $contacts );
 					}
 				}
 			}

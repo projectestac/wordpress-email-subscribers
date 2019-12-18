@@ -10,10 +10,12 @@ class ES_Cron {
 	 * ES_Cron constructor.
 	 *
 	 * @since 4.0.0
+	 * @since 4.3.5 Added ig_es_after_settings_save action
 	 */
 	public function __construct() {
 		add_action( 'wp_loaded', array( &$this, 'init' ), 1 );
 		add_action( 'ig_es_plugin_deactivate', array( &$this, 'clear' ) );
+		add_action( 'ig_es_after_settings_save', array( &$this, 'reschedule' ) );
 	}
 
 	/**
@@ -55,10 +57,8 @@ class ES_Cron {
 			return false;
 		}
 
-		$ig_es_disable_wp_cron = get_option( 'ig_es_disable_wp_cron', 'no' );
-
 		// Don't want to use WP_CRON?
-		if ( 'yes' === $ig_es_disable_wp_cron ) {
+		if ( ! $this->is_wp_cron_enable() ) {
 			$this->clear();
 
 			return true;
@@ -67,6 +67,38 @@ class ES_Cron {
 		$this->schedule();
 
 		return false;
+	}
+
+	/**
+	 * Is WP Cron enable?
+	 *
+	 * @return bool
+	 *
+	 * @since 4.3.5
+	 */
+	public function is_wp_cron_enable() {
+		$ig_es_disable_wp_cron = get_option( 'ig_es_disable_wp_cron', 'no' );
+
+		// Don't want to use WP_CRON?
+		if ( 'yes' === $ig_es_disable_wp_cron ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Reschedule Crons
+	 *
+	 * @since 4.3.5
+	 */
+	public function reschedule() {
+
+		$this->clear();
+
+		if ( $this->is_wp_cron_enable() ) {
+			$this->schedule();
+		}
 	}
 
 	/**
@@ -203,11 +235,47 @@ class ES_Cron {
 	public function cron_schedules( $schedules = array() ) {
 
 		$schedules['ig_es_cron_interval'] = array(
-			'interval' => IG_ES_CRON_INTERVAL,
+			'interval' => $this->get_cron_interval(),
 			'display'  => esc_html__( 'Email Subscribers Cronjob Interval' ),
 		);
 
 		return $schedules;
+	}
+
+	/**
+	 * Get Cron Interval
+	 *
+	 * @return int
+	 *
+	 * @since 4.3.5
+	 */
+	public function get_cron_interval() {
+		$cron_interval = (int) get_option( 'ig_es_cron_interval', IG_ES_CRON_INTERVAL );
+
+		if ( $cron_interval <= 0 ) {
+			$cron_interval = IG_ES_CRON_INTERVAL;
+		}
+
+		return $cron_interval;
+	}
+
+	/**
+	 * Get available cron intervals
+	 *
+	 * @return array
+	 *
+	 * @since 4.3.5
+	 */
+	public function cron_intervals() {
+
+		return array(
+			600  => __( '10 minutes', 'email-subscribers' ),
+			900  => __( '15 minutes', 'email-subscribers' ),
+			1200 => __( '20 minutes', 'email-subscribers' ),
+			1500 => __( '25 minutes', 'email-subscribers' ),
+			1800 => __( '30 minutes', 'email-subscribers' )
+		);
+
 	}
 
 	/**
@@ -491,5 +559,4 @@ class ES_Cron {
 
 		return $message_text;
 	}
-
 }

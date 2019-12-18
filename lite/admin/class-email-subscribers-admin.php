@@ -435,8 +435,21 @@ class Email_Subscribers_Admin {
 		$total_contacts   = ES()->contacts_db->count_active_contacts_by_list_id();
 		$total_email_sent = ES_DB_Mailing_Queue::get_notifications_count();
 
+		$icon_url = plugin_dir_url( __FILE__ ) . 'images/icon-64.png';
+
+		$reviewurl = '?es_dismiss_admin_notice=1&option_name=star_notice_done';
+		$nobugurl  = '?es_dismiss_admin_notice=1&option_name=dismiss_star_notice';
+
 		if ( ( $total_contacts >= 10 || $total_email_sent > 2 ) && 'yes' !== $star_rating_dismiss && 'yes' !== $star_rating_done ) {
-			echo '<div class="notice notice-warning" style="background-color: #FFF;"><p style="letter-spacing: 0.6px;">If you like <strong>Email Subscribers</strong>, please consider leaving us a <a target="_blank" href="?es_dismiss_admin_notice=1&option_name=star_notice_done"><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span></a> rating. A huge thank you from Icegram in advance! <a style="float:right" class="es-admin-btn es-admin-btn-secondary" href="?es_dismiss_admin_notice=1&option_name=dismiss_star_notice">No, I don\'t like it</a></p></div>';
+
+			echo '<div class="notice notice-warning">';
+			echo '<span style="float: left;"><img style="height=90px; width=90px;" src="' . $icon_url . '" /></span>';
+			echo __( "<span><p>We hope you're enjoying <b>Email Subscribers</b> plugin! Could you please do us a BIG favor and give us a 5-star rating on WordPress to help us spread the word and boost our motivation?</p>", "temporary-login-without-password" );
+			echo "<ul class='tlwp-notice-links'>";
+			echo sprintf( '<li><a href="%s" class="tlwp-rating-link-header" target="_blank" data-rated="' . esc_attr__( "Thank You :) ",
+					'temporary-login-without-password' ) . '"><span class="dashicons dashicons-external"></span>&nbsp;&nbsp;Ok, you deserve it!</a></li> <li><a href="%s"><span class="dashicons dashicons-calendar-alt"></span>&nbsp;&nbsp;Maybe later</a></li>', esc_url( $reviewurl ), esc_url( $nobugurl ) );
+			echo "</ul></span>";
+			echo '</div>';
 		}
 	}
 
@@ -447,7 +460,11 @@ class Email_Subscribers_Admin {
 			'message' => __( 'Something went wrong', 'email-subscribers' )
 		);
 
-		$emails = ig_es_get_request_data( 'emails', array() );
+		$emails        = ig_es_get_request_data( 'emails', array() );
+		$es_from_name  = ig_es_get_request_data( 'es_from_name', '' );
+		$es_from_email = ig_es_get_request_data( 'es_from_email', '' );
+		update_option( 'ig_es_from_name', $es_from_name );
+		update_option( 'ig_es_from_email', $es_from_email );
 		if ( is_array( $emails ) && count( $emails ) > 0 ) {
 			$default_list = ES()->lists_db->get_list_by_name( IG_DEFAULT_LIST );
 			$list_id      = $default_list['id'];
@@ -466,7 +483,6 @@ class Email_Subscribers_Admin {
 				$contact_id = ES()->contacts_db->insert( $data );
 				if ( $contact_id ) {
 					$data = array(
-						'list_id'       => array( $list_id ),
 						'contact_id'    => $contact_id,
 						'status'        => 'subscribed',
 						'optin_type'    => IG_SINGLE_OPTIN,
@@ -474,7 +490,7 @@ class Email_Subscribers_Admin {
 						'subscribed_ip' => null
 					);
 
-					ES_DB_Lists_Contacts::add_lists_contacts( $data );
+					ES()->lists_contacts_db->add_contact_to_lists( $data, $list_id );
 				}
 			}
 			$res = ES_Install::create_and_send_default_broadcast();
@@ -490,7 +506,7 @@ class Email_Subscribers_Admin {
 
 			update_option( 'ig_es_onboarding_complete', 'yes' );
 
-			$response = array();
+			$response                  = array();
 			$response['dashboard_url'] = admin_url( 'admin.php?page=es_dashboard' );
 			$response['status']        = 'SUCCESS';
 			echo json_encode( $res );
@@ -531,7 +547,7 @@ class Email_Subscribers_Admin {
 			return 0;
 		}
 
-		$total_count = ES_DB_Lists_Contacts::get_total_count_by_list( $list_id, $status );
+		$total_count = ES()->lists_contacts_db->get_total_count_by_list( $list_id, $status );
 
 		die( json_encode( array( 'total' => $total_count ) ) );
 	}

@@ -138,7 +138,7 @@ class Email_Subscribers_Public {
 
 		if ( ! empty( $hash ) ) {
 
-			$data = ig_es_decode_request_data( $hash );
+			$data        = ig_es_decode_request_data( $hash );
 			$db_id       = ! empty( $data['contact_id'] ) ? (int) $data['contact_id'] : 0;
 			$email       = ! empty( $data['email'] ) ? $data['email'] : '';
 			$guid        = ! empty( $data['guid'] ) ? $data['guid'] : '';
@@ -164,12 +164,12 @@ class Email_Subscribers_Public {
 					$status                    = $subject = $content = '';
 					$unsubscribed              = 0;
 					$status                    = ( $option === 'optin' ) ? 'subscribed' : 'unsubscribed';
-					$is_status_update_required = ES_DB_Lists_Contacts::is_status_update_required( $ids, $status );
+					$is_status_update_required = ES()->lists_contacts_db->is_status_update_required( $ids, $status );
 					if ( $is_status_update_required ) {
 						if ( $option === 'optin' ) {
 							$message = get_option( 'ig_es_subscription_success_message' );
 							ES()->contacts_db->edit_contact_global_status( $ids, $unsubscribed );
-							ES_DB_Lists_Contacts::edit_subscriber_status( $ids, $status );
+							ES()->lists_contacts_db->edit_subscriber_status( $ids, $status );
 							//send welcome email
 							$contact = ES()->contacts_db->get_contacts_email_name_map( array( $email ) );
 							$data    = array(
@@ -213,13 +213,13 @@ class Email_Subscribers_Public {
 									do_action( 'ig_es_confirm_unsubscription' );
 								}
 
-								$unsubscribe_lists = ES_DB_Lists_Contacts::get_list_ids_by_contact( $db_id, 'subscribed' );
+								$unsubscribe_lists = ES()->lists_contacts_db->get_list_ids_by_contact( $db_id, 'subscribed' );
 							}
 
 							//update list status
 							ES()->contacts_db->edit_list_contact_status( array( $db_id ), $unsubscribe_lists, 'unsubscribed' );
 							//check if all list have same status
-							$list_ids = ES_DB_Lists_Contacts::get_list_ids_by_contact( $db_id, 'subscribed' );
+							$list_ids = ES()->lists_contacts_db->get_list_ids_by_contact( $db_id, 'subscribed' );
 							if ( count( $list_ids ) == 0 ) {
 								//update global
 								ES()->contacts_db->edit_contact_global_status( array( $db_id ), 1 );
@@ -307,7 +307,6 @@ class Email_Subscribers_Public {
 			$optin_type        = ( $optin_type === 'double_opt_in' ) ? 2 : 1;
 			$list_id           = ! empty( $list_id ) ? $list_id : 1;
 			$list_contact_data = array(
-				'list_id'       => array( $list_id ),
 				'contact_id'    => $contact_id,
 				'status'        => 'subscribed',
 				'subscribed_at' => ig_get_current_date_time(),
@@ -315,13 +314,12 @@ class Email_Subscribers_Public {
 				'subscribed_ip' => null
 			);
 
-			ES_DB_Lists_Contacts::delete_list_contacts( $contact_id, array( $list_id ) );
+			ES()->lists_contacts_db->remove_contacts_from_lists( $contact_id, $list_id );
 
-			$result = ES_DB_Lists_Contacts::add_lists_contacts( $list_contact_data );
+			ES()->lists_contacts_db->add_contact_to_lists( $list_contact_data, $list_id );
 		}
 
 	}
-
 
 	/**
 	 * Allow user to select the list from which they want to unsubscribe

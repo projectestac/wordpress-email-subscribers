@@ -57,6 +57,7 @@ class es_cls_dbquery {
 			$optin_type = ( $optin_type === 'double_opt_in' ) ? 2 : 1;
 
 			$status = 'subscribed';
+
 			if ( $optin_type == 2 ) {
 				$status = 'unconfirmed';
 			}
@@ -65,7 +66,6 @@ class es_cls_dbquery {
 			$list_id           = ! empty( $list_data['id'] ) ? $list_data['id'] : 1;
 			$list_ids          = array( $list_id );
 			$list_contact_data = array(
-				'list_id'       => $list_ids,
 				'contact_id'    => $contact_id,
 				'status'        => $status,
 				'optin_type'    => $optin_type,
@@ -73,8 +73,7 @@ class es_cls_dbquery {
 				'subscribed_ip' => ig_es_get_ip()
 			);
 
-			ES_DB_Lists_Contacts::delete_list_contacts( $contact_id, $list_ids );
-			ES_DB_Lists_Contacts::add_lists_contacts( $list_contact_data );
+			ES()->lists_contacts_db->add_contact_to_lists( $list_contact_data, $list_id );
 
 			$list_name = ES_Common::prepare_list_name_by_ids( $list_ids );
 

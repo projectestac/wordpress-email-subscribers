@@ -84,24 +84,6 @@ class ES_DB_Forms extends ES_DB {
 	}
 
 	/**
-	 * Insert Forms
-	 *
-	 * @param $place_holders
-	 * @param $values
-	 *
-	 * @return bool
-	 *
-	 * @since 4.2.2
-	 */
-	public function do_forms_insert( $place_holders, $values ) {
-		$forms_table = IG_FORMS_TABLE;
-
-		$fields = array_keys( $this->get_column_defaults() );
-
-		return ES_DB::do_insert( $forms_table, $fields, $place_holders, $values );
-	}
-
-	/**
 	 * Get ID Name Map of Forms
 	 *
 	 * Note: We are using this static function in Icegram.
@@ -132,7 +114,6 @@ class ES_DB_Forms extends ES_DB {
 
 		return $id_name_map;
 	}
-
 
 	/**
 	 * Add Form
@@ -212,8 +193,8 @@ class ES_DB_Forms extends ES_DB {
 
 			if ( count( $forms ) > 0 ) {
 
-				$place_holders = $values = array();
-				foreach ( $forms as $form ) {
+				$data = array();
+				foreach ( $forms as $key => $form ) {
 
 					$es_af_id         = $form['es_af_id'];
 					$es_af_title      = $form['es_af_title'];
@@ -300,21 +281,17 @@ class ES_DB_Forms extends ES_DB {
 						'desc'  => $es_af_desc
 					);
 
-					$data['name']       = $es_af_title;
-					$data['body']       = maybe_serialize( $body );
-					$data['settings']   = maybe_serialize( $settings );
-					$data['styles']     = null;
-					$data['created_at'] = ig_get_current_date_time();
-					$data['updated_at'] = null;
-					$data['deleted_at'] = null;
-					$data['af_id']      = $es_af_id;
-
-					array_push( $values, $data['name'], $data['body'], $data['settings'], $data['styles'], $data['created_at'], $data['updated_at'], $data['deleted_at'], $data['af_id'] );
-					$place_holders[] = "( %s, %s, %s, %s, %s, %s, %s, %d )";
-
+					$data[ $key ]['name']       = $es_af_title;
+					$data[ $key ]['body']       = maybe_serialize( $body );
+					$data[ $key ]['settings']   = maybe_serialize( $settings );
+					$data[ $key ]['styles']     = null;
+					$data[ $key ]['created_at'] = ig_get_current_date_time();
+					$data[ $key ]['updated_at'] = null;
+					$data[ $key ]['deleted_at'] = null;
+					$data[ $key ]['af_id']      = $es_af_id;
 				}
 
-				$this->do_forms_insert( $place_holders, $values );
+				$this->bulk_insert( $data );
 			}
 		}
 	}
@@ -341,7 +318,7 @@ class ES_DB_Forms extends ES_DB {
 	 */
 	public function delete_forms( $ids ) {
 
-		if ( is_string( $ids ) ) {
+		if ( ! is_array( $ids ) ) {
 			$ids = array( $ids );
 		}
 

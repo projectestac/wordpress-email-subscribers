@@ -490,6 +490,15 @@ class ES_Admin_Settings {
 				'desc'         => __( 'Check this if you do not want Email Subscribers to use WP cron for sending emails', 'email-subscribers' )
 			),
 
+			'ig_es_cron_interval' => array(
+				'id'      => 'ig_es_cron_interval',
+				'name'    => __( 'Send Emails At Most Every', 'email-subscribers' ),
+				'type'    => 'select',
+				'options' => ES()->cron->cron_intervals(),
+				'desc'    => __( '<p>Optional if a real cron service is used</p>', 'email-subscribers' ),
+				'default' => IG_ES_CRON_INTERVAL
+			),
+
 			'ig_es_hourly_email_send_limit' => array(
 				'type'         => 'number',
 				'placeholder'  => '',
@@ -498,6 +507,16 @@ class ES_Admin_Settings {
 				'id'           => 'ig_es_hourly_email_send_limit',
 				'name'         => __( 'Maximum Emails To Send In An Hour', 'email-subscribers' ),
 				'desc'         => __( 'Total emails your host can send in an hour.', 'email-subscribers' )
+			),
+
+			'ig_es_max_email_send_at_once' => array(
+				'type'         => 'number',
+				'placeholder'  => '',
+				'supplemental' => '',
+				'default'      => IG_ES_MAX_EMAIL_SEND_AT_ONCE,
+				'id'           => 'ig_es_max_email_send_at_once',
+				'name'         => __( 'Maximum Emails To Send At once', 'email-subscribers' ),
+				'desc'         => __( 'Maximum emails you want to send on every cron request.', 'email-subscribers' )
 			),
 
 			'ig_es_test_send_email' => array(
