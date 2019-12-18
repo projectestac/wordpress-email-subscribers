@@ -202,7 +202,7 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 				}
 
 				if ( count( $this->list_ids ) > 0 ) {
-					$contact_lists = ES_DB_Lists_Contacts::get_list_ids_by_contact( $contact_id, 'subscribed' );
+					$contact_lists = ES()->lists_contacts_db->get_list_ids_by_contact( $contact_id, 'subscribed' );
 					if ( $contact_lists == $this->list_ids ) {
 						$response['message'] = 'es_email_exists_notice';
 						$this->do_response( $response );
@@ -210,15 +210,14 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 					}
 					$optin_type        = $this->is_double_optin ? IG_DOUBLE_OPTIN : IG_SINGLE_OPTIN;
 					$list_contact_data = array(
-						'list_id'       => $this->list_ids,
 						'contact_id'    => $contact_id,
 						'status'        => $this->status,
 						'subscribed_at' => ( $this->status === 'subscribed' ) ? ig_get_current_date_time() : '',
 						'optin_type'    => $optin_type,
 						'subscribed_ip' => ig_es_get_ip()
 					);
-					ES_DB_Lists_Contacts::delete_list_contacts( $contact_id, $this->list_ids );
-					ES_DB_Lists_Contacts::add_lists_contacts( $list_contact_data );
+
+					ES()->lists_contacts_db->add_contact_to_lists( $list_contact_data, $this->list_ids );
 
 					if ( $contact_id ) {
 

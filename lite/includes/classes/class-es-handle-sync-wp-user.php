@@ -8,7 +8,7 @@ class ES_Handle_Sync_Wp_User {
 		// Sync upcoming WordPress users
 		add_action( 'user_register', array( $this, 'sync_registered_wp_user' ) );
 		add_action( 'ig_es_sync_users_tabs_wordpress', array( $this, 'sync_wordpress_users_settings' ) );
-		add_action('edit_user_profile_update', array( $this, 'update_es_contact') );
+		add_action( 'edit_user_profile_update', array( $this, 'update_es_contact' ) );
 	}
 
 	public function sync_wordpress_users_settings( $wordpress_tab ) {
@@ -92,28 +92,35 @@ class ES_Handle_Sync_Wp_User {
 		<?php
 	}
 
+
 	public function sync_registered_wp_user( $user_id ) {
-		//get option
-		$ig_es_sync_wp_users          = get_option( 'ig_es_sync_wp_users', 'norecord' );
-		$ig_es_sync_unserialized_data = maybe_unserialize( $ig_es_sync_wp_users );
-		$ig_es_registered             = ( $ig_es_sync_unserialized_data != 'norecord' ) ? $ig_es_sync_unserialized_data['es_registered'] : 'NO';
-		if ( $ig_es_sync_wp_users != 'norecord' && 'YES' === $ig_es_registered ) {
-			$list_id = $ig_es_sync_unserialized_data['es_registered_group'];
+		$ig_es_sync_wp_users = get_option( 'ig_es_sync_wp_users', array() );
+
+		if ( empty( $ig_es_sync_wp_users ) ) {
+			$ig_es_sync_wp_users = array();
+		}
+
+		$ig_es_sync_wp_users = maybe_unserialize( $ig_es_sync_wp_users );
+
+		$ig_es_registered = ( ! empty( $ig_es_sync_wp_users['es_registered'] ) ) ? $ig_es_sync_wp_users['es_registered'] : 'NO';
+
+		if ( 'YES' === $ig_es_registered ) {
+			$list_id = $ig_es_sync_wp_users['es_registered_group'];
 			//get user info
 			$user_info = get_userdata( $user_id );
 			if ( ! ( $user_info instanceof WP_User ) ) {
 				return false;
 			}
-			$user_firstname = $user_info->display_name;
 
+			$user_first_name = $user_info->display_name;
 
 			$email = $user_info->user_email;
-			if ( empty( $user_firstname ) ) {
-				$user_firstname = ES_Common::get_name_from_email( $email );
+			if ( empty( $user_first_name ) ) {
+				$user_first_name = ES_Common::get_name_from_email( $email );
 			}
 			//prepare data
 			$data = array(
-				'first_name' => $user_firstname,
+				'first_name' => $user_first_name,
 				'email'      => $email,
 				'source'     => 'wp',
 				'status'     => 'verified',
@@ -126,23 +133,29 @@ class ES_Handle_Sync_Wp_User {
 		}
 
 		return true;
-
 	}
 
-	public function update_es_contact( $user_id ){
+	public function update_es_contact( $user_id ) {
+		$ig_es_sync_wp_users = get_option( 'ig_es_sync_wp_users', array() );
 
-		$ig_es_sync_wp_users          = get_option( 'ig_es_sync_wp_users', 'norecord' );
-		$ig_es_sync_unserialized_data = maybe_unserialize( $ig_es_sync_wp_users );
-		$ig_es_registered             = ( $ig_es_sync_unserialized_data != 'norecord' ) ? $ig_es_sync_unserialized_data['es_registered'] : 'NO';
-		if ( $ig_es_sync_wp_users != 'norecord' && 'YES' === $ig_es_registered ) {
+		if ( empty( $ig_es_sync_wp_users ) ) {
+			$ig_es_sync_wp_users = array();
+		}
+
+		$ig_es_sync_wp_users = maybe_unserialize( $ig_es_sync_wp_users );
+
+		$ig_es_registered = ( ! empty( $ig_es_sync_wp_users['es_registered'] ) ) ? $ig_es_sync_wp_users['es_registered'] : 'NO';
+
+		if ( 'YES' === $ig_es_registered ) {
+
 			$user_info = get_userdata( $user_id );
 			if ( ! ( $user_info instanceof WP_User ) ) {
 				return;
 			}
 			//check if user exist with this email
 			$es_contact_id = ES()->contacts_db->get_contact_id_by_email( $user_info->user_email );
-			if( $es_contact_id ){
-				$contact['email'] = $_POST['email'];
+			if ( $es_contact_id ) {
+				$contact['email']      = $_POST['email'];
 				$contact['first_name'] = $_POST['display_name'];
 				ES()->contacts_db->update_contact( $es_contact_id, $contact );
 			}

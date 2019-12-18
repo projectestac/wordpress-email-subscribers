@@ -936,7 +936,7 @@ h5.es-badge {
     max-width: 50em;
     overflow: hidden;
     padding: 2em 3em;
-    height:40em; 
+    height:50em; 
     /*-webkit-transform: translate(0%,45%);*/
     -webkit-transform: translate(0%,7vw);
     transform: translate(0%,7vw);

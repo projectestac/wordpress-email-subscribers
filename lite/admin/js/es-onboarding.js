@@ -16,12 +16,16 @@ jQuery(document).ready(function() {
           emails.push(jQuery(this).val());
         }
       });
+      var es_from_name = jQuery('.es_from_name').val();
+      var es_from_email = jQuery('.es_from_email').val();
       var params = {
         type: 'POST',
         url: ajaxurl,
         data: {
           action: 'send_test_email',
-          emails: emails
+          emails: emails,
+          es_from_name: es_from_name,
+          es_from_email: es_from_email
         },
         dataType: 'json',
         success: function(data, status, xhr) {

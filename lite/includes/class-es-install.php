@@ -229,6 +229,9 @@ if ( ! class_exists( 'ES_Install' ) ) {
 
 				self::install();
 			}
+
+			// Do we need to load templates?
+			self::load_templates();
 		}
 
 		/**
@@ -269,6 +272,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 		 * @since 4.0.0
 		 */
 		public static function install() {
+
 
 			if ( ! is_blog_installed() ) {
 				self::$logger->error( 'Blog is not installed.', self::$logger_context );
@@ -631,6 +635,42 @@ if ( ! class_exists( 'ES_Install' ) ) {
 		}
 
 		/**
+		 * Get sender details to set in from email and name
+		 *
+		 * @return array
+		 *
+		 * @since 4.3.6
+		 */
+		public static function get_sender_details() {
+			global $ig_es_tracker;
+			$active_plugins = $ig_es_tracker::get_active_plugins();
+			$sender_details = array();
+			$admin_email    = get_option( 'admin_email', '' );
+			$blog_name      = get_option( 'blogname', '' );
+
+			if ( $admin_email == "" ) {
+				$admin_email = "support@icegram.com";
+			}
+
+			$sender_details['name']  = $blog_name;
+			$sender_details['email'] = $admin_email;
+
+			//check if installed WP Mail SMTP
+			if ( in_array( 'wp-mail-smtp/wp_mail_smtp.php', $active_plugins ) ) {
+				$wp_mail_smtp_settings = get_option( 'wp_mail_smtp', array() );
+
+				$mail_settings = ig_es_get_data( $wp_mail_smtp_settings, 'mail', array() );
+
+				if ( ! empty( $mail_settings ) ) {
+					$sender_details['name']  = ! empty( $mail_settings['from_name'] ) ? $mail_settings['from_name'] : $sender_details['name'];
+					$sender_details['email'] = ! empty( $mail_settings['from_email'] ) ? $mail_settings['from_email'] : $sender_details['email'];
+				}
+			}
+
+			return $sender_details;
+		}
+
+		/**
 		 * Get default options
 		 *
 		 * @return array
@@ -650,9 +690,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				$latest_db_version => ig_get_current_date_time()
 			);
 
-			if ( $admin_email == "" ) {
-				$admin_email = "support@icegram.com";
-			}
+			$sender_details = self::get_sender_details();
 
 			$home_url  = home_url( '/' );
 			$optinlink = $home_url . "?es=optin&db={{DBID}}&email={{EMAIL}}&guid={{GUID}}";
@@ -688,8 +726,8 @@ if ( ! class_exists( 'ES_Install' ) ) {
 			$unsubscribe_error_message = "Urrgh.. Something's wrong..\r\n\r\nAre you sure that email address is on our file? There was some problem in completing your request.\r\n\r\nPlease try again after some time - or contact us if the problem persists.\r\n\r\n";
 
 			$options = array(
-				'ig_es_from_name'                       => array( 'default' => $blogname, 'old_option' => 'ig_es_fromname' ),
-				'ig_es_from_email'                      => array( 'default' => $admin_email, 'old_option' => 'ig_es_fromemail' ),
+				'ig_es_from_name'                       => array( 'default' => $sender_details['name'], 'old_option' => 'ig_es_fromname' ),
+				'ig_es_from_email'                      => array( 'default' => $sender_details['email'], 'old_option' => 'ig_es_fromemail' ),
 				'ig_es_admin_new_contact_email_subject' => array( 'default' => $new_contact_email_subject, 'old_option' => 'ig_es_admin_new_sub_subject' ),
 				'ig_es_admin_new_contact_email_content' => array( 'default' => $new_contact_email_content, 'old_option' => 'ig_es_admin_new_sub_content' ),
 				'ig_es_admin_emails'                    => array( 'default' => $admin_email, 'old_option' => 'ig_es_adminemail' ),
@@ -722,7 +760,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				'ig_es_sample_data_imported'            => array( 'default' => 'no', 'old_option' => '' ),
 				'ig_es_default_subscriber_imported'     => array( 'default' => 'no', 'old_option' => '' ),
 				'ig_es_set_widget'                      => array( 'default' => '', 'old_option' => '' ),
-				'ig_es_sync_wp_users'                   => array( 'default' => '', 'old_option' => '' ),
+				'ig_es_sync_wp_users'                   => array( 'default' => array(), 'old_option' => '' ),
 				'ig_es_blocked_domains'                 => array( 'default' => 'mail.ru' ),
 				'ig_es_disable_wp_cron'                 => array( 'default' => 'no' ),
 				'ig_es_track_email_opens'               => array( 'default' => 'yes' ),
@@ -732,6 +770,8 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				'ig_es_email_sent_data'                 => array( 'default' => array() ),
 				'ig_es_mailer_settings'                 => array( 'default' => array( 'mailer' => 'wpmail' ), 'old_option' => '' ),
 				'ig_es_user_roles'                      => array( 'default' => ES_Install::get_default_permissions(), 'old_option' => '' ),
+				'ig_es_cron_interval'                   => array( 'default' => IG_ES_CRON_INTERVAL, 'old_option' => '' ),
+				'ig_es_max_email_send_at_once'          => array( 'default' => IG_ES_MAX_EMAIL_SEND_AT_ONCE, 'old_option' => '' ),
 			);
 
 			return $options;
@@ -1099,7 +1139,6 @@ if ( ! class_exists( 'ES_Install' ) ) {
 
 				if ( $contact_id ) {
 					$data = array(
-						'list_id'       => array( $list_id ),
 						'contact_id'    => $contact_id,
 						'status'        => 'subscribed',
 						'optin_type'    => IG_SINGLE_OPTIN,
@@ -1107,7 +1146,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 						'subscribed_ip' => null
 					);
 
-					ES_DB_Lists_Contacts::add_lists_contacts( $data );
+					ES()->lists_contacts_db->add_contact_to_lists( $data, $list_id );
 				}
 
 			}
@@ -1125,10 +1164,8 @@ if ( ! class_exists( 'ES_Install' ) ) {
 					'subscribed_ip' => null
 				);
 
-				ES_DB_Lists_Contacts::add_lists_contacts( $data );
+				ES()->lists_contacts_db->add_contact_to_lists( $data, $main_list_id );
 			}
-
-
 		}
 
 		/**
@@ -1474,43 +1511,59 @@ if ( ! class_exists( 'ES_Install' ) ) {
 		 *
 		 * @since 4.3.2
 		 */
-		public static function load_templates() {
+		public static function load_templates( $force = false ) {
 			//TODO :: Add template with custom post type
 			global $wpdb;
 
-			$templates = array();
-			$templates = apply_filters( 'ig_es_email_templates', $templates );
-
-			$prefix         = $wpdb->prefix;
-			$sSql           = "SELECT post_name FROM `" . $prefix . "posts` where post_type  = 'es_template'";
-			$imported_templ = $wpdb->get_col( $sSql );
-
-			if ( is_array( $templates ) && count( $templates ) > 0 ) {
-
-				foreach ( $templates as $slug => $template ) {
-					if ( in_array( $slug, $imported_templ ) ) {
-						continue;
-					}
-
-					$es_post = array(
-						'post_title'   => wp_strip_all_tags( $template['es_templ_heading'] ),
-						'post_content' => $template['es_templ_body'],
-						'post_status'  => 'publish',
-						'post_type'    => 'es_template',
-						'post_name'    => $slug,
-						'meta_input'   => array(
-							'es_template_type' => $template['es_email_type'],
-							'es_custom_css'    => $template['es_custom_css']
-						)
-					);
-					// Insert the post into the database
-					$last_inserted_id = wp_insert_post( $es_post );
-
-					// Generate Featured Image
-					self::es_generate_featured_image( $template['es_thumbnail'], $last_inserted_id );
-
-				}
+			$plan = 'lite';
+			if ( ES()->is_pro() ) {
+				$plan = 'pro';
+			} elseif ( ES()->is_starter() ) {
+				$plan = 'starter';
 			}
+
+			$templates_loaded_for = get_option( 'ig_es_templates_loaded_for', '' );
+
+			if ( $force || ( $plan !== $templates_loaded_for ) ) {
+
+				$templates = array();
+				$templates = apply_filters( 'ig_es_email_templates', $templates );
+
+				$sSql = "SELECT post_name FROM {$wpdb->prefix}posts where post_type  = 'es_template'";
+
+				$imported_templ = $wpdb->get_col( $sSql );
+
+				if ( is_array( $templates ) && count( $templates ) > 0 ) {
+
+					foreach ( $templates as $slug => $template ) {
+						if ( in_array( $slug, $imported_templ ) ) {
+							continue;
+						}
+
+						$es_post = array(
+							'post_title'   => wp_strip_all_tags( $template['es_templ_heading'] ),
+							'post_content' => $template['es_templ_body'],
+							'post_status'  => 'publish',
+							'post_type'    => 'es_template',
+							'post_name'    => $slug,
+							'meta_input'   => array(
+								'es_template_type' => $template['es_email_type'],
+								'es_custom_css'    => $template['es_custom_css']
+							)
+						);
+						// Insert the post into the database
+						$last_inserted_id = wp_insert_post( $es_post );
+
+						// Generate Featured Image
+						self::es_generate_featured_image( $template['es_thumbnail'], $last_inserted_id );
+
+					}
+				}
+
+				update_option( 'ig_es_templates_loaded_for', $plan );
+			}
+
+
 		}
 
 		/**
@@ -1624,4 +1677,3 @@ if ( ! class_exists( 'ES_Install' ) ) {
 
 	ES_Install::init();
 }
-

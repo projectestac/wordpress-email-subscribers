@@ -4,8 +4,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Author URI: https://www.icegram.com/
 Tags: subscription, newsletter, email marketing, post notification, email newsletter form, email signup, email widget, newsletter signup, subscribe, subscription form, bulk emails, signup form, list builder, lead generation, welcome email, contacts
 Requires at least: 3.9
-Tested up to: 5.3
-Stable tag: 4.3.4.1
+Tested up to: 5.3.1
+Stable tag: 4.3.7
 License: GPLv3
 License URI: http://www.gnu.org/licenses
 
@@ -46,8 +46,7 @@ I am very satisfied with this easy and complete plugin/widget. In 5 minutes or l
 * Send broadcasts.
 * Sent **email status** and when it was viewed.
 * Support **localization or internationalization**.
-* **Include/exclude categories** while sending a newsletter or post notification.
-* **Ability to control user access** (Roles and Capabilities).
+* **Include categories** while sending a post notification.
 * Easy **Integration with free plugins [Icegram](https://wordpress.org/plugins/icegram/) and [Rainmaker](https://wordpress.org/plugins/icegram-rainmaker/)**
 
 > **Best Email Subscriber Plugin!!** -
@@ -299,6 +298,26 @@ Refer [here](https://www.icegram.com/documentation/es-faq/).
 9. Admin page - Settings Tab 4 - Security Settings
 
 == Changelog ==
+
+**4.3.7 (18.12.2019)**
+* Update: Improved import contacts functionality. Now, we are able to import ".CSV" file which contains only emails
+* Fix: Multiple emails to contacts
+
+**4.3.6 (12.12.2019)**
+* Update: Improve on boarding
+* Fix: Count shows zero (0) even if contacts available in list
+* Fix: File with ".CSV" (uppercase) extension was not working with import contacts.
+* Fix: Incorrect unsubscribed contacts count
+
+**4.3.5.1 (07.12.2019)**
+* Update: Improved edit contact
+* Fix: Contacts removed from the list when new subscriber subscribed to the list
+* Fix: WordPress contact sync issue
+
+**4.3.5 (04.12.2019)**
+* New: Added setting to set cron interval
+* New: Added setting to set maximum emails to send on every cron request
+* Fix: Illegal string offset ‘es_registered’ warning
 
 **4.3.4.1 (29.11.2019)**
 * Fix: Delete Campaigns Permanently issue

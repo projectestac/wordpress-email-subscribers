@@ -40,7 +40,7 @@ class ES_Import_Subscribers {
 					$tmp_file = $_FILES["file"]["tmp_name"];
 					$file     = $_FILES['file']['name'];
 
-					$ext = substr( $file, strrpos( $file, "." ), ( strlen( $file ) - strrpos( $file, "." ) ) );
+					$ext = strtolower( substr( $file, strrpos( $file, "." ), ( strlen( $file ) - strrpos( $file, "." ) ) ) );
 
 					if ( $ext == ".csv" ) {
 
@@ -142,12 +142,12 @@ class ES_Import_Subscribers {
 
 								if ( count( $emails ) > 0 ) {
 
-									ES()->contacts_db->do_batch_insert( $contacts_data );
+									ES()->contacts_db->bulk_insert( $contacts_data );
 
 									$contact_ids = ES()->contacts_db->get_contact_ids_by_emails( $emails );
 									if ( count( $contact_ids ) > 0 ) {
-										ES_DB_Lists_Contacts::delete_contacts_from_list( $list_id, $contact_ids );
-										ES_DB_Lists_Contacts::do_import_contacts_into_list( $list_id, $contact_ids, $status, 1, $current_date_time );
+										ES()->lists_contacts_db->remove_contacts_from_lists( $contact_ids, $list_id );
+										ES()->lists_contacts_db->do_import_contacts_into_list( $list_id, $contact_ids, $status, 1, $current_date_time );
 									}
 
 									$message = sprintf( __( 'Total %d contacts have been imported successfully!', 'email-subscribers' ), $imported_subscribers_count );
@@ -313,9 +313,16 @@ class ES_Import_Subscribers {
 			}
 			$i ++;
 		}
-		$results = array_keys( $results, max( $results ) );
 
-		return $results[0];
+		if ( count( $results ) > 0 ) {
+
+			$results = array_keys( $results, max( $results ) );
+
+			return $results[0];
+		}
+
+		return ',';
+
 	}
 
 }

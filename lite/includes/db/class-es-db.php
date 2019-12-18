@@ -170,6 +170,56 @@ abstract class ES_DB {
 	}
 
 	/**
+	 * Get column based on where condition
+	 *
+	 * @param $column
+	 * @param string $where
+	 *
+	 * @return array
+	 *
+	 * @since 4.3.5
+	 */
+	public function get_column_by_condition( $column, $where = '' ) {
+		global $wpdb;
+
+		$column = esc_sql( $column );
+
+		if ( ! empty( $where ) ) {
+			return $wpdb->get_col( "SELECT $column FROM $this->table_name WHERE $where" );
+		} else {
+			return $wpdb->get_col( "SELECT $column FROM $this->table_name" );
+		}
+	}
+
+	/**
+	 * Select few columns based on condition
+	 *
+	 * @param array $columns
+	 * @param string $where
+	 *
+	 * @return array|object|null
+	 *
+	 * @since 4.3.5
+	 */
+	public function get_columns_by_condition( $columns = array(), $where = '', $output = ARRAY_A ) {
+		global $wpdb;
+
+		if ( ! is_array( $columns ) ) {
+			return array();
+		}
+
+		$columns = esc_sql( $columns );
+
+		$columns = implode( ', ', $columns );
+
+		if ( ! empty( $where ) ) {
+			return $wpdb->get_results( "SELECT $columns FROM $this->table_name WHERE $where", $output );
+		} else {
+			return $wpdb->get_results( "SELECT $columns FROM $this->table_name", $output );
+		}
+	}
+
+	/**
 	 * Insert a new row
 	 *
 	 * @param $data
@@ -300,7 +350,7 @@ abstract class ES_DB {
 
 		$row_ids_str = $this->prepare_for_in_query( $row_ids );
 
-		$where = "$this->primary_key IN ($row_ids_str)";
+		$where = "$this->primary_key IN( $row_ids_str )";
 
 		if ( false === $this->delete_by_condition( $where ) ) {
 			return false;
@@ -387,16 +437,19 @@ abstract class ES_DB {
 	 * @param string $type
 	 *
 	 * @since 4.2.1
+	 * @since 4.3.5 Fixed issues and started using it.
 	 */
-	public function bulk_insert( $values, $length = 100, $type = '' ) {
+	public function bulk_insert( $values, $length = 100 ) {
 		global $wpdb;
 
 		if ( ! is_array( $values ) ) {
-			return;
+			return false;
 		}
 
 		// Get the first value from an array to check data structure
-		$data = $values[0];
+		$first_value = array_slice( $values, 0, 1 );
+
+		$data = array_shift( $first_value );
 
 		// Set default values
 		$data = wp_parse_args( $data, $this->get_column_defaults() );
@@ -417,7 +470,8 @@ abstract class ES_DB {
 		$data = wp_parse_args( $data, $this->get_column_defaults() );
 
 		$data_keys = array_keys( $data );
-		$fields    = array_merge( array_flip( $data_keys ), $column_formats );
+
+		$fields = array_keys( array_merge( array_flip( $data_keys ), $column_formats ) );
 
 		// Convert Batches into smaller chunk
 		$batches = array_chunk( $values, $length );
@@ -430,19 +484,24 @@ abstract class ES_DB {
 
 				$formats = array();
 				foreach ( $column_formats as $column => $format ) {
-					$final_values[] = $value[ $column ];
+					$final_values[] = isset( $value[ $column ] ) ? $value[ $column ] : $data[ $column ]; // set default if we don't have
 					$formats[]      = $format;
 				}
 
 				$place_holders[] = "( " . implode( ', ', $formats ) . " )";
 				$fields_str      = "`" . implode( "`, `", $fields ) . "`";
-				$query           = "INSERT INTO $this->table_name({$fields_str}) VALUES ";
-				$query           .= implode( ', ', $place_holders );
-				$sql             = $wpdb->prepare( $query, $final_values );
+			}
 
-				$wpdb->query( $sql );
+			$query = "INSERT INTO $this->table_name ({$fields_str}) VALUES ";
+			$query .= implode( ', ', $place_holders );
+			$sql   = $wpdb->prepare( $query, $final_values );
+
+			if ( ! $wpdb->query( $sql ) ) {
+				return false;
 			}
 		}
+
+		return true;
 	}
 
 	/**
@@ -479,26 +538,42 @@ abstract class ES_DB {
 	 * @return array
 	 *
 	 * @since 4.2.2
+	 * @since 4.3.5 Used get_columns_map method
 	 */
 	public function get_id_name_map( $where = '' ) {
-		global $wpdb;
+		return $this->get_columns_map( $this->primary_key, 'name', $where );
+	}
 
-		$query = "SELECT $this->primary_key, name FROM $this->table_name";
-
-		if ( ! empty( $where ) ) {
-			$query .= " WHERE $where";
+	/**
+	 * Get map of two columns
+	 *
+	 * e.g array($column_1 => $column_2)
+	 *
+	 * @param string $column_1
+	 * @param string $column_2
+	 * @param string $where
+	 *
+	 * @return array
+	 *
+	 * @since 4.3.5
+	 */
+	public function get_columns_map( $column_1 = '', $column_2 = '', $where = '' ) {
+		if ( empty( $column_1 ) || empty( $column_2 ) ) {
+			return array();
 		}
 
-		$results = $wpdb->get_results( $query, ARRAY_A );
+		$columns = array( $column_1, $column_2 );
 
-		$id_name_map = array();
+		$results = $this->get_columns_by_condition( $columns, $where );
+
+		$map = array();
 		if ( count( $results ) > 0 ) {
 			foreach ( $results as $result ) {
-				$id_name_map[ $result['id'] ] = $result['name'];
+				$map[ $result[ $column_1 ] ] = $result[ $column_2 ];
 			}
 		}
 
-		return $id_name_map;
+		return $map;
 	}
 
 	public static function prepare_data( $data, $column_formats, $column_defaults, $insert = true ) {

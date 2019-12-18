@@ -578,3 +578,24 @@ if ( ! function_exists( 'ig_es_get_next_future_schedule_date' ) ) {
 	}
 }
 
+if ( ! function_exists( 'ig_es_array_insert_after' ) ) {
+	/**
+	 * Insert $new in $array after $key
+	 *
+	 * @param $array
+	 * @param $key
+	 * @param $new
+	 *
+	 * @return array
+	 *
+	 * @since 4.3.6
+	 */
+	function ig_es_array_insert_after( $array, $key, $new ) {
+		$keys  = array_keys( $array );
+		$index = array_search( $key, $keys );
+		$pos   = false === $index ? count( $array ) : $index + 1;
+
+		return array_merge( array_slice( $array, 0, $pos ), $new, array_slice( $array, $pos ) );
+	}
+}
+

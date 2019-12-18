@@ -183,6 +183,13 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $links_db;
 
 		/**
+		 * @since 4.3.5
+		 *
+		 * @var object|ES_DB_Lists_Contacts
+		 */
+		public $lists_contacts_db;
+
+		/**
 		 *
 		 * @since 4.2.1
 		 *
@@ -257,12 +264,12 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 
 			$active_plugins = $ig_es_tracker::get_active_plugins();
 
-			$args['url'] = 'https://www.icegram.com/';
-			$args['include'] =  ES_PLUGIN_DIR . 'lite/includes/notices/views/ig-es-offer.php';
-			ES_Admin_Notices::add_custom_notice('bfcm_2019', $args );
+			$args['url']     = 'https://www.icegram.com/';
+			$args['include'] = ES_PLUGIN_DIR . 'lite/includes/notices/views/ig-es-offer.php';
+			ES_Admin_Notices::add_custom_notice( 'bfcm_2019', $args );
 
-			$screen          = get_current_screen();
-			$screen_id       = $screen ? $screen->id : '';
+			$screen    = get_current_screen();
+			$screen_id = $screen ? $screen->id : '';
 			// Don't show admin notices on Dashboard if onboarding is not yet completed.
 			$is_onboarding_complete = get_option( 'ig_es_onboarding_complete', false );
 
@@ -284,10 +291,10 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				$disable_wp_cron_notice = sprintf( __( 'WordPress Cron is disable on your site. Email notifications from Email Subscribers plugin will not be sent automatically. <a href="%s" target="_blank" >Here\'s how you can enable it.</a>', 'email-subscribers' ), $es_cron_url );
 				$disable_wp_cron_notice .= '<br/>' . sprintf( __( 'Or schedule Cron in <a href="%s" target="_blank">cPanel</a>', 'email-subscribers' ), $cpanel_url );
 				$disable_wp_cron_notice .= '<br/>' . sprintf( __( 'Or use <strong><a href="%s" target="_blank">Email Subscribers Pro</a></strong> for automatic Cron support', 'email-subscribers' ), $es_pro_url );
-				$html = '<div class="notice notice-warning" style="background-color: #FFF;"><p style="letter-spacing: 0.6px;">' . $disable_wp_cron_notice . '<a style="float:right" class="es-admin-btn es-admin-btn-secondary " href="' . admin_url() . '?es_dismiss_admin_notice=1&option_name=wp_cron_notice">' . __( 'OK, I Got it!',
+				$html                   = '<div class="notice notice-warning" style="background-color: #FFF;"><p style="letter-spacing: 0.6px;">' . $disable_wp_cron_notice . '<a style="float:right" class="es-admin-btn es-admin-btn-secondary " href="' . admin_url() . '?es_dismiss_admin_notice=1&option_name=wp_cron_notice">' . __( 'OK, I Got it!',
 						'email-subscribers' ) . '</a></p></div>';
-				$args['html'] = $html;
-				ES_Admin_Notices::add_custom_notice('show_wp_cron', $args );
+				$args['html']           = $html;
+				ES_Admin_Notices::add_custom_notice( 'show_wp_cron', $args );
 			}
 
 		}
@@ -497,6 +504,9 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			}
 			if ( ! defined( 'IG_ES_CRON_INTERVAL' ) ) {
 				define( 'IG_ES_CRON_INTERVAL', 15 * MINUTE_IN_SECONDS );
+			}
+			if ( ! defined( 'IG_ES_MAX_EMAIL_SEND_AT_ONCE' ) ) {
+				define( 'IG_ES_MAX_EMAIL_SEND_AT_ONCE', 30 );
 			}
 		}
 
@@ -770,25 +780,25 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		}
 
 		/**
-         * Log Fatal Errors on Shutdown
-         *
+		 * Log Fatal Errors on Shutdown
+		 *
 		 * @since 4.3.1
 		 */
-        public function log_errors() {
-	        $error = error_get_last();
-	        if ( in_array( $error['type'], array( E_ERROR, E_PARSE, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR ), true ) ) {
+		public function log_errors() {
+			$error = error_get_last();
+			if ( in_array( $error['type'], array( E_ERROR, E_PARSE, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR ), true ) ) {
 				$logger = get_ig_logger();
 
-		        $logger->critical(
-			        sprintf( __( '%1$s in %2$s on line %3$s', 'email-subscribers' ), $error['message'], $error['file'], $error['line'] ) . PHP_EOL,
-			        array(
-				        'source' => 'fatal-errors',
-			        )
-		        );
+				$logger->critical(
+					sprintf( __( '%1$s in %2$s on line %3$s', 'email-subscribers' ), $error['message'], $error['file'], $error['line'] ) . PHP_EOL,
+					array(
+						'source' => 'fatal-errors',
+					)
+				);
 
-		        do_action( 'ig_es_shutdown_error', $error );
-	        }
-        }
+				do_action( 'ig_es_shutdown_error', $error );
+			}
+		}
 
 		/**
 		 * Return a true instance of a class
@@ -829,6 +839,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				self::$instance->lists_db          = new ES_DB_Lists();
 				self::$instance->forms_db          = new ES_DB_Forms();
 				self::$instance->contacts_db       = new ES_DB_Contacts();
+				self::$instance->lists_contacts_db = new ES_DB_Lists_Contacts();
 				self::$instance->blocked_emails_db = new ES_DB_Blocked_Emails();
 				self::$instance->links_db          = new ES_DB_Links();
 				self::$instance->queue             = new ES_Queue();
@@ -852,7 +863,10 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 						$plugin       = 'email-subscribers-newsletters-starter';
 						$event_prefix = 'esstarter.';
 					}
+
+
 					$ig_es_feedback = new $ig_es_feedback_class( $name, $plugin, $plugin_abbr, $event_prefix, false );
+
 					$ig_es_feedback->render_deactivate_feedback();
 				}
 

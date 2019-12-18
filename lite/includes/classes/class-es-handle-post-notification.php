@@ -31,7 +31,6 @@ class ES_Handle_Post_Notification {
 
 	public function prepare_post_data( $prepared_post, $request ) {
 		$this->is_rest_request = true;
-
 		return $prepared_post;
 	}
 
@@ -74,7 +73,8 @@ class ES_Handle_Post_Notification {
 
 		if ( ! empty( $post_id ) ) {
 
-			$notifications = ES_DB_Notifications::get_notifications_by_post_id( $post_id );
+			$notifications = ES()->campaigns_db->get_campaigns_by_post_id( $post_id );
+
 			if ( count( $notifications ) > 0 ) {
 				$existing_contacts = array();
 				foreach ( $notifications as $notification ) {
@@ -143,9 +143,7 @@ class ES_Handle_Post_Notification {
 									$delivery_data['campaign_id']      = $notification['id'];
 									$delivery_data['mailing_queue_id'] = $insert;
 									ES_DB_Sending_Queue::do_batch_insert( $delivery_data );
-
 								}
-
 							}
 						}
 					}
@@ -203,6 +201,7 @@ class ES_Handle_Post_Notification {
 		if ( $post_thumbnail != "" ) {
 			$post_thumbnail_link = "<a href='" . $post_link . "' target='_blank'>" . $post_thumbnail . "</a>";
 		}
+
 		$es_templ_body = str_replace( '{{POSTIMAGE}}', $post_thumbnail_link, $es_templ_body );
 
 		// Get post description

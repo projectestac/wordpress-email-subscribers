@@ -61,7 +61,7 @@ function ig_es_render_general_feedback_widget() {
 			'width'             => 700,
 			'force'             => true,
 			'confirmButtonText' => __( 'Send', 'email-subscribers' ),
-			'consent_text'      => __( 'Allow Email Subscribers to track plugin usage. We guarantee no sensitive data is collected.', 'email-subscribers' ),
+			'consent_text'      => __( 'Allow Email Subscribers to send plugin settings. It will help us to understand your issue better. We guarantee no sensitive data is collected.', 'email-subscribers' ),
 			'name'              => ''
 		);
 
