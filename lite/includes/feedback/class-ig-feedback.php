@@ -12,11 +12,11 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 	 * There are different types of feedabck widget like Stars, Emoji, Thubms Up/ Down, Number etc.
 	 *
 	 * @class       IG_Feedback_V_1_0_11
-	 * @package     feedback
+	 * @since       1.0.0
 	 * @copyright   Copyright (c) 2019, Icegram
 	 * @license     https://opensource.org/licenses/gpl-license GNU Public License
 	 * @author      Icegram
-	 * @since       1.0.0
+	 * @package     feedback
 	 */
 	class IG_Feedback_V_1_0_11 {
 
@@ -106,6 +106,11 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		}
 
+		/**
+         * Render Deactivation feedback Form
+         *
+		 * @since 1.0.0
+		 */
 		public function render_deactivate_feedback() {
 			add_action( 'admin_print_scripts', array( $this, 'js' ), 20 );
 			add_action( 'admin_print_scripts', array( $this, 'css' ) );
@@ -152,7 +157,6 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 		 *
 		 * @since 1.0.3
 		 */
-
 		public function prepare_widget_params( $params = array() ) {
 
 			$default_params = array(
@@ -457,8 +461,8 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 					var feedbackButtonID = 'ig-feedback-button-<?php echo $this->plugin; ?>';
 
                     // XTEC ************ Eliminat - Delete Feedback button
-                    // 2019.11.29 @nacho
-					//$('#wpwrap').append('<div class="ig-es-feedback-button" id="' + feedbackButtonID + '">Feedback</div>');
+                    // 2019.12.20 @nacho
+                    //$('#wpwrap').append('<div class="ig-es-feedback-button" id="' + feedbackButtonID + '">Feedback</div>');
                     //************ FI
 
 					$('#' + feedbackButtonID).on('click', function () {

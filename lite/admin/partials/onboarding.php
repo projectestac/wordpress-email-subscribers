@@ -1,6 +1,8 @@
 <div id="slider-wrapper">
     <div id="slider">
         <div class="sp es-send-email-screen" >
+            <?php $from_name = get_option( 'ig_es_from_name');?>
+            <?php $from_email = get_option( 'ig_es_from_email');?>
             <h1> 👍 <?php _e('80% done!'); ?></h1>
             <strong><?php _e('We automatically:'); ?></strong>
             <ol>
@@ -12,8 +14,12 @@
             <div class="es-form-wrapper">
                 <div class="es-form-next"style="padding: 0.5em 0.8em; border-radius: 3px;">
                     <?php _e(' We will create "<strong>Newsletter Broadcast</strong>" and "<strong>New Post Notification</strong>" campaigns.  Next step is to test everything by <strong>sending test campaigns</strong>.<br />We\'ve already added you, but recommend adding another email to test.', 'email-subscribers'); ?>
+                    <br/><?php _e('But before test <strong>verify your sender details</strong>', 'email-subscribers'); ?>
                 </div>
                 <form id="es-send-email-form">
+                    <label><strong><?php _e('Sender', 'email-subscribers'); ?></strong></label><br/>
+                    <input  type="text" name="es_from_name" class="es_from_name" value="<?php echo $from_name; ?>" required style="padding: 0.6em 0.5em; border: 1px solid #dcdcdc; "/>
+                    <input  type="email" name="es_from_email" class="es_from_email" value="<?php echo $from_email; ?>"required style="padding: 0.6em 0.5em; border: 1px solid #dcdcdc; "/><br/>
                     <label><strong><?php _e('Add an email to send a test to:', 'email-subscribers'); ?></strong></label><br/>
                     <input  type="email" placeholder="abc@gmail.com" name="es_test_email[]" class="es_email" required style="padding: 0.6em 0.5em; border: 1px solid #dcdcdc; "/>
                     <a id="button-send" class="button-send"><?php _e('Create and Send test camapigns', 'email-subscribers');?></a>

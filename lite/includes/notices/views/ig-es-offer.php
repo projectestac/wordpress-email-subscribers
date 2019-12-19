@@ -11,7 +11,7 @@
 </style>
 <?php
 // XTEC ************ Eliminat - Disable advertising
-// 2019.12.03 @nacho
+// 2019.12.20 @nacho
 /*if(  (get_option('ig_es_offer_bfcm_done_2019') !== 'yes') && ($ig_current_date >= strtotime("2019-11-22")) && ($ig_current_date <= strtotime("2019-11-30")) ) { ?>
 	<div class="ig_es_offer">
 	    <a target="_blank" href="?es_dismiss_admin_notice=1&option_name=offer_bfcm_done_2019"><img src="<?php echo ES_PLUGIN_URL ?>/lite/admin/images/bfcm-2019.png"  /></a>

@@ -609,7 +609,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 			 * - Update status in ig_es_mailing_queue table
 			 * - Update status in ig_es_sending_queue table
 			 */
-			$es_c_croncount = ES_Common::total_emails_to_be_sent();
+			$es_c_croncount = ES()->mailer->get_total_emails_send_now();
 
 			if ( $es_c_croncount > 0 ) {
 

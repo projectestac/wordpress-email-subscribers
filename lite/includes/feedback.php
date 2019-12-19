@@ -61,7 +61,7 @@ function ig_es_render_general_feedback_widget() {
 			'width'             => 700,
 			'force'             => true,
 			'confirmButtonText' => __( 'Send', 'email-subscribers' ),
-			'consent_text'      => __( 'Allow Email Subscribers to track plugin usage. We guarantee no sensitive data is collected.', 'email-subscribers' ),
+			'consent_text'      => __( 'Allow Email Subscribers to send plugin settings. It will help us to understand your issue better. We guarantee no sensitive data is collected.', 'email-subscribers' ),
 			'name'              => ''
 		);
 
@@ -93,8 +93,8 @@ function ig_es_render_broadcast_created_feedback_widget() {
 	ES_Common::render_feedback_widget( $params );
 }
 // XTEC ************ Eliminat - Dissable unnecessary popup
-// 2019.12.18 @nacho
-//add_action('ig_es_broadcast_created', 'ig_es_render_broadcast_created_feedback_widget');
+// 2019.12.20 @nacho
+//add_action( 'ig_es_broadcast_created', 'ig_es_render_broadcast_created_feedback_widget' );
 // *********FI
 
 /**

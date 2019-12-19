@@ -383,26 +383,32 @@ class ES_Forms_Table extends WP_List_Table {
 									$status         = 'error';
 									ES_Common::show_message( $message, $status );
 								}
-								$url = 'https://www.icegram.com/email-subscribers-starter/?utm_source=in_app&utm_medium=es_form_captcha&utm_campaign=es_upsale';
-								?>
-                                <?php
+
+								if ( ! ES()->is_starter() ) {
+
+									$url = 'https://www.icegram.com/email-subscribers-starter/?utm_source=in_app&utm_medium=es_form_captcha&utm_campaign=es_upsale';
+									?>
+				<?php
                                 // XTEC ************ AFEGIT - Hidden unnecessary info to all users but xtecadmin
-                                // 2019.12.18 @nacho
+                                // 2019.12.20 @nacho
                                 if (is_xtec_super_admin()) {
                                 ?>
                                     <div style=" background-image: linear-gradient(-100deg, rgba(250, 247, 133, 0.4), rgba(250, 247, 133, 0.8) 95%, rgba(250, 247, 133, 0.2)); padding: 10px; width: 35%; border-radius: 1em 0 1em 0; "><?php echo sprintf( __( 'Secure your form and avoid spam signups with Email Subscribers Starter Plan <a target="_blank" style="font-weight: bold; cursor:pointer; text-decoration:none" href="%s">Get started</a>',
-										'email-subscribers' ), $url ) ?></div>
-								<?php
+											'email-subscribers' ), $url ) ?></div>
+								<?php } ?>
+				<?php
                                 }
                                 // *********FI
                                 ?>
+
                             </form>
                         </div>
                     </div>
                 </div>
                 <br class="clear">
             </div>
-        </div
+        </div>
+
 		<?php
 
 	}
@@ -629,19 +635,6 @@ class ES_Forms_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Returns the count of records in the database.
-	 *
-	 * @return null|string
-	 */
-	public function record_count() {
-		global $wpdb;
-
-		$sql = "SELECT COUNT(*) FROM " . IG_FORMS_TABLE;
-
-		return $wpdb->get_var( $sql );
-	}
-
-	/**
 	 * Render a column when no column specific method exist.
 	 *
 	 * @param array $item
@@ -747,17 +740,17 @@ class ES_Forms_Table extends WP_List_Table {
 	}
 
 	/**
-     * Prepare search box
-     *
+	 * Prepare search box
+	 *
 	 * @param string $text
 	 * @param string $input_id
-     *
-     * @since 4.0.0
-     * @since 4.3.4 Added esc_attr()
+	 *
+	 * @since 4.0.0
+	 * @since 4.3.4 Added esc_attr()
 	 */
 	public function search_box( $text, $input_id ) { ?>
         <p class="search-box">
-            <label class="screen-reader-text" for="<?php echo esc_attr($input_id); ?>"><?php echo esc_attr($text); ?>:</label>
+            <label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_attr( $text ); ?>:</label>
             <input type="search" id="<?php echo $input_id ?>" name="s" value="<?php _admin_search_query(); ?>"/>
 			<?php submit_button( __( 'Search Forms', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
         </p>

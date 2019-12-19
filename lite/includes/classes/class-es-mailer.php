@@ -141,7 +141,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 
 				$this->time_limit = $this->time_start + $max_time;
 
-				$this->email_limit = ES_Common::total_emails_to_be_sent();
+				$this->email_limit = $this->get_total_emails_send_now();
 
 				// We are doing heavy lifting..allocate more memory
 				if ( function_exists( 'memory_get_usage' ) && ( (int) @ini_get( 'memory_limit' ) < 128 ) ) {
@@ -555,11 +555,15 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 
 			$response = array();
 
-			if ( is_string( $emails ) ) {
+			if ( ! is_array( $emails ) ) {
 				$emails = array( $emails );
 			}
 
-			$this->email_id_map = ES()->contacts_db->get_email_id_map( (array) $emails );
+			if ( 0 === $campaign_id ) {
+				$this->email_id_map = ES()->contacts_db->get_email_id_map( (array) $emails );
+			} else {
+				$this->email_id_map = ES_DB_Sending_Queue::get_emails_id_map_by_campaign( $campaign_id, $emails );
+			}
 
 			foreach ( (array) $emails as $email ) {
 
@@ -1161,6 +1165,67 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			$link_data['action'] = 'subscribe';
 
 			return $this->prepare_link( $link_data );
+		}
+
+		/**
+		 * How many emails we can send now?
+		 *
+		 * @since 4.3.5
+		 */
+		public function get_total_emails_send_now( $max_send = 100000 ) {
+
+			$current_date = ig_es_get_current_date();
+			$current_hour = ig_es_get_current_hour();
+
+			//Get total emails sent in this hour
+			$email_sent_data = ES_Common::get_ig_option( 'email_sent_data', array() );
+
+			$total_emails_sent = 0;
+			if ( is_array( $email_sent_data ) && ! empty( $email_sent_data[ $current_date ] ) && ! empty( $email_sent_data[ $current_date ][ $current_hour ] ) ) {
+				$total_emails_sent = $email_sent_data[ $current_date ][ $current_hour ];
+			}
+
+			// Get hourly limit
+			$can_total_emails_send_in_hour = ES_Common::get_ig_option( 'hourly_email_send_limit', 300 );
+
+			// Is limit exceed?
+			if ( $total_emails_sent >= $can_total_emails_send_in_hour ) {
+				return 0;
+			}
+
+			// Still, you can send these many emails.
+			$total_emails_can_send_now = $can_total_emails_send_in_hour - $total_emails_sent;
+
+			// We can send more emails but if we get the count, send only those
+			if ( ( $max_send > 0 ) && ( $max_send < $total_emails_can_send_now ) ) {
+				$total_emails_can_send_now = $max_send;
+			}
+
+			// Do we have max email sending limit at once set?
+			$can_total_emails_send_at_once = $this->get_max_email_send_at_once_count();
+
+			if ( $can_total_emails_send_at_once < $total_emails_can_send_now ) {
+				$total_emails_can_send_now = $can_total_emails_send_at_once;
+			}
+
+			return $total_emails_can_send_now;
+		}
+
+		/**
+		 * Get max email send at once count
+		 *
+		 * @return int
+		 *
+		 * @since 4.3.5
+		 */
+		public function get_max_email_send_at_once_count() {
+			$max_count = (int) ES_Common::get_ig_option( 'max_email_send_at_once', IG_ES_MAX_EMAIL_SEND_AT_ONCE );
+
+			if ( $max_count <= 0 ) {
+				$max_count = IG_ES_MAX_EMAIL_SEND_AT_ONCE;
+			}
+
+			return $max_count;
 		}
 	}
 }

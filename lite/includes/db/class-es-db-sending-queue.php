@@ -184,6 +184,7 @@ class ES_DB_Sending_Queue {
 
 		$batches = array_chunk( $delivery_data['subscribers'], 50 );
 
+		$emails = array();
 		foreach ( $batches as $key => $batch ) {
 			$place_holders = $values = array();
 			foreach ( $batch as $subscriber ) {
@@ -191,7 +192,9 @@ class ES_DB_Sending_Queue {
 				$email      = ! empty( $subscriber['email'] ) ? $subscriber['email'] : '';
 				$contact_id = ! empty( $subscriber['id'] ) ? $subscriber['id'] : 0;
 
-				if ( ! empty( $email ) ) {
+				if ( ! empty( $email ) && ! in_array( $email, $emails ) ) {
+
+					$emails[] = $email;
 
 					$data['contact_id']   = $contact_id;
 					$data['email']        = $email;
@@ -515,6 +518,42 @@ class ES_DB_Sending_Queue {
 		}
 
 		return $wpdb->get_var( $wpdb->prepare( $query, $args ) );
+	}
+
+	/**
+	 * Get Email => ID map based on Sending Queue table
+	 * 
+	 * @param int $campaign_id
+	 * @param array $emails
+	 *
+	 * @return array
+	 *
+	 * @since 4.3.7
+	 */
+	public static function get_emails_id_map_by_campaign( $campaign_id = 0, $emails = array() ) {
+		global $wpdb;
+
+		$emails      = esc_sql( $emails );
+		$campaign_id = esc_sql( absint( $campaign_id ) );
+
+		if ( 0 === $campaign_id || empty( $emails ) ) {
+			return array();
+		}
+
+		$emails_str = "'" . implode( "', '", $emails ) . "'";
+
+		$query = "SELECT contact_id, email FROM {$wpdb->prefix}ig_sending_queue WHERE campaign_id = %d AND email IN ($emails_str)";
+
+		$results = $wpdb->get_results( $wpdb->prepare( $query, $campaign_id ), ARRAY_A );
+
+		$emails_id_map = array();
+		if ( count( $results ) > 0 ) {
+			foreach ( $results as $result ) {
+				$emails_id_map[ $result['email'] ] = $result['contact_id'];
+			}
+		}
+
+		return $emails_id_map;
 	}
 
 }

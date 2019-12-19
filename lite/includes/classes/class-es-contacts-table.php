@@ -38,15 +38,26 @@ class ES_Contacts_Table extends WP_List_Table {
 	 */
 	public $lists_id_name_map = array();
 
+	/**
+	 * @var object|ES_DB_Contacts
+	 */
+	public $db;
+
+	/**
+	 * ES_Contacts_Table constructor.
+	 *
+	 * @since 4.0.0
+	 */
 	public function __construct() {
 
-		//set_error_handler(array( 'Email_General' , 'es_handle_error'));
 		parent::__construct( array(
-			'singular' => __( 'Contact', 'email-subscribers' ), //singular name of the listed records
-			'plural'   => __( 'Contacts', 'email-subscribers' ), //plural name of the listed records
-			'ajax'     => false,//does this table support ajax?
+			'singular' => __( 'Contact', 'email-subscribers' ),
+			'plural'   => __( 'Contacts', 'email-subscribers' ),
+			'ajax'     => false,
 			'screen'   => 'es_subscribers'
 		) );
+
+		$this->db = new ES_DB_Contacts();
 
 		add_filter( 'ig_es_audience_tab_main_navigation', array( $this, 'get_audience_main_tabs' ), 10, 2 );
 
@@ -79,7 +90,14 @@ class ES_Contacts_Table extends WP_List_Table {
 
 	}
 
-
+	/**
+	 * @param $active_tab
+	 * @param array $audience_main_tabs
+	 *
+	 * @return array
+	 *
+	 * @since 4.0.0
+	 */
 	public function get_audience_main_tabs( $active_tab, $audience_main_tabs = array() ) {
 
 		$audience_tab_main_navigation = array(
@@ -201,24 +219,39 @@ class ES_Contacts_Table extends WP_List_Table {
 		<?php }
 	}
 
+	/**
+	 * Load Export Feature
+	 *
+	 * @since 4.0.0
+	 */
 	public function load_export() {
 		$export = new Export_Subscribers();
 		$export->export_subscribers_page();
 	}
 
+	/**
+	 * Load import
+	 *
+	 * @since 4.0.0
+	 */
 	public function load_import() {
 		$import = new ES_Import_Subscribers();
 		$import->import_subscribers_page();
 	}
 
+	/**
+	 * Load Sync
+	 *
+	 * @since 4.0.0
+	 */
 	public function load_sync() {
 		$sync = ES_Handle_Sync_Wp_User::get_instance();
 		$sync->prepare_sync_user();
 	}
 
 	/**
-     * Get Contacts Reports
-     *
+	 * Get Contacts Reports
+	 *
 	 * @since 4.3.1
 	 */
 	public function get_contacts_reports() {
@@ -250,6 +283,13 @@ class ES_Contacts_Table extends WP_List_Table {
 		<?php
 	}
 
+	/**
+	 * Save contact
+	 *
+	 * @param int $id
+	 *
+	 * @since 4.0.0
+	 */
 	public function save_contact( $id = 0 ) {
 		global $wpdb;
 
@@ -266,38 +306,39 @@ class ES_Contacts_Table extends WP_List_Table {
 			$title        = __( 'Edit Contact', 'email-subscribers' );
 			$title_action = '<a href="admin.php?page=es_subscribers&action=new" class="page-title-action">' . __( 'Add New', 'email-subscribers' ) . '</a>';
 
-			$contacts_table = IG_CONTACTS_TABLE;
-			$query          = "SELECT * FROM {$contacts_table} WHERE id = %d";
-			$contact        = $wpdb->get_results( $wpdb->prepare( $query, $id ), ARRAY_A );
+			$contact = $this->db->get( $id );
 
-			if ( ! empty( $contact[0] ) ) {
-				$contact = $contact[0];
+			if ( ! empty( $contact ) ) {
 
-				$first_name = ! empty( $contact['first_name'] ) ? $contact['first_name'] : '';
-				$last_name  = ! empty( $contact['last_name'] ) ? $contact['last_name'] : '';
-				$email      = ! empty( $contact['email'] ) ? $contact['email'] : '';
-				$list_ids   = ES_DB_Lists_Contacts::get_list_ids_by_contact( $id );
-				$guid       = $contact['hash'];
-				$nonce      = esc_attr( ig_es_get_request_data( '_wpnonce' ) );
+				$first_name = ig_es_get_data( $contact, 'first_name' );
+				$last_name  = ig_es_get_data( $contact, 'last_name' );
+				$email      = sanitize_email( ig_es_get_data( $contact, 'email' ) );
+				$guid       = ig_es_get_data( $contact, 'hash' );
+
+				$list_ids = ES()->lists_contacts_db->get_list_ids_by_contact( $id );
+
+				$nonce = esc_attr( ig_es_get_request_data( '_wpnonce' ) );
 			}
 		}
 
 		$submitted = ig_es_get_request_data( 'submitted' );
+
 		if ( 'submitted' === $submitted ) {
 
 			$contact_data = ig_es_get_post_data( 'contact_data', array() );
-			$is_error     = false;
+
+			$is_error = false;
 			if ( ! empty( $contact_data ) ) {
 
-				$email = ! empty( $contact_data['email'] ) ? sanitize_email( $contact_data['email'] ) : '';
+				$email = sanitize_email( ig_es_get_data( $contact_data, 'email', '', true ) );
 
 				if ( $email ) {
 
-					$list_ids = ! empty( $contact_data['lists'] ) ? $contact_data['lists'] : array();
+					$lists = ig_es_get_data( $contact_data, 'lists', array() );
 
-					if ( count( $list_ids ) > 0 ) {
-						$first_name = ! empty( $contact_data['first_name'] ) ? sanitize_text_field( $contact_data['first_name'] ) : '';
-						$last_name  = ! empty( $contact_data['last_name'] ) ? sanitize_text_field( $contact_data['last_name'] ) : '';
+					if ( count( $lists ) > 0 ) {
+						$first_name = ig_es_get_data( $contact_data, 'first_name', '', true );
+						$last_name  = ig_es_get_data( $contact_data, 'last_name', '', true );
 
 						if ( ! empty( $first_name ) ) {
 
@@ -330,9 +371,9 @@ class ES_Contacts_Table extends WP_List_Table {
 
 							if ( ! $is_error ) {
 
-								$list_ids = ! empty( $list_ids ) ? $list_ids : array( 1 );
+								$lists = ! empty( $lists ) ? $lists : array( 1 => 0 );
 
-								ES_DB_Lists_Contacts::update_list_contacts( $id, $list_ids );
+								ES()->lists_contacts_db->update_contact_lists( $id, $lists );
 
 								if ( $id ) {
 
@@ -389,7 +430,6 @@ class ES_Contacts_Table extends WP_List_Table {
 			'first_name'        => $first_name,
 			'last_name'         => $last_name,
 			'email'             => $email,
-			'selected_list_ids' => $list_ids,
 			'guid'              => $guid
 		);
 
@@ -522,64 +562,6 @@ class ES_Contacts_Table extends WP_List_Table {
 		return $result;
 	}
 
-	public function edit_list( $id ) {
-		global $wpdb;
-
-		$notificationid = $wpdb->get_results( "SELECT * FROM " . IG_CONTACTS_TABLE . " WHERE id = $id" );
-
-		$title         = $notificationid[0]->first_name . ' ' . $notificationid[0]->last_name;
-		$email         = $notificationid[0]->email;
-		$contact_lists = ES_DB_Lists_Contacts::get_list_ids_by_contact( $notificationid[0]->id );
-
-		$status = ig_es_get_request_data( 'status' );
-		if ( 'updated' === $status ) {
-			$email_address = sanitize_email( ig_es_get_request_data( 'email' ) );
-
-			if ( ! empty( $email_address ) ) {
-				$this->update_list( $id );
-				$title         = ig_es_get_request_data( 'subscriber_name' );
-				$contact_lists = ig_es_get_request_data( 'lists' );
-				$email         = $email_address;
-			}
-		}
-
-		$id      = $notificationid[0]->id;
-		$guid    = $notificationid[0]->hash;
-		$created = $notificationid[0]->created_at;
-		$nonce   = esc_attr( ig_es_get_request_data( '_wpnonce' ) );
-
-		$data = array(
-			'id'                => $id,
-			'action'            => "admin.php?page=es_subscribers&action=edit&subscriber={$id}&_wpnonce={$nonce}&status=updated",
-			'name'              => $title,
-			'email'             => $email,
-			'created'           => $created,
-			'guid'              => $guid,
-			'selected_list_ids' => $contact_lists
-		);
-
-		$contact_name = ig_es_get_request_data( 'subscriber_name' );
-		if ( $contact_name ) {
-			$message = __( 'Contact updated successfully!', 'email-subscribers' );
-			ES_Common::show_message( $message, 'success' );
-		}
-
-		$editform = '<div class="wrap">
-            <h1 class="wp-heading-inline">' . __( 'Edit Contact', 'email-subscribers' ) . '<a href="admin.php?page=es_subscribers&action=new" class="page-title-action">Add New</a></h1>' . Email_Subscribers_Admin::es_feedback() . '
-            <hr class="wp-header-end">
-            <div id="poststuff">
-            <div id="post-body" class="metabox-holder column-1">
-                    <div id="post-body-content">
-                        <div class="meta-box-sortables ui-sortable es-contact-form">'
-		            . $this->prepare_contact_form( $data, false ) .
-		            '</div>
-                    </div>
-                </div>
-            </div>
-        </div>';
-
-		return $editform;
-	}
 
 	public function prepare_contact_form( $data = array(), $is_new = false ) {
 
@@ -590,13 +572,13 @@ class ES_Contacts_Table extends WP_List_Table {
 		$first_name         = ! empty( $data['first_name'] ) ? $data['first_name'] : '';
 		$last_name          = ! empty( $data['last_name'] ) ? $data['last_name'] : '';
 		$email              = ! empty( $data['email'] ) ? $data['email'] : '';
-		$selected_list_ids  = ! empty( $data['selected_list_ids'] ) ? $data['selected_list_ids'] : array();
 		$send_welcome_email = ! empty( $data['send_welcome_email'] ) ? true : false;
 
 		$lists_id_name_map = ES()->lists_db->get_list_id_name_map();
 
 		if ( count( $lists_id_name_map ) ) {
-			$list_html = ES_Shortcode::prepare_lists_checkboxes( $lists_id_name_map, array_keys( $lists_id_name_map ), 4, $selected_list_ids, $id, 'contact_data[lists][]' );
+			//$list_html = ES_Shortcode::prepare_lists_checkboxes( $lists_id_name_map, array_keys( $lists_id_name_map ), 4, $selected_list_ids, $id, 'contact_data[lists][]' );
+			$list_html = $this->prepare_lists_html( $id );
 		} else {
 			$list_html = "<tr><td>" . __( 'No list found', 'email-subscribers' ) . "</td></tr>";
 		}
@@ -649,22 +631,14 @@ class ES_Contacts_Table extends WP_List_Table {
 		<?php
 	}
 
-
 	/**
-	 * Returns the count of records in the database.
+	 * No contacts available
 	 *
-	 * @return null|string
+	 * @since 4.0.0
 	 */
-	public static function record_count() {
-		global $wpdb;
-
-		$sql = "SELECT COUNT(*) FROM " . IG_CONTACTS_TABLE;
-
-		return $wpdb->get_var( $sql );
+	public function no_items() {
+		_e( 'No contacts avaliable.', 'email-subscribers' );
 	}
-
-
-	/** Text displayed when no subscriber data is available */
 
 
 	/**
@@ -674,6 +648,8 @@ class ES_Contacts_Table extends WP_List_Table {
 	 * @param string $column_name
 	 *
 	 * @return mixed
+	 *
+	 * @since 4.0.0
 	 */
 	public function column_default( $item, $column_name ) {
 		$item = apply_filters( 'es_subscribers_col_data', $item, $column_name );
@@ -689,6 +665,67 @@ class ES_Contacts_Table extends WP_List_Table {
 		}
 	}
 
+	/**
+     * Prepare lists html to set status
+     *
+	 * @param int $contact_id
+	 * @param int $columns
+	 *
+	 * @return string
+     *
+     * @since 4.3.6
+	 */
+	public function prepare_lists_html( $contact_id = 0, $columns = 2 ) {
+		$lists = ES()->lists_db->get_id_name_map();
+
+		$lists_html = '';
+		if ( count( $lists ) > 0 ) {
+
+		    $list_contact_status_map = array();
+			if ( ! empty( $contact_id ) ) {
+				$list_contact_status_map = ES()->lists_contacts_db->get_list_contact_status_map( $contact_id );
+			}
+
+			$lists_html = "<div><table class='ig-es-form-list-html'><tr>";
+
+			$i = 0;
+			foreach ( $lists as $list_id => $list_name ) {
+				if ( $i != 0 && ( $i % $columns ) === 0 ) {
+					$lists_html .= "</tr><tr>";
+				}
+
+				$selected = ! empty( $list_contact_status_map[ $list_id ] ) ? $list_contact_status_map[ $list_id ] : '';
+
+				$status_dropdown_html = "<select class='ig-es-statuses-dropdown' name='contact_data[lists][" . $list_id . "]' >";
+				$status_dropdown_html .= ES_Common::prepare_statuses_dropdown_options( $selected );
+				$status_dropdown_html .= "</select>";
+
+				$status_span = '';
+				if(!empty($list_contact_status_map[$list_id])) {
+				    $status_span = '<span class="es_list_contact_status ' . $list_contact_status_map[ $list_id ] . '" title="' . ucwords( $list_contact_status_map[ $list_id ] ) . '">';
+                }
+
+				$list_name  = strlen( $list_name ) > 15 ? substr( $list_name, 0, 15 ) . '...' : $list_name;
+				$lists_html .= "<td>$status_span$list_name</td><td>$status_dropdown_html</td>";
+
+				$i ++;
+			}
+
+			$lists_html .= "</tr></table></div>";
+		}
+
+		return $lists_html;
+	}
+
+	/**
+	 * Show lists with it's status
+	 *
+	 * @param $contact_id
+	 *
+	 * @return string
+	 *
+	 * @since 4.0.0
+	 */
 	public function get_lists_to_show( $contact_id ) {
 
 		$list_str = '';
@@ -711,31 +748,14 @@ class ES_Contacts_Table extends WP_List_Table {
 		return $list_str;
 	}
 
-	public function status_label_map( $status ) {
-
-		$statuses = array(
-			// 'confirmed'     => __( 'Confirmed', 'email-subscribers' ),
-			'subscribed'   => __( 'Subscribed', 'email-subscribers' ),
-			'unconfirmed'  => __( 'Unconfirmed', 'email-subscribers' ),
-			'unsubscribed' => __( 'Unsubscribed', 'email-subscribers' ),
-			// 'single_opt_in' => __( 'Single Opt In', 'email-subscribers' ),
-			// 'double_opt_in' => __( 'Double Opt In', 'email-subscribers' )
-		);
-
-
-		if ( ! in_array( $status, array_keys( $statuses ) ) ) {
-			return '';
-		}
-
-		return $statuses[ $status ];
-	}
-
 	/**
 	 * Render the bulk edit checkbox
 	 *
 	 * @param array $item
 	 *
 	 * @return string
+	 *
+	 * @since 4.0.0
 	 */
 	function column_cb( $item ) {
 		return sprintf(
@@ -743,13 +763,14 @@ class ES_Contacts_Table extends WP_List_Table {
 		);
 	}
 
-
 	/**
 	 * Method for name column
 	 *
 	 * @param array $item an array of DB data
 	 *
 	 * @return string
+	 *
+	 * @since 4.0.0
 	 */
 	function column_name( $item ) {
 		$delete_nonce = wp_create_nonce( 'ig_es_delete_subscriber' );
@@ -769,11 +790,12 @@ class ES_Contacts_Table extends WP_List_Table {
 		return $title . $this->row_actions( $actions );
 	}
 
-
 	/**
 	 * Associative array of columns
 	 *
 	 * @return array
+	 *
+	 * @since 4.0.0
 	 */
 	function get_columns() {
 		$columns = array(
@@ -791,6 +813,8 @@ class ES_Contacts_Table extends WP_List_Table {
 	 * Columns to make sortable.
 	 *
 	 * @return array
+	 *
+	 * @since 4.0.0
 	 */
 	public function get_sortable_columns() {
 		$sortable_columns = array(
@@ -807,6 +831,8 @@ class ES_Contacts_Table extends WP_List_Table {
 	 * Returns an associative array containing the bulk action
 	 *
 	 * @return array
+	 *
+	 * @since 4.0.0
 	 */
 	public function get_bulk_actions() {
 		$actions = array(
@@ -851,13 +877,23 @@ class ES_Contacts_Table extends WP_List_Table {
 
 	<?php }
 
-
-	public function get_contact_id($contact) {
+	/**
+	 * Get Contact id
+	 *
+	 * @param $contact
+	 *
+	 * @return mixed
+	 *
+	 * @since 4.0.0
+	 */
+	public function get_contact_id( $contact ) {
 		return $contact['id'];
 	}
 
 	/**
 	 * Handles data query and filter, sorting, and pagination.
+	 *
+	 * @since 4.0.0
 	 */
 	public function prepare_items() {
 
@@ -887,17 +923,19 @@ class ES_Contacts_Table extends WP_List_Table {
 
 			$contact_ids = array_map( array( $this, 'get_contact_id' ), $contacts );
 
-			$contact_lists_statuses = ES_DB_Lists_Contacts::get_list_status_by_contact_ids( $contact_ids );
+			$contact_lists_statuses = ES()->lists_contacts_db->get_list_status_by_contact_ids( $contact_ids );
 
 			$this->contact_lists_statuses = $contact_lists_statuses;
 
-			$lists_id_name_map = ES()->lists_db->get_list_id_name_map();
-
-			$this->lists_id_name_map = $lists_id_name_map;
-
+			$this->lists_id_name_map = ES()->lists_db->get_list_id_name_map();
 		}
 	}
 
+	/**
+	 * Prepare list dropdown
+	 *
+	 * @since 4.0.0
+	 */
 	public function prepare_lists_dropdown() {
 		$data = '<label for="bulk-action-selector-top" class="screen-reader-text">Select bulk action</label><select name="list_id" id="list_id" class="groupsselect" style="display: none">';
 		$data .= ES_Common::prepare_list_dropdown_options();
@@ -1021,7 +1059,7 @@ class ES_Contacts_Table extends WP_List_Table {
 				}
 
 				// loop over the array of record IDs and delete them
-				$edited = ES_DB_Lists_Contacts::edit_subscriber_status( $subscriber_ids, $status );
+				$edited = ES()->lists_contacts_db->edit_subscriber_status( $subscriber_ids, $status );
 
 				if ( $edited ) {
 					$message = __( 'Status has been changed successfully!', 'email-subscribers' );
@@ -1041,7 +1079,7 @@ class ES_Contacts_Table extends WP_List_Table {
 					return;
 				}
 
-				$edited = ES()->contacts_db->update_contacts_list( $subscriber_ids, $list_id );
+				$edited = ES()->lists_contacts_db->move_contacts_to_list( $subscriber_ids, $list_id );
 
 				if ( $edited ) {
 					$message = __( 'Contact(s) have been moved to list successfully!', 'email-subscribers' );
@@ -1062,7 +1100,7 @@ class ES_Contacts_Table extends WP_List_Table {
 					return;
 				}
 
-				$edited = ES()->contacts_db->add_contacts_to_list( $subscriber_ids, $list_id );
+				$edited = ES()->lists_contacts_db->add_contacts_to_list( $subscriber_ids, $list_id );
 
 				if ( $edited ) {
 					$message = __( 'Contact(s) have been added to list successfully!', 'email-subscribers' );
@@ -1077,18 +1115,18 @@ class ES_Contacts_Table extends WP_List_Table {
 	/**
 	 * Remove contacts from list when list is deleted
 	 *
-	 * @param $list_ids
+	 * @param $list_id
 	 *
 	 * @since 4.3.1
+	 * @since 4.3.5 Used remove_contacts_from_list method
 	 */
-	public function delete_contacts_from_list( $list_id ) {
-		global $wpdb;
+	public function delete_contacts_from_list( $list_id = 0 ) {
 
-		$ig_lists_contacts_table = IG_LISTS_CONTACTS_TABLE;
+		if ( empty( $list_id ) ) {
+			return;
+		}
 
-		$query = "DELETE FROM {$ig_lists_contacts_table} WHERE list_id = %d";
-
-		$wpdb->query( $wpdb->prepare( $query, $list_id ) );
+		return ES()->lists_contacts_db->remove_all_contacts_from_list( $list_id );
 	}
 
 	/**
@@ -1107,12 +1145,6 @@ class ES_Contacts_Table extends WP_List_Table {
 		$query = "UPDATE $ig_contacts_table SET form_id = 0 WHERE form_id = %d";
 
 		$wpdb->query( $wpdb->prepare( $query, $form_id ) );
-
 	}
-
-	public function no_items() {
-		_e( 'No contacts avaliable.', 'email-subscribers' );
-	}
-
 
 }

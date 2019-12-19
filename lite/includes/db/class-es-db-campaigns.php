@@ -567,7 +567,7 @@ class ES_DB_Campaigns extends ES_DB {
 	 */
 	public function delete_campaigns( $ids = array() ) {
 
-		if ( is_string( $ids ) ) {
+		if ( ! is_array( $ids ) ) {
 			$ids = array( absint( $ids ) );
 		}
 
@@ -605,7 +605,63 @@ class ES_DB_Campaigns extends ES_DB {
 			return array();
 		}
 
-		return $this->get_column_by('id', 'parent_id', $parent_campaign_id, false);
+		return $this->get_column_by( 'id', 'parent_id', $parent_campaign_id, false );
 	}
+
+	/**
+	 * Get Post Notifications (Campaigns) based on post_id
+	 * 
+	 * @param int $post_id
+	 *
+	 * @return array|object|null
+	 *
+	 * @since 4.3.6
+	 */
+	public function get_campaigns_by_post_id( $post_id = 0 ) {
+
+		global $wpdb;
+
+		$campaigns = array();
+
+		if ( $post_id > 0 ) {
+			$post_type = get_post_type( $post_id );
+
+			$where = $wpdb->prepare( "status = %d AND type = %s AND (deleted_at IS NULL OR deleted_at = '0000-00-00 00:00:00')", 1, 'post_notification' );
+
+			if ( "post" === $post_type ) {
+				$categories       = get_the_category( $post_id );
+				$total_categories = count( $categories );
+				if ( $total_categories > 0 ) {
+					for ( $i = 0; $i < $total_categories; $i ++ ) {
+						if ( $i == 0 ) {
+							$where .= " and (";
+						} else {
+							$where .= " or";
+						}
+
+						$category_str = ES_Common::prepare_category_string( $categories[ $i ]->term_id );
+
+						$where .= " categories LIKE '%" . $category_str . "%'";
+						if ( $i == ( $total_categories - 1 ) ) {
+							$where .= " OR categories LIKE '%all%'";
+							$where .= ")";
+						}
+					}
+				} else {
+					//no categories fround for post
+					return $campaigns;
+				}
+			} else {
+				$post_type = ES_Common::prepare_custom_post_type_string( $post_type );
+				$where     .= " and categories LIKE '%" . wp_specialchars_decode( addslashes( $post_type ) ) . "%'";
+			}
+
+			$campaigns = $this->get_by_conditions( $where, ARRAY_A );
+		}
+
+		return $campaigns;
+
+	}
+
 
 }

@@ -197,7 +197,7 @@ class ES_DB_Lists extends ES_DB {
 	 */
 	public function add_lists( $lists ) {
 
-		if ( is_string( $lists ) ) {
+		if ( ! is_array( $lists ) ) {
 			$lists = array( $lists );
 		}
 
@@ -234,7 +234,7 @@ class ES_DB_Lists extends ES_DB {
 	 */
 	public function add_list( $list = '' ) {
 
-		if ( empty( $list ) || ! is_string( $list ) ) {
+		if ( empty( $list ) || ! is_scalar( $list ) ) {
 			return 0;
 		}
 
@@ -356,7 +356,7 @@ class ES_DB_Lists extends ES_DB {
 	 */
 	public function delete_lists( $ids ) {
 
-		if ( is_string( $ids ) ) {
+		if ( ! is_array( $ids ) ) {
 			$ids = array( $ids );
 		}
 

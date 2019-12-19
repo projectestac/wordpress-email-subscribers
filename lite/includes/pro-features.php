@@ -24,7 +24,7 @@ function ig_es_add_upsale( $fields ) {
 
 		// Security settings
         // XTEC ************ Eliminat - Disable Security settings
-        // 2019.12.04 @nacho
+        // 2019.12.20 @nacho
         $field_security['es_upsale_security'] = array();
         //************ ORIGINAL
         /*
@@ -39,7 +39,7 @@ function ig_es_add_upsale( $fields ) {
 
 		// SMTP settings
         // XTEC ************ Eliminat - Disable SMTP
-        // 2019.12.04 @nacho
+        // 2019.12.20 @nacho
         $field_smtp['es_upsale_smtp'] = array();
         //************ ORIGINAL
         /*
@@ -53,177 +53,182 @@ function ig_es_add_upsale( $fields ) {
         //************ FI
         $fields['email_sending']      = array_merge( $fields['email_sending'], $field_smtp );
 
-        } $wpforms_plugin = 'wpforms-lite/wpforms.php';// Is Contact Form 7 active? Show CF7
-        return $fields;
-    }
+	}
 
-    // XTEC ************ Modificat - Hidden tab "Comments" in Audience > Sync to all users but xtecadmin
-    // 2019.12.18 @nacho
-    /*function ig_es_add_sync_users_tabs( $tabs ) {
-        if (is_xtec_super_admin()) {
-            global $ig_es_tracker;
+	return $fields;
+}
 
-            // Show integrations only if ES Premium is not installed.
-            if (!ES()->is_starter()) {
-                $tabs['comments'] = array(
-                    'name' => __('Comments', 'email-subscribers'),
-                    'indicator_option' => 'ig_es_show_sync_comment_users_indicator',
-                    'indicator_label' => 'Starter'
-                );
-
-                $woocommerce_plugin = 'woocommerce/woocommerce.php';
-
-                // Is WooCommmerce active? Show WooCommerce integration
-                $active_plugins = $ig_es_tracker::get_active_plugins();
-                if (in_array($woocommerce_plugin, $active_plugins)) {
-                    $tabs['woocommerce'] = array(
-                        'name' => __('WooCommerce', 'email-subscribers'),
-                        'indicator_option' => 'ig_es_show_sync_woocommerce_users_indicator',
-                        'indicator_label' => 'Starter'
-                    );
-                }
-
-                // Is Contact Form 7 active? Show CF7 integration.
-                $contact_form_7 = 'contact-form-7/wp-contact-form-7.php';
-                if (in_array($contact_form_7, $active_plugins)) {
-                    $tabs['cf7'] = array(
-                        'name' => __('Contact Form 7', 'email-subscribers'),
-                        'indicator_option' => 'ig_es_show_sync_cf7_users_indicator',
-                        'indicator_label' => 'Starter'
-                    );
-                }
-
-                $wpforms_plugin = 'wpforms-lite/wpforms.php';
-                if (in_array($wpforms_plugin, $active_plugins)) {
-                    $tabs['wpforms'] = array(
-                        'name' => __('WPForms', 'email-subscribers'),
-                        'indicator_option' => 'ig_es_show_sync_wpforms_users_indicator',
-                        'indicator_label' => 'Starter'
-                    );
-                }
-
-                // Show only if Give is installed & activated
-                $give_plugin = 'give/give.php';
-                if (in_array($give_plugin, $active_plugins)) {
-                    $tabs['give'] = array(
-                        'name' => __('Give', 'email-subscribers'),
-                        'indicator_option' => 'ig_es_show_sync_give_users_indicator',
-                        'indicator_label' => 'Starter'
-                    );
-                }
-
-                // Show only if Ninja Forms is installed & activated
-                $ninja_forms_plugin = 'ninja-forms/ninja-forms.php';
-                if (in_array($ninja_forms_plugin, $active_plugins)) {
-                    $tabs['ninja_forms'] = array(
-                        'name' => __('Ninja Forms', 'email-subscribers'),
-                        'indicator_option' => 'ig_es_show_sync_ninja_forms_users_indicator',
-                        'indicator_label' => 'Starter'
-                    );
-                }
-
-                // Show only if EDD is installed & activated
-                $edd_plugin = 'easy-digital-downloads/easy-digital-downloads.php';
-                if (in_array($edd_plugin, $active_plugins)) {
-                    $tabs['edd'] = array(
-                        'name' => __('EDD', 'email-subscribers'),
-                        'indicator_option' => 'ig_es_show_sync_edd_users_indicator',
-                        'indicator_label' => 'Starter'
-                    );
-                }
-
-            }
-        }
-        return $tabs;
-    }*/
-    //************ ORIGINAL
-    /*function ig_es_add_sync_users_tabs( $tabs ) {
+// XTEC ************ Modificat - Hidden tab "Comments" in Audience > Sync to all users but xtecadmin
+// 2019.12.20 @nacho
+function ig_es_add_sync_users_tabs( $tabs ) {
+    if (is_xtec_super_admin()) {
         global $ig_es_tracker;
 
         // Show integrations only if ES Premium is not installed.
-        if ( ! ES()->is_starter() ) {
+        if (!ES()->is_starter()) {
             $tabs['comments'] = array(
-                'name'             => __( 'Comments', 'email-subscribers' ),
+                'name' => __('Comments', 'email-subscribers'),
                 'indicator_option' => 'ig_es_show_sync_comment_users_indicator',
-                'indicator_label'  => 'Starter'
+                'indicator_label' => 'Starter'
             );
 
             $woocommerce_plugin = 'woocommerce/woocommerce.php';
 
             // Is WooCommmerce active? Show WooCommerce integration
             $active_plugins = $ig_es_tracker::get_active_plugins();
-            if ( in_array( $woocommerce_plugin, $active_plugins ) ) {
+            if (in_array($woocommerce_plugin, $active_plugins)) {
                 $tabs['woocommerce'] = array(
-                    'name'             => __( 'WooCommerce', 'email-subscribers' ),
+                    'name' => __('WooCommerce', 'email-subscribers'),
                     'indicator_option' => 'ig_es_show_sync_woocommerce_users_indicator',
-                    'indicator_label'  => 'Starter'
+                    'indicator_label' => 'Starter'
                 );
             }
 
             // Is Contact Form 7 active? Show CF7 integration.
             $contact_form_7 = 'contact-form-7/wp-contact-form-7.php';
-            if ( in_array( $contact_form_7, $active_plugins ) ) {
+            if (in_array($contact_form_7, $active_plugins)) {
                 $tabs['cf7'] = array(
-                    'name'             => __( 'Contact Form 7', 'email-subscribers' ),
+                    'name' => __('Contact Form 7', 'email-subscribers'),
                     'indicator_option' => 'ig_es_show_sync_cf7_users_indicator',
-                    'indicator_label'  => 'Starter'
+                    'indicator_label' => 'Starter'
                 );
             }
 
             $wpforms_plugin = 'wpforms-lite/wpforms.php';
-            if ( in_array( $wpforms_plugin, $active_plugins ) ) {
+            if (in_array($wpforms_plugin, $active_plugins)) {
                 $tabs['wpforms'] = array(
-                    'name'             => __( 'WPForms', 'email-subscribers' ),
+                    'name' => __('WPForms', 'email-subscribers'),
                     'indicator_option' => 'ig_es_show_sync_wpforms_users_indicator',
-                    'indicator_label'  => 'Starter'
+                    'indicator_label' => 'Starter'
                 );
             }
 
             // Show only if Give is installed & activated
             $give_plugin = 'give/give.php';
-            if ( in_array( $give_plugin, $active_plugins ) ) {
+            if (in_array($give_plugin, $active_plugins)) {
                 $tabs['give'] = array(
-                    'name'             => __( 'Give', 'email-subscribers' ),
+                    'name' => __('Give', 'email-subscribers'),
                     'indicator_option' => 'ig_es_show_sync_give_users_indicator',
-                    'indicator_label'  => 'Starter'
+                    'indicator_label' => 'Starter'
                 );
             }
 
             // Show only if Ninja Forms is installed & activated
             $ninja_forms_plugin = 'ninja-forms/ninja-forms.php';
-            if ( in_array( $ninja_forms_plugin, $active_plugins ) ) {
+            if (in_array($ninja_forms_plugin, $active_plugins)) {
                 $tabs['ninja_forms'] = array(
-                    'name'             => __( 'Ninja Forms', 'email-subscribers' ),
+                    'name' => __('Ninja Forms', 'email-subscribers'),
                     'indicator_option' => 'ig_es_show_sync_ninja_forms_users_indicator',
-                    'indicator_label'  => 'Starter'
+                    'indicator_label' => 'Starter'
                 );
             }
 
             // Show only if EDD is installed & activated
             $edd_plugin = 'easy-digital-downloads/easy-digital-downloads.php';
-            if ( in_array( $edd_plugin, $active_plugins ) ) {
+            if (in_array($edd_plugin, $active_plugins)) {
                 $tabs['edd'] = array(
-                    'name'             => __( 'EDD', 'email-subscribers' ),
+                    'name' => __('EDD', 'email-subscribers'),
                     'indicator_option' => 'ig_es_show_sync_edd_users_indicator',
-                    'indicator_label'  => 'Starter'
+                    'indicator_label' => 'Starter'
                 );
             }
 
         }
+    }
 
-        return $tabs;
-    }*/
-    //************ FI
+	return $tabs;
+}
+//************ ORIGINAL
+/*
+function ig_es_add_sync_users_tabs( $tabs ) {
 
-    function ig_es_add_comments_tab_settings( $tab_options ) {
+    global $ig_es_tracker;
 
-        // If you want to hide once shown. Set it to 'no'
-        // If you don't want to hide. do not use following code or set value as 'yes'
-        /*
-        if ( ! empty( $tab_options['indicator_option'] ) ) {
-            update_option( $tab_options['indicator_option'], 'yes' ); // yes/no
+    // Show integrations only if ES Premium is not installed.
+    if (!ES()->is_starter()) {
+        $tabs['comments'] = array(
+            'name' => __('Comments', 'email-subscribers'),
+            'indicator_option' => 'ig_es_show_sync_comment_users_indicator',
+            'indicator_label' => 'Starter'
+        );
+
+        $woocommerce_plugin = 'woocommerce/woocommerce.php';
+
+        // Is WooCommmerce active? Show WooCommerce integration
+        $active_plugins = $ig_es_tracker::get_active_plugins();
+        if (in_array($woocommerce_plugin, $active_plugins)) {
+            $tabs['woocommerce'] = array(
+                'name' => __('WooCommerce', 'email-subscribers'),
+                'indicator_option' => 'ig_es_show_sync_woocommerce_users_indicator',
+                'indicator_label' => 'Starter'
+            );
         }
-        */
+
+        // Is Contact Form 7 active? Show CF7 integration.
+        $contact_form_7 = 'contact-form-7/wp-contact-form-7.php';
+        if (in_array($contact_form_7, $active_plugins)) {
+            $tabs['cf7'] = array(
+                'name' => __('Contact Form 7', 'email-subscribers'),
+                'indicator_option' => 'ig_es_show_sync_cf7_users_indicator',
+                'indicator_label' => 'Starter'
+            );
+        }
+
+        $wpforms_plugin = 'wpforms-lite/wpforms.php';
+        if (in_array($wpforms_plugin, $active_plugins)) {
+            $tabs['wpforms'] = array(
+                'name' => __('WPForms', 'email-subscribers'),
+                'indicator_option' => 'ig_es_show_sync_wpforms_users_indicator',
+                'indicator_label' => 'Starter'
+            );
+        }
+
+        // Show only if Give is installed & activated
+        $give_plugin = 'give/give.php';
+        if (in_array($give_plugin, $active_plugins)) {
+            $tabs['give'] = array(
+                'name' => __('Give', 'email-subscribers'),
+                'indicator_option' => 'ig_es_show_sync_give_users_indicator',
+                'indicator_label' => 'Starter'
+            );
+        }
+
+        // Show only if Ninja Forms is installed & activated
+        $ninja_forms_plugin = 'ninja-forms/ninja-forms.php';
+        if (in_array($ninja_forms_plugin, $active_plugins)) {
+            $tabs['ninja_forms'] = array(
+                'name' => __('Ninja Forms', 'email-subscribers'),
+                'indicator_option' => 'ig_es_show_sync_ninja_forms_users_indicator',
+                'indicator_label' => 'Starter'
+            );
+        }
+
+        // Show only if EDD is installed & activated
+        $edd_plugin = 'easy-digital-downloads/easy-digital-downloads.php';
+        if (in_array($edd_plugin, $active_plugins)) {
+            $tabs['edd'] = array(
+                'name' => __('EDD', 'email-subscribers'),
+                'indicator_option' => 'ig_es_show_sync_edd_users_indicator',
+                'indicator_label' => 'Starter'
+            );
+        }
+
+    }
+
+
+    return $tabs;
+}*/
+//************ FI
+
+function ig_es_add_comments_tab_settings( $tab_options ) {
+
+	// If you want to hide once shown. Set it to 'no'
+	// If you don't want to hide. do not use following code or set value as 'yes'
+	/*
+	if ( ! empty( $tab_options['indicator_option'] ) ) {
+		update_option( $tab_options['indicator_option'], 'yes' ); // yes/no
+	}
+	*/
 
 	$info = array(
 		'type' => 'info'

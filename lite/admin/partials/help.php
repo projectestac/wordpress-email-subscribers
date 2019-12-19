@@ -31,11 +31,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
         <?php
         // XTEC ************ AFEGIT - Hidden unnecessary help to all users but xtecadmin
-        // 2019.11.29 @nacho
+        // 2019.12.20 @nacho
         if (is_xtec_super_admin()) {
         ?>
         <div class="right-blog">
-
 
 			<?php if ( $enable_manual_update ) {
 
@@ -47,22 +46,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				ob_start();
 				?>
-                
 
                 <div class="database-migration">
-                    <h3><?php echo __('Database Migration', 'email-subscribers'); ?></h3>
+                    <h3><?php echo __( 'Database Migration', 'email-subscribers' ); ?></h3>
 
-                    <p><?php echo __('If you found duplicate campaigns, lists, forms, reports after upgrading from Email Subscribers 3.5.x to 4.x and want to run the database migration again to fix this, please click the below <b>Run the updater</b> button.', 'email-subscribers'); ?></p>
+                    <p><?php echo __( 'If you found duplicate campaigns, lists, forms, reports after upgrading from Email Subscribers 3.5.x to 4.x and want to run the database migration again to fix this, please click the below <b>Run the updater</b> button.', 'email-subscribers' ); ?></p>
 
-                    <p><?php echo __('Once you click on <b>Run the updater</b> button, it will run the migration process from 3.5.x once again. So, if you have created new campaigns, forms or lists after migration to 4.x earlier, you will lose those data. So, make sure you have a backup with you.', 'email-subscribers'); ?></p>
+                    <p><?php echo __( 'Once you click on <b>Run the updater</b> button, it will run the migration process from 3.5.x once again. So, if you have created new campaigns, forms or lists after migration to 4.x earlier, you will lose those data. So, make sure you have a backup with you.', 'email-subscribers' ); ?></p>
 
                     <p class="submit">
-                        <a href="<?php echo esc_url($update_url); ?>"
-                           class="es-update-now button-primary"><?php echo __('Run the updater', 'email-subscribers'); ?></a>
+                        <a href="<?php echo esc_url( $update_url ); ?>" class="es-update-now button-primary"><?php echo __( 'Run the updater', 'email-subscribers' ); ?></a>
                     </p>
 
                 </div>
-
 
 				<?php
 				$content = ob_get_clean();
@@ -108,7 +104,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
         <?php
         // XTEC ************ Modificat - Hidden cron options for all users but xtecadmin
-        // 2019.12.09 @nacho
+        // 2019.12.20 @nacho
         if (is_xtec_super_admin()) {?>
         <div class="feature-blog">
             <h3><?php echo __( 'Cron Job Setup', 'email-subscribers' ); ?></h3>
@@ -125,7 +121,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         ?>
         <?php
         // XTEC ************ Modificat - Hidden GDPR for all users but xtecadmin
-        // 2019.12.0 @nacho
+        // 2019.12.20 @nacho
         if (is_xtec_super_admin()) {?>
         <div class="feature-blog">
             <h3><?php echo __( '[GDPR] Email Subscribers', 'email-subscribers' ); ?></h3>
@@ -157,7 +153,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     </div>
     <?php
     // XTEC ************ Modificat - Hidden help info for all users but xtecadmin
-    // 2019.12.04 @nacho
+    // 2019.12.20 @nacho
     if (is_xtec_super_admin()) {?>
     <div class="feature-section feature-section-last">
         <div class="feature-header"><h2><?php echo __( "Want to do more? Here's how..", 'email-subscribers' ); ?></h2></div>

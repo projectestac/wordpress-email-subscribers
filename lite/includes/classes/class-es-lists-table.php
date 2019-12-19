@@ -264,7 +264,7 @@ class ES_Lists_Table extends WP_List_Table {
                             <form method="post" action="admin.php?page=es_lists&action=<?php echo $action; ?>&list=<?php echo $id; ?>&_wpnonce=<?php echo $nonce; ?>">
                                 <div class="row-blog">
                                     <label><?php _e( 'Name', 'email-subscribers' ); ?>: </label>
-                                    <input type="text" id="name" name="list_name" value="<?php echo esc_attr($list_name); ?>"/>
+                                    <input type="text" id="name" name="list_name" value="<?php echo esc_attr( $list_name ); ?>"/>
                                 </div>
                                 <input type="hidden" name="submitted" value="submitted"/>
                                 <div class="row-blog"><?php submit_button(); ?></div>
@@ -391,20 +391,6 @@ class ES_Lists_Table extends WP_List_Table {
 		return $result;
 	}
 
-
-	/**
-	 * Returns the count of records in the database.
-	 *
-	 * @return null|string
-	 */
-	public function record_count() {
-		global $wpdb;
-
-		$sql = "SELECT COUNT(*) FROM " . IG_LISTS_TABLE;
-
-		return $wpdb->get_var( $sql );
-	}
-
 	/**
 	 * Render a column when no column specific method exist.
 	 *
@@ -416,8 +402,8 @@ class ES_Lists_Table extends WP_List_Table {
 	public function column_default( $item, $column_name ) {
 
 		switch ( $column_name ) {
-			case 'active_contacts':
-				$count = ES_DB_Lists_Contacts::get_total_count_by_list( $item['id'], 'subscribed' );
+			case 'subscribed':
+				$count = ES()->lists_contacts_db->get_total_count_by_list( $item['id'], 'subscribed' );
 				if ( $count > 0 ) {
 					$url   = admin_url( 'admin.php?page=es_subscribers&filter_by_status=subscribed&filter_by_list_id=' . $item['id'] );
 					$count = sprintf( __( '<a href="%s" target="_blank">%d</a>', 'email-subscribers' ), $url, $count );
@@ -425,8 +411,26 @@ class ES_Lists_Table extends WP_List_Table {
 
 				return $count;
 				break;
+			case 'unsubscribed':
+				$count = ES()->lists_contacts_db->get_total_count_by_list( $item['id'], 'unsubscribed' );
+				if ( $count > 0 ) {
+					$url   = admin_url( 'admin.php?page=es_subscribers&filter_by_status=unsubscribed&filter_by_list_id=' . $item['id'] );
+					$count = sprintf( __( '<a href="%s" target="_blank">%d</a>', 'email-subscribers' ), $url, $count );
+				}
+
+				return $count;
+				break;
+			case 'unconfirmed':
+				$count = ES()->lists_contacts_db->get_total_count_by_list( $item['id'], 'unconfirmed' );
+				if ( $count > 0 ) {
+					$url   = admin_url( 'admin.php?page=es_subscribers&filter_by_status=unconfirmed&filter_by_list_id=' . $item['id'] );
+					$count = sprintf( __( '<a href="%s" target="_blank">%d</a>', 'email-subscribers' ), $url, $count );
+				}
+
+				return $count;
+				break;
 			case 'all_contacts':
-				$count = ES_DB_Lists_Contacts::get_total_count_by_list( $item['id'], 'all' );
+				$count = ES()->lists_contacts_db->get_total_count_by_list( $item['id'], 'all' );
 				if ( $count > 0 ) {
 					$url   = admin_url( 'admin.php?page=es_subscribers&filter_by_list_id=' . $item['id'] );
 					$count = sprintf( __( '<a href="%s" target="_blank">%d</a>', 'email-subscribers' ), $url, $count );
@@ -489,16 +493,19 @@ class ES_Lists_Table extends WP_List_Table {
 	 * @return array
 	 */
 	function get_columns() {
+
 		$columns = array(
-			'cb'              => '<input type="checkbox" />',
-			'name'            => __( 'Name', 'email-subscribers' ),
-			'active_contacts' => __( 'Active Contacts', 'email-subscribers' ),
-			'all_contacts'    => __( 'All Contacts', 'email-subscribers' ),
-			'created_at'      => __( 'Created', 'email-subscribers' ),
-			'export'          => __( 'Export', 'email-subscribers' )
+			'cb'           => '<input type="checkbox" />',
+			'name'         => __( 'Name', 'email-subscribers' ),
+			'subscribed'   => __( 'Subscribed', 'email-subscribers' ),
+			'unsubscribed' => __( 'Unsubscribed', 'email-subscribers' ),
+			'unconfirmed'  => __( 'Unconfirmed', 'email-subscribers' ),
+			'all_contacts' => __( 'All Contacts', 'email-subscribers' ),
+			'created_at'   => __( 'Created', 'email-subscribers' ),
+			'export'       => __( 'Export', 'email-subscribers' )
 		);
 
-		return $columns;
+		return apply_filters( 'ig_es_lists_columns', $columns );
 	}
 
 
@@ -530,17 +537,17 @@ class ES_Lists_Table extends WP_List_Table {
 	}
 
 	/**
-     * Prepare search box
-     *
+	 * Prepare search box
+	 *
 	 * @param string $text
 	 * @param string $input_id
-     *
-     * @since 4.0.0
-     * @since 4.3.4 Added esc_attr()
+	 *
+	 * @since 4.0.0
+	 * @since 4.3.4 Added esc_attr()
 	 */
-	public function search_box( $text = '', $input_id = '') { ?>
+	public function search_box( $text = '', $input_id = '' ) { ?>
         <p class="search-box">
-            <label class="screen-reader-text" for="<?php echo esc_attr($input_id); ?>"><?php echo esc_attr($text); ?>:</label>
+            <label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_attr( $text ); ?>:</label>
             <input type="search" id="<?php echo $input_id ?>" name="s" value="<?php _admin_search_query(); ?>"/>
 			<?php submit_button( __( 'Search Lists', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
         </p>

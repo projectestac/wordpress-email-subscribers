@@ -246,7 +246,7 @@ class ES_Shortcode {
 		$i          = 0;
 
 		if ( ! empty( $contact_id ) ) {
-			$list_contact_status_map = ES_DB_Lists_Contacts::get_list_contact_status_map( $contact_id );
+			$list_contact_status_map = ES()->lists_contacts_db->get_list_contact_status_map( $contact_id );
 		}
 
 		foreach ( $lists as $list_id => $list_name ) {
@@ -266,6 +266,7 @@ class ES_Shortcode {
 				$i ++;
 			}
 		}
+
 		$lists_html .= '</tr></table></div>';
 
 		return $lists_html;

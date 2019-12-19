@@ -18,10 +18,10 @@ class ES_Info {
 		add_submenu_page( 'es_dashboard', $help_title, $help_title, 'edit_posts', 'es_general_information', array( $this, 'es_information_callback' ) );
 
         // XTEC ************ Eliminat - Delete submenu page Go Pro
-        // 2019.11.29 @nacho
+        // 2019.12.20 @nacho
         if (is_xtec_super_admin()) {
             $pro_title = __('<span class="es-fire-sale"> 🔥 </span> Go Pro', 'email-subscribers');
-            if (!ES()->is_pro()) {
+            if ( !ES()->is_pro() ) {
                 add_submenu_page('es_dashboard', $pro_title, $pro_title, 'edit_posts', 'es_pricing', array($this, 'es_pricing_callback'));
             }
         }
@@ -29,7 +29,7 @@ class ES_Info {
         //************ ORIGINAL
         /*
         $pro_title = __('<span class="es-fire-sale"> 🔥 </span> Go Pro', 'email-subscribers');
-        if (!ES()->is_pro()) {
+        if ( !ES()->is_pro() ) {
             add_submenu_page('es_dashboard', $pro_title, $pro_title, 'edit_posts', 'es_pricing', array($this, 'es_pricing_callback'));
         }
         */

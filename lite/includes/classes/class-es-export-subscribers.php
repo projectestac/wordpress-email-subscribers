@@ -164,23 +164,23 @@ class Export_Subscribers {
 
 		switch ( $status ) {
 			case 'all':
-				$sql = "SELECT COUNT(*) FROM " . IG_LISTS_CONTACTS_TABLE;
+				return ES()->lists_contacts_db->get_all_contacts_count( 0, false );
 				break;
 
 			case 'subscribed':
-				$sql = $wpdb->prepare( "SELECT COUNT(*) FROM " . IG_LISTS_CONTACTS_TABLE . " WHERE status = %s", 'subscribed' );
+				return ES()->lists_contacts_db->get_subscribed_contacts_count( 0, false );
 				break;
 
 			case 'unsubscribed':
-				$sql = $wpdb->prepare( "SELECT COUNT(email) FROM " . IG_CONTACTS_TABLE . " WHERE status = %s", 'unsubscribed' );
+				return ES()->lists_contacts_db->get_unsubscribed_contacts_count( 0, false );
 				break;
 
 			case 'confirmed':
-				$sql = $wpdb->prepare( "SELECT COUNT(*) FROM " . IG_LISTS_CONTACTS_TABLE . " WHERE status = %s AND optin_type = %d", 'subscribed', IG_DOUBLE_OPTIN );
+				return ES()->lists_contacts_db->get_confirmed_contacts_count( 0, false );
 				break;
 
 			case 'unconfirmed':
-				$sql = $wpdb->prepare( "SELECT count(contact_id) FROM " . IG_LISTS_CONTACTS_TABLE . " WHERE status = %s", 'unconfirmed' );
+				return ES()->lists_contacts_db->get_unconfirmed_contacts_count( 0, false );
 				break;
 
 			case 'select_list':
@@ -189,7 +189,6 @@ class Export_Subscribers {
 				break;
 		}
 
-		return $wpdb->get_var( $sql );
 	}
 
 
@@ -237,7 +236,7 @@ class Export_Subscribers {
 	 *
 	 * @return string
 	 */
-	public function generate_csv( $status = 'all', $list_id = '' ) {
+	public function generate_csv( $status = 'all', $list_id = 0 ) {
 
 		global $wpdb;
 
@@ -245,27 +244,24 @@ class Export_Subscribers {
 		set_time_limit( IG_SET_TIME_LIMIT );
 
 		$email_subscribe_table = IG_CONTACTS_TABLE;
-		$contact_lists_table   = IG_LISTS_CONTACTS_TABLE;
 
+		$results = array();
 		if ( 'all' === $status ) {
-			$query = "SELECT * FROM " . IG_LISTS_CONTACTS_TABLE;
+			$results = ES()->lists_contacts_db->get_all_contacts();
 		} elseif ( 'subscribed' === $status ) {
-			$query = $wpdb->prepare( "SELECT * FROM {$contact_lists_table} WHERE status = %s", 'subscribed' );
+			$results = ES()->lists_contacts_db->get_all_subscribed_contacts();
 		} elseif ( 'unsubscribed' === $status ) {
-			$query = $wpdb->prepare( "SELECT * FROM {$contact_lists_table} WHERE status = %s", 'unsubscribed' );
+			$results = ES()->lists_contacts_db->get_all_unsubscribed_contacts();
 		} elseif ( 'confirmed' === $status ) {
-			$query = $wpdb->prepare( "SELECT * FROM {$contact_lists_table} WHERE status = %s AND optin_type = %d ", 'subscribed', IG_DOUBLE_OPTIN );
+			$results = ES()->lists_contacts_db->get_all_confirmed_contacts();
 		} elseif ( 'unconfirmed' === $status ) {
-			$query = $wpdb->prepare( "SELECT * FROM {$contact_lists_table} WHERE status = %s", 'unconfirmed' );
+			$results = ES()->lists_contacts_db->get_all_unconfirmed_contacts();
 		} elseif ( 'select_list' === $status ) {
-			$query = $wpdb->prepare( "SELECT * FROM {$contact_lists_table} WHERE list_id = %d ", $list_id );
-		} else {
-			// If nothing comes, export only 10 contacts
-			$query = "SELECT * FROM " . IG_LISTS_CONTACTS_TABLE . " LIMIT 0, 10";
+			$list_id = absint( $list_id );
+			$results = ES()->lists_contacts_db->get_all_contacts_from_list( $list_id );
 		}
 
 		$subscribers = array();
-		$results     = $wpdb->get_results( $query, ARRAY_A );
 
 		if ( count( $results ) > 0 ) {
 			$contact_list_map = array();
