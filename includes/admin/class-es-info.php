@@ -19,9 +19,17 @@ class ES_Info {
 		if ( is_multisite() ) {
 			$active_plugins = array_merge( $active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
 		}
-		if ( ! ( in_array( 'email-subscribers-premium/email-subscribers-premium.php', $active_plugins ) || array_key_exists( 'email-subscribers-premium/email-subscribers-premium.php', $active_plugins ) ) ) {
-			add_submenu_page( 'es_dashboard', 'Go Pro', 'Go Pro', 'edit_posts', 'es_pricing', array( $this, 'es_pricing_callback' ) );
-		}
+        // XTEC ************ AFEGIT - Hidden GoPro to all users but xtecadmin
+        // 2020.01.24 @nacho
+        if (is_xtec_super_admin()) {
+        //************ FI
+            if (!(in_array('email-subscribers-premium/email-subscribers-premium.php', $active_plugins) || array_key_exists('email-subscribers-premium/email-subscribers-premium.php', $active_plugins))) {
+                add_submenu_page('es_dashboard', 'Go Pro', 'Go Pro', 'edit_posts', 'es_pricing', array($this, 'es_pricing_callback'));
+            }
+        // XTEC ************ AFEGIT - Hidden GoPro to all users but xtecadmin
+        // 2020.01.24 @nacho
+        }
+        //************ FI
 	}
 
 	public function es_information_callback() {

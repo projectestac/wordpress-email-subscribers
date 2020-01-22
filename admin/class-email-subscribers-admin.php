@@ -142,6 +142,10 @@ class Email_Subscribers_Admin {
 		add_submenu_page( 'es_dashboard', __( 'Reports', 'email-subscribers' ), __( 'Reports', 'email-subscribers' ), 'edit_posts', 'es_reports', array( $this, 'load_reports' ) );
 		add_submenu_page( 'es_dashboard', __( 'Audience', 'email-subscribers' ), __( 'Audience', 'email-subscribers' ), 'edit_posts',  'es_subscribers', array( $this, 'load_audience' ) );
 		add_submenu_page( 'es_dashboard', __( 'Campaigns', 'email-subscribers' ), __( 'Campaigns', 'email-subscribers' ), 'edit_posts',  'es_campaigns', array( $this, 'load_campaigns' ) );
+        // XTEC ************ AFEGIT - Added List submenu page
+        // 2020.01.24 @nacho
+		add_submenu_page( 'es_dashboard', __( 'Lists', 'email-subscribers' ), __( 'Lists', 'email-subscribers' ), 'edit_posts',  'es_lists', array( $this, 'load_lists' ) );
+        //************ FI
 		add_submenu_page( 'es_dashboard', __( 'Settings', 'email-subscribers' ), __( 'Settings', 'email-subscribers' ),'edit_posts',  'es_settings', array( $this, 'load_settings' ) );
 		add_submenu_page( 'es_dashboard', __( 'Forms', 'email-subscribers' ), __( 'Forms', 'email-subscribers' ), 'edit_posts', 'es_forms', array( $this, 'load_forms' ) );
 		add_submenu_page( 'es_dashboard', __( 'Tools', 'email-subscribers' ), __( 'Tools', 'email-subscribers' ), 'edit_posts',  'es_tools', array( $this, 'load_tools' ) );

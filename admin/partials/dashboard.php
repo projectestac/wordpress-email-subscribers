@@ -48,13 +48,6 @@ if ( ! defined( 'ABSPATH' ) ) {
         });
 </script>
 
-<?php
-// XTEC ************ AFEGIT - Hidden email_subscribers info
-// 2019.07.23 @nacho
-if (is_xtec_super_admin()) {
-//************ FI
-?>
-
 <div class="wrap">
 	<div class="about-header">
 		<div class="es-upper">
@@ -104,7 +97,13 @@ if (is_xtec_super_admin()) {
 				</div>
 				
 			</div>
-
+            
+            <?php
+            // XTEC ************ AFEGIT - Hidden email_subscribers info
+            // 2020.01.24 @nacho
+            if (is_xtec_super_admin()) {
+            //************ FI
+            ?>
 			<div class="wrap klawoo-form">
 				<table class="form-table">
 					<tr>
@@ -146,6 +145,12 @@ if (is_xtec_super_admin()) {
 				</table>
 				
 			</div>
+            <?php
+            // XTEC ************ AFEGIT - Hidden email_subscribers info
+            // 2020.01.24 @nacho
+            }
+            //************ FI
+            ?>
 		</div>
 		<div class="es-lower">
 			<div class="es-version">
@@ -159,9 +164,5 @@ if (is_xtec_super_admin()) {
 	</div>
 </div>
 
-<?php
-// XTEC ************ AFEGIT - Hidden email_subscribers info
-// 2019.07.23 @nacho
-}
-//************ FI
-?>
+
+
