@@ -152,6 +152,12 @@ if ( ! defined( 'ABSPATH' ) ) {
             //************ FI
             ?>
 		</div>
+        <?php
+        // XTEC ************ AFEGIT - Hidden email_subscribers info
+        // 2020.01.24 @nacho
+        if (is_xtec_super_admin()) {
+        //************ FI
+        ?>
 		<div class="es-lower">
 			<div class="es-version">
 				<h3><?php echo __( 'Questions? Need Help?', 'email-subscribers' ); ?></h3>
@@ -159,8 +165,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<h5 class="es-badge"><?php echo sprintf( __( 'Version: %s', 'email-subscribers' ), $es_current_version ); ?></h5>
 			</div>
 		</div>
-		
-		
+        <?php
+        // XTEC ************ AFEGIT - Hidden email_subscribers info
+        // 2020.01.24 @nacho
+        }
+        //************ FI
+        ?>
 	</div>
 </div>
 
