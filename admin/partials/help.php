@@ -93,6 +93,12 @@ if ( ! defined( 'ABSPATH' ) ) {
             </ul>
         </div>
     </div>
+    <?php
+    // XTEC ************ AFEGIT - Hidden email_subscribers info
+    // 2020.01.24 @nacho
+    if (is_xtec_super_admin()) {
+    //************ FI
+    ?>
     <div class="feature-section feature-section-last">
         <div class="feature-header"><h2><?php echo __( "Want to do more? Here's how..", 'email-subscribers' ); ?></h2></div>
         <div class="feature-blog-wrapper">
@@ -114,4 +120,10 @@ if ( ! defined( 'ABSPATH' ) ) {
             </div>
         </div>
     </div>
+    <?php
+    // XTEC ************ AFEGIT - Hidden email_subscribers info
+    // 2020.01.24 @nacho
+    }
+    //************ FI
+    ?>
 </div>
