@@ -267,7 +267,14 @@ class Email_Subscribers_Admin {
 	public function email_subscribers_admin_menu() {
 		
 		$accessible_sub_menus = ES_Common::ig_es_get_accessible_sub_menus();
-		
+
+        // XTEC ************ AFEGIT - Hidden workflows to all users
+        // 2021.01.20 @aginard
+        if (($key = array_search('workflows', $accessible_sub_menus)) !== false) {
+            unset($accessible_sub_menus[$key]);
+        }
+        // *********FI
+
 		if ( count( $accessible_sub_menus ) > 0 ) {
 
 			$menu_title = ES()->get_admin_menu_title();

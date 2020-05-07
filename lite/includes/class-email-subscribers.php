@@ -376,6 +376,14 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 						'email-subscribers' ) . '</a></p></div>';
 				$args['html']            = $html;
 				ES_Admin_Notices::add_custom_notice( 'show_wp_cron', $args );
+
+                // XTEC ************ AFEGIT - Delete message email subscribers cron
+                // 2021.01.20 @aginard
+                if (! is_xtec_super_admin()) {
+                    ES_Admin_Notices::remove_notice( 'show_wp_cron' );
+                }
+                //************ FI
+
 			} else {
 				// Remove the notice if user hasn't disabled the WP CRON or renabled the WP CRON.
 				ES_Admin_Notices::remove_notice( 'show_wp_cron' );
@@ -1143,6 +1151,14 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 * @since 4.6.1
 		 */
 		public function can_upsell_features( $show_for_plans = array() ) {
+
+            // XTEC ************ AFEGIT - Hidden PRO features to all users but xtecadmin
+            // 2021.01.20 @aginard
+            if (! is_xtec_super_admin()) {
+                return false;
+            }
+            // *********FI
+
 			$es_current_plan = $this->get_plan();
 			if ( in_array( $es_current_plan, $show_for_plans ) ) { 
 				return true;

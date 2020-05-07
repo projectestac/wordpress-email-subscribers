@@ -9,9 +9,15 @@
 </style>
 <?php
 
+// XTEC ************ ELIMINAT - Disable advertising
+// 2019.12.20 @nacho
+/*
 if ( ( get_option( 'ig_es_offer_covid_19' ) !== 'yes' ) && ( $ig_current_date >= strtotime( '2020-04-08' ) ) && ( $ig_current_date <= strtotime( '2020-04-30' ) )) { ?>
 	<div class="ig_es_offer">
 		<a target="_blank" href="?es_dismiss_admin_notice=1&option_name=offer_covid_19"><img src="<?php echo esc_url ( ES_PLUGIN_URL ); ?>/lite/admin/images/covid-19.png"/></a>
 	</div>
 
 <?php } ?>
+<?php
+*/
+//************ FI

@@ -16,6 +16,12 @@ class ES_Info {
 	public function plugin_menu() {
 
 		// Start-IG-Code.
+
+        // XTEC ************ AFEGIT - Delete submenu page Go Pro
+        // 2019.12.20 @nacho
+        if (is_xtec_super_admin()) {
+        //************ FI
+
 		$help_title = __( 'Help & Info', 'email-subscribers' );
 		add_submenu_page( 'es_dashboard', $help_title, $help_title, 'edit_posts', 'es_general_information', array( $this, 'es_information_callback' ) );
 
@@ -23,6 +29,12 @@ class ES_Info {
 		if ( ! ES()->is_pro() ) {
 			add_submenu_page( 'es_dashboard', $pro_title, $pro_title, 'edit_posts', 'es_pricing', array( $this, 'es_pricing_callback' ) );
 		}
+
+        // XTEC ************ AFEGIT - Delete submenu page Go Pro
+        // 2019.12.20 @nacho
+        }
+        //************ FI
+
 		// End-IG-Code.
 	}
 

@@ -702,7 +702,12 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_5' ) ) {
 
 					var feedbackButtonClass = 'ig-feedback-button-<?php echo $this->plugin; ?>';
 
+                    // XTEC ************ Eliminat - Delete Feedback button
+                    // 2019.12.20 @nacho
+                    /*
 					$('#wpwrap').append('<div class="ig-es-feedback-button ' + feedbackButtonClass + '">Feedback</div>');
+                    */
+                    //************ FI
 
 					$('.' + feedbackButtonClass).on('click', function () {
 						Swal.mixin({

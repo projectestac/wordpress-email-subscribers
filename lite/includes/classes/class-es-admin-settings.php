@@ -496,6 +496,10 @@ class ES_Admin_Settings {
 				'name'         => __( 'Cron URL', 'email-subscribers' ),
 				'desc'         => $cron_url_setting_desc,
 			),
+
+            // XTEC ************ ELIMINAT - Hidden option to Disable Wordpress Cron to all users
+            // 2021.01.20 @aginard
+            /*
 			'ig_es_disable_wp_cron'         => array(
 				'type'         => 'checkbox',
 				'placeholder'  => '',
@@ -505,6 +509,8 @@ class ES_Admin_Settings {
 				'name'         => __( 'Disable Wordpress Cron', 'email-subscribers' ),
 				'info'         => __( 'Check this if you do not want Email Subscribers to use WP Cron to send emails.', 'email-subscribers' ),
 			),
+            */
+            // *********FI
 
 			'ig_es_cron_interval'           => array(
 				'id'      => 'ig_es_cron_interval',
@@ -547,6 +553,9 @@ class ES_Admin_Settings {
 				'desc'         => __( 'Enter email address to send test email.', 'email-subscribers' ),
 			),
 
+            // XTEC ************ ELIMINAT - Hidden option to Select Mailer to all users
+            // 2021.01.20 @aginard
+            /*
 			'ig_es_mailer_settings'         => array(
 				'type'         => 'html',
 				'sub_fields'   => array(
@@ -584,6 +593,9 @@ class ES_Admin_Settings {
 				'name'         => __( 'Select a mailer to send mail', 'email-subscribers' ),
 				'desc'         => '',
 			),
+            */
+            // *********FI
+
 		);
 
 		$email_sending_settings = apply_filters( 'ig_es_registered_email_sending_settings', $email_sending_settings );
@@ -929,6 +941,12 @@ class ES_Admin_Settings {
 	 * @since 4.4.9
 	 */
 	public function show_cron_info( $email_sending_settings ) {
+
+        // XTEC ************ AFEGIT - Hidden workflows to all users
+        // 2021.01.20 @aginard
+        return $email_sending_settings;
+        // ************ FI
+
 		$es_cron_enabled = ES()->cron->is_wp_cron_enable();
 		if ( $es_cron_enabled ) {
 			$es_cron_info           = array(

@@ -88,8 +88,15 @@ $topics_indexes = array_rand( $topics, 3 );
 							  <?php if ( ES()->is_pro() ) { ?>
 								  <a href="<?php echo esc_url( $new_sequence_url ); ?>" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"><?php echo esc_html__( 'New Sequence', 'email-subscribers' ); ?></a>
 							  <?php } else { ?>
+                                  <?php
+                                  // XTEC ************ ELIMINAT - Hidden option to Disable Wordpress Cron to all users
+                                  // 2021.01.20 @aginard
+                                  /*
 								  <a href="<?php echo esc_url( $icegram_pricing_url ); ?>" target="_blank" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"><?php echo esc_html__( 'New Sequence', 'email-subscribers' ); ?>
 									  <span class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full"><?php echo esc_html__( 'Premium', 'email-subscribers' ); ?></span></a>
+							      */
+                                  // *********FI
+                                  ?>
 							  <?php } ?>
 							</div>
 							<div class="border-t border-gray-100"></div>
@@ -161,6 +168,13 @@ $topics_indexes = array_rand( $topics, 3 );
 				</div>
 			</div>
 
+            <?php
+            // XTEC ************ AFEGIT - Hidden unnecessary info to all users but xtecadmin
+            // 2021.01.20 @aginard
+            if (is_xtec_super_admin()) :
+            // *********FI
+            ?>
+
 			<div class="flex-1 min-w-0">
 				<div class="overflow-hidden">
 					<ul>
@@ -207,6 +221,14 @@ $topics_indexes = array_rand( $topics, 3 );
 					</ul>
 				</div>
 			</div>
+
+            <?php
+            // XTEC ************ AFEGIT - Hidden unnecessary info to all users but xtecadmin
+            // 2021.01.20 @aginard
+            endif;
+            // *********FI
+            ?>
+
 		</section>
 
 
