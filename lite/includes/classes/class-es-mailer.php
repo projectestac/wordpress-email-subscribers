@@ -257,11 +257,11 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			$subject = $this->get_confirmation_email_subject();
 			$content = $this->get_confirmation_email_content();
 
-			$content = str_replace( "{{LINK}}", "{{SUBSCRIBE-LINK}}", $content );
-
 			if ( empty( $subject ) || empty( $content ) ) {
 				return false;
 			}
+
+			$content = str_replace( "{{LINK}}", "{{SUBSCRIBE-LINK}}", $content );
 
 			$this->add_unsubscribe_link = false;
 			$this->add_tracking_pixel   = false;
@@ -286,9 +286,17 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 * @return string
 		 *
 		 * @since 4.3.2
+		 *
+		 * @modify 4.3.12
 		 */
 		public function get_confirmation_email_subject() {
-			return stripslashes( get_option( 'ig_es_confirmation_mail_subject', '' ) );
+			$subject = stripslashes( get_option( 'ig_es_confirmation_mail_subject', '' ) );
+
+			if ( empty( $subject ) ) {
+				$subject = __( 'Thanks!', 'email-subscribers' );
+			}
+
+			return $subject;
 		}
 
 		/**
@@ -654,13 +662,27 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 
 			$message->headers = $headers;
 
+			//$email       = ig_es_get_data( $merge_tags, 'email', '' );
+			$hash        = ig_es_get_data( $merge_tags, 'hash', '' );
+			$campaign_id = ig_es_get_data( $merge_tags, 'campaign_id', 0 );
+			$contact_id  = ig_es_get_data( $merge_tags, 'contact_id', 0 );
+			$message_id  = ig_es_get_data( $merge_tags, 'message_id', 0 );
+
+			$link_data = array(
+				'message_id'  => $message_id,
+				'campaign_id' => $campaign_id,
+				'contact_id'  => $contact_id,
+				'email'       => $email,
+				'guid'        => $hash
+			);
+
 			$message->body = preg_replace( '/data-json=".*?"/is', '', $message->body );
 			$message->body = preg_replace( '/  +/s', ' ', $message->body );
 
 			$message->subject = $this->replace_merge_tags( $message->subject, $merge_tags );
 
 			// Can Track Clicks? Replace Links
-			$message->body = $this->replace_links( $message->body );
+			$message->body = $this->replace_links( $message->body, $link_data );
 
 			// Unsubscribe Text
 			$unsubscribe_message = $this->get_unsubscribe_text();
@@ -737,7 +759,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 */
 		public function prepare_content( $content, $merge_tags = array(), $nl2br = false ) {
 			// Convert text equivalent of smilies to images.
-			$content = convert_chars( convert_smilies( wptexturize( $content ) ) );
+			$content = convert_smilies( wptexturize( $content ) );
 
 			if ( isset( $GLOBALS['wp_embed'] ) ) {
 				$content = $GLOBALS['wp_embed']->autoembed( $content );
@@ -809,14 +831,13 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			$total_contacts = ES()->contacts_db->get_total_contacts();
 			$site_url       = home_url( '/' );
 
-			$contact_id = ig_es_get_data( $merge_tags, 'contact_id', 0 );
-
 			$name        = ig_es_get_data( $merge_tags, 'name', '' );
-			$email       = ig_es_get_data( $merge_tags, 'email', '' );
 			$first_name  = ig_es_get_data( $merge_tags, 'first_name', '' );
 			$last_name   = ig_es_get_data( $merge_tags, 'last_name', '' );
-			$hash        = ig_es_get_data( $merge_tags, 'hash', '' );
 			$list_name   = ig_es_get_data( $merge_tags, 'list_name', '' );
+			$hash        = ig_es_get_data( $merge_tags, 'hash', '' );
+			$email       = ig_es_get_data( $merge_tags, 'email', '' );
+			$contact_id  = ig_es_get_data( $merge_tags, 'contact_id', 0 );
 			$campaign_id = ig_es_get_data( $merge_tags, 'campaign_id', 0 );
 			$message_id  = ig_es_get_data( $merge_tags, 'message_id', 0 );
 
@@ -914,6 +935,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 
 				// get all links from the basecontent
 				preg_match_all( '# href=(\'|")?(https?[^\'"]+)(\'|")?#', $content, $links );
+
 				$links = $links[2];
 
 				if ( empty( $links ) ) {
@@ -922,8 +944,10 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 
 				$inserted_links = array();
 
-				$campaign_id = ! empty( $data['campaign_id'] ) ? $data['campaign_id'] : 0;
-				$message_id  = ! empty( $data['message_id'] ) ? $data['message_id'] : 0;
+				$campaign_id = ! empty( $link_data['campaign_id'] ) ? $link_data['campaign_id'] : 0;
+				$message_id  = ! empty( $link_data['message_id'] ) ? $link_data['message_id'] : 0;
+				$contact_id  = ! empty( $link_data['contact_id'] ) ? $link_data['contact_id'] : 0;
+
 
 				foreach ( $links as $link ) {
 
@@ -934,7 +958,8 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 					}
 
 					$inserted_links[ $link ] = $index;
-					$result                  = ES()->links_db->get_link_by_campaign_id( $link, $campaign_id, $message_id, $index );
+
+					$result = ES()->links_db->get_link_by_campaign_id( $link, $campaign_id, $message_id, $index );
 
 					if ( is_array( $result ) && count( $result ) > 0 ) {
 						$hash = $result[0]['hash'];
@@ -953,7 +978,11 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 						ES()->links_db->insert( $link_data );
 					}
 
-					$data['link_hash'] = $hash;
+					$data = array(
+						'action'    => 'click',
+						'link_hash' => $hash,
+						'contact_id' => $contact_id
+					);
 
 					$new_link = $this->prepare_link( $data );
 
@@ -1088,6 +1117,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 * @since 4.3.2
 		 */
 		public function prepare_link( $data = array() ) {
+
 			/**
 			 * We are getting different data like action, message_id, campaign_id, contact_id, guid, email etc in $data
 			 */

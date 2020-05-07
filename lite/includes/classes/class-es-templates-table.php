@@ -193,8 +193,8 @@ class ES_Templates_Table {
 		<div class="es-main" style="display:flex;">
 			<div class="es-sidebar">
 				<h2 style="margin-bottom:1em;">
-					Template Preview					<a class="add-new-h2" href="' . admin_url() . 'admin.php?page=es-general-information">Help</a>
-				</h2>' . Email_Subscribers_Admin::es_feedback() . '
+					Template Preview <a class="add-new-h2" href="' . admin_url() . 'admin.php?page=es-general-information">Help</a>
+				</h2>
 				<p>
 					<a class="button-primary"  href="' . admin_url() . 'post.php?post=' . $template_id . '&action=edit">Edit</a>
 				</p>

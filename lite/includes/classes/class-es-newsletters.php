@@ -140,6 +140,7 @@ class ES_Newsletters {
                         <div class="es_settings_right_pan">
                             <div class="es_settings_field">
                                 <label><?php _e( 'Recipients', 'email-subscribers' ) ?><br/><select name="broadcast_data[list_ids]" id="ig_es_broadcast_list_ids"><?php echo $lists ?></select></label>
+	                            <span class="helper" id="ig_es_total_contacts"></span>
                             </div>
                             <hr>
                             <div class="es_settings_field">
@@ -147,6 +148,7 @@ class ES_Newsletters {
                                     <input class="es_secondary_btn" type="submit" id="ig_es_preview_broadcast" value="<?php _e( 'Preview this email in browser', 'email-subscribers' ) ?>">
                                     <input type="hidden" name="es_broadcast_preview" id="es_broadcast_preview">
                                 </label>
+
                             </div>
 							<?php do_action( 'ig_es_after_broadcast_right_pan_settings' ); ?>
                         </div>

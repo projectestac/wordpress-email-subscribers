@@ -325,21 +325,25 @@ class ES_DB_Contacts extends ES_DB {
 	 * @return bool|int
 	 *
 	 * @since 4.2.4
+	 *
+	 * @modify 4.3.12
 	 */
 	public function delete_contacts_by_ids( $ids = array() ) {
-		global $wpdb;
 
 		$ids = $this->prepare_for_in_query( $ids );
 
 		$where = "id IN ($ids)";
 
-		$this->delete_by_condition( $where );
+		$delete = $this->delete_by_condition( $where );
 
-		$ig_lists_contacts_table = IG_LISTS_CONTACTS_TABLE;
+		if ( $delete ) {
+			$where = "contact_id IN ($ids)";
 
-		$query = "DELETE FROM $ig_lists_contacts_table WHERE contact_id IN ($ids)";
+			return ES()->lists_contacts_db->delete_by_condition( $where );
+		}
 
-		return $wpdb->query( $query );
+		return false;
+
 	}
 
 	/**

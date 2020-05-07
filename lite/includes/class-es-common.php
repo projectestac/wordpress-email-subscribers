@@ -41,7 +41,8 @@ Class ES_Common {
 	 * @since 4.0.0
 	 */
 	public static function es_process_template_body( $content, $tmpl_id = 0, $campaign_id = 0 ) {
-		$content = convert_chars( convert_smilies( wptexturize( $content ) ) );
+		$content = convert_smilies( wptexturize( $content ) );
+
 		if ( isset( $GLOBALS['wp_embed'] ) ) {
 			$content = $GLOBALS['wp_embed']->autoembed( $content );
 		}
@@ -1022,13 +1023,15 @@ Class ES_Common {
 				} elseif ( 'feedback' === $params['type'] ) {
 					$feedback->render_general_feedback( $params );
 				} elseif ( 'fb' === $params['type'] ) {
-
 					/**
 					 * We are not calling home for this event and we want to show
 					 * this Widget only once. So, we are storing feedback data now.
 					 */
 					$feedback->set_feedback_data( 'ig_es', $event );
 					$feedback->render_fb_widget( $params );
+				} elseif ( 'poll' === $params['type'] ) {
+					$feedback->set_feedback_data( 'ig_es', $event );
+					$feedback->render_poll_widget( $params );
 				}
 			}
 		}
@@ -1109,38 +1112,6 @@ Class ES_Common {
 		}
 
 		return $list_name;
-	}
-
-	/**
-	 * Get all pages of Email Subscribers plugin
-	 *
-	 * @param array $excludes
-	 *
-	 * @return array
-	 *
-	 * @since 4.1.14
-	 */
-	public static function get_all_es_admin_screens( $excludes = array() ) {
-
-		$screens = array(
-			'toplevel_page_es_dashboard',
-			'email-subscribers_page_es_subscribers',
-			'email-subscribers_page_es_lists',
-			'email-subscribers_page_es_forms',
-			'email-subscribers_page_es_campaigns',
-			'email-subscribers_page_es_reports',
-			'email-subscribers_page_es_settings',
-			'email-subscribers_page_es_general_information',
-			'email-subscribers_page_es_pricing'
-		);
-
-		$screens = apply_filters( 'ig_es_admin_screens', $screens );
-
-		if ( count( $excludes ) > 0 ) {
-			$screens = array_diff( $screens, $excludes );
-		}
-
-		return $screens;
 	}
 
 	/**
@@ -1255,12 +1226,8 @@ Class ES_Common {
 	 */
 	public static function generate_hash( $length ) {
 
-		$length   = ( $length ) ? $length : 12;
-		$auth_key = '';
-		if ( defined( 'AUTH_KEY' ) ) {
-			$auth_key = AUTH_KEY;
-		}
+		$length = ( $length ) ? $length : 12;
 
-		return substr( md5( $auth_key . wp_rand( $length, 64 ) ), 0, $length );
+		return substr( md5( uniqid() . uniqid() . wp_rand( $length, 64 ) ), 0, $length );
 	}
 }

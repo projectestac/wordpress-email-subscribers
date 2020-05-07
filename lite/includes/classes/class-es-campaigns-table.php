@@ -96,7 +96,6 @@ class ES_Campaigns_Table extends WP_List_Table {
 				<?php do_action( 'ig_es_after_campaign_type_buttons' ) ?>
                 <a href="edit.php?post_type=es_template" class="page-title-action es-imp-button"><?php _e( 'Manage Templates', 'email-subscribers' ) ?></a>
             </h1>
-			<?php Email_Subscribers_Admin::es_feedback(); ?>
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder column-1">
                     <div id="post-body-content">
@@ -209,6 +208,35 @@ class ES_Campaigns_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Get Campaign statuses
+	 *
+	 * @param string $status
+	 *
+	 * @return array|mixed
+	 *
+	 * @since 4.3.6
+	 */
+	public function get_statuses( $status = '' ) {
+
+		$statuses = array(
+			IG_ES_CAMPAIGN_STATUS_IN_ACTIVE => __( 'In Active', 'email-subscribers' ),
+			IG_ES_CAMPAIGN_STATUS_ACTIVE    => __( 'Active', 'email-subscribers' ),
+			IG_ES_CAMPAIGN_STATUS_SCHEDULED => __( 'Scheduled', 'email-subscribers' ),
+			IG_ES_CAMPAIGN_STATUS_QUEUED    => __( 'Queued', 'email-subscribers' ),
+			IG_ES_CAMPAIGN_STATUS_PAUSED    => __( 'Paused', 'email-subscribers' ),
+			IG_ES_CAMPAIGN_STATUS_FINISHED  => __( 'Finished', 'email-subscribers' ),
+		);
+
+		// We are getting $status = 0 for "In Active".
+		// So, we can't check empty()
+		if ( $status != '' ) {
+			return $statuses[ $status ];
+		}
+
+		return $statuses;
+	}
+
+	/**
 	 * Render a column when no column specific method exist.
 	 *
 	 * @param array $item
@@ -227,10 +255,8 @@ class ES_Campaigns_Table extends WP_List_Table {
 				}
 				break;
 			case 'status':
-				$status = ( $item[ $column_name ] == 1 ) ? __( 'Active', 'email-subscribers' ) : __( 'Inactive', 'email-subscribers' );
 
-				return $status;
-
+				return $this->get_statuses( $item[ $column_name ] );
 				break;
 			case 'type':
 				$type = ( $item[ $column_name ] === 'newsletter' ) ? __( 'Broadcast', 'email-subscribers' ) : $item[ $column_name ];

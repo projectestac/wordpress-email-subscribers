@@ -57,3 +57,12 @@
     height: 200px;
     width: 92%
 }
+
+.ig-feedback-data-poll-message textarea {
+    height: 100px;
+    width: 100%;
+}
+
+.swal2-actions {
+    margin: 0px !important;
+}

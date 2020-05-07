@@ -4,22 +4,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
+if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 	/**
 	 * IG Feedback
 	 *
 	 * The IG Feedback class adds functionality to get quick interactive feedback from users.
 	 * There are different types of feedabck widget like Stars, Emoji, Thubms Up/ Down, Number etc.
 	 *
-	 * @class       IG_Feedback_V_1_0_11
+	 * @class       IG_Feedback_V_1_2_0
 	 * @since       1.0.0
 	 * @copyright   Copyright (c) 2019, Icegram
 	 * @license     https://opensource.org/licenses/gpl-license GNU Public License
 	 * @author      Icegram
 	 * @package     feedback
 	 */
-	class IG_Feedback_V_1_0_11 {
+	class IG_Feedback_V_1_2_0 {
 
+		/**
+		 * Version of Feedback Library
+		 *
+		 * @since 1.0.13
+		 * @var string
+		 *
+		 */
+		public $version = '1.2.0';
 		/**
 		 * The API URL where we will send feedback data.
 		 *
@@ -104,11 +112,226 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
+			/**
+			 * Show 5 star review notice to user
+			 *
+			 * @since 1.0.12
+			 */
+			add_action( 'admin_notices', array( &$this, 'show_review_notice' ) );
 		}
 
 		/**
-         * Render Deactivation feedback Form
-         *
+		 * Ask for user review
+		 *
+		 * @since 1.0.12
+		 */
+		public function show_review_notice() {
+
+			if ( ! defined( 'DOING_AJAX' ) && is_admin() ) {
+
+				$enable_review_notice = apply_filters( $this->plugin_abbr . '_enable_review_notice', true );
+
+				$can_ask_user_for_review = true;
+
+				if ( $enable_review_notice ) {
+
+					$current_user_id = get_current_user_id();
+
+					$review_done_option      = $this->plugin_abbr . '_feedback_review_done';
+					$no_bug_option           = $this->plugin_abbr . '_feedback_do_not_ask_again';
+					$already_did_option      = $this->plugin_abbr . '_feedback_already_did';
+					$maybe_later_option      = $this->plugin_abbr . '_feedback_maybe_later';
+					$review_done_time_option = $review_done_option . '_time';
+					$no_bug_time_option      = $no_bug_option . '_time';
+					$already_did_time_option = $already_did_option . '_time';
+					$maybe_later_time_option = $maybe_later_option . '_time';
+
+					$no_bug_days_before = 1;
+					$no_bug_value       = get_user_meta( $current_user_id, $no_bug_option, true );
+					$no_bug_time_value  = get_user_meta( $current_user_id, $no_bug_time_option, true );
+
+					$review_done_value      = get_user_meta( $current_user_id, $review_done_option, true );
+					$review_done_time_value = get_user_meta( $current_user_id, $review_done_time_option, true );
+
+					if ( ! empty( $no_bug_time_value ) && 0 !== $no_bug_time_value ) {
+						$no_bug_time_diff   = time() - $no_bug_time_value;
+						$no_bug_days_before = floor( $no_bug_time_diff / 86400 ); // 86400 seconds == 1 day
+					}
+
+					$already_did_value      = get_user_meta( $current_user_id, $already_did_option, true );
+					$already_did_time_value = get_user_meta( $current_user_id, $already_did_time_option, true );
+
+					$maybe_later_days_before = 1;
+					$maybe_later_value       = get_user_meta( $current_user_id, $maybe_later_option, true );
+					$maybe_later_time_value  = get_user_meta( $current_user_id, $maybe_later_time_option, true );
+
+					if ( $maybe_later_value && ! empty( $maybe_later_time_value ) && 0 !== $maybe_later_time_value ) {
+						$maybe_later_time_diff   = time() - $maybe_later_time_value;
+						$maybe_later_days_before = floor( $maybe_later_time_diff / 86400 ); // 86400 seconds == 1 day
+					}
+
+					// Is user fall in love with our plugin in 15 days after when they said may be later?
+					// But, make sure we are asking user only after 15 days.
+					// We are good people. Respect the user decision.
+					if ( $review_done_value || $no_bug_value || $already_did_value || ( $maybe_later_value && $maybe_later_days_before < 15 ) || $already_did_value ) {
+						$can_ask_user_for_review = false;
+					}
+
+					$review_data = array(
+						'review_done_value'      => $review_done_value,
+						'review_done_time_value' => $review_done_time_value,
+						'no_bug_value'           => $no_bug_value,
+						'no_bug_time_value'      => $no_bug_time_value,
+						'maybe_later_value'      => $maybe_later_value,
+						'maybe_later_time_value' => $maybe_later_time_value,
+						'already_did_value'      => $already_did_value,
+						'already_did_time_value' => $already_did_time_value,
+					);
+
+					$can_ask_user_for_review = apply_filters( $this->plugin_abbr . '_can_ask_user_for_review', $can_ask_user_for_review, $review_data );
+
+					if ( $can_ask_user_for_review ) {
+
+						$current_page_url = "//" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+						$got_feedback = false;
+						/************** Update Review Status ********************/
+						$nonce          = ! empty( $_GET['ig_feedback_nonce'] ) ? esc_attr( wp_unslash( $_GET['ig_feedback_nonce'] ) ) : '';
+						$nonce_verified = wp_verify_nonce( $nonce, 'review' );
+
+						$action = '';
+						if ( $nonce_verified ) {
+							$action = ! empty( $_GET['ig_feedback_action'] ) ? esc_attr( wp_unslash( $_GET['ig_feedback_action'] ) ) : '';
+
+							if ( ! empty( $action ) && $this->is_valid_action( $action ) ) {
+								update_user_meta( $current_user_id, $action, 1 );
+								update_user_meta( $current_user_id, $action . "_time", time() );
+
+								// Got the review request?
+								// Redirect them to review page
+								if ( $action === $review_done_option ) {
+
+									$url = ! empty( $_GET['review_url'] ) ? $_GET['review_url'] : '';
+
+									if ( ! empty( $url ) ) {
+										?>
+
+                                        <meta http-equiv="refresh" content="0; url=<?php echo $url; ?>"/>
+
+										<?php
+									}
+								}
+							}
+
+							$got_feedback = true;
+						}
+						/************** Update Review Status (End) ********************/
+
+						if ( ! $got_feedback ) {
+
+							$review_url = "https://wordpress.org/support/plugin/{$this->plugin}/reviews/";
+							$icon_url   = plugin_dir_url( __FILE__ ) . 'assets/images/icon-64.png';
+							$message    = __( sprintf( "<span><p>We hope you're enjoying <b>%s</b> plugin! Could you please do us a BIG favor and give us a 5-star rating on WordPress to help us spread the word and boost our motivation?</p>", $this->name ), $this->plugin );
+
+							$message_data = array(
+								'review_url' => $review_url,
+								'icon_url'   => $icon_url,
+								'message'    => $message
+							);
+
+							$message_data = apply_filters( $this->plugin_abbr . '_review_message_data', $message_data );
+
+							$message    = ! empty( $message_data['message'] ) ? $message_data['message'] : '';
+							$review_url = ! empty( $message_data['review_url'] ) ? $message_data['review_url'] : '';
+							$icon_url   = ! empty( $message_data['icon_url'] ) ? $message_data['icon_url'] : '';
+
+							$nonce = wp_create_nonce( 'review' );
+
+							$review_url      = add_query_arg( 'review_url', $review_url, add_query_arg( 'ig_feedback_nonce', $nonce, add_query_arg( 'ig_feedback_action', $review_done_option, $current_page_url ) ) );
+							$maybe_later_url = add_query_arg( 'ig_feedback_nonce', $nonce, add_query_arg( 'ig_feedback_action', $maybe_later_option, $current_page_url ) );
+							$already_did_url = add_query_arg( 'ig_feedback_nonce', $nonce, add_query_arg( 'ig_feedback_action', $already_did_option, $current_page_url ) );
+							$no_bug_url      = add_query_arg( 'ig_feedback_nonce', $nonce, add_query_arg( 'ig_feedback_action', $no_bug_option, $current_page_url ) );
+
+							?>
+
+                            <style type="text/css">
+
+                                .ig-feedback-notice-links li {
+                                    display: inline-block;
+                                    margin-right: 15px;
+                                }
+
+                                .ig-feedback-notice-links li a {
+                                    display: inline-block;
+                                    color: #10738b;
+                                    text-decoration: none;
+                                    padding-left: 26px;
+                                    position: relative;
+                                }
+
+                                .ig-feedback-notice {
+                                    display: flex;
+                                    align-items: center;
+                                }
+
+                                .ig-feedback-plugin-icon {
+                                    float: left;
+                                    margin-right: 0.5em;
+                                }
+
+                            </style>
+
+							<?php
+
+							echo '<div class="notice notice-success ig-feedback-notice">';
+							echo '<span class="ig-feedback-plugin-icon"> <img src="' . $icon_url . '" alt="Logo"/></span>';
+							echo $message;
+							echo "<ul class='ig-feedback-notice-links'>";
+							echo sprintf( '<li><a href="%s" class="button-primary" target="_blank" data-rated="' . esc_attr__( "Thank You :) ",
+									$this->plugin ) . '"><span class="dashicons dashicons-external"></span>&nbsp;&nbsp;Ok, you deserve it</a></li> <li><a href="%s"><span class="dashicons dashicons-calendar-alt"></span>&nbsp;&nbsp;Maybe later</a></li><li><a href="%s"><span class="dashicons dashicons-smiley"></span>&nbsp;&nbsp;I already did!</a></li><li><a href="%s"><span class="dashicons dashicons-no"></span>&nbsp;&nbsp;Don\'t ask me again</a></li>',
+								esc_url( $review_url ), esc_url( $maybe_later_url ), esc_url( $already_did_url ), esc_url( $no_bug_url ) );
+							echo "</ul></span>";
+							echo '</div>';
+						}
+					}
+				}
+			}
+		}
+
+		/**
+		 * Is valid action?
+		 *
+		 * @param string $action
+		 *
+		 * @return bool
+		 *
+		 * @since 1.0.14
+		 */
+		public function is_valid_action( $action = '' ) {
+			if ( empty( $action ) ) {
+				return false;
+			}
+
+			$available_actions = array(
+				'_feedback_review_done',
+				'_feedback_already_did',
+				'_feedback_maybe_later',
+				'_feedback_do_not_ask_again',
+			);
+
+			foreach ( $available_actions as $available_action ) {
+				if ( strpos( $action, $available_action ) !== false ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		 * Render Deactivation Feedback
+		 *
 		 * @since 1.0.0
 		 */
 		public function render_deactivate_feedback() {
@@ -121,9 +344,16 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 		 * Load Javascripts
 		 *
 		 * @since 1.0.1
+		 *
+		 * @modify 1.1.0
 		 */
 		public function enqueue_scripts() {
-			wp_enqueue_script( 'sweetalert', plugin_dir_url( __FILE__ ) . 'assets/js/sweetalert2.min.js', array( 'jquery' ) );
+
+			$can_load = apply_filters( $this->plugin_abbr . '_can_load_sweetalert_js', false );
+
+			if ( $can_load ) {
+				wp_enqueue_script( 'sweetalert', plugin_dir_url( __FILE__ ) . 'assets/js/sweetalert2.min.js', array( 'jquery' ) );
+			}
 		}
 
 		/**
@@ -132,20 +362,20 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 		 * @since 1.0.1
 		 */
 		public function enqueue_styles() {
-			wp_register_style( 'sweetalert', plugin_dir_url( __FILE__ ) . 'assets/css/sweetalert2.min.css' );
-			wp_enqueue_style( 'sweetalert' );
+			wp_register_style( "sweetalert_{$this->version}", plugin_dir_url( __FILE__ ) . 'assets/css/sweetalert2.min.css', array(), $this->version );
+			wp_enqueue_style( "sweetalert_{$this->version}" );
 
-			wp_register_style( 'animate', plugin_dir_url( __FILE__ ) . 'assets/css/animate.min.css' );
-			wp_enqueue_style( 'animate' );
+			wp_register_style( "animate_{$this->version}", plugin_dir_url( __FILE__ ) . 'assets/css/animate.min.css', array(), $this->version );
+			wp_enqueue_style( "animate_{$this->version}" );
 
-			wp_register_style( 'ig-feedback-star-rating', plugin_dir_url( __FILE__ ) . 'assets/css/star-rating.min.css' );
-			wp_enqueue_style( 'ig-feedback-star-rating' );
+			wp_register_style( "ig-feedback-star-rating_{$this->version}", plugin_dir_url( __FILE__ ) . 'assets/css/star-rating.min.css', array(), $this->version );
+			wp_enqueue_style( "ig-feedback-star-rating_{$this->version}" );
 
-			wp_register_style( 'ig-feedback-emoji', plugin_dir_url( __FILE__ ) . 'assets/css/emoji.min.css' );
-			wp_enqueue_style( 'ig-feedback-emoji' );
+			wp_register_style( "ig-feedback-emoji_{$this->version}", plugin_dir_url( __FILE__ ) . 'assets/css/emoji.min.css', array(), $this->version );
+			wp_enqueue_style( "ig-feedback-emoji_{$this->version}" );
 
-			wp_register_style( 'ig-feedback', plugin_dir_url( __FILE__ ) . 'assets/css/feedback.min.css' );
-			wp_enqueue_style( 'ig-feedback' );
+			wp_register_style( "ig-feedback_{$this->version}", plugin_dir_url( __FILE__ ) . 'assets/css/feedback.min.css', array(), $this->version );
+			wp_enqueue_style( "ig-feedback_{$this->version}" );
 		}
 
 		/**
@@ -172,7 +402,8 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 				'backdrop'          => true,
 				'delay'             => 3, // In Seconds
 				'consent_text'      => 'You are agree to our terms and condition',
-				'email'             => $this->get_contact_email()
+				'email'             => $this->get_contact_email(),
+				'name'              => ''
 			);
 
 			$params = wp_parse_args( $params, $default_params );
@@ -180,6 +411,13 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 			return $params;
 		}
 
+		/**
+		 * Render Widget
+		 *
+		 * @param array $params
+		 *
+		 * @since 1.0.0
+		 */
 		public function render_widget( $params = array() ) {
 
 			$params = $this->prepare_widget_params( $params );
@@ -618,6 +856,164 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 		}
 
 		/**
+		 * Render Poll widget
+		 *
+		 * @param array $params
+		 *
+		 * @since 1.1.0
+		 */
+		public function render_poll_widget( $params = array() ) {
+			$params = $this->prepare_widget_params( $params );
+
+			$poll_options = ! empty( $params['poll_options'] ) ? $params['poll_options'] : array();
+
+			if ( empty( $poll_options ) ) {
+				return;
+			}
+
+			$allow_multiple = ! empty( $params['allow_multiple'] ) ? $params['allow_multiple'] : false;
+
+			$title = $params['title'];
+			$slug  = sanitize_title( $title );
+			$event = $this->event_prefix . $params['event'];
+			$desc  = ! empty( $params['desc'] ) ? $params['desc'] : '';
+
+			ob_start();
+
+			?>
+
+            <div class="ig-general-feedback" id="ig-general-feedback-<?php echo $this->plugin; ?>">
+                <form class="ig-general-feedback" id="ig-general-feedback">
+                    <p><?php echo $desc; ?></p>
+
+                    <p class="ig-general-feedback">
+						<?php foreach ( $poll_options as $value => $option ) { ?>
+                            <input type="radio" name="feedback_data[poll_options]" value="<?php echo $value; ?>"><b style="color: <?php echo $option['color']; ?>"><?php echo $option['text']; ?></b><br/>
+						<?php } ?>
+                    </p>
+                    <p class="ig-feedback-data-poll-message" id="ig-feedback-data-poll-message">
+                        <textarea name="feedback_data[details]" id="ig-feedback-data-poll-additional-message" placeholder="Additional feedback"></textarea>
+                    </p>
+                </form>
+            </div>
+
+			<?php
+
+			$html = str_replace( array( "\r", "\n" ), '', trim( ob_get_clean() ) );
+
+			$params['html'] = $html;
+
+			$title = $params['title'];
+			$slug  = sanitize_title( $title );
+			$event = $this->event_prefix . $params['event'];
+			$html  = ! empty( $params['html'] ) ? $params['html'] : '';
+
+			?>
+
+            <script type="text/javascript">
+
+				jQuery(document).ready(function ($) {
+
+					function doSend(data, meta, system_info) {
+
+						var data = {
+							action: '<?php echo $this->ajax_action; ?>',
+							feedback: {
+								type: '<?php echo $params['type']; ?>',
+								slug: '<?php echo $slug; ?>',
+								title: '<?php echo esc_js( $title ); ?>',
+								data: data
+							},
+
+							event: '<?php echo $event; ?>',
+
+							// Add additional information
+							misc: {
+								plugin: '<?php echo $this->plugin; ?>',
+								plugin_abbr: '<?php echo $this->plugin_abbr; ?>',
+								is_dev_mode: '<?php echo $this->is_dev_mode; ?>',
+								set_transient: '<?php echo $params['set_transient']; ?>',
+								meta_info: meta,
+								system_info: system_info
+							}
+						};
+
+						return jQuery.post(ajaxurl, data);
+					}
+
+					Swal.mixin({
+						footer: '',
+						position: '<?php echo $params['position']; ?>',
+						width: <?php echo $params['width']; ?>,
+						animation: false,
+						focusConfirm: false,
+						allowEscapeKey: true,
+						showCloseButton: '<?php echo $params['showCloseButton']; ?>',
+						allowOutsideClick: '<?php echo $params['allowOutsideClick']; ?>',
+						showLoaderOnConfirm: true,
+						confirmButtonText: '<?php echo $params['confirmButtonText']; ?>',
+						backdrop: '<?php echo (int) $params['backdrop']; ?>'
+					}).queue([
+						{
+							title: '<p class="ig-feedback-title"><?php echo esc_js( $params['title'] ); ?></p>',
+							html: '<?php echo $html; ?>',
+							customClass: {
+								popup: 'animated fadeInUpBig'
+							},
+							onOpen: () => {
+
+							},
+
+							preConfirm: () => {
+								var $overlay = $('#ig-general-feedback-<?php echo $this->plugin; ?>');
+								var $form = $overlay.find('form');
+								var poll_options = $form.find("input[name='feedback_data[poll_options]']:checked").val();
+								var message = $form.find("#ig-feedback-data-poll-additional-message").val();
+
+								if (poll_options === undefined) {
+									Swal.showValidationMessage('Please select option');
+									return;
+								}
+
+								var data = {
+									poll_option: poll_options,
+									additional_feedback: message
+								};
+
+								var meta = {};
+
+								return doSend(data, meta, true);
+							}
+						},
+
+					]).then(response => {
+
+						if (response.hasOwnProperty('value')) {
+
+							Swal.fire({
+								type: 'success',
+								width: <?php echo $params['width']; ?>,
+								title: "Thank You!",
+								showConfirmButton: false,
+								position: '<?php echo $params['position']; ?>',
+								timer: 1500,
+								animation: false
+							});
+
+						}
+					});
+
+
+				});
+
+            </script>
+
+
+			<?php
+		}
+
+
+		/**
 		 * Get Feedback API url
 		 *
 		 * @param $is_dev_mode
@@ -733,7 +1129,7 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 						event.preventDefault();
 						loader(true);
 						if (!$form.find('input[type=radio]:checked').val()) {
-							$form.find('.ig-deactivate-survey-footer').prepend('<span class="error"><?php echo esc_js( __( 'Please select an option', 'email-subscribers' ) ); ?></span>');
+							$form.find('.ig-deactivate-survey-footer').prepend('<span class="error"><?php echo esc_js( __( 'Please select an option', $this->plugin ) ); ?></span>');
 							return;
 						}
 
@@ -928,34 +1324,34 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 
 			$options = array(
 				1 => array(
-					'title' => esc_html__( 'I no longer need the plugin', 'email-subscribers' ),
+					'title' => esc_html__( 'I no longer need the plugin', $this->plugin ),
 					'slug'  => 'i-no-longer-need-the-plugin'
 				),
 				2 => array(
-					'title'   => esc_html__( 'I\'m switching to a different plugin', 'email-subscribers' ),
+					'title'   => esc_html__( 'I\'m switching to a different plugin', $this->plugin ),
 					'slug'    => 'i-am-switching-to-a-different-plugin',
-					'details' => esc_html__( 'Please share which plugin', 'email-subscribers' ),
+					'details' => esc_html__( 'Please share which plugin', $this->plugin ),
 				),
 				3 => array(
-					'title' => esc_html__( 'I couldn\'t get the plugin to work', 'email-subscribers' ),
+					'title' => esc_html__( 'I couldn\'t get the plugin to work', $this->plugin ),
 					'slug'  => 'i-could-not-get-the-plugin-to-work'
 				),
 				4 => array(
-					'title' => esc_html__( 'It\'s a temporary deactivation', 'email-subscribers' ),
+					'title' => esc_html__( 'It\'s a temporary deactivation', $this->plugin ),
 					'slug'  => 'it-is-a-temporary-deactivation'
 				),
 				5 => array(
-					'title'   => esc_html__( 'Other', 'email-subscribers' ),
+					'title'   => esc_html__( 'Other', $this->plugin ),
 					'slug'    => 'other',
-					'details' => esc_html__( 'Please share the reason', 'email-subscribers' ),
+					'details' => esc_html__( 'Please share the reason', $this->plugin ),
 				),
 			);
 			?>
             <div class="ig-deactivate-survey-modal" id="ig-deactivate-survey-<?php echo $this->plugin; ?>">
                 <div class="ig-deactivate-survey-wrap">
                     <form class="ig-deactivate-survey" method="post">
-                        <span class="ig-deactivate-survey-title"><span class="dashicons dashicons-testimonial"></span><?php echo ' ' . esc_html__( 'Quick Feedback', 'email-subscribers' ); ?></span>
-                        <span class="ig-deactivate-survey-desc"><?php echo sprintf( esc_html__( 'If you have a moment, please share why you are deactivating %s:', 'email-subscribers' ), $this->name ); ?></span>
+                        <span class="ig-deactivate-survey-title"><span class="dashicons dashicons-testimonial"></span><?php echo ' ' . esc_html__( 'Quick Feedback', $this->plugin ); ?></span>
+                        <span class="ig-deactivate-survey-desc"><?php echo sprintf( esc_html__( 'If you have a moment, please share why you are deactivating %s:', $this->plugin ), $this->name ); ?></span>
                         <div class="ig-deactivate-survey-options">
 							<?php foreach ( $options as $id => $option ) : ?>
                                 <div class="ig-deactivate-survey-option">
@@ -978,9 +1374,9 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
                             <input type="text" class="ig-deactivate-survey-info-email-address" id="ig-deactivate-survey-info-email-address" name="ig-deactivate-survey-info-email-address" value="<?php echo $email; ?>"/>
                         </div>
                         <div class="ig-deactivate-survey-footer">
-                            <button type="submit" class="ig-deactivate-survey-submit button button-primary button-large"><?php echo sprintf( esc_html__( 'Submit %s Deactivate', 'email-subscribers' ), '&amp;' ); ?></button>
+                            <button type="submit" class="ig-deactivate-survey-submit button button-primary button-large"><?php echo sprintf( esc_html__( 'Submit %s Deactivate', $this->plugin ), '&amp;' ); ?></button>
                             <img class="ig-deactivate-survey-loader" id="ig-deactivate-survey-loader" src="<?php echo plugin_dir_url( __FILE__ ); ?>/assets/images/loading.gif"/>
-                            <a href="#" class="ig-deactivate-survey-deactivate"><?php echo sprintf( esc_html__( 'Skip %s Deactivate', 'email-subscribers' ), '&amp;' ); ?></a>
+                            <a href="#" class="ig-deactivate-survey-deactivate"><?php echo sprintf( esc_html__( 'Skip %s Deactivate', $this->plugin ), '&amp;' ); ?></a>
                         </div>
                     </form>
                 </div>
@@ -1143,6 +1539,40 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 		}
 
 		/**
+		 * Check whether event tracked or not.
+		 *
+		 * @param $plugin_abbr
+		 * @param $event
+		 *
+		 * @return bool
+		 *
+		 * @since 1.1.0
+		 */
+		public function is_event_tracked( $plugin_abbr = '', $event = '' ) {
+
+			if ( empty( $plugin_abbr ) || empty( $event ) ) {
+				return false;
+			}
+
+			$feedback_data = $this->get_feedback_data( $plugin_abbr );
+
+			if ( count( $feedback_data ) > 0 ) {
+
+				$events = array_keys( $feedback_data );
+
+				foreach ( $events as $key => $value ) {
+					if ( strpos( $value, $event ) ) {
+						return true;
+					}
+				}
+
+			}
+
+			return false;
+		}
+
+
+		/**
 		 * Set event into transient
 		 *
 		 * @param $event
@@ -1211,9 +1641,10 @@ if ( ! class_exists( 'IG_Feedback_V_1_0_11' ) ) {
 			unset( $data['misc'] );
 
 			$default_meta_info = array(
-				'plugin'     => sanitize_key( $plugin ),
-				'locale'     => get_locale(),
-				'wp_version' => get_bloginfo( 'version' )
+				'plugin'      => sanitize_key( $plugin ),
+				'locale'      => get_locale(),
+				'wp_version'  => get_bloginfo( 'version' ),
+				'php_version' => PHP_VERSION
 			);
 
 			$meta_info = wp_parse_args( $meta_info, $default_meta_info );

@@ -73,7 +73,6 @@ class ES_Lists_Table extends WP_List_Table {
 			echo $this->edit_list( absint( $list ) );
 		} else { ?>
             <h1 class="wp-heading-inline"><?php _e( 'Audience > Lists', 'email-subscribers' ); ?> <a href="admin.php?page=es_lists&action=new" class="page-title-action">Add New</a></h1>
-			<?php Email_Subscribers_Admin::es_feedback(); ?>
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder column-1">
                     <div id="post-body-content">
@@ -254,8 +253,6 @@ class ES_Lists_Table extends WP_List_Table {
 				?>
                 <a href="admin.php?page=es_lists&action=manage-lists" class="page-title-action es-imp-button"><?php _e( 'Manage Lists', 'email-subscribers' ); ?></a>
             </h1>
-
-			<?php Email_Subscribers_Admin::es_feedback(); ?>
 
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder column-1">

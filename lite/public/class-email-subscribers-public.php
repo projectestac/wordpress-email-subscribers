@@ -181,12 +181,12 @@ class Email_Subscribers_Public {
 								'guid'       => $guid
 							);
 
-							ES()->mailer->send_welcome_email( $email, $data );
-
 							$lists     = ES()->lists_db->get_all_lists_name_by_contact( $db_id );
 							$list_name = implode( ", ", $lists );
 
 							$data['list_name'] = $list_name;
+
+							ES()->mailer->send_welcome_email( $email, $data );
 
 							ES()->mailer->send_add_new_contact_notification_to_admins( $data );
 						} elseif ( $option === 'unsubscribe' ) {
@@ -261,8 +261,8 @@ class Email_Subscribers_Public {
 					$link = ES()->links_db->get_by_hash( $hash );
 
 					if ( ! empty( $link ) ) {
-						$campaign_id = ! empty( $data['campaign_id'] ) ? $data['campaign_id'] : 0;
-						$message_id  = ! empty( $data['message_id'] ) ? $data['message_id'] : 0;
+						$campaign_id = ! empty( $link['campaign_id'] ) ? $link['campaign_id'] : 0;
+						$message_id  = ! empty( $link['message_id'] ) ? $link['message_id'] : 0;
 						$contact_id  = ! empty( $data['contact_id'] ) ? $data['contact_id'] : 0;
 						$link_id     = ! empty( $link['id'] ) ? $link['id'] : 0;
 

@@ -79,7 +79,6 @@ class ES_Forms_Table extends WP_List_Table {
 			echo $this->edit_form( absint( $form ) );
 		} else { ?>
             <h1 class="wp-heading-inline"><?php _e( 'Forms', 'email-subscribers' ) ?><a href="admin.php?page=es_forms&action=new" class="page-title-action"> <?php _e( 'Add New', 'email-subscribers' ) ?></a></h1>
-			<?php Email_Subscribers_Admin::es_feedback(); ?>
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder column-1">
                     <div id="post-body-content">
@@ -141,7 +140,7 @@ class ES_Forms_Table extends WP_List_Table {
 		if ( 'submitted' === $submitted ) {
 
 			$nonce     = ig_es_get_request_data( '_wpnonce' );
-			$form_data = ig_es_get_request_data( 'form_data' );
+			$form_data = ig_es_get_request_data( 'form_data', array(), false );
 			$lists     = ig_es_get_request_data( 'lists' );
 
 			$form_data['lists'] = $lists;
@@ -186,7 +185,7 @@ class ES_Forms_Table extends WP_List_Table {
 				if ( 'submitted' === $submitted ) {
 
 					$nonce     = ig_es_get_request_data( '_wpnonce' );
-					$form_data = ig_es_get_request_data( 'form_data' );
+					$form_data = ig_es_get_request_data( 'form_data', array(), false );
 					$lists     = ig_es_get_request_data( 'lists' );
 
 					$form_data['lists'] = $lists;
@@ -243,6 +242,8 @@ class ES_Forms_Table extends WP_List_Table {
 		$form_data['email_place_holder'] = ! empty( $data['email_place_holder'] ) ? sanitize_text_field( $data['email_place_holder'] ) : '';
 		$form_data['button_label']       = ! empty( $data['button_label'] ) ? sanitize_text_field( $data['button_label'] ) : __( 'Subscribe', 'email-subscribers' );
 		$form_data['list_visible']       = ! empty( $data['list_visible'] ) ? $data['list_visible'] : 'no';
+		$form_data['gdpr_consent']       = ! empty( $data['gdpr_consent'] ) ? $data['gdpr_consent'] : 'no';
+		$form_data['gdpr_consent_text']  = ! empty( $data['gdpr_consent_text'] ) ? $data['gdpr_consent_text'] : 'Please accept terms & condition';
 		$form_data['lists']              = ! empty( $data['lists'] ) ? $data['lists'] : array();
 		$form_data['af_id']              = ! empty( $data['af_id'] ) ? $data['af_id'] : 0;
 		$form_data['desc']               = ! empty( $data['desc'] ) ? sanitize_text_field( $data['desc'] ) : '';
@@ -264,14 +265,12 @@ class ES_Forms_Table extends WP_List_Table {
 				?>
             </h1>
 
-			<?php Email_Subscribers_Admin::es_feedback(); ?>
-
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder column-1">
                     <div id="post-body-content">
                         <div class="meta-box-sortables ui-sortable">
                             <form method="post" action="admin.php?page=es_forms&action=<?php echo $action; ?>&form=<?php echo $id; ?>&_wpnonce=<?php echo $nonce; ?>">
-                                <table class="form-table">
+                                <table class="form-table ig-es-form-table">
                                     <tbody>
                                     <tr>
                                         <th scope="row">
@@ -294,7 +293,7 @@ class ES_Forms_Table extends WP_List_Table {
                                             <label for="tag-link"><?php echo __( 'Form Fields', 'email-subscribers' ); ?></label>
                                         </th>
                                         <td>
-                                            <table class="">
+                                            <table class="ig-es-form-table">
                                                 <tr class="form-field">
                                                     <td><b><?php _e( 'Field', 'email-subscribers' ); ?></b></td>
                                                     <td><b><?php _e( 'Show?', 'email-subscribers' ); ?></b></td>
@@ -367,8 +366,34 @@ class ES_Forms_Table extends WP_List_Table {
 												echo 'checked="checked"';
 											} ?> /> <?php _e( 'No', 'email-subscribers' ); ?>
                                         </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <label for="tag-link"><?php echo __( 'Show GDPR consent checkbox', 'email-subscribers' ); ?></label>
+                                            <p class="helper"> <?php _e( 'Show consent checkbox to get the consent of a contact before adding them to list(s)', 'email-subscribers' ); ?></p>
+                                        </th>
+                                        <td>
+                                            <table class="ig_es_form_table">
+                                                <tr>
+                                                    <td>
+                                                        <input type="radio" name="form_data[gdpr_consent]" value="yes" <?php if ( $form_data['gdpr_consent'] === 'yes' ) {
+															echo 'checked="checked"';
+														} ?> /><?php _e( 'Yes', 'email-subscribers' ); ?>
 
+                                                        <input type="radio" name="form_data[gdpr_consent]" value="no" <?php if ( $form_data['gdpr_consent'] === 'no' ) {
+															echo 'checked="checked"';
+														} ?> /> <?php _e( 'No', 'email-subscribers' ); ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <textarea rows="2" cols="50" name="form_data[gdpr_consent_text]"><?php echo $form_data['gdpr_consent_text']; ?></textarea>
+                                                        <p class="helper"><?php _e( 'Consent text will show up at subscription form next to consent checkbox.', 'email-subscribers' ); ?></p>
+                                                    </td>
+                                                </tr>
+                                            </table>
 
+                                        </td>
                                     </tr>
 
                                     </tbody>
@@ -435,9 +460,11 @@ class ES_Forms_Table extends WP_List_Table {
 		$name_visible       = ( ! empty( $data['name_visible'] ) && $data['name_visible'] === 'yes' ) ? true : false;
 		$name_required      = ( ! empty( $data['name_required'] ) && $data['name_required'] === 'yes' ) ? true : false;
 		$list_visible       = ( ! empty( $data['list_visible'] ) && $data['list_visible'] === 'yes' ) ? true : false;
-		$list_requried      = true;
+		$list_required      = true;
 		$list_ids           = ! empty( $data['lists'] ) ? $data['lists'] : array();
 		$af_id              = ! empty( $data['af_id'] ) ? $data['af_id'] : 0;
+		$gdpr_consent       = ! empty( $data['gdpr_consent'] ) ? sanitize_text_field( $data['gdpr_consent'] ) : "no";
+		$gdpr_consent_text  = ! empty( $data['gdpr_consent_text'] ) ? wp_kses_post( $data['gdpr_consent_text'] ) : "";
 
 		$body = array(
 			array(
@@ -475,7 +502,7 @@ class ES_Forms_Table extends WP_List_Table {
 				'params' => array(
 					'label'    => 'Lists',
 					'show'     => $list_visible,
-					'required' => $list_requried,
+					'required' => $list_required,
 					'values'   => $list_ids
 				),
 
@@ -500,7 +527,11 @@ class ES_Forms_Table extends WP_List_Table {
 		$settings = array(
 			'lists'        => $list_ids,
 			'desc'         => $desc,
-			'form_version' => ES()->forms_db->version
+			'form_version' => ES()->forms_db->version,
+			'gdpr'         => array(
+				'consent'      => $gdpr_consent,
+				'consent_text' => $gdpr_consent_text
+			)
 		);
 
 		$form_data['name']       = $name;
@@ -526,7 +557,15 @@ class ES_Forms_Table extends WP_List_Table {
 		$desc         = ! empty( $settings_data['desc'] ) ? $settings_data['desc'] : '';
 		$form_version = ! empty( $settings_data['form_version'] ) ? $settings_data['form_version'] : '0.1';
 
-		$form_data = array( 'form_id' => $id, 'name' => $name, 'af_id' => $af_id, 'desc' => $desc, 'form_version' => $form_version );
+		$gdpr_consent      = "no";
+		$gdpr_consent_text = "";
+		if ( ! empty( $settings_data['gdpr'] ) ) {
+			$gdpr_consent      = ! empty( $settings_data['gdpr']['consent'] ) ? $settings_data['gdpr']['consent'] : "no";
+			$gdpr_consent_text = ! empty( $settings_data['gdpr']['consent_text'] ) ? $settings_data['gdpr']['consent_text'] : "";
+		}
+
+		$form_data = array( 'form_id' => $id, 'name' => $name, 'af_id' => $af_id, 'desc' => $desc, 'form_version' => $form_version, 'gdpr_consent' => $gdpr_consent, 'gdpr_consent_text' => $gdpr_consent_text );
+
 		foreach ( $body_data as $d ) {
 			if ( $d['id'] === 'name' ) {
 				$form_data['name_visible']      = ( $d['params']['show'] === true ) ? 'yes' : '';
@@ -722,11 +761,9 @@ class ES_Forms_Table extends WP_List_Table {
 	 * @return array
 	 */
 	public function get_bulk_actions() {
-		$actions = array(
+		return array(
 			'bulk_delete' => __( 'Delete', 'email-subscribers' )
 		);
-
-		return $actions;
 	}
 
 	/**

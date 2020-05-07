@@ -80,6 +80,15 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $cron;
 
 		/**
+		 * ES_Compatibility object
+		 *
+		 * @since 4.3.9
+		 * @var object|ES_Compatibility
+		 *
+		 */
+		public $compatibiloty;
+
+		/**
 		 * ES_DB_Actions object
 		 *
 		 * @since 4.2.1
@@ -268,8 +277,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			$args['include'] = ES_PLUGIN_DIR . 'lite/includes/notices/views/ig-es-offer.php';
 			ES_Admin_Notices::add_custom_notice( 'bfcm_2019', $args );
 
-			$screen    = get_current_screen();
-			$screen_id = $screen ? $screen->id : '';
+			$screen_id = $this->get_current_screen_id();
 			// Don't show admin notices on Dashboard if onboarding is not yet completed.
 			$is_onboarding_complete = get_option( 'ig_es_onboarding_complete', false );
 
@@ -508,6 +516,31 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			if ( ! defined( 'IG_ES_MAX_EMAIL_SEND_AT_ONCE' ) ) {
 				define( 'IG_ES_MAX_EMAIL_SEND_AT_ONCE', 30 );
 			}
+
+
+			if ( ! defined( 'IG_ES_CAMPAIGN_STATUS_IN_ACTIVE' ) ) {
+				define( 'IG_ES_CAMPAIGN_STATUS_IN_ACTIVE', 0 );
+			}
+
+			if ( ! defined( 'IG_ES_CAMPAIGN_STATUS_ACTIVE' ) ) {
+				define( 'IG_ES_CAMPAIGN_STATUS_ACTIVE', 1 );
+			}
+
+			if ( ! defined( 'IG_ES_CAMPAIGN_STATUS_SCHEDULED' ) ) {
+				define( 'IG_ES_CAMPAIGN_STATUS_SCHEDULED', 2 );
+			}
+
+			if ( ! defined( 'IG_ES_CAMPAIGN_STATUS_QUEUED' ) ) {
+				define( 'IG_ES_CAMPAIGN_STATUS_QUEUED', 3 );
+			}
+
+			if ( ! defined( 'IG_ES_CAMPAIGN_STATUS_PAUSED' ) ) {
+				define( 'IG_ES_CAMPAIGN_STATUS_PAUSED', 4 );
+			}
+
+			if ( ! defined( 'IG_ES_CAMPAIGN_STATUS_FINISHED' ) ) {
+				define( 'IG_ES_CAMPAIGN_STATUS_FINISHED', 5 );
+			}
 		}
 
 		/**
@@ -609,6 +642,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/classes/class-es-subscription-throttling.php',
 				'lite/includes/classes/class-es-actions.php',
 				'lite/includes/classes/class-es-tracking.php',
+				'lite/includes/classes/class-es-compatibility.php',
 
 				// Core Functions
 				'lite/includes/es-core-functions.php',
@@ -771,6 +805,81 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		}
 
 		/**
+		 * Get all ES admin screens
+		 *
+		 * @return array|mixed|void
+		 *
+		 * @since 4.3.8
+		 */
+		public function get_es_admin_screens() {
+
+			// TODO: Can be updated with a version check when https://core.trac.wordpress.org/ticket/18857 is fixed
+			$prefix = sanitize_title( __( 'Email Subscribers', 'email-subscribers' ) );
+
+			$screens = array(
+				"es_template",
+				"edit-es_template",
+				"toplevel_page_es_dashboard",
+				"{$prefix}_page_es_subscribers",
+				"{$prefix}_page_es_lists",
+				"{$prefix}_page_es_forms",
+				"{$prefix}_page_es_campaigns",
+				"{$prefix}_page_es_newsletters",
+				"{$prefix}_page_es_notifications",
+				"{$prefix}_page_es_reports",
+				"{$prefix}_page_es_settings",
+				"{$prefix}_page_es_tools",
+				"{$prefix}_page_es_general_information",
+				"{$prefix}_page_es_pricing",
+				"{$prefix}_page_es_sequence",
+			);
+
+			$screens = apply_filters( 'ig_es_admin_screens', $screens );
+
+			return $screens;
+		}
+
+		/**
+		 * Is es admin screen?
+		 *
+		 * @return bool
+		 *
+		 * @since 4.3.8
+		 */
+		public function is_es_admin_screen() {
+
+			$current_screen_id = $this->get_current_screen_id();
+
+			$es_admin_screens = $this->get_es_admin_screens();
+
+			if ( in_array( $current_screen_id, $es_admin_screens ) ) {
+				return true;
+			}
+
+			return false;
+		}
+
+		/**
+		 * Get Current Screen Id
+		 *
+		 * @return string
+		 *
+		 * @since 4.3.8
+		 */
+		public function get_current_screen_id() {
+
+			$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : false;
+
+			if ( ! $current_screen instanceof WP_Screen ) {
+				return '';
+			}
+
+			$current_screen = get_current_screen();
+
+			return ( $current_screen ? $current_screen->id : '' );
+		}
+
+		/**
 		 * Register Widget Class
 		 *
 		 * @since 4.0.0
@@ -824,10 +933,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				self::$instance->define_admin_hooks();
 				self::$instance->define_public_hooks();
 
-				//register_shutdown_function( array( self::$instance, 'log_errors' ) );
-
 				self::$instance->logger = get_ig_logger();
-
 
 				self::$instance->mailer = new ES_Mailer();
 
@@ -845,7 +951,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				self::$instance->queue             = new ES_Queue();
 				self::$instance->actions           = new ES_Actions();
 				self::$instance->cron              = new ES_Cron();
-
+				self::$instance->compatibiloty     = new ES_Compatibility();
 
 				if ( is_admin() ) {
 					$ig_es_feedback_class = 'IG_Feedback_V_' . str_replace( '.', '_', IG_ES_FEEDBACK_TRACKER_VERSION );

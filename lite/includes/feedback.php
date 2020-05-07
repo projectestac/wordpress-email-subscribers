@@ -25,7 +25,6 @@ if ( ! function_exists( 'ig_es_get_additional_info' ) ) {
 
 		return $additional_info;
 	}
-
 }
 
 add_filter( 'ig_es_additional_feedback_meta_info', 'ig_es_get_additional_info', 10, 2 );
@@ -41,13 +40,7 @@ function ig_es_render_general_feedback_widget() {
 			return;
 		}
 
-		$screen    = get_current_screen();
-		$screen_id = $screen ? $screen->id : '';
-
-		// Get all Email Subscribers Screen
-		$show_on_screens = ES_Common::get_all_es_admin_screens();
-
-		if ( ! in_array( $screen_id, $show_on_screens ) ) {
+		if ( ! ES()->is_es_admin_screen() ) {
 			return;
 		}
 
@@ -61,7 +54,7 @@ function ig_es_render_general_feedback_widget() {
 			'width'             => 700,
 			'force'             => true,
 			'confirmButtonText' => __( 'Send', 'email-subscribers' ),
-			'consent_text'      => __( 'Allow Email Subscribers to send plugin settings. It will help us to understand your issue better. We guarantee no sensitive data is collected.', 'email-subscribers' ),
+			'consent_text'      => __( 'Allow Email Subscribers to track plugin usage. It will help us to understand your issue better. We guarantee no sensitive data is collected.', 'email-subscribers' ),
 			'name'              => ''
 		);
 
@@ -108,12 +101,7 @@ function ig_es_render_fb_widget() {
 			return;
 		}
 
-		$screen    = get_current_screen();
-		$screen_id = $screen ? $screen->id : '';
-
-		$show_on_screens = ES_Common::get_all_es_admin_screens();
-
-		if ( ! in_array( $screen_id, $show_on_screens ) ) {
+		if ( ! ES()->is_es_admin_screen() ) {
 			return;
 		}
 
@@ -140,7 +128,141 @@ function ig_es_render_fb_widget() {
 			ES_Common::render_feedback_widget( $params );
 		}
 	}
-
 }
 
 add_action( 'admin_footer', 'ig_es_render_fb_widget' );
+
+if ( ! function_exists( 'ig_es_review_message_data' ) ) {
+	/**
+	 * Filter 5 star review data
+	 *
+	 * @param $review_data
+	 *
+	 * @return mixed
+	 *
+	 * @since 4.3.8
+	 */
+	function ig_es_review_message_data( $review_data ) {
+
+		$review_url = 'https://wordpress.org/support/plugin/email-subscribers/reviews/';
+		$icon_url   = ES_PLUGIN_URL . 'lite/admin/images/icon-64.png';
+		$message    = __( "<span><p>We hope you're enjoying <b>Email Subscribers</b> plugin! Could you please do us a BIG favor and give us a 5-star rating on WordPress to help us spread the word and boost our motivation?</p>", 'temporary-login-without-password' );
+
+		$review_data['review_url'] = $review_url;
+		$review_data['icon_url']   = $icon_url;
+		$review_data['message']    = $message;
+
+		return $review_data;
+	}
+}
+
+add_filter( 'ig_es_review_message_data', 'ig_es_review_message_data', 10 );
+
+if ( ! function_exists( 'ig_es_can_ask_user_for_review' ) ) {
+	/**
+	 * Can we ask user for 5 star review?
+	 *
+	 * @return bool
+	 *
+	 * @since 4.3.8
+	 */
+	function ig_es_can_ask_user_for_review( $enable, $review_data ) {
+
+		if ( $enable ) {
+
+			if ( ! ES()->is_es_admin_screen() ) {
+				return false;
+			}
+
+			$total_contacts   = ES()->contacts_db->count_active_contacts_by_list_id();
+			$total_email_sent = ES_DB_Mailing_Queue::get_notifications_count();
+
+			// Don't show if - less than 3 post notifications or Newsletters sent OR less than 10 subscribers
+			if ( $total_contacts < 10 && $total_email_sent < 3 ) {
+				return false;
+			}
+		}
+
+		return $enable;
+	}
+}
+
+add_filter( 'ig_es_can_ask_user_for_review', 'ig_es_can_ask_user_for_review', 10, 2 );
+
+/**
+ * Render Icegram-Email Subscribers merge feedback widget.
+ *
+ * @since 4.3.13
+ */
+function ig_es_render_iges_merge_feedback() {
+
+	global $ig_es_feedback;
+
+	if ( is_admin() ) {
+
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			return;
+		}
+
+		if ( ! ES()->is_es_admin_screen() ) {
+			return;
+		}
+
+		$total_contacts = ES()->contacts_db->count_active_contacts_by_list_id();
+
+		if ( $total_contacts >= 5 ) {
+
+			$event = 'poll.merge_iges';
+
+			// If user has already given feedback on Icegram page, don't ask them again
+			$is_event_tracked = $ig_es_feedback->is_event_tracked( 'ig', $event );
+
+			if ( $is_event_tracked ) {
+				return;
+			}
+
+			$params = array(
+				'type'              => 'poll',
+				'title'             => __( 'Subscription forms and CTAs??', 'email-subscribers' ),
+				'event'             => $event,
+				'desc'              => '<div><p>You use <a href="https://wordpress.org/plugins/email-subscribers" target="_blank"><b>Email Subscribers</b></a> to send email campaigns.</p> <p>Would you like us to include onsite popups and action bars in the plugin as well? This way you can <b>convert visitors to subscribers, drive traffic and run email marketing from a single plugin</b>.</p> <p>Why do we ask?</p> <p>Our <a href="https://wordpress.org/plugins/icegram" target="_blank"><b>Icegram</b></a> plugin already does onsite campaigns. We are thinking of merging Icegram & Email Subscribers into a single plugin.</p> <p><b>Will a comprehensive ConvertKit / MailChimp like email + onsite campaign plugin be useful to you?</b></p> </div>',
+				'poll_options'      => array(
+					'yes' => array( 'text' => '<b>' . __( 'Yes', 'email-subscribers' ) . '</b>', 'color' => 'green' ),
+					'no'  => array( 'text' => '<b>' . __( 'No', 'email-subscribers' ) . '</b>', 'color' => 'red' )
+				),
+				'allow_multiple'    => false,
+				'position'          => 'bottom-center',
+				'width'             => 400,
+				'delay'             => 2, // seconds
+				'confirmButtonText' => __( 'Send my feedback to <b>Icegram team</b>', 'email-subscribers' ),
+				'show_once'         => true
+			);
+
+			ES_Common::render_feedback_widget( $params );
+
+		}
+
+	}
+}
+
+add_action( 'admin_footer', 'ig_es_render_iges_merge_feedback' );
+
+/**
+ * Can load sweetalert js file
+ *
+ * @param bool $load
+ *
+ * @return bool
+ *
+ * @since 4.3.13
+ */
+function ig_es_can_load_sweetalert_js( $load = false ) {
+
+	if ( ES()->is_es_admin_screen() ) {
+		return true;
+	}
+
+	return $load;
+}
+
+add_filter( 'ig_es_can_load_sweetalert_js', 'ig_es_can_load_sweetalert_js', 10, 1 );
