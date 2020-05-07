@@ -199,7 +199,6 @@ class ES_Contacts_Table extends WP_List_Table {
 				<?php $this->get_contacts_reports() ?>
             </div>
 
-			<?php Email_Subscribers_Admin::es_feedback(); ?>
             <div id="poststuff" class="es-audience-view">
                 <div id="post-body" class="metabox-holder column-1">
                     <div id="post-body-content">
@@ -349,11 +348,30 @@ class ES_Contacts_Table extends WP_List_Table {
 							);
 
 							// Add contact
+							$existing_contact_id = ES()->contacts_db->get_contact_id_by_email( $email );
+
+							if ( $existing_contact_id && ( $existing_contact_id != $id ) ) {
+								$message = __( 'Contact already exist.', 'email-subscribers' );
+								ES_Common::show_message( $message, 'error' );
+								$is_error = true;
+							} else {
+								if ( $id ) {
+									ES()->contacts_db->update_contact( $id, $contact );
+								} else {
+									$contact['source']     = 'admin';
+									$contact['status']     = 'verified';
+									$contact['hash']       = ES_Common::generate_guid();
+									$contact['created_at'] = ig_get_current_date_time();
+
+									$id = ES()->contacts_db->insert( $contact );
+								}
+							}
+
+							/*
 							if ( $id ) {
 								ES()->contacts_db->update_contact( $id, $contact );
 							} else {
-								$id = ES()->contacts_db->get_contact_id_by_email( $email );
-								if ( ! $id ) {
+								if ( ! $existing_contact_id ) {
 									$contact['source']     = 'admin';
 									$contact['status']     = 'verified';
 									$contact['hash']       = ES_Common::generate_guid();
@@ -368,6 +386,7 @@ class ES_Contacts_Table extends WP_List_Table {
 								}
 
 							}
+							*/
 
 							if ( ! $is_error ) {
 
@@ -426,17 +445,17 @@ class ES_Contacts_Table extends WP_List_Table {
 		}
 
 		$data = array(
-			'id'                => $id,
-			'first_name'        => $first_name,
-			'last_name'         => $last_name,
-			'email'             => $email,
-			'guid'              => $guid
+			'id'         => $id,
+			'first_name' => $first_name,
+			'last_name'  => $last_name,
+			'email'      => $email,
+			'guid'       => $guid
 		);
 
 		?>
 
         <div class="wrap">
-            <h1 class="wp-heading-inline"><?php echo $title; ?><?php echo $title_action; ?></h1><?php Email_Subscribers_Admin::es_feedback(); ?>
+            <h1 class="wp-heading-inline"><?php echo $title; ?><?php echo $title_action; ?></h1>
             <hr class="wp-header-end">
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder column-1">
@@ -666,14 +685,14 @@ class ES_Contacts_Table extends WP_List_Table {
 	}
 
 	/**
-     * Prepare lists html to set status
-     *
+	 * Prepare lists html to set status
+	 *
 	 * @param int $contact_id
 	 * @param int $columns
 	 *
 	 * @return string
-     *
-     * @since 4.3.6
+	 *
+	 * @since 4.3.6
 	 */
 	public function prepare_lists_html( $contact_id = 0, $columns = 2 ) {
 		$lists = ES()->lists_db->get_id_name_map();
@@ -681,7 +700,7 @@ class ES_Contacts_Table extends WP_List_Table {
 		$lists_html = '';
 		if ( count( $lists ) > 0 ) {
 
-		    $list_contact_status_map = array();
+			$list_contact_status_map = array();
 			if ( ! empty( $contact_id ) ) {
 				$list_contact_status_map = ES()->lists_contacts_db->get_list_contact_status_map( $contact_id );
 			}
@@ -701,9 +720,9 @@ class ES_Contacts_Table extends WP_List_Table {
 				$status_dropdown_html .= "</select>";
 
 				$status_span = '';
-				if(!empty($list_contact_status_map[$list_id])) {
-				    $status_span = '<span class="es_list_contact_status ' . $list_contact_status_map[ $list_id ] . '" title="' . ucwords( $list_contact_status_map[ $list_id ] ) . '">';
-                }
+				if ( ! empty( $list_contact_status_map[ $list_id ] ) ) {
+					$status_span = '<span class="es_list_contact_status ' . $list_contact_status_map[ $list_id ] . '" title="' . ucwords( $list_contact_status_map[ $list_id ] ) . '">';
+				}
 
 				$list_name  = strlen( $list_name ) > 15 ? substr( $list_name, 0, 15 ) . '...' : $list_name;
 				$lists_html .= "<td>$status_span$list_name</td><td>$status_dropdown_html</td>";

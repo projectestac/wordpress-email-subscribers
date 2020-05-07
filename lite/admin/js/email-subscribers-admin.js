@@ -183,14 +183,15 @@
 				$.ajax({
 					method: 'POST',
 					url: ajaxurl,
-					async: false,
+					async: true,
 					data: params,
 					success: function(response) {
 						if (response !== '') {
 							response = JSON.parse(response);
 							if (response.hasOwnProperty('total')) {
 								var total = response.total;
-								$('#ig_es_total_contacts').text(response.total);
+								var total_contacts_text = "<b>Total Contacts: " + total + "</b>";
+								$('#ig_es_total_contacts').html(total_contacts_text);
 								if (total == 0) {
 									$('#ig_es_campaign_submit_button').attr("disabled", true);
 								} else {

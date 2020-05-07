@@ -80,6 +80,7 @@ class ES_Import_Subscribers {
 								$existing_contacts = array();
 								if ( count( $existing_contacts_email_id_map ) > 0 ) {
 									$existing_contacts = array_keys( $existing_contacts_email_id_map );
+									$existing_contacts = array_map( 'strtolower', $existing_contacts );
 								}
 
 								$invalid_emails_count = $imported_subscribers_count = $existing_contacts_count = 0;
@@ -95,7 +96,7 @@ class ES_Import_Subscribers {
 
 									$data = array_combine( $headers, $data );
 
-									$email = isset( $data['Email'] ) ? sanitize_email( trim( $data['Email'] ) ) : '';
+									$email = isset( $data['Email'] ) ? strtolower( sanitize_email( trim( $data['Email'] ) ) ) : '';
 
 									if ( empty( $email ) ) {
 										$invalid_emails_count ++;

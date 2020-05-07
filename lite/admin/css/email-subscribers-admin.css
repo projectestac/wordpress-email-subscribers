@@ -1397,3 +1397,7 @@ div.es .last {
     color: #636363;
 }
 /* Email Subscribers new css : End*/
+
+table.ig_es_form_table td {
+    padding: 15px 10px 15px 0px;
+}

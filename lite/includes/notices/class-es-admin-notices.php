@@ -92,8 +92,8 @@ class ES_Admin_Notices {
 	 * Hide a notice if the GET variable is set.
 	 */
 	public static function hide_notices() {
-		$hide_notice = ig_es_get_request_data('ig-es-hide-notice');
-		$ig_es_hide_notice_nonce = ig_es_get_request_data('_ig_es_notice_nonce');
+		$hide_notice             = ig_es_get_request_data( 'ig-es-hide-notice' );
+		$ig_es_hide_notice_nonce = ig_es_get_request_data( '_ig_es_notice_nonce' );
 		if ( isset( $_GET['ig-es-hide-notice'] ) && isset( $_GET['_ig_es_notice_nonce'] ) ) { // WPCS: input var ok, CSRF ok.
 			if ( ! wp_verify_nonce( sanitize_key( $ig_es_hide_notice_nonce ), 'ig_es_hide_notices_nonce' ) ) { // WPCS: input var ok, CSRF ok.
 				wp_die( esc_html__( 'Action failed. Please refresh the page and retry.', 'email-subscribers' ) );
@@ -114,22 +114,10 @@ class ES_Admin_Notices {
 			return;
 		}
 
-		$screen          = get_current_screen();
-		$screen_id       = $screen ? $screen->id : '';
-		$show_on_screens = array(
-			'toplevel_page_es_dashboard',
-			'email-subscribers_page_es_subscribers',
-			'email-subscribers_page_es_forms',
-			'email-subscribers_page_es_campaigns',
-			'email-subscribers_page_es_reports',
-			'email-subscribers_page_es_settings',
-			'email-subscribers_page_es_general_information',
-			'email-subscribers_page_es_pricing',
-		);
-
-		if ( ! in_array( $screen_id, $show_on_screens, true ) ) {
+		if ( ! ES()->is_es_admin_screen() ) {
 			return;
 		}
+
 		foreach ( $notices as $notice ) {
 			if ( ! empty( self::$core_notices[ $notice ] ) ) {
 				add_action( 'admin_notices', array( __CLASS__, self::$core_notices[ $notice ] ) );
@@ -159,14 +147,14 @@ class ES_Admin_Notices {
 		if ( ! empty( $notices ) ) {
 			foreach ( $notices as $notice ) {
 				if ( empty( self::$core_notices[ $notice ] ) ) {
-					$notice_args = get_option( 'ig_es_custom_admin_notice_' . $notice );
-					$timezone_format   = _x( 'Y-m-d', 'timezone date format' );
-					$ig_current_date   = strtotime( date_i18n( $timezone_format ) );
-					if( $notice_args['include'] ){
+					$notice_args     = get_option( 'ig_es_custom_admin_notice_' . $notice );
+					$timezone_format = _x( 'Y-m-d', 'timezone date format' );
+					$ig_current_date = strtotime( date_i18n( $timezone_format ) );
+					if ( $notice_args['include'] ) {
 						include_once( $notice_args['include'] );
 					}
-					if( !empty($notice_args['html']) ){
-						echo  $notice_args['html'];
+					if ( ! empty( $notice_args['html'] ) ) {
+						echo $notice_args['html'];
 					}
 					// if ( $notice_html ) {
 					// 	include dirname( __FILE__ ) . '/views/html-notice-custom.php';
@@ -198,7 +186,7 @@ class ES_Admin_Notices {
 	/**
 	 * If we need to update, include a message with the update button.
 	 */
-	public static function es_dismiss_admin_notice(){
+	public static function es_dismiss_admin_notice() {
 		$es_dismiss_admin_notice = ig_es_get_request_data( 'es_dismiss_admin_notice' );
 		$option_name             = ig_es_get_request_data( 'option_name' );
 		if ( $es_dismiss_admin_notice == '1' && ! empty( $option_name ) ) {
@@ -226,7 +214,6 @@ class ES_Admin_Notices {
 		}
 
 	}
-
 
 
 }

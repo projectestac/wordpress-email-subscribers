@@ -76,28 +76,11 @@ class Email_Subscribers_Admin {
 	 * @since    4.0
 	 */
 	public function enqueue_styles() {
-		$screen             = get_current_screen();
-		$screen_id          = $screen ? $screen->id : '';
-		$enqueue_on_screens = array(
-			'toplevel_page_es_dashboard',
-			'email-subscribers_page_es_subscribers',
-			'email-subscribers_page_es_lists',
-			'email-subscribers_page_es_forms',
-			'email-subscribers_page_es_campaigns',
-			'email-subscribers_page_es_newsletters',
-			'email-subscribers_page_es_notifications',
-			'edit-es_template',
-			'email-subscribers_page_es_reports',
-			'email-subscribers_page_es_tools',
-			'email-subscribers_page_es_settings',
-			'email-subscribers_page_es_general_information',
-			'email-subscribers_page_es_pricing',
-			'es_template',
-		);
-		//all admin notice
-		if ( ! in_array( $screen_id, $enqueue_on_screens, true ) ) {
+
+		if ( ! ES()->is_es_admin_screen() ) {
 			return;
 		}
+
 		/**
 		 * This function is provided for demonstration purposes only.
 		 *
@@ -126,27 +109,11 @@ class Email_Subscribers_Admin {
 	 * @since    4.0
 	 */
 	public function enqueue_scripts() {
-		$screen             = get_current_screen();
-		$screen_id          = $screen ? $screen->id : '';
-		$enqueue_on_screens = array(
-			'toplevel_page_es_dashboard',
-			'email-subscribers_page_es_subscribers',
-			'email-subscribers_page_es_lists',
-			'email-subscribers_page_es_forms',
-			'email-subscribers_page_es_campaigns',
-			'email-subscribers_page_es_newsletters',
-			'email-subscribers_page_es_notifications',
-			'edit-es_template',
-			'email-subscribers_page_es_reports',
-			'email-subscribers_page_es_tools',
-			'email-subscribers_page_es_settings',
-			'email-subscribers_page_es_general_information',
-			'email-subscribers_page_es_pricing',
-		);
-		//all admin notice
-		if ( ! in_array( $screen_id, $enqueue_on_screens, true ) ) {
+
+		if ( ! ES()->is_es_admin_screen() ) {
 			return;
 		}
+
 		wp_enqueue_script( $this->email_subscribers, plugin_dir_url( __FILE__ ) . 'js/email-subscribers-admin.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-tabs' ), $this->version, false );
 		wp_enqueue_script( 'custom', plugin_dir_url( __FILE__ ) . 'js/es-onboarding.js', array( 'jquery' ), $this->version, false );
 	}
@@ -427,32 +394,6 @@ class Email_Subscribers_Admin {
 		}
 
 	}
-
-	public static function es_feedback() {
-		$star_rating_dismiss = get_option( 'ig_es_dismiss_star_notice', 'no' );
-		$star_rating_done    = get_option( 'ig_es_star_notice_done', 'no' );
-		// Show if - more than 2 post notifications or Newsletters sent OR more than 10 subscribers
-		$total_contacts   = ES()->contacts_db->count_active_contacts_by_list_id();
-		$total_email_sent = ES_DB_Mailing_Queue::get_notifications_count();
-
-		$icon_url = plugin_dir_url( __FILE__ ) . 'images/icon-64.png';
-
-		$reviewurl = '?es_dismiss_admin_notice=1&option_name=star_notice_done';
-		$nobugurl  = '?es_dismiss_admin_notice=1&option_name=dismiss_star_notice';
-
-		if ( ( $total_contacts >= 10 || $total_email_sent > 2 ) && 'yes' !== $star_rating_dismiss && 'yes' !== $star_rating_done ) {
-
-			echo '<div class="notice notice-warning">';
-			echo '<span style="float: left;"><img style="height=90px; width=90px;" src="' . $icon_url . '" /></span>';
-			echo __( "<span><p>We hope you're enjoying <b>Email Subscribers</b> plugin! Could you please do us a BIG favor and give us a 5-star rating on WordPress to help us spread the word and boost our motivation?</p>", "temporary-login-without-password" );
-			echo "<ul class='tlwp-notice-links'>";
-			echo sprintf( '<li><a href="%s" class="tlwp-rating-link-header" target="_blank" data-rated="' . esc_attr__( "Thank You :) ",
-					'temporary-login-without-password' ) . '"><span class="dashicons dashicons-external"></span>&nbsp;&nbsp;Ok, you deserve it!</a></li> <li><a href="%s"><span class="dashicons dashicons-calendar-alt"></span>&nbsp;&nbsp;Maybe later</a></li>', esc_url( $reviewurl ), esc_url( $nobugurl ) );
-			echo "</ul></span>";
-			echo '</div>';
-		}
-	}
-
 
 	function send_test_email() {
 		$message = array(

@@ -71,6 +71,7 @@ class ES_Shortcode {
 			$form = ES()->forms_db->get_form_by_id( $id );
 
 			if ( $form ) {
+
 				$form_data = ES_Forms_Table::get_form_data_from_body( $form );
 
 				self::render_form( $form_data );
@@ -135,6 +136,8 @@ class ES_Shortcode {
 		$list               = ! empty( $data['list'] ) ? $data['list'] : 0;
 		$desc               = ! empty( $data['desc'] ) ? $data['desc'] : '';
 		$form_version       = ! empty( $data['form_version'] ) ? $data['form_version'] : '0.1';
+		$gdpr_consent       = ! empty( $data['gdpr_consent'] ) ? $data['gdpr_consent'] : 'no';
+		$gdpr_consent_text  = ! empty( $data['gdpr_consent_text'] ) ? $data['gdpr_consent_text'] : '';
 
 		/**
 		 * We did not have $email_label, $name_label in
@@ -222,15 +225,22 @@ class ES_Shortcode {
                 <input type="hidden" name="es_email_page_url" value="<?php echo $current_page_url; ?>"/>
                 <input type="hidden" name="status" value="Unconfirmed"/>
                 <input type="hidden" name="es-subscribe" id="es-subscribe" value="<?php echo $nonce; ?>"/>
-                <label style="<?php echo $hp_style; ?>"><input type="email" name="es_hp_email" class="es_required_field" tabindex="-1" autocomplete="-1" value="" /></label>
+                <label style="<?php echo $hp_style; ?>"><input type="email" name="es_hp_email" class="es_required_field" tabindex="-1" autocomplete="-1" value=""/></label>
 				<?php do_action( 'ig_es_after_form_fields' ) ?>
-				<?php if ( ( in_array( 'gdpr/gdpr.php', $active_plugins ) || array_key_exists( 'gdpr/gdpr.php', $active_plugins ) ) ) {
+				<?php
+
+
+                if($gdpr_consent === 'yes') { ?>
+                    <p><input type="checkbox" name="es_gdpr_consent" value="true" required />&nbsp;<label style="display: inline"><?php echo $gdpr_consent_text; ?></label></p>
+                <?php } else if ( ( in_array( 'gdpr/gdpr.php', $active_plugins ) || array_key_exists( 'gdpr/gdpr.php', $active_plugins ) ) ) {
 					echo GDPR::consent_checkboxes();
-				} ?>
+				}
+
+                ?>
                 <input type="submit" name="submit" class="es_subscription_form_submit es_submit_button es_textbox_button" id="es_subscription_form_submit_<?php echo $unique_id; ?>" value="<?php echo $button_label; ?>"/>
 
 				<?php $spinner_image_path = ES_PLUGIN_URL . 'lite/public/images/spinner.gif'; ?>
-                
+
                 <span class="es_spinner_image" id="spinner-image"><img src="<?php echo $spinner_image_path; ?>"/></span>
 
             </form>

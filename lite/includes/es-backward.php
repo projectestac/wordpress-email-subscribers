@@ -24,7 +24,12 @@ class es_cls_dbquery {
 			return;
 		}
 
-		$email     = trim( $data['es_email_mail'] );
+		$email = trim( $data['es_email_mail'] );
+
+		if ( ! is_email( $email ) ) {
+			return;
+		}
+
 		$name      = trim( $data['es_email_name'] );
 		$last_name = '';
 		if ( ! empty( $name ) ) {

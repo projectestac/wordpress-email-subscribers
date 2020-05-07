@@ -38,8 +38,8 @@ class ES_Tools {
 		
 		$email = sanitize_email( ig_es_get_request_data( 'es_test_email' ) );
 
-		$subject = ig_es_get_request_data( 'subject', '' );
-		$content = ig_es_get_request_data( 'content', '' );
+		$subject = ig_es_get_post_data( 'subject', '' );
+		$content = wp_kses_post(ig_es_get_request_data( 'content', '', false ));
 
 		if ( ! empty( $email ) ) {
 

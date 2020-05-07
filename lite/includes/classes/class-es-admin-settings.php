@@ -62,7 +62,7 @@ class ES_Admin_Settings {
 					'ig_es_disable_wp_cron'
 				);
 
-				$texarea_fields_to_sanitize = array(
+				$textarea_fields_to_sanitize = array(
 					'ig_es_unsubscribe_link_content',
 					'ig_es_subscription_success_message',
 					'ig_es_subscription_error_messsage',
@@ -87,7 +87,7 @@ class ES_Admin_Settings {
 
 						if ( in_array( $key, $text_fields_to_sanitize ) ) {
 							$value = sanitize_text_field( $value );
-						} elseif ( in_array( $key, $texarea_fields_to_sanitize ) ) {
+						} elseif ( in_array( $key, $textarea_fields_to_sanitize ) ) {
 							$value = wp_kses_post( $value );
 						} elseif ( in_array( $key, $email_fields_to_sanitize ) ) {
 							$value = sanitize_email( $value );
@@ -755,30 +755,51 @@ class ES_Admin_Settings {
 
 	}
 
+	/**
+	 * Prepare Mailers Setting
+	 *
+	 * @return string
+	 *
+	 * @modify 4.3.12
+	 */
 	public static function mailers_html() {
 		$html                     = '';
-		$es_email_type            = get_option( 'ig_es_email_type' );
-		$selected_mailer_settings = get_option( 'ig_es_mailer_settings' );
-		$selected_mailer          = $selected_mailer_settings['mailer'];
-		$default_mailer           = ( $es_email_type === 'php_html_mail' || $es_email_type === 'php_plaintext_mail' || $selected_mailer === 'phpmail' ) ? 'phpmail' : $selected_mailer;
-		$pepipost_doc_block       = '';
-		$mailers                  = array(
+		$es_email_type            = get_option( 'ig_es_email_type', '' );
+		$selected_mailer_settings = get_option( 'ig_es_mailer_settings', array() );
+
+		$selected_mailer = '';
+		if ( ! empty( $selected_mailer_settings ) && ! empty( $selected_mailer_settings['mailer'] ) ) {
+			$selected_mailer = $selected_mailer_settings['mailer'];
+		} else {
+			$php_email_type_values = array(
+				'php_html_mail',
+				'php_plaintext_mail',
+				'phpmail'
+			);
+
+			if ( in_array( $es_email_type, $php_email_type_values ) ) {
+				$selected_mailer = 'phpmail';
+			}
+		}
+
+		$pepipost_doc_block = '';
+
+		$mailers = array(
 			'wpmail'   => array( 'name' => 'WP Mail', 'logo' => ES_PLUGIN_URL . 'lite/admin/images/wpmail.png' ),
 			'phpmail'  => array( 'name' => 'PHP mail', 'logo' => ES_PLUGIN_URL . 'lite/admin/images/phpmail.png' ),
 			'pepipost' => array( 'name' => 'Pepipost', 'logo' => ES_PLUGIN_URL . 'lite/admin/images/pepipost.png', 'docblock' => $pepipost_doc_block ),
 		);
 
-		$mailers        = apply_filters( 'ig_es_mailers', $mailers );
-		$default_mailer = ( array_key_exists( $default_mailer, $mailers ) ) ? $default_mailer : 'wpmail';
+		$mailers         = apply_filters( 'ig_es_mailers', $mailers );
+		$selected_mailer = ( array_key_exists( $selected_mailer, $mailers ) ) ? $selected_mailer : 'wpmail';
 
 		foreach ( $mailers as $key => $mailer ) {
 			$class = ( $key === 'pepipost' ) ? 'es_recommended' : '';
 			$html  .= '<label><div class="es-mailer-logo ' . $class . '"><div class="es-logo-wrapper"><img src="' . $mailer['logo'] . '" alt="Default (none)"></div>';
-			$html  .= '<input type="radio" class="es_mailer" name="ig_es_mailer_settings[mailer]" value="' . $key . '" ' . checked( $default_mailer, $key, false ) . '>' . $mailer['name'] . '</input></div></label>';
+			$html  .= '<input type="radio" class="es_mailer" name="ig_es_mailer_settings[mailer]" value="' . $key . '" ' . checked( $selected_mailer, $key, false ) . '>' . $mailer['name'] . '</input></div></label>';
 		}
 
 		return $html;
-
 	}
 
 	public static function pepipost_doc_block() {
