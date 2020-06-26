@@ -846,8 +846,15 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 
 			$headers = array(
 				"From: \"$sender_name\" <$sender_email>",
+
+                // XTEC ************ ELIMINAT - Removed headers that causes e-mail to be blocked in AWS' SES
+                // 2020.06.26 @aginard
+                /*
 				'Return-Path: <' . $sender_email . '>',
 				'Reply-To: <' . $reply_to_email . '>',
+                */
+                //************ FI
+
 				'Content-Type: text/html; charset="' . $charset . '"'
 			);
 
