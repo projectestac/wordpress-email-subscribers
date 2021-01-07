@@ -10,18 +10,20 @@ if ( ! class_exists( 'ES_Wpmail_Mailer' ) ) {
 		 *
 		 * @since 4.3.2
 		 */
-		function __construct() {
+		public function __construct() {
 			parent::__construct();
 		}
 
 		/**
+		 * Send Email
+		 *
 		 * @param ES_Message $message
 		 *
 		 * @return boolean|WP_Error
 		 *
 		 * @since 4.3.2
 		 */
-		function send( ES_Message $message ) {
+		public function send( ES_Message $message ) {
 
 			ES()->logger->info( 'Start Sending Email Using WP Mail', $this->logger_context );
 

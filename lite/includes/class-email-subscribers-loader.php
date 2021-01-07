@@ -23,7 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @package    Email_Subscribers
  * @subpackage Email_Subscribers/includes
- * @author     Your Name <email@example.com>
  */
 class Email_Subscribers_Loader {
 
@@ -31,7 +30,6 @@ class Email_Subscribers_Loader {
 	 * The array of actions registered with WordPress.
 	 *
 	 * @since    4.0
-	 * @access   protected
 	 * @var      array    $actions    The actions registered with WordPress to fire when the plugin loads.
 	 */
 	protected $actions;
@@ -40,7 +38,6 @@ class Email_Subscribers_Loader {
 	 * The array of filters registered with WordPress.
 	 *
 	 * @since    4.0
-	 * @access   protected
 	 * @var      array    $filters    The filters registered with WordPress to fire when the plugin loads.
 	 */
 	protected $filters;
@@ -90,7 +87,6 @@ class Email_Subscribers_Loader {
 	 * collection.
 	 *
 	 * @since    4.0
-	 * @access   private
 	 * @param    array                $hooks            The collection of hooks that is being registered (that is, actions or filters).
 	 * @param    string               $hook             The name of the WordPress filter that is being registered.
 	 * @param    object               $component        A reference to the instance of the object on which the filter is defined.

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class ES_Subscription_Throttling {
 
-	static function throttle() {
+	public static function throttle() {
 
 		global $wpdb;
 
@@ -26,14 +26,24 @@ class ES_Subscription_Throttling {
 					return MINUTE_IN_SECONDS * 10;
 				}
 
-				$query       = "SELECT count(*) as count from " . IG_CONTACTS_IPS_TABLE . " WHERE ip = %s AND ( `created_on` >= NOW() - INTERVAL %s SECOND )";
-				$subscribers = $wpdb->get_var( $wpdb->prepare( $query, $subscriber_ip, DAY_IN_SECONDS ) );
+				$subscribers = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT count(*) as count from {$wpdb->prefix}ig_contacts_ips WHERE ip = %s AND ( `created_on` >= NOW() - INTERVAL %s SECOND )",
+						$subscriber_ip,
+						DAY_IN_SECONDS
+					)
+				);
 
 				if ( $subscribers > 0 ) {
 					$timeout = MINUTE_IN_SECONDS * pow( 2, $subscribers - 1 );
 
-					$query       = "SELECT count(*) as count from " . IG_CONTACTS_IPS_TABLE . " WHERE ip = %s AND ( `created_on` >= NOW() - INTERVAL %s SECOND ) LIMIT 1";
-					$subscribers = $wpdb->get_var( $wpdb->prepare( $query, $subscriber_ip, $timeout ) );
+					$subscribers = $wpdb->get_var(
+						$wpdb->prepare(
+							"SELECT count(*) as count from {$wpdb->prefix}ig_contacts_ips WHERE ip = %s AND ( `created_on` >= NOW() - INTERVAL %s SECOND ) LIMIT 1",
+							$subscriber_ip,
+							$timeout
+						)
+					);
 
 					if ( $subscribers > 0 ) {
 						return $timeout;
@@ -41,12 +51,20 @@ class ES_Subscription_Throttling {
 				}
 
 				// Add IP Address.
-				$query = "INSERT INTO " . IG_CONTACTS_IPS_TABLE . " (`ip`) VALUES ( %s )";
-				$wpdb->query( $wpdb->prepare( $query, $subscriber_ip ) );
+				$wpdb->query(
+					$wpdb->prepare(
+						"INSERT INTO {$wpdb->prefix}ig_contacts_ips (`ip`) VALUES ( %s )",
+						$subscriber_ip
+					)
+				);
 
 				// Delete older entries
-				$query = "DELETE FROM " . IG_CONTACTS_IPS_TABLE . " WHERE (`created_on` < NOW() - INTERVAL %s SECOND )";
-				$wpdb->query( $wpdb->prepare( $query, DAY_IN_SECONDS ) );
+				$wpdb->query(
+					$wpdb->prepare(
+						"DELETE FROM {$wpdb->prefix}ig_contacts_ips WHERE (`created_on` < NOW() - INTERVAL %s SECOND )",
+						DAY_IN_SECONDS
+					)
+				);
 			}
 		}
 

@@ -11,25 +11,31 @@ if ( ! class_exists( 'ES_Base_Mailer' ) ) {
 	 */
 	class ES_Base_Mailer {
 		/**
+		 * Mailer name
+		 *
 		 * @since 4.3.2
 		 * @var
 		 *
 		 */
-		var $name;
+		public $name;
 
 		/**
+		 * Mailer Slug
+		 *
 		 * @since 4.3.2
 		 * @var
 		 *
 		 */
-		var $slug;
+		public $slug;
 
 		/**
+		 * Mailer Version
+		 *
 		 * @since 4.3.2
 		 * @var string
 		 *
 		 */
-		var $version = '1.0';
+		public $version = '1.0';
 
 		/**
 		 * Added Logger Context
@@ -47,7 +53,7 @@ if ( ! class_exists( 'ES_Base_Mailer' ) ) {
 		 *
 		 * @since 4.3.2
 		 */
-		function __construct() {
+		public function __construct() {
 
 		}
 
@@ -56,7 +62,7 @@ if ( ! class_exists( 'ES_Base_Mailer' ) ) {
 		 *
 		 * @since 4.3.2
 		 */
-		function send( ES_Message $message ) {
+		public function send( ES_Message $message ) {
 			return new WP_Error( 'ig_es_email_sending_failed', 'Send Method Not Implemented' );
 		}
 
@@ -65,7 +71,7 @@ if ( ! class_exists( 'ES_Base_Mailer' ) ) {
 		 *
 		 * @since 4.3.2
 		 */
-		function pre_send( ES_Message $message ) {
+		public function pre_send( ES_Message $message ) {
 
 		}
 
@@ -74,7 +80,7 @@ if ( ! class_exists( 'ES_Base_Mailer' ) ) {
 		 *
 		 * @since 4.3.2
 		 */
-		function post_send( ES_Message $message ) {
+		public function post_send( ES_Message $message ) {
 
 		}
 
@@ -88,7 +94,7 @@ if ( ! class_exists( 'ES_Base_Mailer' ) ) {
 		 *
 		 * @since 4.3.2
 		 */
-		function do_response( $status = 'success', $message = '' ) {
+		public function do_response( $status = 'success', $message = '' ) {
 
 			if ( 'success' !== $status ) {
 				return new WP_Error( 'ig_es_email_sending_failed', $message );

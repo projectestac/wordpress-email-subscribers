@@ -77,7 +77,7 @@ class ES_Html2Text {
 		"\n\n", // <table> and </table>
 		"\n", // <tr> and </tr>
 		"\t\t\\1\n", // <td> and </td>
-		"", // <span class="_html2text_ignore">...</span>
+		'', // <span class="_html2text_ignore">...</span>
 		'[\\2]', // <img> with alt tag
 	);
 
@@ -201,7 +201,7 @@ class ES_Html2Text {
 	);
 
 	/**
-	 *
+	 * Legacy class constructor
 	 *
 	 * @param unknown $html     (optional)
 	 * @param unknown $fromFile (optional)
@@ -214,7 +214,7 @@ class ES_Html2Text {
 
 
 	/**
-	 *
+	 * Class constructor
 	 *
 	 * @param string  $html    (optional) Source HTML
 	 * @param array   $options (optional) Set configuration options
@@ -256,7 +256,7 @@ class ES_Html2Text {
 
 
 	/**
-	 *
+	 * Sets the given HTML.
 	 *
 	 * @deprecated
 	 * @param unknown $html
@@ -265,7 +265,7 @@ class ES_Html2Text {
 	 */
 	public function set_html( $html, $from_file = false ) {
 		if ( $from_file ) {
-			throw new \InvalidArgumentException( "Argument from_file no longer supported" );
+			throw new \InvalidArgumentException( 'Argument from_file no longer supported' );
 		}
 
 		return $this->setHtml( $html );
@@ -287,7 +287,7 @@ class ES_Html2Text {
 
 
 	/**
-	 *
+	 * Returns the text.
 	 *
 	 * @deprecated
 	 * @return unknown
@@ -298,17 +298,17 @@ class ES_Html2Text {
 
 
 	/**
-	 *
+	 * Prints the processed text.
 	 *
 	 * @deprecated
 	 */
 	public function print_text() {
-		print $this->getText();
+		print esc_html( $this->getText() );
 	}
 
 
 	/**
-	 *
+	 * Prints the text.
 	 *
 	 * @deprecated
 	 * @return unknown
@@ -329,7 +329,7 @@ class ES_Html2Text {
 
 
 	/**
-	 *
+	 * Sets base URL.
 	 *
 	 * @deprecated
 	 * @param unknown $baseurl
@@ -375,7 +375,7 @@ class ES_Html2Text {
 
 
 	/**
-	 *
+	 * Converts the given text.
 	 *
 	 * @param unknown $text (reference)
 	 */
@@ -423,7 +423,7 @@ class ES_Html2Text {
 	 */
 	protected function buildlinkList( $link, $display, $linkOverride = null ) {
 		$linkMethod = ( $linkOverride ) ? $linkOverride : $this->options['do_links'];
-		if ( $linkMethod == 'none' ) {
+		if ( 'none' == $linkMethod ) {
 			return $display;
 		}
 
@@ -442,16 +442,17 @@ class ES_Html2Text {
 			$url .= $link;
 		}
 
-		if ( $linkMethod == 'table' ) {
-			if ( ( $index = array_search( $url, $this->linkList ) ) === false ) {
+		if ( 'table' == $linkMethod ) {
+			$index = array_search( $url, $this->linkList );
+			if ( false === $index ) {
 				$index = count( $this->linkList );
 				$this->linkList[] = $url;
 			}
 
 			return $display . ' [' . ( $index + 1 ) . ']';
-		} elseif ( $linkMethod == 'nextline' ) {
+		} elseif ( 'nextline' == $linkMethod ) {
 			return $display . "\n[" . $url . ']';
-		} elseif ( $linkMethod == 'bbcode' ) {
+		} elseif ( 'bbcode' == $linkMethod ) {
 			return sprintf( '[url=%s]%s[/url]', $url, $display );
 		} else {
 			// link_method defaults to inline
@@ -461,7 +462,7 @@ class ES_Html2Text {
 
 
 	/**
-	 *
+	 * Converts text from pre element.
 	 *
 	 * @param unknown $text (reference)
 	 */
@@ -512,11 +513,11 @@ class ES_Html2Text {
 			$diff = 0;
 			foreach ( $matches[0] as $m ) {
 				$m[1] = strlen( substr( $originalText, 0, $m[1] ) );
-				if ( $m[0][0] == '<' && $m[0][1] == '/' ) {
+				if ( '<' == $m[0][0] && '/' == $m[0][1] ) {
 					$level--;
 					if ( $level < 0 ) {
 						$level = 0; // malformed HTML: go to next blockquote
-					} elseif ( $level == 0 ) {
+					} elseif ( 0 == $level ) {
 						$end = $m[1];
 						$len = $end - $taglen - $start;
 						// Get blockquote content
@@ -538,14 +539,14 @@ class ES_Html2Text {
 						$this->options['width'] = $pWidth;
 						// Replace content
 						$text = substr( $text, 0, $start - $diff )
-						        . $body
-						        . substr( $text, $end + strlen( $m[0] ) - $diff );
+								. $body
+								. substr( $text, $end + strlen( $m[0] ) - $diff );
 
 						$diff += $len + $taglen + strlen( $m[0] ) - strlen( $body );
 						unset( $body );
 					}
 				} else {
-					if ( $level == 0 ) {
+					if ( 0 == $level ) {
 						$start = $m[1];
 						$taglen = strlen( $m[0] );
 					}
@@ -566,7 +567,7 @@ class ES_Html2Text {
 		switch ( strtolower( $matches[1] ) ) {
 			case 'p':
 				// Replace newlines with spaces.
-				$para = str_replace( "\n", " ", $matches[3] );
+				$para = str_replace( "\n", ' ', $matches[3] );
 
 				// Trim trailing and leading whitespace within the tag.
 				$para = trim( $para );
@@ -621,7 +622,7 @@ class ES_Html2Text {
 
 		// convert toupper only the text between HTML tags
 		foreach ( $chunks as $i => $chunk ) {
-			if ( $chunk[0] != '<' ) {
+			if ( '<' != $chunk[0]  ) {
 				$chunks[$i] = $this->strtoupper( $chunk );
 			}
 		}

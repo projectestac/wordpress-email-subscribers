@@ -23,7 +23,7 @@ if ( ! class_exists( 'IG_Log_Handler' ) ) {
 		 * @return string Formatted time for use in log entry.
 		 */
 		protected static function format_time( $timestamp ) {
-			return date( 'c', $timestamp );
+			return gmdate( 'c', $timestamp );
 		}
 
 		/**

@@ -142,7 +142,24 @@ if ( ! class_exists( 'ES_DB_Links' ) ) {
 		public function get_link_by_campaign_id( $link, $campaign_id = 0, $message_id = 0, $index = 0 ) {
 			global $wpdb;
 
-			$where = $wpdb->prepare( " link = %s AND campaign_id = %d AND message_id = %d AND i = %d", $link, $campaign_id, $message_id, $index );
+			$where = $wpdb->prepare( ' link = %s AND campaign_id = %d AND message_id = %d AND i = %d', $link, $campaign_id, $message_id, $index );
+
+			return $this->get_by_conditions( $where );
+		}
+
+		/**
+		 * Check whether link exists in campaign
+		 *
+		 * @param int $message_id
+		 *
+		 * @return string|null
+		 *
+		 * @since 4.2.4
+		 */
+		public function get_links_by_message_id( $message_id = 0 ) {
+			global $wpdb;
+
+			$where = $wpdb->prepare( ' message_id = %d', $message_id );
 
 			return $this->get_by_conditions( $where );
 		}

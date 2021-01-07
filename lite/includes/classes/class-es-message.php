@@ -12,67 +12,85 @@ if ( ! class_exists( 'ES_Message' ) ) {
 	 */
 	class ES_Message {
 		/**
+		 * To email
+		 *
 		 * @var string
 		 *
 		 * @since 4.3.2
 		 */
-		var $to = '';
+		public $to = '';
 
 		/**
+		 * To name
+		 *
 		 * @var string
 		 *
 		 * @since 4.3.2
 		 */
-		var $to_name = '';
+		public $to_name = '';
 
 		/**
+		 * Message headers
+		 *
 		 * @var array
 		 *
 		 * @since 4.3.2
 		 */
-		var $headers = array();
+		public $headers = array();
 
 		/**
+		 * Message errors
+		 *
 		 * @var string
 		 *
 		 * @since 4.3.2
 		 */
-		var $error = '';
+		public $error = '';
 
 		/**
+		 * Message subject
+		 *
 		 * @var string
 		 *
 		 * @since 4.3.2
 		 */
-		var $subject = '';
+		public $subject = '';
 
 		/**
+		 * Message body
+		 *
 		 * @var string
 		 *
 		 * @since 4.3.2
 		 */
-		var $body = '';
+		public $body = '';
 
 		/**
+		 * Message text
+		 *
 		 * @var string
 		 *
 		 * @since 4.3.2
 		 */
-		var $body_text = '';
+		public $body_text = '';
 
 		/**
+		 * Message From
+		 *
 		 * @var
 		 *
 		 * @sinc 4.3.2
 		 */
-		var $from;
+		public $from;
 
 		/**
+		 * Message from name
+		 *
 		 * @var string
 		 *
 		 * @since 4.3.2
 		 */
-		var $from_name = '';
+		public $from_name = '';
 
 
 		public function __construct() {

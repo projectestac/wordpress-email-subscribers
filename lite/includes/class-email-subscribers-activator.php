@@ -23,7 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since      4.0
  * @package    Email_Subscribers
  * @subpackage Email_Subscribers/includes
- * @author     Your Name <email@example.com>
  */
 class Email_Subscribers_Activator {
 
@@ -41,21 +40,21 @@ class Email_Subscribers_Activator {
 
 	public static function register_email_templates() {
 		$labels = array(
-			'name'               => __( 'Templates', 'EMAIL_SUBSCRIBERS' ),
-			'singular_name'      => __( 'Templates', 'EMAIL_SUBSCRIBERS' ),
-			'add_new'            => __( 'Add new Template', 'EMAIL_SUBSCRIBERS' ),
-			'add_new_item'       => __( 'Add new Template', 'EMAIL_SUBSCRIBERS' ),
-			'edit_item'          => __( 'Edit Templates', 'EMAIL_SUBSCRIBERS' ),
-			'new_item'           => __( 'New Templates', 'EMAIL_SUBSCRIBERS' ),
-			'all_items'          => __( 'Templates', 'EMAIL_SUBSCRIBERS' ),
-			'view_item'          => __( 'View Templates', 'EMAIL_SUBSCRIBERS' ),
-			'search_items'       => __( 'Search Templates', 'EMAIL_SUBSCRIBERS' ),
-			'not_found'          => __( 'No Templates found', 'EMAIL_SUBSCRIBERS' ),
-			'not_found_in_trash' => __( 'No Templates found in Trash', 'EMAIL_SUBSCRIBERS' ),
-			'parent_item_colon'  => __( '', 'EMAIL_SUBSCRIBERS' ),
-			'menu_name'          => __( 'Email Subscribers', 'EMAIL_SUBSCRIBERS' ),
-			'featured_image'     => __( 'Thumbnail (For Visual Representation only)', 'EMAIL_SUBSCRIBERS' ),
-			'set_featured_image' => __( 'Set thumbnail', 'EMAIL_SUBSCRIBERS' )
+			'name'               => __( 'Templates', 'email-subscribers' ),
+			'singular_name'      => __( 'Templates', 'email-subscribers' ),
+			'add_new'            => __( 'Add New Template', 'email-subscribers' ),
+			'add_new_item'       => __( 'Add New Template', 'email-subscribers' ),
+			'edit_item'          => __( 'Edit Templates', 'email-subscribers' ),
+			'new_item'           => __( 'New Templates', 'email-subscribers' ),
+			'all_items'          => __( 'Templates', 'email-subscribers' ),
+			'view_item'          => __( 'View Templates', 'email-subscribers' ),
+			'search_items'       => __( 'Search Templates', 'email-subscribers' ),
+			'not_found'          => __( 'No Templates found', 'email-subscribers' ),
+			'not_found_in_trash' => __( 'No Templates found in Trash', 'email-subscribers' ),
+			'parent_item_colon'  => '',
+			'menu_name'          => __( 'Email Subscribers', 'email-subscribers' ),
+			'featured_image'     => __( 'Thumbnail (For Visual Representation only)', 'email-subscribers' ),
+			'set_featured_image' => __( 'Set thumbnail', 'email-subscribers' )
 		);
 
 		$args = array(

@@ -17,4 +17,4 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package    Email_Subscribers
  * @subpackage Email_Subscribers/public/partials
  */
-?>
+

@@ -11,24 +11,28 @@ if ( ! class_exists( 'ES_Pepipost_Mailer' ) ) {
 	 */
 	class ES_Pepipost_Mailer extends ES_Base_Mailer {
 		/**
+		 * Pepipost API Url
+		 *
 		 * @since 4.3.2
 		 * @var string
 		 *
 		 */
-		var $api_url = 'https://api.pepipost.com/v2/sendEmail';
+		public $api_url = 'https://api.pepipost.com/v2/sendEmail';
 		/**
+		 * API Key
+		 *
 		 * @since 4.3.2
 		 * @var string
 		 *
 		 */
-		var $api_key = '';
+		public $api_key = '';
 
 		/**
 		 * ES_Pepipost_Mailer constructor.
 		 *
 		 * @since 4.3.2
 		 */
-		function __construct() {
+		public function __construct() {
 			parent::__construct();
 		}
 
@@ -42,7 +46,7 @@ if ( ! class_exists( 'ES_Pepipost_Mailer' ) ) {
 		 * @since 4.2.1
 		 * @since 4.3.2 Modified Response
 		 */
-		function send( ES_Message $message ) {
+		public function send( ES_Message $message ) {
 
 			ES()->logger->info( 'Start Sending Email Using Pepipost', $this->logger_context );
 
@@ -79,7 +83,7 @@ if ( ! class_exists( 'ES_Pepipost_Mailer' ) ) {
 				'headers' => $headers
 			);
 
-			if ( $method == 'POST' ) {
+			if ( 'POST' == $method ) {
 				$options['body'] = $qs;
 			}
 

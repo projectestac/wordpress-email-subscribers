@@ -1,5 +1,11 @@
 <?php
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
 class ES_Handle_Post_Notification {
 
 	public $is_wp_5 = false;
@@ -51,7 +57,7 @@ class ES_Handle_Post_Notification {
 
 	public function es_post_publish_callback( $post_status, $original_post_status, $post ) {
 
-		if ( ( $post_status == 'publish' ) && ( $original_post_status != 'publish' ) ) {
+		if ( ( 'publish' == $post_status ) && ( 'publish' != $original_post_status ) ) {
 
 			if ( is_object( $post ) ) {
 
@@ -76,74 +82,59 @@ class ES_Handle_Post_Notification {
 			$notifications = ES()->campaigns_db->get_campaigns_by_post_id( $post_id );
 
 			if ( count( $notifications ) > 0 ) {
-				$existing_contacts = array();
 				foreach ( $notifications as $notification ) {
 					$template_id = $notification['base_template_id'];
 					$template    = get_post( $template_id );    // to confirm if template exists in ES->Templates
 					if ( is_object( $template ) ) {
 						$list_id     = $notification['list_ids'];
-						$subscribers = ES()->contacts_db->get_active_contacts_by_list_id( $list_id );
+						$list_id     = explode( ',', $list_id );
 
-						//schedule
-						if ( count( $subscribers ) > 0 ) {
+						$post = get_post( $post_id );
+
+						if ( is_object( $post ) ) {
+
 							/*
-							 * Prepare Subject
-							 * Prepare Body
-							 * Add entry into sent_details table
-							 * Add entry into deliverreport table
-							 */
-
-							foreach ( $subscribers as $key => $subscriber ) {
-								if ( in_array( $subscriber['id'], $existing_contacts ) ) {
-									unset( $subscribers[ $key ] );
-								} else {
-									$existing_contacts[] = $subscriber['id'];
-								}
-							}
-							/*check again for unique subscribers count
-							 if unique count it 0 then skip this report
+							* Prepare Subject
+							* Prepare Body
+							* Add entry into mailing queue table
 							*/
-							if ( count( $subscribers ) <= 0 ) {
-								continue;
-							}
 
-							$post = get_post( $post_id );
+							// Prepare subject
+							$post_subject = self::prepare_subject( $post, $template );
 
-							if ( is_object( $post ) ) {
-								// Prepare subject
-								$post_subject = self::prepare_subject( $post, $template );
+							// Prepare body
+							$template_content = $template->post_content;
+							$post_content     = self::prepare_body( $template_content, $post_id, $template_id );
 
-								// Prepare body
-								$template_content = $template->post_content;
-								$post_content     = self::prepare_body( $template_content, $post_id, $template_id );
+							$guid = ES_Common::generate_guid( 6 );
 
-								$guid = ES_Common::generate_guid( 6 );
+							$data = array(
+								'hash'        => $guid,
+								'campaign_id' => $notification['id'],
+								'subject'     => $post_subject,
+								'body'        => $post_content,
+								'count'       => 0, // Subscribers count would be updated through background process when they are added in the sending_queue table.
+								'status'      => 'Queueing',
+								'start_at'    => '',
+								'finish_at'   => '',
+								'created_at'  => ig_get_current_date_time(),
+								'updated_at'  => ig_get_current_date_time(),
+								'meta'        => maybe_serialize(
+									array(
+										'post_id' => $post_id,
+										'type'    => 'post_notification',
+									)
+								),
+							);
 
-								$data = array(
-									'hash'        => $guid,
-									'campaign_id' => $notification['id'],
-									'subject'     => $post_subject,
-									'body'        => $post_content,
-									'count'       => count( $subscribers ),
-									'status'      => 'In Queue',
-									'start_at'    => '',
-									'finish_at'   => '',
-									'created_at'  => ig_get_current_date_time(),
-									'updated_at'  => ig_get_current_date_time(),
-									'meta'        => maybe_serialize( array( 'post_id' => $post_id, 'type' => 'post_notification' ) )
+							// Add entry into mailing queue table
+							$mailing_queue_id = ES_DB_Mailing_Queue::add_notification( $data );
+							if ( $mailing_queue_id ) {
+								$action_args = array(
+									'mailing_queue_id' => $mailing_queue_id,
+									'list_ids'         => $list_id,
 								);
-
-								// Add entry into mailing queue table
-								$insert = ES_DB_Mailing_Queue::add_notification( $data );
-								if ( $insert ) {
-									// Add entry into sending queue table
-									$delivery_data                     = array();
-									$delivery_data['hash']             = $guid;
-									$delivery_data['subscribers']      = $subscribers;
-									$delivery_data['campaign_id']      = $notification['id'];
-									$delivery_data['mailing_queue_id'] = $insert;
-									ES_DB_Sending_Queue::do_batch_insert( $delivery_data );
-								}
+								IG_ES_Background_Process_Helper::add_action_scheduler_task( 'ig_es_add_subscribers_to_sending_queue', $action_args );
 							}
 						}
 					}
@@ -153,7 +144,7 @@ class ES_Handle_Post_Notification {
 	}
 
 	public static function prepare_subject( $post, $template ) {
-		//convert post subject here
+		// convert post subject here
 
 		$post_title     = $post->post_title;
 		$template_title = $template->post_title;
@@ -171,17 +162,21 @@ class ES_Handle_Post_Notification {
 	}
 
 	public static function prepare_body( $es_templ_body, $post_id, $email_template_id ) {
-		$post          = get_post( $post_id );
-		$post_date     = $post->post_modified;
-		$es_templ_body = str_replace( '{{DATE}}', $post_date, $es_templ_body );
+		$post                 = get_post( $post_id );
+		$post_key             = 'post';
+		// Making $post as global using $GLOBALS['post'] key. Can't use 'post' key directly into $GLOBALS since PHPCS throws global variable assignment warning for 'post'.
+		$GLOBALS[ $post_key ] = $post;
+
+		$post_date            = ES_Common::convert_date_to_wp_date( $post->post_modified );
+		$es_templ_body        = str_replace( '{{DATE}}', $post_date, $es_templ_body );
 
 		$post_title    = get_the_title( $post );
 		$es_templ_body = str_replace( '{{POSTTITLE}}', $post_title, $es_templ_body );
 		$post_link     = get_permalink( $post_id );
 
 		// Size of {{POSTIMAGE}}
-		$post_thumbnail      = "";
-		$post_thumbnail_link = "";
+		$post_thumbnail      = '';
+		$post_thumbnail_link = '';
 		if ( ( function_exists( 'has_post_thumbnail' ) ) && ( has_post_thumbnail( $post_id ) ) ) {
 			$es_post_image_size = get_option( 'ig_es_post_image_size', 'full' );
 			switch ( $es_post_image_size ) {
@@ -198,8 +193,8 @@ class ES_Handle_Post_Notification {
 			}
 		}
 
-		if ( $post_thumbnail != "" ) {
-			$post_thumbnail_link = "<a href='" . $post_link . "' target='_blank'>" . $post_thumbnail . "</a>";
+		if ( '' != $post_thumbnail ) {
+			$post_thumbnail_link = "<a href='" . $post_link . "' target='_blank'>" . $post_thumbnail . '</a>';
 		}
 
 		$es_templ_body = str_replace( '{{POSTIMAGE}}', $post_thumbnail_link, $es_templ_body );
@@ -220,16 +215,47 @@ class ES_Handle_Post_Notification {
 		$post_excerpt  = get_the_excerpt( $post );
 		$es_templ_body = str_replace( '{{POSTEXCERPT}}', $post_excerpt, $es_templ_body );
 
+		$more_tag_data = get_extended( $post->post_content );
+		
+		// Get text before the more(<!--more-->) tag.
+		$text_before_more_tag = $more_tag_data['main'];
+		$text_before_more_tag = strip_tags( strip_shortcodes( $text_before_more_tag ) );
+		$es_templ_body        = str_replace( '{{POSTMORETAG}}', $text_before_more_tag, $es_templ_body );
+
 		// get post author
 		$post_author_id = $post->post_author;
 		$post_author    = get_the_author_meta( 'display_name', $post_author_id );
 		$es_templ_body  = str_replace( '{{POSTAUTHOR}}', $post_author, $es_templ_body );
 		$es_templ_body  = str_replace( '{{POSTLINK-ONLY}}', $post_link, $es_templ_body );
 
-		if ( $post_link != "" ) {
-			$post_link_with_title = "<a href='" . $post_link . "' target='_blank'>" . $post_title . "</a>";
+		// Check if template has {{POSTCATS}} placeholder.
+		if ( strpos( $es_templ_body, '{{POSTCATS}}' ) >= 0 ) {
+			$taxonomies = get_object_taxonomies( $post );
+			$post_cats  = array();
+			
+			if ( ! empty( $taxonomies ) ) {
+				foreach ( $taxonomies as $taxonomy ) {
+					$taxonomy_object = get_taxonomy( $taxonomy );
+					// Check if taxonomy is hierarchical e.g. have parent-child relationship like categories
+					if ( $taxonomy_object->hierarchical ) {
+						$post_terms = get_the_terms( $post, $taxonomy );
+						if ( ! empty( $post_terms ) ) {
+							foreach ( $post_terms as $term ) {
+								$term_name   = $term->name;
+								$post_cats[] = $term_name;
+							}
+						}
+					}
+				}
+			}
+
+			$es_templ_body = str_replace( '{{POSTCATS}}', implode( ', ', $post_cats ), $es_templ_body );
+		}
+
+		if ( '' != $post_link ) {
+			$post_link_with_title = "<a href='" . $post_link . "' target='_blank'>" . $post_title . '</a>';
 			$es_templ_body        = str_replace( '{{POSTLINK-WITHTITLE}}', $post_link_with_title, $es_templ_body );
-			$post_link            = "<a href='" . $post_link . "' target='_blank'>" . $post_link . "</a>";
+			$post_link            = "<a href='" . $post_link . "' target='_blank'>" . $post_link . '</a>';
 		}
 		$es_templ_body = str_replace( '{{POSTLINK}}', $post_link, $es_templ_body );
 
@@ -266,4 +292,3 @@ class ES_Handle_Post_Notification {
 	}
 
 }
-

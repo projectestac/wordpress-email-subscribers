@@ -85,7 +85,7 @@ function ig_es_update_327_db_version() {
 
 /* --------------------- ES 3.3.6 (Start)--------------------------- */
 /**
- * To migrate Email Settings data from custom pluginconfig table to wordpress options table and to update user roles
+ * To migrate Email Settings data from custom pluginconfig table to WordPress options table and to update user roles
  * ES version 3.3 onwards
  */
 function ig_es_update_330_import_options() {
@@ -132,6 +132,7 @@ function ig_es_update_330_import_options() {
 			update_option( $new_option_name, $option_value );
 			delete_option( $old_option_name );
 		}
+
 	}
 
 	// Do not pull data for new users as there is no pluginconfig table created on activation
@@ -140,8 +141,7 @@ function ig_es_update_330_import_options() {
 	if ( $table_exists > 0 ) {
 		global $wpdb;
 		// Pull out ES settings data of existing users and move them to options table
-		$es_get_settings_data = $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}es_pluginconfig WHERE es_c_id = %d", 1 );
-		$settings_data        = $wpdb->get_row( $es_get_settings_data, ARRAY_A );
+		$settings_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}es_pluginconfig WHERE es_c_id = %d", 1 ), ARRAY_A );
 
 		if ( ! empty( $settings_data ) ) {
 			foreach ( $settings_data as $name => $value ) {
@@ -155,7 +155,7 @@ function ig_es_update_330_import_options() {
 	//Update User Roles Settings
 	$es_c_rolesandcapabilities = get_option( 'ig_es_rolesandcapabilities', 'norecord' );
 
-	if ( $es_c_rolesandcapabilities != 'norecord' ) {
+	if ( 'norecord' != $es_c_rolesandcapabilities ) {
 		$remove_roles = array( 'es_roles_setting', 'es_roles_help' );
 		foreach ( $es_c_rolesandcapabilities as $role_name => $role_value ) {
 			if ( in_array( $role_name, $remove_roles ) ) {
@@ -186,12 +186,11 @@ function ig_es_update_336_add_template_slug() {
 	if ( $template_table_exists > 0 ) {
 
 		// To check if column es_templ_slug exists or not
-		$es_template_col      = "SHOW COLUMNS FROM {$wpdb->prefix}es_templatetable LIKE 'es_templ_slug' ";
-		$results_template_col = $wpdb->get_results( $es_template_col, 'ARRAY_A' );
+		$results_template_col = $wpdb->get_results( $wpdb->prepare( "SHOW COLUMNS FROM {$wpdb->prefix}es_templatetable LIKE %s", 'es_templ_slug' ) , 'ARRAY_A' );
 		$template_num_rows    = $wpdb->num_rows;
 
 		// If column doesn't exists, then insert it
-		if ( $template_num_rows != '1' ) {
+		if ( '1' != $template_num_rows ) {
 			// Template table
 			$wpdb->query( "ALTER TABLE {$wpdb->prefix}es_templatetable
 								ADD COLUMN es_templ_slug VARCHAR(255) NULL
@@ -213,23 +212,25 @@ function ig_es_update_336_db_version() {
  */
 function ig_es_update_340_migrate_templates_to_cpt() {
 
-	global $wpdb;
+	global $wpdb, $wpbd;
 
 	// MIGRATION OF TEMPLATE TABLE TO CTP
 	$es_template_table_exists = $wpdb->query( "SHOW TABLES LIKE '{$wpdb->prefix}es_templatetable'" );
 	if ( $es_template_table_exists > 0 ) {
 
 		$es_migration_success = get_option( 'es_template_migration_done', 'nodata' );
-		if ( $es_migration_success == 'yes' ) {
+		if ( 'yes' == $es_migration_success ) {
 			return;
 		}
 
-		$sSql   = "SELECT es_tt.*,
-							 IFNULL(es_not.es_note_id, '') as es_note_id
-					FROM {$wpdb->prefix}es_templatetable AS es_tt
-					LEFT JOIN {$wpdb->prefix}es_notification AS es_not
-						ON(es_not.es_note_templ = es_tt.es_templ_id)";
-		$arrRes = $wpdb->get_results( $sSql, ARRAY_A );
+		$arrRes = $wpdb->get_results( 
+					"SELECT es_tt.*,
+					IFNULL(es_not.es_note_id, '') as es_note_id
+   					FROM {$wpdb->prefix}es_templatetable AS es_tt
+   					LEFT JOIN {$wpdb->prefix}es_notification AS es_not
+	   				ON(es_not.es_note_templ = es_tt.es_templ_id)",
+					ARRAY_A
+				);
 
 		if ( ! empty( $arrRes ) ) {
 
@@ -249,15 +250,15 @@ function ig_es_update_340_migrate_templates_to_cpt() {
 				// Insert the post into the database
 				$last_inserted_id = wp_insert_post( $es_post );
 
-				if ( $tmpl['es_email_type'] == 'Post Notification' && ! empty( $tmpl['es_note_id'] ) ) {
+				if ( 'Post Notification' == $tmpl['es_email_type'] && ! empty( $tmpl['es_note_id'] ) ) {
 					$es_note_ids[] = 'WHEN es_note_id = ' . $tmpl['es_note_id'] . ' THEN ' . $last_inserted_id;
 				}
 			}
 
 			if ( ! empty( $es_note_ids ) ) {
 				// To update the 'es_note_templ' ids
-				$sSql = "UPDATE {$wpdb->prefix}es_notification SET es_note_templ = (CASE " . implode( " ", $es_note_ids ) . " END)";
-				$wpdb->query( $sSql );
+				$sSql = "UPDATE {$wpdb->prefix}es_notification SET es_note_templ = (CASE " . implode( ' ', $es_note_ids ) . ' END)';
+				$wpbd->query( $sSql );
 			}
 
 		}
@@ -267,7 +268,8 @@ function ig_es_update_340_migrate_templates_to_cpt() {
 }
 
 function ig_es_update_340_migrate_keywords() {
-	global $wpdb;
+
+	global $wpdb, $wpbd;
 	// Keywords in Compose table
 	$keywords_to_rename_in_compose = array(
 		'###NAME###'               => '{{NAME}}',
@@ -300,8 +302,7 @@ function ig_es_update_340_migrate_keywords() {
 	);
 
 	// Updating keywords in post_title column where `post_type` = 'es_template'
-	$es_post_title_query = "UPDATE {$wpdb->prefix}posts SET post_title = REPLACE(post_title,'###POSTTITLE###','{{POSTTITLE}}') WHERE post_type = 'es_template'";
-	$wpdb->query( $es_post_title_query );
+	$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}posts SET post_title = REPLACE(post_title,'###POSTTITLE###','{{POSTTITLE}}') WHERE post_type = %s", 'es_template' ) );
 
 	// Updating keywords in post_content column where `post_type` = 'es_template'
 	$compose_keywords = array();
@@ -309,8 +310,8 @@ function ig_es_update_340_migrate_keywords() {
 		$compose_keywords[] = "post_content = REPLACE(post_content,'" . $key . "','" . $value . "')";
 	}
 
-	$es_post_content_query = "UPDATE {$wpdb->prefix}posts SET " . implode( ", ", $compose_keywords ) . " WHERE post_type = 'es_template'";
-	$wpdb->query( $es_post_content_query );
+	$es_post_content_query = "UPDATE {$wpdb->prefix}posts SET " . implode( ', ', $compose_keywords ) . " WHERE post_type = 'es_template'";
+	$wpbd->query( $es_post_content_query );
 
 	// Updating keywords in options
 	$es_admin_new_sub_content = get_option( 'ig_es_admin_new_sub_content', 'nodata' );
@@ -323,42 +324,42 @@ function ig_es_update_340_migrate_keywords() {
 	$es_unsub_link            = get_option( 'ig_es_unsublink', 'nodata' );
 
 	foreach ( $keywords_in_settings_to_rename as $key => $value ) {
-		if ( $es_admin_new_sub_content != 'nodata' ) {
+		if ( 'nodata' != $es_admin_new_sub_content ) {
 			$es_admin_new_sub_content = str_replace( $key, $value, $es_admin_new_sub_content );
 			update_option( 'ig_es_admin_new_sub_content', $es_admin_new_sub_content );
 		}
 
-		if ( $es_sent_report_content != 'nodata' ) {
+		if ( 'nodata' != $es_sent_report_content ) {
 			$es_sent_report_content = str_replace( $key, $value, $es_sent_report_content );
 			update_option( 'ig_es_sentreport', $es_sent_report_content );
 		}
 
-		if ( $es_confirm_content != 'nodata' ) {
+		if ( 'nodata' != $es_confirm_content ) {
 			$es_confirm_content = str_replace( $key, $value, $es_confirm_content );
 			update_option( 'ig_es_confirmcontent', $es_confirm_content );
 		}
 
-		if ( $es_welcome_content != 'nodata' ) {
+		if ( 'nodata' != $es_welcome_content ) {
 			$es_welcome_content = str_replace( $key, $value, $es_welcome_content );
 			update_option( 'ig_es_welcomecontent', $es_welcome_content );
 		}
 
-		if ( $es_unsub_content != 'nodata' ) {
+		if ( 'nodata' != $es_unsub_content ) {
 			$es_unsub_content = str_replace( $key, $value, $es_unsub_content );
 			update_option( 'ig_es_unsubcontent', $es_unsub_content );
 		}
 
-		if ( $es_cron_admin_mail != 'nodata' ) {
+		if ( 'nodata' != $es_cron_admin_mail ) {
 			$es_cron_admin_mail = str_replace( $key, $value, $es_cron_admin_mail );
 			update_option( 'ig_es_cron_adminmail', $es_cron_admin_mail );
 		}
 
-		if ( $es_optin_link != 'nodata' ) {
+		if ( 'nodata' != $es_optin_link ) {
 			$es_optin_link = str_replace( $key, $value, $es_optin_link );
 			update_option( 'ig_es_optinlink', $es_optin_link );
 		}
 
-		if ( $es_unsub_link != 'nodata' ) {
+		if ( 'nodata' != $es_unsub_link ) {
 			$es_unsub_link = str_replace( $key, $value, $es_unsub_link );
 			update_option( 'ig_es_unsublink', $es_unsub_link );
 		}
@@ -392,7 +393,7 @@ function ig_es_update_3516_create_subscribers_ips_table() {
 							  ) $charset_collate";
 
 
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	require_once  ABSPATH . 'wp-admin/includes/upgrade.php' ;
 	dbDelta( $es_subscriber_ips_table );
 }
 
@@ -405,7 +406,7 @@ function ig_es_update_3516_db_version() {
 
 /* --------------------- ES 4.0.0 (Start)--------------------------- */
 function ig_es_update_400_delete_tables() {
-	global $wpdb;
+	global $wpdb, $wpbd;
 
 	$tables_to_delete = array(
 		$wpdb->prefix . 'ig_blocked_emails',
@@ -418,22 +419,20 @@ function ig_es_update_400_delete_tables() {
 		$wpdb->prefix . 'ig_mailing_queue',
 		$wpdb->prefix . 'ig_sending_queue',
 		$wpdb->prefix . 'ig_queue',
-		$wpdb->prefix . 'ig_actions'
+		$wpdb->prefix . 'ig_actions',
+		$wpdb->prefix . 'ig_links',
+		$wpdb->prefix . 'ig_workflows',
+		$wpdb->prefix . 'ig_workflows_queue',
 	);
 
 	foreach ( $tables_to_delete as $table ) {
 		$query = "DROP TABLE IF EXISTS {$table}";
-		$wpdb->query( $query );
+		$wpbd->query( $query );
 	}
 }
 
 function ig_es_update_400_create_tables() {
-	global $wpdb;
-
-	$wpdb->hide_errors();
-	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-	dbDelta( ES_Install::get_ig_es_400_schema() );
-
+	ES_Install::create_tables( '4.0.0' );
 }
 
 function ig_es_update_400_import_options() {
@@ -448,7 +447,7 @@ function ig_es_update_400_import_options() {
 				$value = $data['default'];
 			}
 
-			if ( ! empty( $data['action'] ) && $data['action'] === 'convert_space_to_underscore' ) {
+			if ( ! empty( $data['action'] ) && 'convert_space_to_underscore' === $data['action'] ) {
 				$value = strtolower( ig_es_convert_space_to_underscore( $value ) );
 			}
 
@@ -464,12 +463,10 @@ function ig_es_update_400_migrate_lists() {
 	global $wpdb;
 
 	// Collect list name from Email list
-	$sql   = "SELECT distinct(es_email_group) FROM " . ES_EMAILLIST_TABLE;
-	$lists = $wpdb->get_col( $sql );
+	$lists = $wpdb->get_col( "SELECT distinct(es_email_group) FROM {$wpdb->prefix}es_emaillist" );
 
 	// Collect list name from notification table
-	$sql      = "SELECT distinct(es_note_group) FROM " . EMAIL_SUBSCRIBERS_NOTIFICATION_TABLE;
-	$ps_lists = $wpdb->get_col( $sql );
+	$ps_lists = $wpdb->get_col( "SELECT distinct(es_note_group) FROM {$wpdb->prefix}es_notification" );
 
 	if ( count( $lists ) > 0 || count( $ps_lists ) > 0 ) {
 		$all_lists = array_unique( array_merge( $lists, $ps_lists ) );
@@ -545,19 +542,15 @@ function ig_es_update_402_db_version() {
 function ig_es_update_403_alter_campaigns_table() {
 	global $wpdb;
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `name` varchar(255) DEFAULT NULL";
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `name` varchar(255) DEFAULT NULL" );
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `slug` varchar(255) DEFAULT NULL";
-
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `slug` varchar(255) DEFAULT NULL" );
 }
 
 function ig_es_update_403_alter_mailing_queue_table() {
 	global $wpdb;
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_mailing_queue MODIFY `subject` text DEFAULT ''";
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_mailing_queue MODIFY `subject` text DEFAULT ''" );
 }
 
 function ig_es_update_403_db_version() {
@@ -569,19 +562,15 @@ function ig_es_update_403_db_version() {
 function ig_es_update_405_alter_forms_table() {
 	global $wpdb;
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_forms MODIFY `name` varchar(255) DEFAULT NULL";
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_forms MODIFY `name` varchar(255) DEFAULT NULL" );
 }
 
 function ig_es_update_405_alter_lists_table() {
 	global $wpdb;
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_lists MODIFY `name` varchar(255) DEFAULT NULL";
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_lists MODIFY `name` varchar(255) DEFAULT NULL" );
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_lists MODIFY `slug` varchar(255) DEFAULT NULL";
-
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_lists MODIFY `slug` varchar(255) DEFAULT NULL" );
 }
 
 function ig_es_update_405_migrate_widgets() {
@@ -597,9 +586,7 @@ function ig_es_update_405_db_version() {
 function ig_es_update_4010_update_sending_status() {
 	global $wpdb;
 
-	$sql   = "UPDATE {$wpdb->prefix}ig_sending_queue SET status = %s WHERE status = %s";
-	$query = $wpdb->prepare( $sql, array( 'Sent', 'Nodata' ) );
-	$wpdb->query( $query );
+	$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}ig_sending_queue SET status = %s WHERE status = %s", array( 'Sent', 'Nodata' ) ) );
 }
 
 function ig_es_update_4010_db_version() {
@@ -625,8 +612,7 @@ function ig_es_update_4011_db_version() {
 function ig_es_update_4015_alter_blocked_emails_table() {
 	global $wpdb;
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_blocked_emails MODIFY `id` int(10) NOT NULL AUTO_INCREMENT";
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_blocked_emails MODIFY `id` int(10) NOT NULL AUTO_INCREMENT" );
 }
 
 function ig_es_update_4015_db_version() {
@@ -637,8 +623,7 @@ function ig_es_update_4015_db_version() {
 function ig_es_update_411_alter_contacts_table() {
 	global $wpdb;
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_contacts MODIFY `source` varchar(50) DEFAULT NULL";
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_contacts MODIFY `source` varchar(50) DEFAULT NULL" );
 }
 
 function ig_es_update_411_db_version() {
@@ -649,24 +634,18 @@ function ig_es_update_411_db_version() {
 function ig_es_update_417_alter_campaigns_table() {
 	global $wpdb;
 
-	$campaigns_table = IG_CAMPAIGNS_TABLE;
-
-	$cols = $wpdb->get_col( "SHOW COLUMNS FROM {$campaigns_table}" );
+	$cols = $wpdb->get_col( "SHOW COLUMNS FROM {$wpdb->prefix}ig_campaigns" );
 	if ( ! in_array( 'meta', $cols ) ) {
-		$query = "ALTER TABLE {$campaigns_table} ADD COLUMN meta longtext NULL AFTER `status`";
-		$wpdb->query( $query );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns ADD COLUMN meta longtext NULL AFTER `status`" );
 	}
 }
 
 function ig_es_update_417_alter_mailing_queue_table() {
 	global $wpdb;
 
-	$mailing_queue_table = IG_MAILING_QUEUE_TABLE;
-
-	$cols = $wpdb->get_col( "SHOW COLUMNS FROM {$mailing_queue_table}" );
+	$cols = $wpdb->get_col( "SHOW COLUMNS FROM {$wpdb->prefix}ig_mailing_queue" );
 	if ( ! in_array( 'meta', $cols ) ) {
-		$query = "ALTER TABLE {$mailing_queue_table} ADD COLUMN meta longtext NULL AFTER `finish_at`";
-		$wpdb->query( $query );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_mailing_queue ADD COLUMN meta longtext NULL AFTER `finish_at`" );
 	}
 }
 
@@ -682,10 +661,8 @@ function ig_es_update_417_db_version() {
  * @since 4.1.13
  */
 function ig_es_update_4113_migrate_categories_in_campaigns_table() {
-	global $wpdb;
-	$campaigns_table       = IG_CAMPAIGNS_TABLE;
-	$query                 = "SELECT id, categories FROM {$campaigns_table} where type='post_notification' ";
-	$campaign_category_map = $wpdb->get_results( $query, ARRAY_A );
+	global $wpdb, $wpbd;
+	$campaign_category_map = $wpdb->get_results( $wpdb->prepare( "SELECT id, categories FROM {$wpdb->prefix}ig_campaigns where type = %s", 'post_notification' ), ARRAY_A );
 
 	if ( ! empty( $campaign_category_map ) ) {
 		foreach ( $campaign_category_map as $value ) {
@@ -695,8 +672,8 @@ function ig_es_update_4113_migrate_categories_in_campaigns_table() {
 			$categories[]   = " WHEN categories = '" . esc_sql( $value['categories'] ) . "' THEN '" . $categories_str . "'";
 		}
 
-		$update_query = "UPDATE {$campaigns_table} SET categories = (CASE " . implode( ' ', $categories ) . " ELSE categories END)";
-		$wpdb->query( $update_query );
+		$update_query = "UPDATE {$wpdb->prefix}ig_campaigns SET categories = (CASE " . implode( ' ', $categories ) . ' ELSE categories END)';
+		$wpbd->query( $update_query );
 	}
 }
 
@@ -764,13 +741,13 @@ function ig_es_update_4115_migrate_db_update_history() {
 }
 
 /**
- * add form success message according to opt-in type
+ * Add form success message according to opt-in type
  *
  * @since 4.1.15
  */
 function ig_es_update_4115_add_form_submission_option() {
 	$ig_es_option_type = get_option( 'ig_es_optin_type' );
-	$message           = ( $ig_es_option_type == 'double_opt_in' ) ? __( 'Your subscription was successful! Kindly check your mailbox and confirm your subscription. If you don\'t see the email within a few minutes, check the spam/junk folder.', 'email-subscribers' ) : __( 'Successfully Subscribed.', 'email-subscribers' );
+	$message           = ( 'double_opt_in' == $ig_es_option_type ) ? __( 'Your subscription was successful! Kindly check your mailbox and confirm your subscription. If you don\'t see the email within a few minutes, check the spam/junk folder.', 'email-subscribers' ) : __( 'Successfully Subscribed.', 'email-subscribers' );
 	update_option( 'ig_es_form_submission_success_message', $message );
 }
 
@@ -792,40 +769,34 @@ function ig_es_update_4115_db_version() {
 function ig_es_update_420_alter_campaigns_table() {
 	global $wpdb;
 
+
 	$wpdb->hide_errors();
 
-	$campaigns_table = IG_CAMPAIGNS_TABLE;
-
-	$cols = $wpdb->get_col( "SHOW COLUMNS FROM {$campaigns_table}" );
+	$cols = $wpdb->get_col( "SHOW COLUMNS FROM {$wpdb->prefix}ig_campaigns" );
 
 	// Add `parent_id`
 	if ( ! in_array( 'parent_id', $cols ) ) {
-		$query = "ALTER TABLE {$wpdb->prefix}ig_campaigns ADD COLUMN `parent_id` int(10) unsigned DEFAULT NULL AFTER `type`";
-		$wpdb->query( $query );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns ADD COLUMN `parent_id` int(10) unsigned DEFAULT NULL AFTER `type`" );
 	}
 
 	// Add `parent_type`
 	if ( ! in_array( 'parent_type', $cols ) ) {
-		$query = "ALTER TABLE {$wpdb->prefix}ig_campaigns ADD COLUMN `parent_type` varchar(50) DEFAULT NULL AFTER `parent_id`";
-		$wpdb->query( $query );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns ADD COLUMN `parent_type` varchar(50) DEFAULT NULL AFTER `parent_id`" );
 	}
 
 	// Add `subject`
 	if ( ! in_array( 'subject', $cols ) ) {
-		$query = "ALTER TABLE {$wpdb->prefix}ig_campaigns ADD COLUMN `subject` varchar(255) DEFAULT NULL AFTER `parent_type`";
-		$wpdb->query( $query );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns ADD COLUMN `subject` varchar(255) DEFAULT NULL AFTER `parent_type`" );
 	}
 
 	// Add `body`
 	if ( ! in_array( 'body', $cols ) ) {
-		$query = "ALTER TABLE {$wpdb->prefix}ig_campaigns ADD COLUMN `body` longtext DEFAULT NULL AFTER `subject`";
-		$wpdb->query( $query );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns ADD COLUMN `body` longtext DEFAULT NULL AFTER `subject`" );
 	}
 
 	// Drop `sequence_ids`
 	if ( in_array( 'sequence_ids', $cols ) ) {
-		$query = "ALTER TABLE {$wpdb->prefix}ig_campaigns DROP COLUMN `sequence_ids`";
-		$wpdb->query( $query );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns DROP COLUMN `sequence_ids`" );
 	}
 }
 
@@ -835,12 +806,7 @@ function ig_es_update_420_alter_campaigns_table() {
  * @since 4.2.0
  */
 function ig_es_update_420_create_tables() {
-
-	global $wpdb;
-
-	$wpdb->hide_errors();
-	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-	dbDelta( ES_Install::get_ig_es_420_schema() );
+	ES_Install::create_tables( '4.2.0' );
 }
 
 /**
@@ -850,11 +816,11 @@ function ig_es_update_420_create_tables() {
  */
 function ig_es_update_420_migrate_mailer_options() {
 	$es_email_type                   = get_option( 'ig_es_email_type' );
-	$default_mailer                  = ( $es_email_type === 'php_html_mail' || $es_email_type === 'php_plaintext_mail' ) ? 'phpmail' : 'wpmail';
+	$default_mailer                  = ( 'php_html_mail' === $es_email_type || 'php_plaintext_mail' === $es_email_type ) ? 'phpmail' : 'wpmail';
 	$ig_es_mailer_settings['mailer'] = $default_mailer;
 	//smtp settings default option
 	$enable_smtp                     = get_option( 'ig_es_enable_smtp', 'no' );
-	$ig_es_mailer_settings['mailer'] = ( $enable_smtp === 'yes' ) ? 'smtp' : $default_mailer;
+	$ig_es_mailer_settings['mailer'] = ( 'yes' === $enable_smtp ) ? 'smtp' : $default_mailer;
 	$smtp_host                       = get_option( 'ig_es_smtp_host', '' );
 	$smtp_port                       = get_option( 'ig_es_smtp_port', 25 );
 	$smtp_encryption                 = get_option( 'ig_es_smtp_encryption', 'tls' );
@@ -886,7 +852,7 @@ function ig_es_update_420_db_version() {
 /* --------------------- ES 4.2.0(End)--------------------------- */
 
 function ig_es_update_421_drop_tables() {
-	global $wpdb;
+	global $wpdb, $wpbd;
 
 	/**
 	 * Note: Still we are not using ig_contact_meta table.
@@ -896,12 +862,12 @@ function ig_es_update_421_drop_tables() {
 	 */
 	$tables_to_drop = array(
 		$wpdb->prefix . 'ig_contact_meta',
-		$wpdb->prefix . 'ig_actions'
+		$wpdb->prefix . 'ig_actions',
 	);
 
 	foreach ( $tables_to_drop as $table ) {
 		$query = "DROP TABLE IF EXISTS {$table}";
-		$wpdb->query( $query );
+		$wpbd->query( $query );
 	}
 }
 
@@ -911,11 +877,7 @@ function ig_es_update_421_drop_tables() {
  * @since 4.2.1
  */
 function ig_es_update_421_create_tables() {
-	global $wpdb;
-
-	$wpdb->hide_errors();
-	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-	dbDelta( ES_Install::get_ig_es_421_schema() );
+	ES_Install::create_tables( '4.2.1' );
 }
 
 /**
@@ -935,7 +897,8 @@ function ig_es_update_421_db_version() {
  * @since 4.2.4
  */
 function ig_es_update_424_drop_tables() {
-	global $wpdb;
+
+	global $wpdb, $wpbd;
 
 	/**
 	 * Note: Still we are not using ig_links table.
@@ -943,12 +906,12 @@ function ig_es_update_424_drop_tables() {
 	 * Which we are going to create in 'ig_es_update_424_create_table' function.
 	 */
 	$tables_to_drop = array(
-		$wpdb->prefix . 'ig_links'
+		$wpdb->prefix . 'ig_links',
 	);
 
 	foreach ( $tables_to_drop as $table ) {
 		$query = "DROP TABLE IF EXISTS {$table}";
-		$wpdb->query( $query );
+		$wpbd->query( $query );
 	}
 }
 
@@ -958,11 +921,7 @@ function ig_es_update_424_drop_tables() {
  * @since 4.2.4
  */
 function ig_es_update_424_create_tables() {
-	global $wpdb;
-
-	$wpdb->hide_errors();
-	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-	dbDelta( ES_Install::get_ig_es_424_schema() );
+	ES_Install::create_tables( '4.2.4' );
 }
 
 /**
@@ -979,17 +938,13 @@ function ig_es_update_424_db_version() {
 function ig_es_update_430_alter_campaigns_table() {
 	global $wpdb;
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `from_name` varchar(250) DEFAULT NULL";
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `from_name` varchar(250) DEFAULT NULL" );
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `from_email` varchar(150) DEFAULT NULL";
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `from_email` varchar(150) DEFAULT NULL" );
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `reply_to_name` varchar(250) DEFAULT NULL";
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `reply_to_name` varchar(250) DEFAULT NULL" );
 
-	$query = "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `reply_to_email` varchar(150) DEFAULT NULL";
-	$wpdb->query( $query );
+	$wpdb->query( "ALTER TABLE {$wpdb->prefix}ig_campaigns MODIFY `reply_to_email` varchar(150) DEFAULT NULL" );
 }
 
 /**
@@ -1022,8 +977,7 @@ function ig_es_update_431_set_default_permissions() {
 function ig_es_update_431_permanently_delete_lists() {
 	global $wpdb;
 
-	$query = "DELETE FROM {$wpdb->prefix}ig_lists WHERE deleted_at IS NOT NULL";
-	$wpdb->query($query);
+	$wpdb->query( "DELETE FROM {$wpdb->prefix}ig_lists WHERE deleted_at IS NOT NULL" );
 }
 
 /**
@@ -1034,9 +988,9 @@ function ig_es_update_431_permanently_delete_lists() {
 function ig_es_update_431_permanently_delete_forms() {
 	global $wpdb;
 
-	$query = "DELETE FROM {$wpdb->prefix}ig_forms WHERE deleted_at IS NOT NULL";
-	$wpdb->query($query);
+	$wpdb->query( "DELETE FROM {$wpdb->prefix}ig_forms WHERE deleted_at IS NOT NULL" );
 }
+
 /**
  * Delete unwanted options
  *
@@ -1057,11 +1011,16 @@ function ig_es_update_431_delete_options() {
 		'ig_es_unsubcontent',
 	);
 
-	$options_str = "'" . implode($options_to_delete, "', '") . "'";
+	$options_str = implode( ',', $options_to_delete );
 
-	$query = "DELETE FROM {$wpdb->prefix}options WHERE option_name IN ($options_str)";
-	$wpdb->query($query);
+	$wpdb->query( 
+		$wpdb->prepare(
+			"DELETE FROM {$wpdb->prefix}options WHERE FIND_IN_SET (option_name, %s)",
+			$options_str
+		)
+	);
 }
+
 /**
  * Disable autoload for all ES options
  *
@@ -1070,8 +1029,7 @@ function ig_es_update_431_delete_options() {
 function ig_es_update_431_disable_autoload_options() {
 	global $wpdb;
 
-	$query = "UPDATE {$wpdb->prefix}options SET `autoload` = 'no' WHERE option_name LIKE 'ig_es_%'";
-	$wpdb->query( $query );
+	$wpdb->query( "UPDATE {$wpdb->prefix}options SET `autoload` = 'no' WHERE option_name LIKE 'ig_es_%'" );
 }
 
 /**
@@ -1082,6 +1040,7 @@ function ig_es_update_431_disable_autoload_options() {
 function ig_es_update_431_db_version() {
 	ES_Install::update_db_version( '4.3.1' );
 }
+
 /* --------------------- ES 4.3.1(End)--------------------------- */
 
 /**
@@ -1089,9 +1048,10 @@ function ig_es_update_431_db_version() {
  *
  * @sicne 4.3.2
  */
-function ig_es_update_432_import_bfcm_templates(){
+function ig_es_update_432_import_bfcm_templates() {
 	ES_Install::load_templates();
 }
+
 /**
  * Update DB Update history
  *
@@ -1100,6 +1060,7 @@ function ig_es_update_432_import_bfcm_templates(){
 function ig_es_update_432_db_version() {
 	ES_Install::update_db_version( '4.3.2' );
 }
+
 /* --------------------- ES 4.3.2(End)--------------------------- */
 /**
  * Delete Campaigns Permanently
@@ -1108,10 +1069,10 @@ function ig_es_update_432_db_version() {
  * @since 4.3.4.1 Added and condition
  */
 function ig_es_update_434_permanently_delete_campaigns() {
+
 	global $wpdb;
 
-	$query = "DELETE FROM {$wpdb->prefix}ig_campaigns WHERE deleted_at IS NOT NULL AND deleted_at != '0000-00-00 00:00:00' ";
-	$wpdb->query($query);
+	$wpdb->query( "DELETE FROM {$wpdb->prefix}ig_campaigns WHERE deleted_at IS NOT NULL AND deleted_at != '0000-00-00 00:00:00' " );
 }
 
 /**
@@ -1122,4 +1083,246 @@ function ig_es_update_434_permanently_delete_campaigns() {
 function ig_es_update_434_db_version() {
 	ES_Install::update_db_version( '4.3.4' );
 }
+
 /* --------------------- ES 4.3.4(End)--------------------------- */
+
+
+/* --------------------- ES 4.4.1(Start)--------------------------- */
+/**
+ * Create Workflows Tables.
+ *
+ * @since 4.4.1
+ */
+function ig_es_update_441_create_tables() {
+	ES_Install::create_tables( '4.4.1' );
+}
+
+/**
+ * Migrate audience sync setting to related workflows/admin settings.
+ *
+ * @since 4.4.1
+ */
+function ig_es_update_441_migrate_audience_sync_settings() {
+	ES()->workflows_db->migrate_audience_sync_settings_to_workflows();
+	ES()->workflows_db->migrate_audience_sync_settings_to_admin_settings();
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.4.1
+ */
+function ig_es_update_441_db_version() {
+	ES_Install::update_db_version( '4.4.1' );
+}
+
+/* --------------------- ES 4.4.1(End)--------------------------- */
+
+
+/* --------------------- ES 4.4.2(Start)--------------------------- */
+
+/**
+ * Adding workflows user role permissions.
+ *
+ * @since 4.4.2
+ */
+function ig_es_update_442_set_workflows_default_permission() {
+	$user_role_permissions = get_option( 'ig_es_user_roles', false );
+	if ( false === $user_role_permissions ) {
+		update_option( 'ig_es_user_roles', ES_Install::get_default_permissions() );
+	} elseif ( ! empty( $user_role_permissions ) && is_array( $user_role_permissions ) ) {
+		$user_role_permissions['workflows'] = array(
+			'administrator' => 'yes'
+		);
+		update_option( 'ig_es_user_roles', $user_role_permissions );
+	}
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.4.2
+ */
+function ig_es_update_442_db_version() {
+	ES_Install::update_db_version( '4.4.2' );
+}
+
+/* --------------------- ES 4.4.2(End)--------------------------- */
+
+/* --------------------- ES 4.4.9(Start)--------------------------- */
+
+/*
+ * Verify table structure. If table is not created, this will create table
+ */
+function ig_es_update_449_create_tables() {
+	ES_Install::create_tables();
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.4.2
+ */
+function ig_es_update_449_db_version() {
+	ES_Install::update_db_version( '4.4.9' );
+}
+/* --------------------- ES 4.4.9(End)--------------------------- */
+
+/* --------------------- ES 4.4.10(Start)--------------------------- */
+
+/**
+ * Load templates
+ *
+ * @since 4.4.10
+ */
+function ig_es_update_4410_load_templates() {
+	ES_Install::load_templates( true );
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.4.10
+ */
+function ig_es_update_4410_db_version() {
+	ES_Install::update_db_version( '4.4.10' );
+}
+
+/* --------------------- ES 4.4.10(End)--------------------------- */
+
+
+/* --------------------- ES 4.5.0(Start)--------------------------- */
+function ig_es_update_450_alter_actions_table() {
+	global $wpdb;
+	
+	$cols = $wpdb->get_col( "SHOW COLUMNS FROM {$wpdb->prefix}ig_actions" );
+
+	if ( ! in_array( 'ip', $cols ) ) {
+		$wpdb->query( 
+			"ALTER TABLE {$wpdb->prefix}ig_actions 
+			ADD COLUMN ip varchar(50) NULL AFTER `list_id`,
+			ADD COLUMN country varchar(50) NULL AFTER `ip`,
+			ADD COLUMN device varchar(50) NULL AFTER `country`,
+			ADD COLUMN browser varchar(50) NULL AFTER `device`,
+			ADD COLUMN email_client varchar(50) NULL AFTER `browser`,
+			ADD COLUMN os varchar(50) NULL AFTER `email_client`"
+		);
+	}
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.5.0
+ */
+function ig_es_update_450_db_version() {
+	ES_Install::update_db_version( '4.5.0' );
+}
+/* --------------------- ES 4.5.0(End)--------------------------- */
+
+/* --------------------- ES 4.5.7(Start)--------------------------- */
+function ig_es_update_457_alter_list_table() {
+	global $wpdb;
+	
+	$cols = $wpdb->get_col( "SHOW COLUMNS FROM {$wpdb->prefix}ig_lists" );
+
+	if ( ! in_array( 'hash', $cols, true ) ) {
+		$wpdb->query(
+			"ALTER TABLE {$wpdb->prefix}ig_lists 
+			ADD COLUMN `hash` varchar(12) NULL AFTER `name`"
+		);
+	}
+}
+
+/**
+ * Add hash string in existing list items.
+ *
+ * @since 4.5.7
+ */
+function ig_es_update_457_add_list_hash() {
+	global $wpdb;
+	
+	$lists = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}ig_lists", ARRAY_A );
+
+	if ( ! empty( $lists ) ) {
+		foreach ( $lists as $list ) {
+			$list_id = $list['id'];
+			if ( ! empty( $list_id ) ) {
+				$list_hash = ES_Common::generate_hash( 12 );
+				$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}ig_lists SET hash = %s WHERE id = %d AND ( hash = '' OR hash IS NULL )", array( $list_hash, $list_id ) ) );
+			}
+		}
+	}
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.5.7
+ */
+function ig_es_update_457_db_version() {
+	ES_Install::update_db_version( '4.5.7' );
+}
+/* --------------------- ES 4.5.7(End)--------------------------- */
+
+
+/* --------------------- ES 4.6.3(Start)--------------------------- */
+
+/**
+ * Add Ip column in contacts table
+ * Migrate existing Ip address from lists_contacts table to contacts table
+ *
+ * @since 4.6.3
+ */
+function ig_es_update_463_alter_contacts_table() {
+	global $wpdb;
+	
+	$cols = $wpdb->get_col( "SHOW COLUMNS FROM {$wpdb->prefix}ig_contacts" );
+
+	if ( ! in_array( 'ip_address', $cols, true ) ) {
+		$wpdb->query(
+			"ALTER TABLE {$wpdb->prefix}ig_contacts
+			ADD COLUMN `ip_address` varchar(50) NULL AFTER `source`"
+		);
+
+	}
+}
+
+/**
+ * Migrate existing Ip address from lists_contacts table to contacts table
+ *
+ * @since 4.6.3
+ */
+function ig_es_migrate_ip_from_list_contacts_to_contacts_table() {
+	ES()->contacts_db->migrate_ip_from_list_contacts_to_contacts_table();
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.6.3
+ */
+function ig_es_update_463_db_version() {
+	ES_Install::update_db_version( '4.6.3' );
+}
+/* --------------------- ES 4.6.3(End)--------------------------- */
+
+/* --------------------- ES 4.6.5(Start)--------------------------- */
+/**
+ * Create Abandoned Carts Tables.
+ *
+ * @since 4.6.5
+ */
+function ig_es_update_465_create_tables() {
+	ES_Install::create_tables( '4.6.5' );
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.6.5
+ */
+function ig_es_update_465_db_version() {
+	ES_Install::update_db_version( '4.6.5' );
+}
+/* --------------------- ES 4.6.5(End)--------------------------- */

@@ -26,10 +26,13 @@ class ES_DB_Notifications {
 	 */
 	public static function migrate_post_notification_es_template_type() {
 		global $wpdb;
-
-		$sql    = "UPDATE {$wpdb->prefix}postmeta SET meta_value = %s WHERE meta_key = %s AND meta_value = %s";
-		$query  = $wpdb->prepare( $sql, array( 'post_notification', 'es_template_type', 'Post Notification' ) );
-		$update = $wpdb->query( $query );
+		
+		$update = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$wpdb->prefix}postmeta SET meta_value = %s WHERE meta_key = %s AND meta_value = %s",
+				array( 'post_notification', 'es_template_type', 'Post Notification' )
+			)
+		);
 
 		return $update;
 	}
@@ -44,9 +47,12 @@ class ES_DB_Notifications {
 	public static function migrate_newsletter_es_template_type() {
 		global $wpdb;
 
-		$sql    = "UPDATE {$wpdb->prefix}postmeta SET meta_value = %s WHERE meta_key = %s AND meta_value = %s";
-		$query  = $wpdb->prepare( $sql, array( 'newsletter', 'es_template_type', 'Newsletter' ) );
-		$update = $wpdb->query( $query );
+		$update = $wpdb->query(
+			$wpdb->prepare( 
+				"UPDATE {$wpdb->prefix}postmeta SET meta_value = %s WHERE meta_key = %s AND meta_value = %s",
+				array( 'newsletter', 'es_template_type', 'Newsletter' )
+			)
+		);
 
 		return $update;
 	}

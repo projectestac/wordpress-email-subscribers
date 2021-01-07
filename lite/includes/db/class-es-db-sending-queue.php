@@ -53,10 +53,17 @@ class ES_DB_Sending_Queue {
 	public static function get_emails_to_be_sent_by_hash( $guid, $limit ) {
 		global $wpdb;
 
-		$query = "SELECT * FROM " . IG_SENDING_QUEUE_TABLE . " WHERE status = %s AND mailing_queue_hash = %s ORDER BY id LIMIT 0, $limit";
-
-		$sql         = $wpdb->prepare( $query, array( "In Queue", $guid ) );
-		$subscribers = $wpdb->get_results( $sql, ARRAY_A );
+		$subscribers = $wpdb->get_results(
+			$wpdb->prepare( 
+				"SELECT * FROM {$wpdb->prefix}ig_sending_queue WHERE status = %s AND mailing_queue_hash = %s ORDER BY id LIMIT 0, %d",
+				array(
+					'In Queue',
+					$guid,
+					$limit
+				)
+			),
+			ARRAY_A
+		);
 
 		return $subscribers;
 	}
@@ -65,31 +72,39 @@ class ES_DB_Sending_Queue {
 		global $wpdb;
 
 		$updated = false;
-		if ( $message_id == 0 ) {
+		if ( 0 == $message_id ) {
 			return $updated;
 		}
 
 		$id_str = '';
 		if ( is_array( $contact_ids ) && count( $contact_ids ) > 0 ) {
-			$id_str = implode( ",", $contact_ids );
+			$id_str = implode( ',', $contact_ids );
 		} elseif ( is_string( $contact_ids ) ) {
 			$id_str = $contact_ids;
 		}
 
 		if ( ! empty( $id_str ) ) {
-			$sql = "UPDATE " . IG_SENDING_QUEUE_TABLE . " SET status = %s";
-
 			if ( 'Sent' === $status ) {
 				$current_time = ig_get_current_date_time();
-
-				$sql .= ", sent_at = '{$current_time}' ";
+				$updated = $wpdb->query(
+					$wpdb->prepare(
+						"UPDATE {$wpdb->prefix}ig_sending_queue SET status = %s, sent_at = %s WHERE mailing_queue_id = %d AND  FIND_IN_SET(contact_id, %s)",
+						$status,
+						$current_time,
+						$message_id,
+						$id_str
+					)
+				);
+			} else {
+				$updated = $wpdb->query(
+					$wpdb->prepare(
+						"UPDATE {$wpdb->prefix}ig_sending_queue SET status = %s WHERE mailing_queue_id = %d AND  FIND_IN_SET(contact_id, %s)",
+						$status,
+						$message_id,
+						$id_str
+					)
+				);
 			}
-
-			$sql .= " WHERE mailing_queue_id = %d AND contact_id IN ($id_str)";
-
-			$sql = $wpdb->prepare( $sql, $status, $message_id );
-
-			$updated = $wpdb->query( $sql );
 		}
 
 		return $updated;
@@ -103,10 +118,12 @@ class ES_DB_Sending_Queue {
 
 		$result = 0;
 		if ( ! empty( $notification_hash ) ) {
-			$query  = $wpdb->prepare( "SELECT COUNT(*) AS count
-                                        FROM " . IG_SENDING_QUEUE_TABLE . " 
-                                        WHERE mailing_queue_hash = %s AND status = %s", array( $notification_hash, "In Queue" ) );
-			$result = $wpdb->get_var( $query );
+			$result = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE mailing_queue_hash = %s AND status = %s",
+					array( $notification_hash, 'In Queue' )
+				)
+			);
 		}
 
 		return $result;
@@ -117,10 +134,12 @@ class ES_DB_Sending_Queue {
 
 		global $wpdb;
 
-		$query  = $wpdb->prepare( "SELECT COUNT(*) AS count
-                                        FROM " . IG_SENDING_QUEUE_TABLE . " 
-                                        WHERE status = %s", array( "In Queue" ) );
-		$result = $wpdb->get_var( $query );
+		$result = $wpdb->get_var( 
+			$wpdb->prepare(
+				"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE status = %s",
+				array( 'In Queue' )
+			)
+		 );
 
 		return $result;
 
@@ -131,11 +150,13 @@ class ES_DB_Sending_Queue {
 		global $wpdb;
 
 		$result = 0;
-		if ( $notification_hash != "" ) {
-			$query  = $wpdb->prepare( "SELECT COUNT(*) AS count
-                                        FROM " . IG_SENDING_QUEUE_TABLE . " 
-                                        WHERE mailing_queue_hash = %s AND status = %s", array( $notification_hash, "Sent" ) );
-			$result = $wpdb->get_var( $query );
+		if ( '' != $notification_hash ) {
+			$result = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE mailing_queue_hash = %s AND status = %s",
+					array( $notification_hash, 'Sent' )
+				)
+			);
 		}
 
 		return $result;
@@ -146,22 +167,29 @@ class ES_DB_Sending_Queue {
 		global $wpdb;
 
 		$emails = array();
-		if ( $notification_hash != "" ) {
-			$query  = $wpdb->prepare( "SELECT * FROM " . IG_SENDING_QUEUE_TABLE . " WHERE mailing_queue_hash = %s", array( $notification_hash ) );
-			$emails = $wpdb->get_results( $query, ARRAY_A );
+		if ( '' != $notification_hash ) {
+			$emails = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM {$wpdb->prefix}ig_sending_queue WHERE mailing_queue_hash = %s",
+					array( $notification_hash )
+				),
+				ARRAY_A
+			);
 
 			// We are not migrating reports data because it caused lots of migration issues
 			// in the past. So, we are fetching reports data from older table if we don't get
 			// the data from the new table.
-
 			// This is generally fetch the data for older campaigns
 			if ( count( $emails ) == 0 ) {
-				$es_deliver_report_table = EMAIL_SUBSCRIBERS_STATS_TABLE;
-
-				$result = $wpdb->get_var( "SHOW TABLES LIKE '{$es_deliver_report_table}' " );
-				if ( $result === $es_deliver_report_table ) {
-					$query  = $wpdb->prepare( "SELECT * FROM {$es_deliver_report_table} WHERE es_deliver_sentguid = %s", array( $notification_hash ) );
-					$emails = $wpdb->get_results( $query, ARRAY_A );
+				$result = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s ', $wpdb->prefix . 'es_deliverreport' ) );
+				if ( $result === $wpdb->prefix . 'es_deliverreport' ) {
+					$emails = $wpdb->get_results(
+						$wpdb->prepare(
+							"SELECT * FROM {$wpdb->prefix}es_deliverreport WHERE es_deliver_sentguid = %s", 
+							array( $notification_hash ) 
+						),
+						ARRAY_A
+					);
 				}
 			}
 		}
@@ -186,7 +214,8 @@ class ES_DB_Sending_Queue {
 
 		$emails = array();
 		foreach ( $batches as $key => $batch ) {
-			$place_holders = $values = array();
+			$place_holders = array();
+			$values        = array();
 			foreach ( $batch as $subscriber ) {
 
 				$email      = ! empty( $subscriber['email'] ) ? $subscriber['email'] : '';
@@ -206,7 +235,7 @@ class ES_DB_Sending_Queue {
 						$formats[] = $format;
 					}
 
-					$place_holders[] = "( " . implode( ', ', $formats ) . " )";
+					$place_holders[] = '( ' . implode( ', ', $formats ) . ' )';
 				}
 			}
 
@@ -218,15 +247,15 @@ class ES_DB_Sending_Queue {
 	}
 
 	public static function do_insert( $place_holders, $values ) {
-		global $wpdb;
+		global $wpbd;
 
 		$delivery_reports_table = IG_SENDING_QUEUE_TABLE;
 
-		$query = "INSERT INTO $delivery_reports_table (`mailing_queue_id`, `mailing_queue_hash`, `campaign_id`, `contact_id`, `contact_hash`, `email`, `status`, `links`, `opened`, `sent_at`, `opened_at`) VALUES ";
+		$query  = "INSERT INTO $delivery_reports_table (`mailing_queue_id`, `mailing_queue_hash`, `campaign_id`, `contact_id`, `contact_hash`, `email`, `status`, `links`, `opened`, `sent_at`, `opened_at`) VALUES ";
 		$query .= implode( ', ', $place_holders );
-		$sql   = $wpdb->prepare( "$query ", $values );
+		$sql    = $wpbd->prepare( "$query ", $values );
 
-		if ( $wpdb->query( $sql ) ) {
+		if ( $wpbd->query( $sql ) ) {
 			return true;
 		} else {
 			return false;
@@ -239,19 +268,27 @@ class ES_DB_Sending_Queue {
 
 		$current_date = ig_get_current_date_time();
 
-		$query = "UPDATE " . IG_SENDING_QUEUE_TABLE . " SET opened_at = %s, opened = %d WHERE (mailing_queue_id = %d OR mailing_queue_hash = %s ) AND email = %s";
-		$sql   = $wpdb->prepare( $query, $current_date, 1, $message_id, $guid, $email );
-
-		return $wpdb->query( $sql );
+		return $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$wpdb->prefix}ig_sending_queue SET opened_at = %s, opened = %d WHERE (mailing_queue_id = %d OR mailing_queue_hash = %s ) AND email = %s",
+				$current_date,
+				1,
+				$message_id,
+				$guid,
+				$email
+			)
+		);
 	}
 
+	/*
+	 * Commenting for now as we might need this function in the future. 
 	public static function migrate_reports_data() {
 		global $wpdb;
 
 		$mailing_queue_details = ES_DB_Mailing_Queue::get_id_details_map();
 		$email_details         = ES()->contacts_db->get_email_details_map();
 
-		$query = "SELECT count(*) as total FROM " . EMAIL_SUBSCRIBERS_STATS_TABLE;
+		$query = 'SELECT count(*) as total FROM ' . EMAIL_SUBSCRIBERS_STATS_TABLE;
 
 		$total = $wpdb->get_var( $query );
 
@@ -280,13 +317,16 @@ class ES_DB_Sending_Queue {
 					set_transient( 'ig_es_running_migration_for_' . $i, true, 300 );
 					$batch_start = $i * $batch_size;
 
-					$query = "SELECT * FROM " . EMAIL_SUBSCRIBERS_STATS_TABLE . " LIMIT {$batch_start}, {$batch_size}";
-
+					$query   = 'SELECT * FROM ' . EMAIL_SUBSCRIBERS_STATS_TABLE . " LIMIT {$batch_start}, {$batch_size}";
 					$results = $wpdb->get_results( $query, ARRAY_A );
-					$values  = $data = $place_holders = array();
+
+					$values        = array();
+					$data          = array();
+					$place_holders = array();
+
 					foreach ( $results as $key => $result ) {
 						$email     = $result['es_deliver_emailmail'];
-						$is_opened = ( $result['es_deliver_viewdate'] != '0000-00-00 00:00:00' ) ? 1 : 0;
+						$is_opened = ( '0000-00-00 00:00:00' != $result['es_deliver_viewdate'] ) ? 1 : 0;
 
 						$contact_id = 0;
 						$hash       = '';
@@ -315,7 +355,7 @@ class ES_DB_Sending_Queue {
 							$formats[] = $format;
 						}
 
-						$place_holders[] = "( " . implode( ', ', $formats ) . " )";
+						$place_holders[] = '( ' . implode( ', ', $formats ) . ' )';
 					}
 
 					$logger->info( '------------------[Running.....]: ' . $i, array( 'source' => 'es_update' ) );
@@ -330,6 +370,7 @@ class ES_DB_Sending_Queue {
 			}
 		}
 	}
+	*/
 
 	/*
 	public static function migrate_reports_data() {
@@ -414,49 +455,55 @@ class ES_DB_Sending_Queue {
 		}
 	}
 	*/
+	
 	public static function delete_records_from_delivereport( $ids ) {
-		global $wpdb;
+		global $wpbd;
 
 		$delivereport_ids = implode( ',', array_map( 'absint', $ids ) );
 
-		$query = "DELETE FROM " . EMAIL_SUBSCRIBERS_STATS_TABLE . " WHERE es_deliver_id IN ($delivereport_ids)";
+		$query = 'DELETE FROM ' . EMAIL_SUBSCRIBERS_STATS_TABLE . " WHERE es_deliver_id IN ($delivereport_ids)";
 
-		$wpdb->query( $query );
+		$wpbd->query( $query );
 	}
 
 	public static function delete_sending_queue_by_mailing_id( $mailing_queue_ids ) {
 		global $wpdb;
-
+		
 		$mailing_queue_ids = esc_sql( $mailing_queue_ids );
+		$mailing_queue_ids = implode( ',', array_map( 'absint', $mailing_queue_ids ) );
 
-		$mailing_queue_ids = implode( ', ', array_map( 'absint', $mailing_queue_ids ) );
-
-		$sending_queue_table = IG_SENDING_QUEUE_TABLE;
-
-		$query = "DELETE FROM $sending_queue_table WHERE mailing_queue_id IN ($mailing_queue_ids)";
-
-		$wpdb->query( $query );
+		$wpdb->query( 
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->prefix}ig_sending_queue WHERE FIND_IN_SET (mailing_queue_id, %s)",
+				$mailing_queue_ids
+			)
+		);
 	}
 
 	// Query to get total viewed emails per report
-	public static function get_viewed_count_by_hash( $hash = "" ) {
+	public static function get_viewed_count_by_hash( $hash = '' ) {
 
 		global $wpdb;
 
 		$result = 0;
 
-		if ( $hash != "" ) {
-			$query  = $wpdb->prepare( "SELECT COUNT(*) AS count
-									FROM " . IG_SENDING_QUEUE_TABLE . "
-									WHERE opened = 1 AND mailing_queue_hash = %s", array( $hash ) );
-			$result = $wpdb->get_var( $query );
+		if ( '' != $hash ) {
+			$result = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE opened = 1 AND mailing_queue_hash = %s",
+					array( $hash )
+				)
+			);
 
-			if ( $result == 0 ) {
-				$es_deliver_report_table = EMAIL_SUBSCRIBERS_STATS_TABLE;
-				$table_name              = $wpdb->get_var( "SHOW TABLES LIKE '{$es_deliver_report_table}' " );
-				if ( $table_name === $es_deliver_report_table ) {
-					$query  = $wpdb->prepare( "SELECT COUNT(*) AS count FROM {$es_deliver_report_table} WHERE es_deliver_status = 'Viewed' AND  es_deliver_sentguid = %s", array( $hash ) );
-					$result = $wpdb->get_var( $query );
+			if ( 0 == $result ) {
+				$table_name = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'es_deliverreport' ) );
+				if ( $table_name === $wpdb->prefix . 'es_deliverreport' ) {
+					$result = $wpdb->get_var(
+						$wpdb->prepare(
+							"SELECT COUNT(*) AS count FROM {$wpdb->prefix}es_deliverreport WHERE es_deliver_status = 'Viewed' AND  es_deliver_sentguid = %s",
+							array( $hash )
+						)
+					);
 				}
 			}
 
@@ -466,23 +513,29 @@ class ES_DB_Sending_Queue {
 
 	}
 
-	public static function get_total_email_count_by_hash( $hash = "" ) {
+	public static function get_total_email_count_by_hash( $hash = '' ) {
 
 		global $wpdb;
 
 		$result = 0;
 
-		if ( $hash != "" ) {
-			$query  = $wpdb->prepare( "SELECT COUNT(*) AS count
-									FROM " . IG_SENDING_QUEUE_TABLE . "
-									WHERE mailing_queue_hash = %s", array( $hash ) );
-			$result = $wpdb->get_var( $query );
-			if ( $result == 0 ) {
+		if ( '' != $hash ) {
+			$result = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE mailing_queue_hash = %s", 
+					array( $hash )
+				)
+			);
+			if ( 0 == $result ) {
 				$es_deliver_report_table = EMAIL_SUBSCRIBERS_STATS_TABLE;
-				$table_name              = $wpdb->get_var( "SHOW TABLES LIKE '{$es_deliver_report_table}' " );
+				$table_name              = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'es_deliverreport' ) );
 				if ( $table_name === $es_deliver_report_table ) {
-					$query  = $wpdb->prepare( "SELECT COUNT(*) AS count FROM {$es_deliver_report_table} WHERE es_deliver_sentguid = %s", array( $hash ) );
-					$result = $wpdb->get_var( $query );
+					$result = $wpdb->get_var(
+						$wpdb->prepare(
+							"SELECT COUNT(*) AS count FROM {$wpdb->prefix}es_deliverreport WHERE es_deliver_sentguid = %s",
+							array( $hash )
+						)
+					);
 				}
 			}
 		}
@@ -502,7 +555,7 @@ class ES_DB_Sending_Queue {
 	 */
 	public static function get_total_contacts_opened_emails( $days = 0 ) {
 
-		global $wpdb;
+		global $wpbd;
 
 		$ig_sending_queue_table = IG_SENDING_QUEUE_TABLE;
 
@@ -512,14 +565,15 @@ class ES_DB_Sending_Queue {
 
 		if ( 0 != $days ) {
 			$days   = esc_sql( $days );
-			$where  = " AND opened_at >= DATE_SUB(NOW(), INTERVAL %d DAY)";
-			$query  .= $where;
+			$where  = ' AND opened_at >= DATE_SUB(NOW(), INTERVAL %d DAY)';
+			$query .= $where;
 			$args[] = $days;
 		}
 
-		return $wpdb->get_var( $wpdb->prepare( $query, $args ) );
+		return $wpbd->get_var( $wpbd->prepare( $query, $args ) );
 	}
 
+	
 	/**
 	 * Get Email => ID map based on Sending Queue table
 	 * 
@@ -540,11 +594,17 @@ class ES_DB_Sending_Queue {
 			return array();
 		}
 
-		$emails_str = "'" . implode( "', '", $emails ) . "'";
+		$emails_str = implode( ',', $emails );
 
-		$query = "SELECT contact_id, email FROM {$wpdb->prefix}ig_sending_queue WHERE campaign_id = %d AND email IN ($emails_str)";
-
-		$results = $wpdb->get_results( $wpdb->prepare( $query, $campaign_id ), ARRAY_A );
+		$results = $wpdb->get_results( 
+			$wpdb->prepare(
+				// We are using FIND_IN_SET since IN clause requires emails to be seperated by single quotes(') which get escaped when passed as a placeholder value in $wp->prepare.
+				"SELECT contact_id, email FROM {$wpdb->prefix}ig_sending_queue WHERE campaign_id = %d AND FIND_IN_SET( email, %s)", 
+				$campaign_id, 
+				$emails_str 
+			), 
+			ARRAY_A
+		);
 
 		$emails_id_map = array();
 		if ( count( $results ) > 0 ) {

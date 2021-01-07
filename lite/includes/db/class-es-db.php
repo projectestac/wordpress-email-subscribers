@@ -10,7 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0
  */
 abstract class ES_DB {
+	
 	/**
+	 * Table name
+	 * 
 	 * @since 4.0.0
 	 * @var $table_name
 	 *
@@ -18,6 +21,8 @@ abstract class ES_DB {
 	public $table_name;
 
 	/**
+	 * Table DB version
+	 * 
 	 * @since 4.0.0
 	 * @var $version
 	 *
@@ -25,6 +30,8 @@ abstract class ES_DB {
 	public $version;
 
 	/**
+	 * Table primary key column name
+	 * 
 	 * @since 4.0.0
 	 * @var $primary_key
 	 *
@@ -51,6 +58,8 @@ abstract class ES_DB {
 	}
 
 	/**
+	 * Get columns default values
+	 * 
 	 * @return array
 	 *
 	 * @since 4.0.0
@@ -69,9 +78,9 @@ abstract class ES_DB {
 	 * @since 4.0.0
 	 */
 	public function get( $row_id, $output = ARRAY_A ) {
-		global $wpdb;
+		global $wpbd;
 
-		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $this->table_name WHERE $this->primary_key = %s LIMIT 1;", $row_id ), $output );
+		return $wpbd->get_row( $wpbd->prepare( "SELECT * FROM $this->table_name WHERE $this->primary_key = %s LIMIT 1;", $row_id ), $output );
 	}
 
 	/**
@@ -85,10 +94,10 @@ abstract class ES_DB {
 	 * @since 4.0.0
 	 */
 	public function get_by( $column, $row_id, $output = ARRAY_A ) {
-		global $wpdb;
+		global $wpbd;
 		$column = esc_sql( $column );
 
-		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $this->table_name WHERE $column = %s LIMIT 1;", $row_id ), $output );
+		return $wpbd->get_row( $wpbd->prepare( "SELECT * FROM $this->table_name WHERE $column = %s LIMIT 1;", $row_id ), $output );
 	}
 
 	/**
@@ -99,7 +108,7 @@ abstract class ES_DB {
 	 * @since 4.2.1
 	 */
 	public function get_by_conditions( $where = '', $output = ARRAY_A ) {
-		global $wpdb;
+		global $wpbd;
 
 		$query = "SELECT * FROM $this->table_name";
 
@@ -107,7 +116,7 @@ abstract class ES_DB {
 			$query .= " WHERE $where";
 		}
 
-		return $wpdb->get_results( $query, $output );
+		return $wpbd->get_results( $query, $output );
 	}
 
 	/**
@@ -132,14 +141,14 @@ abstract class ES_DB {
 	 * @since 4.0.0
 	 */
 	public function get_column( $column, $row_id = 0 ) {
-		global $wpdb;
+		global $wpbd;
 
 		$column = esc_sql( $column );
 
 		if ( $row_id ) {
-			return $wpdb->get_var( $wpdb->prepare( "SELECT $column FROM $this->table_name WHERE $this->primary_key = %s LIMIT 1;", $row_id ) );
+			return $wpbd->get_var( $wpbd->prepare( "SELECT $column FROM $this->table_name WHERE $this->primary_key = %s LIMIT 1;", $row_id ) );
 		} else {
-			return $wpdb->get_col( "SELECT $column FROM $this->table_name" );
+			return $wpbd->get_col( "SELECT $column FROM $this->table_name" );
 		}
 	}
 
@@ -157,15 +166,15 @@ abstract class ES_DB {
 	 * @since 4.3.4 Added support to retrieve whole column
 	 */
 	public function get_column_by( $column, $column_where, $column_value, $only_one = true ) {
-		global $wpdb;
+		global $wpbd;
 
 		$column_where = esc_sql( $column_where );
 		$column       = esc_sql( $column );
 
 		if ( $only_one ) {
-			return $wpdb->get_var( $wpdb->prepare( "SELECT $column FROM $this->table_name WHERE $column_where = %s LIMIT 1;", $column_value ) );
+			return $wpbd->get_var( $wpbd->prepare( "SELECT $column FROM $this->table_name WHERE $column_where = %s LIMIT 1;", $column_value ) );
 		} else {
-			return $wpdb->get_col( $wpdb->prepare( "SELECT $column FROM $this->table_name WHERE $column_where = %s;", $column_value ) );
+			return $wpbd->get_col( $wpbd->prepare( "SELECT $column FROM $this->table_name WHERE $column_where = %s;", $column_value ) );
 		}
 	}
 
@@ -180,14 +189,14 @@ abstract class ES_DB {
 	 * @since 4.3.5
 	 */
 	public function get_column_by_condition( $column, $where = '' ) {
-		global $wpdb;
+		global $wpbd;
 
 		$column = esc_sql( $column );
 
 		if ( ! empty( $where ) ) {
-			return $wpdb->get_col( "SELECT $column FROM $this->table_name WHERE $where" );
+			return $wpbd->get_col( "SELECT $column FROM $this->table_name WHERE $where" );
 		} else {
-			return $wpdb->get_col( "SELECT $column FROM $this->table_name" );
+			return $wpbd->get_col( "SELECT $column FROM $this->table_name" );
 		}
 	}
 
@@ -202,7 +211,7 @@ abstract class ES_DB {
 	 * @since 4.3.5
 	 */
 	public function get_columns_by_condition( $columns = array(), $where = '', $output = ARRAY_A ) {
-		global $wpdb;
+		global $wpbd;
 
 		if ( ! is_array( $columns ) ) {
 			return array();
@@ -213,9 +222,9 @@ abstract class ES_DB {
 		$columns = implode( ', ', $columns );
 
 		if ( ! empty( $where ) ) {
-			return $wpdb->get_results( "SELECT $columns FROM $this->table_name WHERE $where", $output );
+			return $wpbd->get_results( "SELECT $columns FROM $this->table_name WHERE $where", $output );
 		} else {
-			return $wpdb->get_results( "SELECT $columns FROM $this->table_name", $output );
+			return $wpbd->get_results( "SELECT $columns FROM $this->table_name", $output );
 		}
 	}
 
@@ -315,7 +324,7 @@ abstract class ES_DB {
 	 */
 	public function delete( $row_id = 0 ) {
 
-		global $wpdb;
+		global $wpbd;
 
 		// Row ID must be positive integer
 		$row_id = absint( $row_id );
@@ -324,7 +333,7 @@ abstract class ES_DB {
 			return false;
 		}
 
-		$where = $wpdb->prepare( "$this->primary_key = %d", $row_id );
+		$where = $wpbd->prepare( "$this->primary_key = %d", $row_id );
 
 		if ( false === $this->delete_by_condition( $where ) ) {
 			return false;
@@ -370,13 +379,13 @@ abstract class ES_DB {
 	 * @since 4.2.4
 	 */
 	public function delete_by_condition( $where = '' ) {
-		global $wpdb;
+		global $wpbd;
 
 		if ( empty( $where ) ) {
 			return false;
 		}
 
-		if ( false === $wpdb->query( "DELETE FROM $this->table_name WHERE $where" ) ) {
+		if ( false === $wpbd->query( "DELETE FROM $this->table_name WHERE $where" ) ) {
 			return false;
 		}
 
@@ -396,7 +405,7 @@ abstract class ES_DB {
 		global $wpdb;
 		$table = sanitize_text_field( $table );
 
-		return $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE '%s'", $table ) ) === $table;
+		return $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table;
 	}
 
 	/**
@@ -418,15 +427,15 @@ abstract class ES_DB {
 	 * @since 4.2.1
 	 */
 	public function count( $where = '' ) {
-		global $wpdb;
+		global $wpbd;
 
 		$query = "SELECT count(*) FROM $this->table_name";
 
 		if ( ! empty( $where ) ) {
 			$query .= " WHERE $where";
 		}
-
-		return $wpdb->get_var( $query );
+		
+		return $wpbd->get_var( $query );
 	}
 
 	/**
@@ -440,7 +449,7 @@ abstract class ES_DB {
 	 * @since 4.3.5 Fixed issues and started using it.
 	 */
 	public function bulk_insert( $values, $length = 100 ) {
-		global $wpdb;
+		global $wpbd;
 
 		if ( ! is_array( $values ) ) {
 			return false;
@@ -476,9 +485,12 @@ abstract class ES_DB {
 		// Convert Batches into smaller chunk
 		$batches = array_chunk( $values, $length );
 
+		$error_flag = false;
+
 		foreach ( $batches as $key => $batch ) {
 
-			$place_holders = $final_values = array();
+			$place_holders = array();
+			$final_values  = array();
 
 			foreach ( $batch as $value ) {
 
@@ -488,23 +500,30 @@ abstract class ES_DB {
 					$formats[]      = $format;
 				}
 
-				$place_holders[] = "( " . implode( ', ', $formats ) . " )";
-				$fields_str      = "`" . implode( "`, `", $fields ) . "`";
+				$place_holders[] = '( ' . implode( ', ', $formats ) . ' )';
+				$fields_str      = '`' . implode( '`, `', $fields ) . '`';
 			}
 
-			$query = "INSERT INTO $this->table_name ({$fields_str}) VALUES ";
+			$query  = "INSERT INTO $this->table_name ({$fields_str}) VALUES ";
 			$query .= implode( ', ', $place_holders );
-			$sql   = $wpdb->prepare( $query, $final_values );
+			$sql    = $wpbd->prepare( $query, $final_values );
 
-			if ( ! $wpdb->query( $sql ) ) {
-				return false;
+			if ( ! $wpbd->query( $sql ) ) {
+				$error_flag = true;
 			}
+		}
+
+		// Check if error occured during executing the query.
+		if ( $error_flag ) {
+			return false;
 		}
 
 		return true;
 	}
 
 	/**
+	 * Bulk insert data into given table
+	 * 
 	 * @param $table_name
 	 * @param $fields
 	 * @param $place_holders
@@ -512,18 +531,17 @@ abstract class ES_DB {
 	 *
 	 * @return bool
 	 *
-	 *
 	 */
 	public static function do_insert( $table_name, $fields, $place_holders, $values ) {
-		global $wpdb;
+		global $wpbd;
 
-		$fields_str = "`" . implode( "`, `", $fields ) . "`";
+		$fields_str = '`' . implode( '`, `', $fields ) . '`';
 
-		$query = "INSERT INTO $table_name ({$fields_str}) VALUES ";
+		$query  = "INSERT INTO $table_name ({$fields_str}) VALUES ";
 		$query .= implode( ', ', $place_holders );
-		$sql   = $wpdb->prepare( $query, $values );
+		$sql    = $wpbd->prepare( $query, $values );
 
-		if ( $wpdb->query( $sql ) ) {
+		if ( $wpbd->query( $sql ) ) {
 			return true;
 		} else {
 			return false;
@@ -547,7 +565,7 @@ abstract class ES_DB {
 	/**
 	 * Get map of two columns
 	 *
-	 * e.g array($column_1 => $column_2)
+	 * E.g array($column_1 => $column_2)
 	 *
 	 * @param string $column_1
 	 * @param string $column_2

@@ -23,7 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since      4.0
  * @package    Email_Subscribers
  * @subpackage Email_Subscribers/includes
- * @author     Your Name <email@example.com>
  */
 class Email_Subscribers_Deactivator {
 

@@ -22,8 +22,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 
 					if ( is_object( $handler ) && is_array( $implements ) && in_array( 'IG_Log_Handler_Interface', $implements, true ) ) {
 						$register_handlers[] = $handler;
-					} else {
-					}
+					} 
 				}
 			}
 
@@ -91,7 +90,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 		public function log( $level, $message, $context = array() ) {
 
 			if ( $this->should_handle( $level ) ) {
-				$timestamp = current_time( 'timestamp', 1 );
+				$timestamp = time();
 				$message   = apply_filters( 'ig_logger_log_message', $message, $level, $context );
 
 				foreach ( $this->handlers as $handler ) {
@@ -206,7 +205,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 		}
 
 
-		function trace( $message, $context = array() ) {
+		public function trace( $message, $context = array() ) {
 
 			$e = new \Exception();
 

@@ -14,7 +14,7 @@ if ( ! class_exists( 'ES_Phpmail_Mailer' ) ) {
 		 *
 		 * @since 4.3.2
 		 */
-		function __construct() {
+		public function __construct() {
 			parent::__construct();
 		}
 
@@ -27,15 +27,15 @@ if ( ! class_exists( 'ES_Phpmail_Mailer' ) ) {
 		 *
 		 * @since 4.3.2
 		 */
-		function send( ES_Message $message ) {
+		public function send( ES_Message $message ) {
 
 			ES()->logger->info( 'Start Sending Email Using PHP Mail', $this->logger_context );
 
-			$message->headers[] = "MIME-Version: 1.0";
-			$message->headers[] = "X-Mailer: PHP" . phpversion();
-            
-            $headers = implode("\n", $message->headers);
-			$send = mail( $message->to, $message->subject, $message->body, $headers );
+			$message->headers[] = 'MIME-Version: 1.0';
+			$message->headers[] = 'X-Mailer: PHP' . phpversion();
+			
+			$headers = implode("\n", $message->headers);
+			$send    = mail( $message->to, $message->subject, $message->body, $headers );
 
 			if ( ! $send ) {
 				return $this->do_response( 'error', 'Error in Email Sending' );

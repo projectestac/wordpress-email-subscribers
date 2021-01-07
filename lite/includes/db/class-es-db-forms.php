@@ -6,7 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class ES_DB_Forms extends ES_DB {
+	
 	/**
+	 * Table name
+	 * 
 	 * @since 4.2.2
 	 * @var string
 	 *
@@ -14,6 +17,8 @@ class ES_DB_Forms extends ES_DB {
 	public $table_name;
 
 	/**
+	 * Table DB version
+	 * 
 	 * @since 4.2.2
 	 * @var string
 	 *
@@ -21,6 +26,8 @@ class ES_DB_Forms extends ES_DB {
 	public $version;
 
 	/**
+	 * Table primary key column name
+	 * 
 	 * @since 4.2.2
 	 * @var string
 	 *
@@ -99,11 +106,7 @@ class ES_DB_Forms extends ES_DB {
 
 		global $wpdb;
 
-		$forms_table = IG_FORMS_TABLE;
-
-		$query = "SELECT id, name FROM $forms_table";
-
-		$results = $wpdb->get_results( $query, ARRAY_A );
+		$results = $wpdb->get_results( "SELECT id, name FROM {$wpdb->prefix}ig_forms", ARRAY_A );
 
 		$id_name_map = array();
 		if ( count( $results ) > 0 ) {
@@ -160,7 +163,7 @@ class ES_DB_Forms extends ES_DB {
 	public function get_form_by_af_id( $af_id ) {
 		global $wpdb;
 
-		$where = $wpdb->prepare( "af_id = %d", $af_id );
+		$where = $wpdb->prepare( 'af_id = %d', $af_id );
 
 		$forms = $this->get_by_conditions( $where );
 
@@ -183,13 +186,15 @@ class ES_DB_Forms extends ES_DB {
 	public function migrate_advanced_forms() {
 		global $wpdb;
 
-		$table           = sanitize_text_field( EMAIL_SUBSCRIBERS_ADVANCED_FORM );
-		$is_table_exists = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE '%s'", $table ) ) === $table;
+		$is_table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'es_advanced_form' ) ) === $wpdb->prefix . 'es_advanced_form';
 
 		$lists_name_id_map = ES()->lists_db->get_list_id_name_map( '', true );
+
 		if ( $is_table_exists ) {
-			$query = "SELECT * FROM " . EMAIL_SUBSCRIBERS_ADVANCED_FORM;
-			$forms = $wpdb->get_results( $query, ARRAY_A );
+			$forms = $wpdb->get_results(
+				"SELECT * FROM {$wpdb->prefix}es_advanced_form",
+				ARRAY_A
+			);
 
 			if ( count( $forms ) > 0 ) {
 
@@ -228,8 +233,8 @@ class ES_DB_Forms extends ES_DB {
 							'id'     => 'name',
 							'params' => array(
 								'label'    => 'Name',
-								'show'     => ( $es_af_name === 'YES' ) ? true : false,
-								'required' => ( $es_af_name_mand === 'YES' ) ? true : false
+								'show'     => ( 'YES' === $es_af_name ) ? true : false,
+								'required' => ( 'YES' === $es_af_name_mand ) ? true : false
 							),
 
 							'position' => 1
@@ -241,8 +246,8 @@ class ES_DB_Forms extends ES_DB {
 							'id'     => 'email',
 							'params' => array(
 								'label'    => 'Email',
-								'show'     => ( $es_af_email === 'YES' ) ? true : false,
-								'required' => ( $es_af_email_mand === 'YES' ) ? true : false
+								'show'     => ( 'YES' === $es_af_email ) ? true : false,
+								'required' => ( 'YES' === $es_af_email_mand ) ? true : false
 							),
 
 							'position' => 2
@@ -254,8 +259,8 @@ class ES_DB_Forms extends ES_DB {
 							'id'     => 'lists',
 							'params' => array(
 								'label'    => 'Lists',
-								'show'     => ( $es_af_group === 'YES' ) ? true : false,
-								'required' => ( $es_af_group_mand === 'YES' ) ? true : false,
+								'show'     => ( 'YES' === $es_af_group ) ? true : false,
+								'required' => ( 'YES' === $es_af_group_mand ) ? true : false,
 								'values'   => $list_ids
 							),
 

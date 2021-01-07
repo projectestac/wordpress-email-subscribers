@@ -11,6 +11,8 @@ class ES_DB_Campaigns extends ES_DB {
 
 	const STATUS_INACTIVE = 0;
 	/**
+	 * Tabl Name
+	 *
 	 * @since 4.2.1
 	 * @var string $table_name
 	 *
@@ -18,6 +20,8 @@ class ES_DB_Campaigns extends ES_DB {
 	public $table_name;
 
 	/**
+	 * Version
+	 *
 	 * @since 4.2.1
 	 * @var string $version
 	 *
@@ -25,6 +29,8 @@ class ES_DB_Campaigns extends ES_DB {
 	public $version;
 
 	/**
+	 * Primary Key
+	 *
 	 * @since 4.2.1
 	 * @var string
 	 *
@@ -122,6 +128,8 @@ class ES_DB_Campaigns extends ES_DB {
 	}
 
 	/**
+	 * Save Campaign
+	 *
 	 * @param $data
 	 * @param null $id
 	 *
@@ -131,7 +139,12 @@ class ES_DB_Campaigns extends ES_DB {
 	 */
 	public function save_campaign( $data, $id = null ) {
 
-		$insert = is_null( $id ) ? true : false;
+		$insert = is_null( $id );
+
+		if ( ! empty( $data['list_ids'] ) && is_array( $data['list_ids'] ) ) {
+			$data['list_ids'] = array_unique( $data['list_ids'] );
+			$data['list_ids'] = implode( ',', $data['list_ids'] );
+		}
 
 		if ( $insert ) {
 			$result = $this->insert( $data );
@@ -175,8 +188,9 @@ class ES_DB_Campaigns extends ES_DB {
 		$from_email       = ES_Common::get_ig_option( 'from_email' );
 		$list_is_name_map = ES()->lists_db->get_list_id_name_map( '', true );
 
-		$query = "SELECT count(*) as total FROM " . EMAIL_SUBSCRIBERS_NOTIFICATION_TABLE;
-		$total = $wpdb->get_var( $query );
+		$es_notification_table = EMAIL_SUBSCRIBERS_NOTIFICATION_TABLE;
+
+		$total = $wpdb->get_var( $wpdb->prepare( "SELECT count(*) as total FROM {$wpdb->prefix}es_notification WHERE %d", 1 ) );
 
 		if ( $total > 0 ) {
 			$batch_size = IG_DEFAULT_BATCH_SIZE;
@@ -184,9 +198,10 @@ class ES_DB_Campaigns extends ES_DB {
 			$total_batches = ( $total > IG_DEFAULT_BATCH_SIZE ) ? ceil( $total / $batch_size ) : 1;
 
 			for ( $i = 0; $i < $total_batches; $i ++ ) {
-				$batch_start   = $i * $batch_size;
-				$query         = "SELECT * FROM " . EMAIL_SUBSCRIBERS_NOTIFICATION_TABLE . " LIMIT {$batch_start}, {$batch_size}";
-				$notifications = $wpdb->get_results( $query, ARRAY_A );
+				$batch_start = $i * $batch_size;
+				//$query         = 'SELECT * FROM ' . EMAIL_SUBSCRIBERS_NOTIFICATION_TABLE . " LIMIT {$batch_start}, {$batch_size}";
+				//$notifications = $wpdb->get_results( $query, ARRAY_A ); // WPCS: cache ok, DB call ok, unprepared SQL ok.
+				$notifications = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}es_notification LIMIT %d, %d", $batch_start, $batch_size ), ARRAY_A );
 				if ( count( $notifications ) > 0 ) {
 					foreach ( $notifications as $key => $notification ) {
 						$categories = ! empty( $notification['es_note_cat'] ) ? $notification['es_note_cat'] : '';
@@ -215,7 +230,7 @@ class ES_DB_Campaigns extends ES_DB {
 						$campaigns_data[ $key ]['categories']       = $categories;
 						$campaigns_data[ $key ]['list_ids']         = ( ! empty( $notification['es_note_group'] ) && ! empty( $list_is_name_map[ $notification['es_note_group'] ] ) ) ? $list_is_name_map[ $notification['es_note_group'] ] : 0;
 						$campaigns_data[ $key ]['base_template_id'] = $template_id;
-						$campaigns_data[ $key ]['status']           = ( ! empty( $notification['es_note_status'] ) && $notification['es_note_status'] === 'Disable' ) ? 0 : 1;
+						$campaigns_data[ $key ]['status']           = ( ! empty( $notification['es_note_status'] ) && ( 'Disable' === $notification['es_note_status'] ) ) ? 0 : 1;
 						$campaigns_data[ $key ]['created_at']       = ig_get_current_date_time();
 						$campaigns_data[ $key ]['updated_at']       = null;
 						$campaigns_data[ $key ]['deleted_at']       = null;
@@ -224,17 +239,22 @@ class ES_DB_Campaigns extends ES_DB {
 					$templates_data = array();
 					// Get Template Name & Slug
 					if ( count( $template_ids ) > 0 ) {
-						$template_ids_str = "'" . implode( "', '", $template_ids ) . "'";
-						$query            = "SELECT ID, post_name, post_title FROM {$wpdb->prefix}posts WHERE id IN ({$template_ids_str})";
-						$templates        = $wpdb->get_results( $query, ARRAY_A );
+						//$template_ids_str = implode( "', '", $template_ids );
+						//$query            = "SELECT ID, post_name, post_title FROM {$wpdb->prefix}posts WHERE id IN ({$template_ids_str})";
+						//$templates        = $wpdb->get_results( $query, ARRAY_A );
+						$template_ids_str = implode( ',', $template_ids );
+
+						// We can use IN query only but to make WooCommerce standard compatible, we have used FIND_IN_SET.
+						$templates = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_name, post_title FROM {$wpdb->prefix}posts WHERE FIND_IN_SET(ID, %s)", $template_ids_str ), ARRAY_A );
 						foreach ( $templates as $template ) {
 							$templates_data[ $template['ID'] ] = $template;
 						}
 					}
 
 					//Do Batach Insert
-					$values  = $place_holders = array();
-					$columns = $this->get_columns();
+					$values        = array();
+					$place_holders = array();
+					$columns       = $this->get_columns();
 					unset( $columns['id'] );
 					$fields = array_keys( $columns );
 
@@ -250,7 +270,7 @@ class ES_DB_Campaigns extends ES_DB {
 							$formats[] = $format;
 						}
 
-						$place_holders[] = "( " . implode( ', ', $formats ) . " )";
+						$place_holders[] = '( ' . implode( ', ', $formats ) . ' )';
 					}
 
 					ES_DB::do_insert( IG_CAMPAIGNS_TABLE, $fields, $place_holders, $values );
@@ -266,55 +286,59 @@ class ES_DB_Campaigns extends ES_DB {
 	 */
 	public function migrate_newsletters() {
 		global $wpdb;
-
-		$from_name  = ES_Common::get_ig_option( 'from_name' );
-		$from_email = ES_Common::get_ig_option( 'from_email' );
-
-		$query = "SELECT count(*) as total FROM " . EMAIL_SUBSCRIBERS_SENT_TABLE . " WHERE es_sent_source = 'Newsletter'";
-		$total = $wpdb->get_var( $query );
-
-		if ( $total > 0 ) {
-
-			$list_is_name_map = ES()->lists_db->get_list_id_name_map( '', true );
-			$batch_size       = IG_DEFAULT_BATCH_SIZE;
-			$total_batches    = ceil( $total / $batch_size );
-
-			$values  = $place_holders = array();
-			$columns = $this->get_columns();
-			unset( $columns['id'] );
-			$fields = array_keys( $columns );
-			for ( $i = 0; $i <= $total_batches; $i ++ ) {
-				$batch_start = $i * $batch_size;
-
-				$query       = "SELECT * FROM " . EMAIL_SUBSCRIBERS_SENT_TABLE . " WHERE es_sent_source = 'Newsletter' LIMIT {$batch_start}, {$batch_size}";
-				$newsletters = $wpdb->get_results( $query, ARRAY_A );
-
-				if ( count( $newsletters ) > 0 ) {
-					$campaign_data = $values = $place_holders = array();
-					foreach ( $newsletters as $key => $newsletter ) {
-						$campaign_data['slug']           = sanitize_title( $newsletter['es_sent_subject'] );
-						$campaign_data['name']           = $newsletter['es_sent_subject'];
-						$campaign_data['type']           = IG_CAMPAIGN_TYPE_NEWSLETTER;
-						$campaign_data['from_name']      = $from_name;
-						$campaign_data['from_email']     = $from_email;
-						$campaign_data['reply_to_name']  = $from_name; // We don't have this option avaialble. So, setting from_name as reply_to_name
-						$campaign_data['reply_to_email'] = $from_email; // We don't have this option available. So, setting from_email as reply_to_email
-						$campaign_data['list_ids']       = ( ! empty( $newsletter['es_note_group'] ) && ! empty( $list_is_name_map[ $newsletter['es_note_group'] ] ) ) ? $list_is_name_map[ $newsletter['es_note_group'] ] : 0;
-						$campaign_data['status']         = 1;
-						$campaign_data['created_at']     = $newsletter['es_sent_starttime'];
-
-						$campaign_data = wp_parse_args( $campaign_data, $this->get_column_defaults() );
-
-						$formats = array();
-						foreach ( $columns as $column => $format ) {
-							$values[]  = $campaign_data[ $column ];
-							$formats[] = $format;
+	
+		// Check if es_sentdetails table exists or not.
+		if ( $this->table_exists( $wpdb->prefix . 'es_sentdetails' ) ) {
+			$from_name  = ES_Common::get_ig_option( 'from_name' );
+			$from_email = ES_Common::get_ig_option( 'from_email' );
+	
+			$total = $wpdb->get_var( $wpdb->prepare( "SELECT count(*) as total FROM {$wpdb->prefix}es_sentdetails WHERE es_sent_source = %s", 'Newsletter' ) );
+	
+			if ( $total > 0 ) {
+	
+				$list_is_name_map = ES()->lists_db->get_list_id_name_map( '', true );
+				$batch_size       = IG_DEFAULT_BATCH_SIZE;
+				$total_batches    = ceil( $total / $batch_size );
+	
+				$values        = array();
+				$place_holders = array();
+				$columns       = $this->get_columns();
+				unset( $columns['id'] );
+				$fields = array_keys( $columns );
+				for ( $i = 0; $i <= $total_batches; $i ++ ) {
+					$batch_start = $i * $batch_size;
+	
+					$newsletters = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}es_sentdetails WHERE es_sent_source = %s LIMIT %d, %d", 'Newsletter', $batch_start, $batch_size ), ARRAY_A );
+	
+					if ( count( $newsletters ) > 0 ) {
+						$campaign_data = array();
+						$values        = array();
+						$place_holders = array();
+						foreach ( $newsletters as $key => $newsletter ) {
+							$campaign_data['slug']           = sanitize_title( $newsletter['es_sent_subject'] );
+							$campaign_data['name']           = $newsletter['es_sent_subject'];
+							$campaign_data['type']           = IG_CAMPAIGN_TYPE_NEWSLETTER;
+							$campaign_data['from_name']      = $from_name;
+							$campaign_data['from_email']     = $from_email;
+							$campaign_data['reply_to_name']  = $from_name; // We don't have this option avaialble. So, setting from_name as reply_to_name
+							$campaign_data['reply_to_email'] = $from_email; // We don't have this option available. So, setting from_email as reply_to_email
+							$campaign_data['list_ids']       = ( ! empty( $newsletter['es_note_group'] ) && ! empty( $list_is_name_map[ $newsletter['es_note_group'] ] ) ) ? $list_is_name_map[ $newsletter['es_note_group'] ] : 0;
+							$campaign_data['status']         = 1;
+							$campaign_data['created_at']     = $newsletter['es_sent_starttime'];
+	
+							$campaign_data = wp_parse_args( $campaign_data, $this->get_column_defaults() );
+	
+							$formats = array();
+							foreach ( $columns as $column => $format ) {
+								$values[]  = $campaign_data[ $column ];
+								$formats[] = $format;
+							}
+	
+							$place_holders[] = '( ' . implode( ', ', $formats ) . ' )';
 						}
-
-						$place_holders[] = "( " . implode( ', ', $formats ) . " )";
+	
+						ES_DB::do_insert( IG_CAMPAIGNS_TABLE, $fields, $place_holders, $values );
 					}
-
-					ES_DB::do_insert( IG_CAMPAIGNS_TABLE, $fields, $place_holders, $values );
 				}
 			}
 		}
@@ -328,13 +352,11 @@ class ES_DB_Campaigns extends ES_DB {
 	public function update_campaign_id_in_mailing_queue() {
 		global $wpdb;
 
-		$sql       = "SELECT id, name FROM {$wpdb->prefix}ig_campaigns";
-		$campaigns = $wpdb->get_results( $sql, ARRAY_A );
+		$campaigns = $wpdb->get_results( $wpdb->prepare( "SELECT id, name FROM {$wpdb->prefix}ig_campaigns WHERE %d", 1 ), ARRAY_A );
 
 		$data_to_update = array();
 		if ( count( $campaigns ) > 0 ) {
-			$sql                   = "SELECT * FROM {$wpdb->prefix}ig_mailing_queue";
-			$mailing_queue_results = $wpdb->get_results( $sql, ARRAY_A );
+			$mailing_queue_results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}ig_mailing_queue WHERE %d", 1 ), ARRAY_A );
 			if ( count( $mailing_queue_results ) > 0 ) {
 				foreach ( $mailing_queue_results as $result ) {
 					$subject = trim( $result['subject'] );
@@ -353,9 +375,7 @@ class ES_DB_Campaigns extends ES_DB {
 
 		if ( ! empty( $data_to_update ) ) {
 			foreach ( $data_to_update as $mailing_queue_id => $campaign_id ) {
-				$sql   = "UPDATE {$wpdb->prefix}ig_mailing_queue SET campaign_id = %d WHERE id = %d";
-				$query = $wpdb->prepare( $sql, array( $campaign_id, $mailing_queue_id ) );
-				$wpdb->query( $query );
+				$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}ig_mailing_queue SET campaign_id = %d WHERE id = %d", array( $campaign_id, $mailing_queue_id ) ) );
 			}
 		}
 	}
@@ -384,7 +404,7 @@ class ES_DB_Campaigns extends ES_DB {
 	public function get_total_campaigns_by_type( $type = 'newsletter' ) {
 		global $wpdb;
 
-		$where = $wpdb->prepare( "type = %s", array( $type ) );
+		$where = $wpdb->prepare( 'type = %s', array( $type ) );
 
 		$campaigns = $this->get_total_campaigns( $where );
 
@@ -455,14 +475,18 @@ class ES_DB_Campaigns extends ES_DB {
 	 *
 	 * @return array|object|null
 	 */
-	public function get_campaign_by_id( $id = 0 ) {
+	public function get_campaign_by_id( $id = 0, $status = 1 ) {
 		global $wpdb;
 
 		if ( empty( $id ) ) {
 			return array();
 		}
 
-		$where = $wpdb->prepare( "id = %d AND status = %d", $id, self::STATUS_ACTIVE );
+		$where = $wpdb->prepare( 'id = %d', $id );
+
+		if ( - 1 !== $status ) {
+			$where .= $wpdb->prepare( ' AND status = %d', $status );
+		}
 
 		$campaigns = $this->get_by_conditions( $where );
 
@@ -516,9 +540,7 @@ class ES_DB_Campaigns extends ES_DB {
 			$where = $wpdb->prepare( "status = %d AND type = %s AND (deleted_at IS NULL OR deleted_at = '0000-00-00 00:00:00')", self::STATUS_ACTIVE, $type );
 		}
 
-		$campaigns = $this->get_by_conditions( $where );
-
-		return $campaigns;
+		return $this->get_by_conditions( $where );
 	}
 
 	/**
@@ -549,6 +571,7 @@ class ES_DB_Campaigns extends ES_DB {
 					$campaign['meta'] = maybe_serialize( $meta );
 
 					$update = $this->save_campaign( $campaign, $campaign_id );
+
 
 				}
 			}
@@ -610,7 +633,7 @@ class ES_DB_Campaigns extends ES_DB {
 
 	/**
 	 * Get Post Notifications (Campaigns) based on post_id
-	 * 
+	 *
 	 * @param int $post_id
 	 *
 	 * @return array|object|null
@@ -628,23 +651,23 @@ class ES_DB_Campaigns extends ES_DB {
 
 			$where = $wpdb->prepare( "status = %d AND type = %s AND (deleted_at IS NULL OR deleted_at = '0000-00-00 00:00:00')", 1, 'post_notification' );
 
-			if ( "post" === $post_type ) {
+			if ( 'post' === $post_type ) {
 				$categories       = get_the_category( $post_id );
 				$total_categories = count( $categories );
 				if ( $total_categories > 0 ) {
 					for ( $i = 0; $i < $total_categories; $i ++ ) {
-						if ( $i == 0 ) {
-							$where .= " and (";
+						if ( 0 === $i) {
+							$where .= ' and (';
 						} else {
-							$where .= " or";
+							$where .= ' or';
 						}
 
 						$category_str = ES_Common::prepare_category_string( $categories[ $i ]->term_id );
 
 						$where .= " categories LIKE '%" . $category_str . "%'";
-						if ( $i == ( $total_categories - 1 ) ) {
+						if ( ( $total_categories - 1 )  === $i ) {
 							$where .= " OR categories LIKE '%all%'";
-							$where .= ")";
+							$where .= ')';
 						}
 					}
 				} else {
@@ -653,7 +676,7 @@ class ES_DB_Campaigns extends ES_DB {
 				}
 			} else {
 				$post_type = ES_Common::prepare_custom_post_type_string( $post_type );
-				$where     .= " and categories LIKE '%" . wp_specialchars_decode( addslashes( $post_type ) ) . "%'";
+				$where    .= " and categories LIKE '%" . wp_specialchars_decode( addslashes( $post_type ) ) . "%'";
 			}
 
 			$campaigns = $this->get_by_conditions( $where, ARRAY_A );
@@ -663,5 +686,79 @@ class ES_DB_Campaigns extends ES_DB {
 
 	}
 
+	/**
+	 * Method to update campaign status
+	 *
+	 * @param array $campaign_ids Campaign IDs.
+	 * @param integer $status New status.
+	 *
+	 * @return bool $updated        Update status
+	 *
+	 * @since 4.4.4
+	 */
+	public function update_status( $campaign_ids = array(), $status = 0 ) {
+		global $wpdb;
 
+		$updated = false;
+		if ( empty( $campaign_ids ) ) {
+			return $updated;
+		}
+
+		$id_str       = '';
+		$campaign_ids = esc_sql( $campaign_ids );
+
+		if ( is_array( $campaign_ids ) && count( $campaign_ids ) > 0 ) {
+			$id_str = implode( ',', $campaign_ids );
+		} elseif ( is_numeric( $campaign_ids ) ) {
+			$id_str = $campaign_ids;
+		}
+
+		if ( ! empty( $id_str ) ) {
+
+			$updated = $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}ig_campaigns SET status = %d WHERE FIND_IN_SET(id, %s)", $status, $id_str) );
+
+			//Changing status of child campaigns along with its parent campaign id
+			$wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}ig_campaigns SET status = %d WHERE FIND_IN_SET(parent_id, %s)", $status, $id_str) );
+		}
+
+		return $updated;
+
+	}
+
+	/**
+	 * Duplicate Campaign
+	 *
+	 * @param $id
+	 *
+	 * @since 4.6.3
+	 */
+	public function duplicate_campaign( $id = null ) {
+
+		if ( ! empty( $id ) ) {
+			
+			$campaign = $this->get( $id );
+			$campaign['status'] = IG_ES_CAMPAIGN_STATUS_IN_ACTIVE;
+			$campaign['name']  = __( 'Copy', 'email-subscribers' ) . ' - ' . $campaign['name'];
+
+			if ( 'newsletter' === $campaign['type'] ) {
+				$campaign['subject']  = __( 'Copy', 'email-subscribers' ) . ' - ' . $campaign['subject'];
+			}
+			$campaign_id = $campaign['id'];	
+			unset( $campaign['id'] );
+			unset( $campaign['created_at'] );
+
+			$duplicate_campaign_id = $this->save_campaign( $campaign );
+			
+			if ( 'sequence' === $campaign['type'] ) {
+				$sequence_campaigns = $this->get_campaign_by_parent_id( $campaign_id );
+
+				foreach ( $sequence_campaigns as $index => $child_campaign ) {
+					$child_campaign['parent_id'] = $duplicate_campaign_id;
+					unset( $child_campaign['id'] );
+					unset( $child_campaign['created_at'] );
+					$this->save_campaign( $child_campaign );
+				}
+			}
+		}
+	}
 }

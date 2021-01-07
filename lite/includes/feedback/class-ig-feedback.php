@@ -4,21 +4,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
+if ( ! class_exists( 'IG_Feedback_V_1_2_4' ) ) {
 	/**
 	 * IG Feedback
 	 *
 	 * The IG Feedback class adds functionality to get quick interactive feedback from users.
 	 * There are different types of feedabck widget like Stars, Emoji, Thubms Up/ Down, Number etc.
 	 *
-	 * @class       IG_Feedback_V_1_2_0
+	 * @class       IG_Feedback_V_1_2_4
 	 * @since       1.0.0
 	 * @copyright   Copyright (c) 2019, Icegram
 	 * @license     https://opensource.org/licenses/gpl-license GNU Public License
-	 * @author      Icegram
 	 * @package     feedback
 	 */
-	class IG_Feedback_V_1_2_0 {
+	class IG_Feedback_V_1_2_4 {
 
 		/**
 		 * Version of Feedback Library
@@ -27,7 +26,7 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 		 * @var string
 		 *
 		 */
-		public $version = '1.2.0';
+		public $version = '1.2.4';
 		/**
 		 * The API URL where we will send feedback data.
 		 *
@@ -403,7 +402,8 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 				'delay'             => 3, // In Seconds
 				'consent_text'      => 'You are agree to our terms and condition',
 				'email'             => $this->get_contact_email(),
-				'name'              => ''
+				'name'              => '',
+				'consent'    => false
 			);
 
 			$params = wp_parse_args( $params, $default_params );
@@ -452,7 +452,8 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 							is_dev_mode: '<?php echo $this->is_dev_mode; ?>',
 							set_transient: '<?php echo $params['set_transient']; ?>'
 							//system_info: enable_system_info
-						}
+						},
+						security: '<?php echo esc_js( wp_create_nonce( $this->plugin_abbr . '-admin-ajax-nonce' ) ); ?>'
 					};
 
 					return jQuery.post(ajaxurl, data);
@@ -636,9 +637,11 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
                         <label class="ig-label"">Feedback</label><br/>
                         <textarea name="feedback_data[details]" id="ig-feedback-data-message"></textarea>
                     </p>
-                    <p>
-                        <input type="checkbox" name="feedback_data[collect_system_info]" checked="checked" id="ig-feedback-data-consent"/><?php echo $params['consent_text']; ?>
-                    </p>
+					<?php if ( isset( $params['consent'] ) && $params['consent'] === true ) { ?>
+                        <p>
+                            <input type="checkbox" name="feedback_data[collect_system_info]" checked="checked" id="ig-feedback-data-consent"/><?php echo $params['consent_text']; ?>
+                        </p>
+					<?php } ?>
                 </form>
             </div>
 
@@ -681,7 +684,8 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 								set_transient: '<?php echo $params['set_transient']; ?>',
 								meta_info: meta,
 								system_info: system_info
-							}
+							},
+							security: '<?php echo esc_js( wp_create_nonce( $this->plugin_abbr . '-admin-ajax-nonce' ) ); ?>'
 						};
 
 						return jQuery.post(ajaxurl, data);
@@ -696,12 +700,11 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 						}
 					}
 
-					var feedbackButtonID = 'ig-feedback-button-<?php echo $this->plugin; ?>';
+					var feedbackButtonClass = 'ig-feedback-button-<?php echo $this->plugin; ?>';
 
-					$('#wpwrap').append('<div class="ig-es-feedback-button" id="' + feedbackButtonID + '">Feedback</div>');
+					$('#wpwrap').append('<div class="ig-es-feedback-button ' + feedbackButtonClass + '">Feedback</div>');
 
-					$('#' + feedbackButtonID).on('click', function () {
-
+					$('.' + feedbackButtonClass).on('click', function () {
 						Swal.mixin({
 							footer: '<?php echo $this->footer; ?>',
 							position: '<?php echo $params['position']; ?>',
@@ -744,7 +747,7 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 										return;
 									}
 
-									var system_info = false;
+									var system_info = true;
 									if (consent === 'checked') {
 										system_info = true;
 									}
@@ -796,22 +799,30 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 			$params = $this->prepare_widget_params( $params );
 
 			$title = $params['title'];
+			$widget_tyoe = !empty($params['widget_tyoe']) ? $params['widget_tyoe'] : 'question';
 			$slug  = sanitize_title( $title );
 			$event = $this->event_prefix . $params['event'];
 			$html  = ! empty( $params['html'] ) ? $params['html'] : '';
+			$confirm_button_link = ! empty( $params['confirmButtonLink'] ) ? $params['confirmButtonLink'] : '';
+			$cancel_button_link = ! empty( $params['cancelButtonLink'] ) ? $params['cancelButtonLink'] : '';
+			$show_cancel_button = ! empty( $params['showCancelButton'] ) ? 'true' : 'false';
+			$cancel_button_text = ! empty( $params['cancelButtonText'] ) ? $params['cancelButtonText'] : 'Cancel';
 
 			?>
 
             <script>
 
 				Swal.mixin({
-					type: 'question',
-					footer: '<?php echo $this->footer; ?>',
+					type: '<?php echo $widget_tyoe; ?>',
 					position: '<?php echo $params['position']; ?>',
 					width: <?php echo $params['width']; ?>,
 					animation: false,
-					focusConfirm: false,
+					focusConfirm: true,
 					allowEscapeKey: true,
+					showCancelButton: <?php echo $show_cancel_button; ?>,
+					confirmButtonColor: '#0e9f6e',
+					cancelButtonColor: '#5850ec',
+					cancelButtonText: '<?php echo $cancel_button_text; ?>',
 					showCloseButton: '<?php echo $params['showCloseButton']; ?>',
 					allowOutsideClick: '<?php echo $params['allowOutsideClick']; ?>',
 					showLoaderOnConfirm: true,
@@ -827,13 +838,14 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 
 						preConfirm: () => {
 							window.open(
-								'https://www.facebook.com/groups/2298909487017349/',
+								'<?php echo $confirm_button_link; ?>',
 								'_blank' // <- This is what makes it open in a new window.
 							);
 						}
 					}
 				]).then(response => {
 
+					console.log(response);
 					if (response.hasOwnProperty('value')) {
 
 						Swal.fire({
@@ -845,9 +857,12 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 							timer: 1500,
 							animation: false
 						});
-					}
-
-
+					} else if(response.dismiss == 'cancel') {
+						window.open(
+							'<?php echo $cancel_button_link; ?>',
+							'_blank' // <- This is what makes it open in a new window.
+						);
+                    }
 				});
 
             </script>
@@ -886,12 +901,12 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
                 <form class="ig-general-feedback" id="ig-general-feedback">
                     <p><?php echo $desc; ?></p>
 
-                    <p class="ig-general-feedback">
+                    <p class="ig-general-feedback mb-3">
 						<?php foreach ( $poll_options as $value => $option ) { ?>
                             <input type="radio" name="feedback_data[poll_options]" value="<?php echo $value; ?>"><b style="color: <?php echo $option['color']; ?>"><?php echo $option['text']; ?></b><br/>
 						<?php } ?>
                     </p>
-                    <p class="ig-feedback-data-poll-message" id="ig-feedback-data-poll-message">
+                    <p class="ig-feedback-data-poll-message mb-3" id="ig-feedback-data-poll-message">
                         <textarea name="feedback_data[details]" id="ig-feedback-data-poll-additional-message" placeholder="Additional feedback"></textarea>
                     </p>
                 </form>
@@ -935,7 +950,8 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 								set_transient: '<?php echo $params['set_transient']; ?>',
 								meta_info: meta,
 								system_info: system_info
-							}
+							},
+							security: '<?php echo esc_js( wp_create_nonce( $this->plugin_abbr . '-admin-ajax-nonce' ) ); ?>'
 						};
 
 						return jQuery.post(ajaxurl, data);
@@ -1172,7 +1188,8 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 								set_cookie: '',
 								meta_info: meta,
 								system_info: system_info
-							}
+							},
+							security: '<?php echo esc_js( wp_create_nonce( $this->plugin_abbr . '-admin-ajax-nonce' ) ); ?>'
 						};
 
 						var submitSurvey = $.post(ajaxurl, data);
@@ -1626,6 +1643,8 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_0' ) ) {
 		 * Send feedback to server
 		 */
 		function submit_feedback() {
+
+			check_ajax_referer( $this->plugin_abbr . '-admin-ajax-nonce', 'security' );
 
 			$data = ! empty( $_POST ) ? $_POST : array();
 

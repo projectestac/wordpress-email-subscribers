@@ -332,7 +332,7 @@ if ( ! class_exists( 'IG_Log_Handler_File' ) ) {
 		 */
 		public static function get_log_file_name( $handle ) {
 			if ( function_exists( 'wp_hash' ) ) {
-				$date_suffix = date( 'Y-m-d', current_time( 'timestamp', true ) );
+				$date_suffix = gmdate( 'Y-m-d', time() );
 				$hash_suffix = wp_hash( $handle );
 
 				return sanitize_file_name( implode( '-', array( $handle, $date_suffix, $hash_suffix ) ) . '.log' );

@@ -7,14 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 function header_part() {
 	$screen = get_current_screen();
-	if ( $screen->parent_base == 'es_dashboard' || $screen->id == 'es_template' || $screen->parent_base == 'admin_page_es_template_preview' ) {
+	if ( 'es_dashboard' == $screen->parent_base || 'es_template' == $screen->id || 'admin_page_es_template_preview' == $screen->parent_base ) {
 		?>
 
-        <div class="headerpart">
-            <div class="esbgheader">
-                <h1>Email Subscribers V4.0</h1>
-            </div>
-        </div>
+		<div class="headerpart">
+			<div class="esbgheader">
+				<h1>Email Subscribers V4.0</h1>
+			</div>
+		</div>
 		<?php
 	}
 }

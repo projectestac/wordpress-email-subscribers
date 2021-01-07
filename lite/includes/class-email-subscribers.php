@@ -1,5 +1,4 @@
 <?php
-
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -32,10 +31,10 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 	 * @since      4.0
 	 * @package    Email_Subscribers
 	 * @subpackage Email_Subscribers/includes
-	 * @author     Your Name <email@example.com>
 	 */
 	class Email_Subscribers {
 		/**
+		 * ES instance
 		 *
 		 * @since 4.2.1
 		 *
@@ -118,6 +117,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $tracker;
 
 		/**
+		 * Campaigns Object
+		 *
 		 * @since 4.2.1
 		 *
 		 * @var object|ES_Campaigns_Table
@@ -135,6 +136,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $campaigns_db;
 
 		/**
+		 * Lists Object
+		 *
 		 * @since 4.2.1
 		 * @var object|ES_Lists_Table
 		 *
@@ -142,6 +145,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $lists;
 
 		/**
+		 * Lists DB Object
+		 *
 		 * @since 4.2.1
 		 *
 		 * @var object|ES_DB_Lists
@@ -150,6 +155,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $lists_db;
 
 		/**
+		 * Forms Object
+		 *
 		 * @since 4.2.1
 		 * @var object|ES_Forms_Table
 		 *
@@ -157,6 +164,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $forms;
 
 		/**
+		 * Forms DB Object
+		 *
 		 * @since 4.2.1
 		 *
 		 * @var object|ES_DB_Forms
@@ -164,6 +173,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $forms_db;
 
 		/**
+		 * Contacts Object
+		 *
 		 * @since 4.2.1
 		 *
 		 * @var object|ES_Contacts_Table
@@ -171,6 +182,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $contacts;
 
 		/**
+		 * Contacts DB Object
+		 *
 		 * @since 4.2.1
 		 *
 		 * @var object|ES_DB_Contacts
@@ -178,6 +191,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $contacts_db;
 
 		/**
+		 * ES_DB_Blocked_Emails object
+		 *
 		 * @since 4.2.2
 		 *
 		 * @var object|ES_DB_Blocked_Emails
@@ -185,6 +200,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $blocked_emails_db;
 
 		/**
+		 * ES_DB_Links object
+		 *
 		 * @since 4.2.4
 		 *
 		 * @var object|ES_DB_Links
@@ -192,6 +209,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $links_db;
 
 		/**
+		 * ES_DB_Lists_Contacts object
+		 *
 		 * @since 4.3.5
 		 *
 		 * @var object|ES_DB_Lists_Contacts
@@ -199,6 +218,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $lists_contacts_db;
 
 		/**
+		 * ES_Integrations object
 		 *
 		 * @since 4.2.1
 		 *
@@ -208,6 +228,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $integrations;
 
 		/**
+		 * IG_Logger object
+		 *
 		 * @since 4.2.1
 		 *
 		 * @var object|IG_Logger
@@ -216,6 +238,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $logger;
 
 		/**
+		 * ES_Mailer object
+		 *
 		 * @since 4.3.1
 		 *
 		 * @var object|ES_Mailer
@@ -227,7 +251,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 * the plugin.
 		 *
 		 * @since    4.0
-		 * @access   protected
+		 *
 		 * @var      Email_Subscribers_Loader $loader Maintains and registers all hooks for the plugin.
 		 */
 		protected $loader;
@@ -236,7 +260,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 * The unique identifier of this plugin.
 		 *
 		 * @since    4.0
-		 * @access   protected
+		 *
 		 * @var      string $email_subscribers The string used to uniquely identify this plugin.
 		 */
 		protected $email_subscribers;
@@ -245,10 +269,19 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 * The current version of the plugin.
 		 *
 		 * @since    4.0
-		 * @access   protected
+		 *
 		 * @var      string $version The current version of the plugin.
 		 */
 		protected $version;
+
+		/**
+		 * ES_DB_Workflows object
+		 *
+		 * @since 4.4.0
+		 *
+		 * @var object|ES_DB_Workflows
+		 */
+		public $workflows_db;
 
 		/**
 		 * Define the core functionality of the plugin.
@@ -260,7 +293,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 * @since    4.0
 		 */
 		public function __construct() {
-
+			$this->version = ES_PLUGIN_VERSION;
 		}
 
 		/**
@@ -269,20 +302,35 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 * @since 4.0.0
 		 */
 		public function add_admin_notice() {
-			global $ig_es_tracker;
+			///Halloween offer
+			$show_offer = false;
+			$current_page = ig_es_get_request_data( 'page' );
+			
+			if ( $this->can_upsell_features( array( 'lite', 'trial', 'starter' ) ) && IG_ES_Onboarding::is_onboarding_completed() ) { 
+				if ( 'es_reports' === $current_page ) {
+					$report_insight = ig_es_get_request_data( 'insight' );
+					if ( ! $report_insight ) {
+						$show_offer = true;
+					}
+				} else {
+					$show_offer = true;
+				}	
+			}
 
-			$active_plugins = $ig_es_tracker::get_active_plugins();
-
-			$args['url']     = 'https://www.icegram.com/';
-			$args['include'] = ES_PLUGIN_DIR . 'lite/includes/notices/views/ig-es-offer.php';
-			ES_Admin_Notices::add_custom_notice( 'bfcm_2019', $args );
+			if ( $show_offer ) {
+				$args['url']     = 'https://www.icegram.com/';
+				$args['include'] = ES_PLUGIN_DIR . 'lite/includes/notices/views/ig-es-bfcm-offer.php';
+				ES_Admin_Notices::add_custom_notice( 'bfcm_offer_2020', $args );
+			} else {
+				ES_Admin_Notices::remove_notice( 'bfcm_offer_2020' );
+			}
 
 			$screen_id = $this->get_current_screen_id();
 			// Don't show admin notices on Dashboard if onboarding is not yet completed.
 			$is_onboarding_complete = get_option( 'ig_es_onboarding_complete', false );
 
 			// We don't have ig_es_onboarding_complete option if somebody is migrating from older version
-			if ( ( 'toplevel_page_es_dashboard' === $screen_id ) && ( ! $is_onboarding_complete || $is_onboarding_complete == 'no' ) ) {
+			if ( ( 'toplevel_page_es_dashboard' === $screen_id ) && ( ! $is_onboarding_complete || 'no' == $is_onboarding_complete ) ) {
 				return;
 			}
 
@@ -292,52 +340,29 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			$show_notice = true;
 			$show_notice = apply_filters( 'ig_es_show_wp_cron_notice', $show_notice );
 
-			if ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON && $notice_option != 'yes' && $show_notice ) {
-				$es_cron_url            = 'https://www.icegram.com/documentation/how-to-enable-the-wordpress-cron/?utm_source=es&utm_medium=in_app&utm_campaign=view_admin_notice';
-				$cpanel_url             = 'https://www.icegram.com/documentation/es-how-to-schedule-cron-emails-in-cpanel/?utm_source=es&utm_medium=in_app&utm_campaign=view_admin_notice';
-				$es_pro_url             = 'https://www.icegram.com/documentation/es-how-to-schedule-cron-emails-in-cpanel/?utm_source=es&utm_medium=in_app&utm_campaign=view_admin_notice';
-				$disable_wp_cron_notice = sprintf( __( 'WordPress Cron is disable on your site. Email notifications from Email Subscribers plugin will not be sent automatically. <a href="%s" target="_blank" >Here\'s how you can enable it.</a>', 'email-subscribers' ), $es_cron_url );
+			// If DISABLE_WP_CRON constant is defined and set to true, then we can say that wp cron is disabled.
+			$wp_cron_disabled = ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) ? true : false;
+
+			// Add notice only if wp cron is disabled and user have not acknowledged the notice by clicking on the acknowledgement button in the notice.
+			if ( $wp_cron_disabled && 'yes' != $notice_option && $show_notice ) {
+				$es_cron_url = 'https://www.icegram.com/documentation/how-to-enable-the-wordpress-cron/?utm_medium=enable_wordpress_cron&utm_source=in_app&utm_campaign=view_admin_notice';
+				$cpanel_url  = 'https://www.icegram.com/documentation/es-how-to-schedule-cron-emails-in-cpanel/?utm_source=schedule_cron_in_cpanel&utm_medium=in_app&utm_campaign=view_admin_notice';
+				$es_pro_url  = 'https://www.icegram.com/documentation/es-how-to-schedule-cron-emails-in-cpanel/?utm_source=schedule_cron_in_cpanel&utm_medium=in_app&utm_campaign=view_admin_notice';
+				/* translators: %s: Cron URL */
+				$disable_wp_cron_notice = sprintf( __( 'WordPress Cron is disabled on your site. Email notifications from Email Subscribers plugin will not be sent automatically. <a href="%s" target="_blank" >Here\'s how you can enable it.</a>', 'email-subscribers' ), $es_cron_url );
+				/* translators: %s: Link to Cpanel URL */
 				$disable_wp_cron_notice .= '<br/>' . sprintf( __( 'Or schedule Cron in <a href="%s" target="_blank">cPanel</a>', 'email-subscribers' ), $cpanel_url );
+				/* translators: %s: ES Pro URL */
 				$disable_wp_cron_notice .= '<br/>' . sprintf( __( 'Or use <strong><a href="%s" target="_blank">Email Subscribers Pro</a></strong> for automatic Cron support', 'email-subscribers' ), $es_pro_url );
-				$html                   = '<div class="notice notice-warning" style="background-color: #FFF;"><p style="letter-spacing: 0.6px;">' . $disable_wp_cron_notice . '<a style="float:right" class="es-admin-btn es-admin-btn-secondary " href="' . admin_url() . '?es_dismiss_admin_notice=1&option_name=wp_cron_notice">' . __( 'OK, I Got it!',
+				$html                    = '<div class="notice notice-warning" style="background-color: #FFF;"><p style="letter-spacing: 0.6px;">' . $disable_wp_cron_notice . '<a style="float:right" class="es-admin-btn es-admin-btn-secondary " href="' . admin_url() . '?es_dismiss_admin_notice=1&option_name=wp_cron_notice">' . __( 'OK, I Got it!',
 						'email-subscribers' ) . '</a></p></div>';
-				$args['html']           = $html;
+				$args['html']            = $html;
 				ES_Admin_Notices::add_custom_notice( 'show_wp_cron', $args );
+			} else {
+				// Remove the notice if user hasn't disabled the WP CRON or renabled the WP CRON.
+				ES_Admin_Notices::remove_notice( 'show_wp_cron' );
 			}
 
-		}
-
-		/**
-		 * Dismiss Admin Notices
-		 *
-		 * @since 4.0.0
-		 */
-		public function es_dismiss_admin_notice() {
-			$es_dismiss_admin_notice = ig_es_get_request_data( 'es_dismiss_admin_notice' );
-			$option_name             = ig_es_get_request_data( 'option_name' );
-			if ( $es_dismiss_admin_notice == '1' && ! empty( $option_name ) ) {
-				update_option( 'ig_es_' . $option_name, 'yes' );
-				if ( in_array( $option_name, array( 'redirect_upsale_notice', 'dismiss_upsale_notice', 'dismiss_star_notice', 'star_notice_done' ) ) ) {
-					update_option( 'ig_es_' . $option_name . '_date', ig_get_current_date_time() );
-				}
-				if ( $option_name === 'star_notice_done' ) {
-					header( "Location: https://wordpress.org/support/plugin/email-subscribers/reviews/" );
-					exit();
-				}
-				if ( $option_name === 'redirect_upsale_notice' ) {
-					header( "Location: https://www.icegram.com/email-subscribers-starter-plan-pricing/?utm_source=es&utm_medium=es_upsale_banner&utm_campaign=es_upsale" );
-					exit();
-				}
-				if ( $option_name === 'offer_pre_halloween_done_2019' || $option_name === 'offer_halloween_done_2019' || $option_name === 'offer_last_day_halloween_done_2019' ) {
-					$url = "https://www.icegram.com/?utm_source=in_app&utm_medium=es_banner&utm_campaign=" . $option_name;
-					header( "Location: {$url}" );
-					exit();
-				} else {
-					$referer = wp_get_referer();
-					wp_safe_redirect( $referer );
-				}
-				exit();
-			}
 		}
 
 		/**
@@ -399,6 +424,9 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			}
 			if ( ! defined( 'IG_CAMPAIGNS_TABLE' ) ) {
 				define( 'IG_CAMPAIGNS_TABLE', $wpdb->prefix . 'ig_campaigns' );
+			}
+			if ( ! defined( 'IG_WORKFLOWS_TABLE' ) ) {
+				define( 'IG_WORKFLOWS_TABLE', $wpdb->prefix . 'ig_workflows' );
 			}
 			if ( ! defined( 'IG_CONTACTS_TABLE' ) ) {
 				define( 'IG_CONTACTS_TABLE', $wpdb->prefix . 'ig_contacts' );
@@ -541,6 +569,19 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			if ( ! defined( 'IG_ES_CAMPAIGN_STATUS_FINISHED' ) ) {
 				define( 'IG_ES_CAMPAIGN_STATUS_FINISHED', 5 );
 			}
+
+
+			if ( ! defined( 'IG_ES_WORKFLOW_STATUS_IN_ACTIVE' ) ) {
+				define( 'IG_ES_WORKFLOW_STATUS_IN_ACTIVE', 0 );
+			}
+
+			if ( ! defined( 'IG_ES_WORKFLOW_STATUS_ACTIVE' ) ) {
+				define( 'IG_ES_WORKFLOW_STATUS_ACTIVE', 1 );
+			}
+
+			if ( ! defined( 'IG_ES_TRIAL_PERIOD_IN_DAYS' ) ) {
+				define( 'IG_ES_TRIAL_PERIOD_IN_DAYS', 14 );
+			}
 		}
 
 		/**
@@ -551,7 +592,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 *
 		 * @since 4.2.0
 		 */
-		function define( $constant, $value ) {
+		public function define( $constant, $value ) {
 			if ( ! defined( $constant ) ) {
 				define( $constant, $value );
 			}
@@ -571,7 +612,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 * with WordPress.
 		 *
 		 * @since    4.0
-		 * @access   private
+		 * 
 		 */
 		private function load_dependencies() {
 
@@ -590,6 +631,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				// Admin Notices
 				'lite/includes/notices/class-es-admin-notices.php',
 
+
 				// Database class files
 				'lite/includes/db/class-es-db.php',
 				'lite/includes/db/class-es-db-queue.php',
@@ -604,6 +646,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/db/class-es-db-forms.php',
 				'lite/includes/db/class-es-db-blocked-emails.php',
 				'lite/includes/db/class-es-db-actions.php',
+				'lite/includes/db/class-ig-es-db-wc-cart.php',
+				'lite/includes/db/class-ig-es-db-wc-guest.php',
 
 				// Mailers
 				'lite/includes/mailers/class-es-base-mailer.php',
@@ -614,7 +658,17 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				// Common Class
 				'lite/includes/class-es-common.php',
 
+				// Services
+				'lite/includes/services/class-es-services.php',
+				'lite/includes/services/class-es-email-delivery-check.php',
+				'lite/includes/services/class-es-send-test-email.php',
+				'lite/includes/services/class-es-service-spam-score-check.php',
+				'lite/includes/services/class-es-service-handle-cron-data.php',
+				'lite/includes/services/class-es-service-process-email-content.php',
+
 				// Classes
+				'lite/includes/classes/class-es-list-table.php',
+				'lite/includes/classes/class-es-cache.php',
 				'lite/includes/classes/class-es-mailer.php',
 				'lite/includes/classes/class-es-message.php',
 				'lite/includes/classes/class-es-lists-table.php',
@@ -635,7 +689,9 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/classes/class-es-form-widget.php',
 				'lite/includes/classes/class-es-export-subscribers.php',
 				'lite/includes/classes/class-es-import-subscribers.php',
+				// Start-IG-Code.
 				'lite/includes/classes/class-es-info.php',
+				// End-IG-Code.
 				'lite/includes/classes/class-es-handle-post-notification.php',
 				'lite/includes/classes/class-es-handle-subscription.php',
 				'lite/includes/classes/class-es-handle-sync-wp-user.php',
@@ -643,6 +699,10 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/classes/class-es-actions.php',
 				'lite/includes/classes/class-es-tracking.php',
 				'lite/includes/classes/class-es-compatibility.php',
+				'lite/includes/classes/class-es-ig-redirect.php',
+				'lite/includes/classes/class-es-geolocation.php',
+				'lite/includes/classes/class-es-browser.php',
+				'lite/includes/classes/class-ig-es-trial.php',
 
 				// Core Functions
 				'lite/includes/es-core-functions.php',
@@ -650,32 +710,121 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				// Install/ Update
 				'lite/includes/upgrade/es-update-functions.php',
 				'lite/includes/class-es-install.php',
+				
+				// Onboarding process handler class.
+				'lite/admin/class-ig-es-onboarding.php',
 
 				// Public Classes
 				'lite/public/class-email-subscribers-public.php',
 				'lite/admin/partials/admin-header.php',
 				'lite/public/partials/class-es-shortcode.php',
 
-				// Backward Compatibility
+				// Start-IG-Code.
+				// Backward Compatibility.
 				'lite/includes/es-backward.php',
+				// End-IG-Code.
 				'lite/admin/class-email-subscribers-admin.php',
 
+				// Start-IG-Code.
 				// Pro Feature
 				'lite/includes/pro-features.php',
+				// End-IG-Code.
 
 				// Feedback Class
 				'lite/includes/feedback/class-ig-tracker.php',
+				// Start-IG-Code.
 				'lite/includes/feedback/class-ig-feedback.php',
 				'lite/includes/feedback.php',
+				// End-IG-Code.
+				
+				// WC session tracking
+				'lite/includes/classes/class-ig-es-wc-session-tracker.php',
+				'lite/includes/classes/ig-es-wc-cookies.php',
+				
+				// Workflows
+				'lite/includes/workflows/db/class-es-db-workflows.php',
+				'lite/includes/workflows/db/class-es-db-workflows-queue.php',
+				'lite/includes/workflows/class-es-workflows-table.php',
+				// Workflow Abstracts
+				'lite/includes/workflows/abstracts/class-es-workflow-registry.php',
+				'lite/includes/workflows/abstracts/class-es-workflow-trigger.php',
+				'lite/includes/workflows/abstracts/class-es-workflow-action.php',
+				'lite/includes/workflows/abstracts/class-es-workflow-data-type.php',
+				
+				// Workflow Utility
+				'lite/includes/workflows/class-es-clean.php',
+				'lite/includes/workflows/class-es-format.php',
+				'lite/includes/workflows/class-es-workflow-time-helper.php',
+				'lite/includes/workflows/class-es-workflow-datetime.php',
+				'lite/includes/workflows/workflow-helper-functions.php',
+				
+				// Workflow
+				'lite/includes/workflows/class-es-workflow.php',
+				'lite/includes/workflows/class-es-workflow-factory.php',
+				
+				// Data Types
+				'lite/includes/workflows/data-types/abstracts/class-es-data-type-form-data.php',
+				'lite/includes/workflows/data-types/class-es-data-type-user.php',
+				'lite/includes/workflows/class-es-workflow-data-types.php',
+				
+				// Data Layer
+				'lite/includes/workflows/class-es-workflow-data-layer.php',
+				
+				// Workflow Fields
+				'lite/includes/workflows/fields/class-es-field.php',
+				'lite/includes/workflows/fields/class-es-text.php',
+				'lite/includes/workflows/fields/class-es-date.php',
+				'lite/includes/workflows/fields/class-es-number.php',
+				'lite/includes/workflows/fields/class-es-time.php',
+				'lite/includes/workflows/fields/class-es-select.php',
+				'lite/includes/workflows/fields/class-es-checkbox.php',
+				'lite/includes/workflows/fields/class-es-wp-editor.php',
+				
+				// Workflow Admin
+				'lite/includes/workflows/admin/class-es-workflow-admin.php',
+				'lite/includes/workflows/admin/class-es-workflow-admin-edit.php',
+				'lite/includes/workflows/admin/class-es-workflow-admin-ajax.php',
+				
+				// Workflow Triggers.
+				'lite/includes/workflows/triggers/abstracts/class-es-trigger-form-submitted.php',
+				'lite/includes/workflows/triggers/class-es-trigger-user-registered.php',
+				'lite/includes/workflows/triggers/class-es-trigger-user-deleted.php',
+				'lite/includes/workflows/triggers/class-es-trigger-user-updated.php',
+				'lite/includes/workflows/class-es-workflow-triggers.php',
+				
+				// Abstracts workflow actions
+				'lite/includes/workflows/actions/abstracts/class-ig-es-action-send-email-abstract.php',
+				
+				// Workflow Actions.
+				'lite/includes/workflows/actions/class-es-action-add-to-list.php',
+				'lite/includes/workflows/actions/class-es-action-move-contact.php',
+				'lite/includes/workflows/actions/class-es-action-remove-contact.php',
+				'lite/includes/workflows/actions/class-es-action-delete-contact.php',
+				'lite/includes/workflows/actions/class-es-action-update-contact.php',
+				'lite/includes/workflows/class-es-workflow-actions.php',
+				
+				// Workflow Query
+				'lite/includes/workflows/class-es-workflow-query.php',
+				
+				// Workflow Queue			
+				'lite/includes/workflows/queue/class-es-workflow-queue.php',
+				'lite/includes/workflows/queue/class-es-workflow-queue-factory.php',
+				'lite/includes/workflows/queue/class-es-workflow-queue-handler.php',
+				'lite/includes/workflows/queue/class-es-workflow-queue-runner.php',
 
-				//Load Starter & Pro files if exists
-				'starter/class-es-utils.php',
-				'pro/pro-class-email-subscribers.php',
+				// Workflow Loader
+				'lite/includes/workflows/class-es-workflow-loader.php',
+				
+				// Premium services ui components.
+				'lite/includes/premium-services-ui/class-ig-es-premium-services-ui.php',
+				
+				// Background Process Helper
+				'lite/includes/classes/class-ig-es-background-process-helper.php',
+				
 				'starter/starter-class-email-subscribers.php',
-
-				'starter/mailers/class-es-smtp-mailer.php',
+				'pro/pro-class-email-subscribers.php',
 			);
-
+			
 			foreach ( $files_to_load as $file ) {
 				if ( is_file( ES_PLUGIN_DIR . $file ) ) {
 					require_once ES_PLUGIN_DIR . $file;
@@ -707,7 +856,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 * of the plugin.
 		 *
 		 * @since    4.0
-		 * @access   private
+		 * 
 		 */
 		private function define_admin_hooks() {
 
@@ -718,10 +867,13 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			$this->loader->add_action( 'plugins_loaded', $plugin_admin, 'plugins_loaded' );
 
 			$this->loader->add_filter( 'set-screen-option', $plugin_admin, 'save_screen_options', 20, 3 );
-
 			$this->loader->add_action( 'wp_ajax_count_contacts_by_list', $plugin_admin, 'count_contacts_by_list' );
 			$this->loader->add_action( 'wp_ajax_get_template_content', $plugin_admin, 'get_template_content' );
+			$this->loader->add_action( 'admin_print_scripts', $plugin_admin, 'remove_other_admin_notices' );
 
+			// Start-IG-Code.
+			$this->loader->add_filter( 'admin_footer_text', $plugin_admin, 'update_admin_footer_text' );
+			// End-IG-Code.
 		}
 
 		/**
@@ -729,7 +881,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 * of the plugin.
 		 *
 		 * @since    4.0
-		 * @access   private
+		 * 
 		 */
 		private function define_public_hooks() {
 
@@ -740,6 +892,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			$this->loader->add_action( 'init', $plugin_public, 'es_email_subscribe_init' );
 			$this->loader->add_action( 'ig_es_add_contact', $plugin_public, 'add_contact', 10, 2 );
 			$this->loader->add_action( 'ig_es_confirm_unsubscription', $plugin_public, 'confirm_unsubscription', 10, 2 );
+
+			$this->loader->add_filter( 'es_template_type', $plugin_public, 'add_template_type' );
 		}
 
 		/**
@@ -783,6 +937,97 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		}
 
 		/**
+		 * Method to get if user has opted for trial or not.
+		 * 
+		 * @return bool
+		 * 
+		 * @since 4.6.0
+		 */
+		public function is_trial() {
+			$is_trial = get_option( 'ig_es_is_trial', '' );
+			if ( 'yes' === $is_trial ) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		/**
+		 * Method to get if trial has expired or not.
+		 * 
+		 * @return bool
+		 * 
+		 * @since 4.6.1
+		 */
+		public function is_trial_expired() {
+			$is_trial_expired = false;
+			$is_trial         = get_option( 'ig_es_is_trial', '' );
+
+			if ( 'yes' === $is_trial ) {
+				$trial_started_at = get_option( 'ig_es_trial_started_at' );
+				if ( ! empty( $trial_started_at ) ) {
+					
+					// Get current timestamp.
+					$current_time = time();
+					
+					// Get the timestamp when trial will expire.
+					$trial_expires_at = $trial_started_at + ES()->trial->get_trial_period();
+					
+					// Check if current time is greater than expiry time.
+					if ( $current_time > $trial_expires_at ) {
+						$is_trial_expired = true;
+					}
+				}
+			}
+
+			return $is_trial_expired;
+		}
+
+		/**
+		 * Method to check if trial is valid.
+		 * 
+		 * @return bool $is_trial_valid Is trial valid
+		 * 
+		 * @since 4.6.1
+		 */
+		public function is_trial_valid() {
+
+			// Check if user has opted for trial and it has not yet expired.
+			$is_trial_valid = $this->is_trial() && ! $this->is_trial_expired() ? true : false;
+			
+			return $is_trial_valid;
+		}
+
+		/**
+		 * Method to validate a premium service request
+		 * 
+		 * @param array $service Request
+		 * 
+		 * @return bool
+		 * 
+		 * @since 4.6.1
+		 */
+		public function validate_service_request( $services = array() ) {
+			$is_request_valid = false;
+			
+			// Check if trial is still valid.
+			if ( $this->is_trial_valid() ) {
+				$is_request_valid = true;
+			} else if ( $this->is_premium() ) {
+				$es_services = apply_filters( 'ig_es_services', array() );
+				if ( ! empty( $es_services ) ) {
+					// Check if there is not any invalid service in $services array which is not present in the $es_services.
+					$invalid_services = array_diff( $services, $es_services );
+					if ( empty( $invalid_services ) ) {
+						$is_request_valid = true;
+					}
+				}
+			}
+
+			return $is_request_valid;
+		}
+
+		/**
 		 * Is ES PRO?
 		 *
 		 * @return bool
@@ -805,6 +1050,62 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		}
 
 		/**
+		 * Is ES Premium?
+		 *
+		 * @return bool
+		 *
+		 * @since 4.4.4
+		 */
+		public function is_premium() {
+			return ES()->is_starter() || ES()->is_pro();
+		}
+
+		/**
+		 * Check whether ES premium activated
+		 *
+		 * @return mixed
+		 *
+		 * @since 4.4.8
+		 */
+		public function is_premium_activated() {
+			global $ig_es_tracker;
+
+			$plugin = 'email-subscribers-premium/email-subscribers-premium.php';
+
+			return $ig_es_tracker::is_plugin_activated( $plugin );
+		}
+
+		/**
+		 * Check whether ES Premium Installed
+		 *
+		 * @return mixed
+		 *
+		 * @since 4.4.8
+		 */
+		public function is_premium_installed() {
+			global $ig_es_tracker;
+
+			$plugin = 'email-subscribers-premium/email-subscribers-premium.php';
+
+			return $ig_es_tracker::is_plugin_installed( $plugin );
+		}
+
+		/**
+		 * Check whether ES Pro features can be upselled or not
+		 *
+		 * @return bool
+		 *
+		 * @since 4.6.1
+		 */
+		public function can_upsell_features( $show_for_plans = array() ) {
+			$es_current_plan = $this->get_plan();
+			if ( in_array( $es_current_plan, $show_for_plans ) ) { 
+				return true;
+			}
+			return false;
+		}
+
+		/**
 		 * Get all ES admin screens
 		 *
 		 * @return array|mixed|void
@@ -814,16 +1115,18 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public function get_es_admin_screens() {
 
 			// TODO: Can be updated with a version check when https://core.trac.wordpress.org/ticket/18857 is fixed
-			$prefix = sanitize_title( __( 'Email Subscribers', 'email-subscribers' ) );
+			$prefix = $this->get_admin_page_prefix();
 
 			$screens = array(
-				"es_template",
-				"edit-es_template",
-				"toplevel_page_es_dashboard",
+				'es_template',
+				'edit-es_template',
+				'toplevel_page_es_dashboard',
+				'admin_page_go_to_icegram',
 				"{$prefix}_page_es_subscribers",
 				"{$prefix}_page_es_lists",
 				"{$prefix}_page_es_forms",
 				"{$prefix}_page_es_campaigns",
+				"{$prefix}_page_es_workflows",
 				"{$prefix}_page_es_newsletters",
 				"{$prefix}_page_es_notifications",
 				"{$prefix}_page_es_reports",
@@ -832,6 +1135,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				"{$prefix}_page_es_general_information",
 				"{$prefix}_page_es_pricing",
 				"{$prefix}_page_es_sequence",
+
+
 			);
 
 			$screens = apply_filters( 'ig_es_admin_screens', $screens );
@@ -842,16 +1147,25 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		/**
 		 * Is es admin screen?
 		 *
+		 * @param string $screen_id Admin screen id
+		 *
 		 * @return bool
 		 *
 		 * @since 4.3.8
 		 */
-		public function is_es_admin_screen() {
+		public function is_es_admin_screen( $screen_id = '' ) {
 
 			$current_screen_id = $this->get_current_screen_id();
+			// Check for specific admin screen id if passed.
+			if ( ! empty( $screen_id ) ) {
+				if ( $current_screen_id === $screen_id ) {
+					return true;
+				} else {
+					return false;
+				}
+			}
 
 			$es_admin_screens = $this->get_es_admin_screens();
-
 			if ( in_array( $current_screen_id, $es_admin_screens ) ) {
 				return true;
 			}
@@ -880,6 +1194,17 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		}
 
 		/**
+		 * Check if the current user is admin
+		 *
+		 * @return bool
+		 *
+		 * @since 4.4.2
+		 */
+		public function is_current_user_administrator() {
+			return current_user_can( 'administrator' );
+		}
+
+		/**
 		 * Register Widget Class
 		 *
 		 * @since 4.0.0
@@ -897,9 +1222,9 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			$error = error_get_last();
 			if ( in_array( $error['type'], array( E_ERROR, E_PARSE, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR ), true ) ) {
 				$logger = get_ig_logger();
-
 				$logger->critical(
-					sprintf( __( '%1$s in %2$s on line %3$s', 'email-subscribers' ), $error['message'], $error['file'], $error['line'] ) . PHP_EOL,
+					/* translators: 1: Error message 2: File name  3: Line number */
+					sprintf( esc_html__( '%1$s in %2$s on line %3$s', 'email-subscribers' ), $error['message'], $error['file'], $error['line'] ) . PHP_EOL,
 					array(
 						'source' => 'fatal-errors',
 					)
@@ -918,12 +1243,18 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 */
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof Email_Subscribers ) ) {
-				global $ig_es_feedback;
+				global $wpdb, $ig_es_feedback, $wpbd;
+
+				$wpbd = $wpdb;
 
 				self::$instance = new Email_Subscribers();
 
 				require_once plugin_dir_path( __FILE__ ) . 'class-email-subscribers-activator.php';
 				require_once plugin_dir_path( __FILE__ ) . 'class-email-subscribers-deactivator.php';
+
+				// Start-IG-Code.
+				require_once plugin_dir_path( __FILE__ ) . 'libraries/action-scheduler/action-scheduler.php';
+				// End-IG-Code.
 
 				self::$instance->email_subscribers = 'email-subscribers';
 
@@ -952,7 +1283,11 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				self::$instance->actions           = new ES_Actions();
 				self::$instance->cron              = new ES_Cron();
 				self::$instance->compatibiloty     = new ES_Compatibility();
+				self::$instance->workflows_db      = new ES_DB_Workflows();
+				self::$instance->carts_db      	   = new IG_ES_DB_WC_Cart();
+				self::$instance->trial             = new IG_ES_Trial();
 
+				// Start-IG-Code.
 				if ( is_admin() ) {
 					$ig_es_feedback_class = 'IG_Feedback_V_' . str_replace( '.', '_', IG_ES_FEEDBACK_TRACKER_VERSION );
 
@@ -970,14 +1305,16 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 						$event_prefix = 'esstarter.';
 					}
 
-
 					$ig_es_feedback = new $ig_es_feedback_class( $name, $plugin, $plugin_abbr, $event_prefix, false );
 
 					$ig_es_feedback->render_deactivate_feedback();
 				}
+				// End-IG-Code.
 
 				add_action( 'admin_init', array( self::$instance, 'add_admin_notice' ) );
-				// add_action( 'admin_init', array( self::$instance, 'es_dismiss_admin_notice' ) );
+				add_action( 'admin_init', array( self::$instance, 'check_trial_optin_consent' ) );
+				add_filter( 'ig_es_service_request_data', array( self::$instance, 'add_service_authentication_data' ) );
+				add_filter( 'ig_es_plan', array( self::$instance, 'add_trial_plan' ) );
 
 				if ( ! post_type_exists( 'es_template' ) ) {
 					add_action( 'init', array( 'Email_Subscribers_Activator', 'register_email_templates' ) );
@@ -987,5 +1324,154 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 
 			return self::$instance;
 		}
+
+		/**
+		 * Method to get plugin plan
+		 * 
+		 * @return string $plan
+		 * 
+		 * @since 4.6.1
+		 */
+		public function get_plan() {
+
+			$plan = apply_filters( 'ig_es_plan', 'lite' );
+			
+			return $plan;
+		}
+
+		/**
+		 * Method to add trial plan
+		 * 
+		 * @param string $plan
+		 * 
+		 * @return string $plan
+		 * 
+		 * @since 4.6.1
+		 */
+		public function add_trial_plan( $plan = '' ) {
+
+			if ( $this->is_trial_valid() ) {
+				$plan = 'trial';
+			}
+
+			return $plan;
+		}
+
+		/**
+		 * Method to add ES service authentication data.
+		 * 
+		 * @param array $request_data Service request data.
+		 * 
+		 * @return array $request_data
+		 * 
+		 * @since 4.6.1
+		 */
+		public function add_service_authentication_data( $request_data = array() ) {
+
+			$es_plan = $this->get_plan();
+			
+			if ( ! empty( $es_plan ) ) {
+				$request_data['plan'] = $es_plan;
+			}
+			
+			if ( $this->is_trial() ) {
+
+				$trial_started_at = get_option( 'ig_es_trial_started_at' );
+				$site_url	      = site_url();
+
+				$request_data['trial_started_at'] = $trial_started_at;
+				$request_data['site_url']         = $site_url;
+			}
+
+			return $request_data;
+		}
+
+		/**
+		 * Method to check if user has given optin consent.
+		 * 
+		 * @since 4.6.1
+		 */
+		public function check_trial_optin_consent() {
+
+			// Check optin consent only if not already trial or premium. 
+			if ( ! ( $this->is_trial() || $this->is_premium() ) ) {
+				$trial_consent = ig_es_get_request_data( 'ig_es_trial_consent', '' );
+				if ( ! empty( $trial_consent ) ) {
+					check_admin_referer( 'ig_es_trial_consent' );
+					$this->add_trial_data( $trial_consent );
+					update_option( 'ig_es_trial_consent', $trial_consent, false );
+					ES_Admin_Notices::remove_notice( 'trial_consent' );
+					$referer = wp_get_referer();
+					wp_safe_redirect( $referer );
+				}
+			}
+		}
+		
+		/**
+		 * Method to add trial related data.
+		 * 
+		 * @param string $is_trial.
+		 * 
+		 * @return int $trial_started_at
+		 * 
+		 * @since 4.6.1
+		 */
+		public function add_trial_data( $is_trial = '', $trial_started_at = 0 ) {
+
+			$is_trial = ! empty( $is_trial ) ? $is_trial : 'yes';
+			update_option( 'ig_es_is_trial', $is_trial, false );
+			
+			if ( 'yes' === $is_trial ) {
+				$trial_started_at = ! empty( $trial_started_at ) ? $trial_started_at : time();
+				update_option( 'ig_es_trial_started_at', $trial_started_at, false );
+			}
+		}
+
+		/**
+		 * Method to get admin menu title.
+		 * 
+		 * @return string $menu_title Admin menu title
+		 * 
+		 * @since 4.6.3
+		 */ 
+		public function get_admin_menu_title() {
+			
+			global $ig_es_tracker;
+			
+			$menu_title = __( 'Email Subscribers', 'email-subscribers' );
+
+			if ( 'woo' === IG_ES_PLUGIN_PLAN ) {
+				$menu_title = __( 'Icegram', 'email-subscribers' );
+
+				$icegram_lite_plugin_slug = 'icegram/icegram.php';
+				$icegram_premium_plugin_slug = 'icegram-engage/icegram-engage.php';
+
+				$icegram_lite_installed    = $ig_es_tracker::is_plugin_installed( $icegram_lite_plugin_slug );
+				$icegram_premium_installed = $ig_es_tracker::is_plugin_installed( $icegram_premium_plugin_slug );
+
+				// Change Woo Plugin's menu name if Icegram or Icegram premium plugin is installed on the site.
+				if ( $icegram_lite_installed || $icegram_premium_installed ) {
+					$menu_title = __( 'Icegram WC', 'email-subscribers' );
+				}
+			}
+
+			return $menu_title;
+		}
+
+		/**
+		 * Method to get admin menu page prefix.
+		 * 
+		 * @return string $page_prefix Admin menu page prefix.
+		 * 
+		 * @since 4.6.3
+		 */
+		public function get_admin_page_prefix() {
+			
+			$menu_title  = $this->get_admin_menu_title();
+			$page_prefix = sanitize_title( $menu_title );
+			
+			return $page_prefix;
+		}
+
 	}
 }

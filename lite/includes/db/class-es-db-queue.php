@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class ES_DB_Queue extends ES_DB {
 	/**
+	 * Table name
+	 * 
 	 * @since 4.2.1
 	 * @var $table_name
 	 *
@@ -18,6 +20,8 @@ class ES_DB_Queue extends ES_DB {
 	public $table_name;
 
 	/**
+	 * Table DB version
+	 * 
 	 * @since 4.2.1
 	 * @var $version
 	 *
@@ -25,6 +29,8 @@ class ES_DB_Queue extends ES_DB {
 	public $version;
 
 	/**
+	 * Table primary key column name
+	 * 
 	 * @since 4.2.1
 	 * @var $primary_key
 	 *
@@ -56,12 +62,16 @@ class ES_DB_Queue extends ES_DB {
 	 *
 	 * @since 4.2.1
 	 */
-	public function delete_from_queue($campaign_id, $contact_id) {
+	public function delete_from_queue( $campaign_id, $contact_id) {
 		global $wpdb;
 
-		$sql = "DELETE FROM $this->table_name WHERE campaign_id = %d AND $contact_id = %d";
-
-		return $wpdb->query($wpdb->prepare($sql, $campaign_id, $contact_id));
+		return $wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->prefix}ig_queue WHERE campaign_id = %d AND contact_id = %d",
+				$campaign_id,
+				$contact_id
+			)
+		);
 	}
 
 }

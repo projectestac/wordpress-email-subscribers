@@ -21,6 +21,13 @@ if ( ! function_exists( 'get_ig_es_db_version' ) ) {
 
 		$option = get_option( 'current_sa_email_subscribers_db_version', null );
 
+		if ( ! is_null( $option ) ) {
+			return $option;
+		}
+
+		// Prior to ES 3.2, 'email-subscribers' option was being used to decide db version.
+		$option = get_option( 'email-subscribers', null );
+
 		return $option;
 
 	}
@@ -130,7 +137,8 @@ if ( ! function_exists( 'ig_es_format_date_time' ) ) {
 	 * @return string
 	 */
 	function ig_es_format_date_time( $date ) {
-		$local_timestamp = ( $date !== '0000-00-00 00:00:00' ) ? get_date_from_gmt( $date ) : '<i class="dashicons dashicons-es dashicons-minus"></i>';
+
+		$local_timestamp = ( '0000-00-00 00:00:00' !== $date ) ? ES_Common::convert_date_to_wp_date( get_date_from_gmt( $date )) : '<i class="dashicons dashicons-es dashicons-minus"></i>';
 
 		return $local_timestamp;
 	}
@@ -202,7 +210,7 @@ if ( ! function_exists( 'ig_es_get_data' ) ) {
 	 * @since 4.1.15
 	 */
 	function ig_es_get_data( $array = array(), $var = '', $default = '', $clean = false ) {
-
+		
 		if ( ! empty( $var ) ) {
 			$value = isset( $array[ $var ] ) ? wp_unslash( $array[ $var ] ) : $default;
 		} else {
@@ -242,7 +250,16 @@ if ( ! function_exists( 'ig_es_get_post_data' ) ) {
 	 *
 	 * @since 4.1.15
 	 */
+
 	function ig_es_get_post_data( $var = '', $default = '', $clean = true ) {
+		
+		$nonce = ! empty( $_POST['es-nonce'] ) ? sanitize_text_field( $_POST['es-nonce'] ) : '';
+		
+		if ( wp_verify_nonce( $nonce, 'es-nonce' ) ) {
+			//TODO: Verify Nonce
+			$nonce_verified = true;
+		}
+
 		return ig_es_get_data( $_POST, $var, $default, $clean );
 	}
 }
@@ -259,21 +276,21 @@ if ( ! function_exists( 'ig_es_get_ip' ) ) {
 
 		// Get real visitor IP behind CloudFlare network
 		if ( isset( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
-			$ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
+			$ip = sanitize_text_field( $_SERVER['HTTP_CF_CONNECTING_IP'] );
 		} elseif ( isset( $_SERVER['HTTP_X_REAL_IP'] ) ) {
-			$ip = $_SERVER['HTTP_X_REAL_IP'];
+			$ip = sanitize_text_field(  $_SERVER['HTTP_X_REAL_IP'] );
 		} elseif ( isset( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-			$ip = $_SERVER['HTTP_CLIENT_IP'];
+			$ip = sanitize_text_field( $_SERVER['HTTP_CLIENT_IP'] );
 		} elseif ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			$ip = sanitize_text_field( $_SERVER['HTTP_X_FORWARDED_FOR'] );
 		} elseif ( isset( $_SERVER['HTTP_X_FORWARDED'] ) ) {
-			$ip = $_SERVER['HTTP_X_FORWARDED'];
+			$ip = sanitize_text_field( $_SERVER['HTTP_X_FORWARDED'] );
 		} elseif ( isset( $_SERVER['HTTP_FORWARDED_FOR'] ) ) {
-			$ip = $_SERVER['HTTP_FORWARDED_FOR'];
+			$ip = sanitize_text_field( $_SERVER['HTTP_FORWARDED_FOR'] );
 		} elseif ( isset( $_SERVER['HTTP_FORWARDED'] ) ) {
-			$ip = $_SERVER['HTTP_FORWARDED'];
+			$ip = sanitize_text_field( $_SERVER['HTTP_FORWARDED'] );
 		} else {
-			$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : 'UNKNOWN';
+			$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( $_SERVER['REMOTE_ADDR'] ) : 'UNKNOWN';
 		}
 
 		return $ip;
@@ -330,14 +347,6 @@ if ( ! function_exists( 'ig_es_get_gmt_offset' ) ) {
 
 		$offset = get_option( 'gmt_offset' );
 
-		if ( $offset == '' ) {
-			$tzstring = get_option( 'timezone_string' );
-			$current  = date_default_timezone_get();
-			date_default_timezone_set( $tzstring );
-			$offset = date( 'Z' ) / 3600;
-			date_default_timezone_set( $current );
-		}
-
 		// check if timestamp has DST
 		if ( ! is_null( $timestamp ) ) {
 			$l = localtime( $timestamp, true );
@@ -365,17 +374,17 @@ if ( ! function_exists( 'ig_es_get_upcoming_daily_datetime' ) ) {
 		$offset = ig_es_get_gmt_offset( true );
 		$now    = time() + $offset;
 
-		$year    = (int) date( 'Y', $now );
-		$month   = (int) date( 'm', $now );
-		$day     = (int) date( 'd', $now );
-		$hour    = (int) date( 'H', $now );
-		$minutes = (int) date( 'i', $now );
-		$seconds = (int) date( 's', $now );
+		$year    = (int) gmdate( 'Y', $now );
+		$month   = (int) gmdate( 'm', $now );
+		$day     = (int) gmdate( 'd', $now );
+		$hour    = (int) gmdate( 'H', $now );
+		$minutes = (int) gmdate( 'i', $now );
+		$seconds = (int) gmdate( 's', $now );
 
 		$timestamp = ( $hour * 3600 ) + ( $minutes * 60 ) + $seconds;
 
 		if ( $time < $timestamp ) {
-			$day += 1;
+			$day++;
 		}
 
 		$t = mktime( 0, 0, 0, $month, $day, $year ) + $time;
@@ -406,9 +415,29 @@ if ( ! function_exists( 'ig_es_get_upcoming_weekly_datetime' ) ) {
 			6 => 'saturday'
 		);
 
-		$next_week_day_str = 'next ' . $week_days_map[ $frequency_interval ];
+		// w is used since it returns day number considering Sunday as 0.
+		$current_day = (int) current_time( 'w' );
 
-		$timestamp = strtotime( $next_week_day_str ) + $time;
+		// If campaign day is same as the current day then check campaign time also with current time since campaign time may have not already been passed.
+		if ( $current_day === (int) $frequency_interval ) {
+			// Get curret time.
+			$current_hours   = (int) current_time( 'H' );
+			$current_minutes = (int) current_time( 'i' );
+			$current_seconds = (int) current_time( 's' );
+			
+			$current_time = $current_hours * HOUR_IN_SECONDS + $current_minutes * MINUTE_IN_SECONDS + $current_seconds;
+
+			// Check if campaign time has not yet passed then we can use today's date/time else use date/time when campaign day comes next time.
+			if ( $current_time < $time ) {
+				$week_day_str = 'today';
+			} else {
+				$week_day_str = 'next ' . $week_days_map[ $frequency_interval ];
+			}
+		} else {
+			$week_day_str = 'next ' . $week_days_map[ $frequency_interval ];
+		}
+
+		$timestamp = strtotime( $week_day_str ) + $time;
 
 		return $timestamp;
 
@@ -427,14 +456,14 @@ if ( ! function_exists( 'ig_es_get_upcoming_monthly_datetime' ) ) {
 	 */
 	function ig_es_get_upcoming_monthly_datetime( $day, $time ) {
 
-		$month = (int) date( 'm', time() );
-		$year  = (int) date( 'Y', time() );
+		$month = (int) gmdate( 'm', time() );
+		$year  = (int) gmdate( 'Y', time() );
 
-		$expected_time = strtotime( date( 'Y-m-d' ) ) + $time;
+		$expected_time = strtotime( gmdate( 'Y-m-d' ) ) + $time;
 
 		if ( $expected_time < time() ) {
 
-			$month = $month + 1;
+			$month++;
 
 			$expected_time = mktime( 0, 0, 0, $month, $day, $year ) + $time;
 
@@ -464,17 +493,17 @@ if ( ! function_exists( 'ig_es_get_next_future_schedule_date' ) ) {
 		$weekdays_array = array( '0', '1', '2', '3', '4', '5', '6' );
 
 		$utc_start   = ! empty( $data['utc_start'] ) ? $data['utc_start'] : 0;
-		$interval    = ! empty( $data['interval'] ) ? $data['interval'] : 1;
+		$interval    = isset( $data['interval'] ) ? $data['interval'] : 1;
 		$time_frame  = ! empty( $data['time_frame'] ) ? $data['time_frame'] : 'week';
 		$weekdays    = ! empty( $data['weekdays'] ) ? $data['weekdays'] : $weekdays_array;
 		$force       = ! empty( $data['force'] ) ? $data['force'] : false;
 		$in_future   = ! empty( $data['in_future'] ) ? $data['in_future'] : true;
-		$time_of_day = ! empty( $data['time_of_day'] ) ? $data['time_of_day'] : 32400;
+		$time_of_day = isset( $data['time_of_day'] ) ? $data['time_of_day'] : 32400;
 
-		$offset    = ig_es_get_gmt_offset( true );
-		$now       = time() + $offset;
+		$offset     = ig_es_get_gmt_offset( true );
+		$now        = time() + $offset;
 		$utc_start += $offset;
-		$times     = 1;
+		$times      = 1;
 
 		$next_date        = '';
 		$change_next_date = true;
@@ -485,10 +514,10 @@ if ( ! function_exists( 'ig_es_get_next_future_schedule_date' ) ) {
 			// get how many $time_frame are in the time between now and the starttime
 			switch ( $time_frame ) {
 				case 'year':
-					$count = date( 'Y', $now ) - date( 'Y', $utc_start );
+					$count = gmdate( 'Y', $now ) - gmdate( 'Y', $utc_start );
 					break;
 				case 'month':
-					$count = ( date( 'Y', $now ) - date( 'Y', $utc_start ) ) * 12 + ( date( 'm', $now ) - date( 'm', $utc_start ) );
+					$count = ( gmdate( 'Y', $now ) - gmdate( 'Y', $utc_start ) ) * 12 + ( gmdate( 'm', $now ) - gmdate( 'm', $utc_start ) );
 					break;
 				case 'week':
 					$count = floor( ( ( $now - $utc_start ) / 86400 ) / 7 );
@@ -502,25 +531,29 @@ if ( ! function_exists( 'ig_es_get_next_future_schedule_date' ) ) {
 				case 'immediately':
 					$time_frame       = 'day';
 					$next_date        = $now;
-					$interval         = $count = 1;
+					$interval         = 1;
+					$count 			  = 1;
 					$change_next_date = false;
 					break;
 				case 'daily':
 					$time_frame       = 'day';
 					$next_date        = ig_es_get_upcoming_daily_datetime( $time_of_day );
-					$interval         = $count = 1;
+					$interval         = 1;
+					$count			  = 1;
 					$change_next_date = false;
 					break;
 				case 'weekly':
 					$time_frame       = 'day';
 					$next_date        = ig_es_get_upcoming_weekly_datetime( $interval, $time_of_day );
-					$interval         = $count = 1;
+					$interval         = 1; 
+					$count			  = 1;
 					$change_next_date = false;
 					break;
 				case 'monthly':
 					$time_frame       = 'day';
 					$next_date        = ig_es_get_upcoming_monthly_datetime( $interval, $time_of_day );
-					$interval         = $count = 1;
+					$interval         = 1; 
+					$count			  = 1;
 					$change_next_date = false;
 					break;
 				default:
@@ -533,17 +566,17 @@ if ( ! function_exists( 'ig_es_get_next_future_schedule_date' ) ) {
 
 		// We have already got the next date for weekly & monthly
 		if ( empty( $next_date ) ) {
-			$next_date = strtotime( date( 'Y-m-d H:i:s', $utc_start ) . ' +' . ( $interval * $times ) . " {$time_frame}" );
+			$next_date = strtotime( gmdate( 'Y-m-d H:i:s', $utc_start ) . ' +' . ( $interval * $times ) . " {$time_frame}" );
 		}
 
 		// add a single entity if date is still in the past or just now
 		if ( $in_future && ( $next_date - $now < 0 || $next_date == $utc_start ) && $change_next_date ) {
-			$next_date = strtotime( date( 'Y-m-d H:i:s', $utc_start ) . ' +' . ( $interval * $times + $interval ) . " {$time_frame}" );
+			$next_date = strtotime( gmdate( 'Y-m-d H:i:s', $utc_start ) . ' +' . ( $interval * $times + $interval ) . " {$time_frame}" );
 		}
 
 		if ( ! empty( $weekdays ) && count( $weekdays ) < 7 ) {
 
-			$day_of_week = date( 'w', $next_date );
+			$day_of_week = gmdate( 'w', $next_date );
 
 			$i = 0;
 			if ( ! $interval ) {
@@ -561,7 +594,7 @@ if ( ! function_exists( 'ig_es_get_next_future_schedule_date' ) ) {
 					$next_date = strtotime( "+{$interval} {$time_frame}", $next_date );
 				}
 
-				$day_of_week = date( 'w', $next_date );
+				$day_of_week = gmdate( 'w', $next_date );
 
 				// Force break
 				if ( $i > 500 ) {
@@ -599,3 +632,369 @@ if ( ! function_exists( 'ig_es_array_insert_after' ) ) {
 	}
 }
 
+if ( ! function_exists( 'ig_es_get_raw_human_interval' ) ) {
+	/**
+	 * Gets interval split by days, hours, minutes and seconds
+	 * 
+	 * @param $interval_in_seconds
+	 * 
+	 * @return array
+	 * 
+	 * @since 4.4.9
+	 */
+	function ig_es_get_raw_human_interval( $interval_in_seconds = 0 ) {
+
+		$interval = array();
+
+		$seconds_in_minute = 60;
+		$seconds_in__hour  = 60 * $seconds_in_minute;
+		$seconds_in_day    = 24 * $seconds_in__hour;
+
+		// extract days
+		$interval['days'] = floor( $interval_in_seconds / $seconds_in_day );
+
+		// extract hours
+		$hour_seconds      = $interval_in_seconds % $seconds_in_day;
+		$interval['hours'] = floor( $hour_seconds / $seconds_in__hour );
+
+		// extract minutes
+		$minute_seconds      = $hour_seconds % $seconds_in__hour;
+		$interval['minutes'] = floor( $minute_seconds / $seconds_in_minute );
+
+		// extract the remaining seconds
+		$remaining_seconds   = $minute_seconds % $seconds_in_minute;
+		$interval['seconds'] = ceil( $remaining_seconds );
+
+		return $interval;
+
+	}
+}
+
+if ( ! function_exists( 'ig_es_get_human_interval' ) ) {
+	/**
+	 * Gets interval in human readable format
+	 * 
+	 * @param $interval_in_seconds
+	 * 
+	 * @return string
+	 * 
+	 * @since 4.4.9
+	 */
+	function ig_es_get_human_interval( $interval_in_seconds = 0 ) {
+
+		$interval = ig_es_get_raw_human_interval( $interval_in_seconds );
+
+		$human_time = '';
+
+		if ( $interval['days'] > 0 ) {
+			$human_time .= $interval['days'] . 'd ';
+		}
+
+		if ( $interval['hours'] > 0 ) {
+			$human_time .= $interval['hours'] . 'h ';
+		}
+
+		if ( $interval['minutes'] > 0 ) {
+			$human_time .= $interval['minutes'] . 'm ';
+		}
+
+		if ( $interval['seconds'] > 0 ) {
+			$human_time .= $interval['seconds'] . 's ';
+		}
+
+		if ( empty( $human_time ) ) {
+			$human_time = '0s';
+		}
+
+		return trim( $human_time );
+
+	}
+}
+
+if ( ! function_exists( 'ig_es_allowed_html_tags_in_esc' ) ) {
+	/**
+	 * Allow Html tags in WP Kses
+	 *
+	 * @since 4.5.4
+	 */
+	function ig_es_allowed_html_tags_in_esc() {
+		$context_allowed_tags 	= wp_kses_allowed_html('post');
+		$custom_allowed_tags	= array(
+					'select' => array(
+						'class' 	=> true,
+						'name' 		=> true,
+						'id' 		=> true,
+						'style'		=> true,
+						'title'		=> true,
+						'role'		=> true,
+						'data-*'	=> true,
+						'tab-*'		=> true,
+						'multiple'	=> true,
+						'aria-*'	=> true,
+		  
+					),
+					'option' => array(
+						'class' 	=> true,
+						'value' 	=> true,
+						'selected'	=> true,
+						'name'		=> true,
+						'id'		=> true,
+						'style'		=> true,
+						'title'		=> true,
+						'data-*'	=> true,
+					),
+					'input' => array(
+						'class' 		=> true,
+						'name' 			=> true,
+						'type' 			=> true,
+						'value' 		=> true,
+						'id'  			=> true,
+						'checked'		=> true,
+						'disabled'		=> true,
+						'selected'		=> true,
+						'style'			=> true,
+						'required'		=> 'required',
+						'min'			=> true,
+						'max'			=> true,
+						'maxlength' 	=> true,
+						'size'			=> true,
+						'placeholder' 	=> true,
+						'autocomplete'	=> true,
+						'autocapitalize'=> true,
+						'autocorrect'	=> true,
+						'tabindex'		=> true,
+						'role'			=> true,
+						'aria-*'		=> true,
+						'data-*'		=> true,
+					),
+					'label' => array(
+						'class' 	=> true,
+						'name'		=> true,
+						'type' 		=> true,
+						'value' 	=> true,
+						'id'  		=> true,
+						'for'		=> true,
+						'style'		=> true,						
+					),
+					'form' => array(
+						'class' 	=> true,
+						'name'		=> true,
+						'value' 	=> true,
+						'id'  		=> true,
+						'style'		=> true,
+						'action'    => true,
+					),	
+					'svg' 	=> array(
+						'width'				=> true,
+						'height'			=> true,
+						'viewbox'			=> true,
+						'xmlns'				=> true,
+						'class'				=> true,
+						'stroke-*'			=> true,
+						'fill'				=> true,
+						'stroke'			=> true,
+					),
+					'path' 	=> array(
+						'd'					=> true,
+						'fill'				=> true,
+						'class'				=> true,
+						'fill-*'			=> true,
+						'clip-*'			=> true,
+						'stroke-linecap'	=> true,
+						'stroke-linejoin'	=> true,
+						'stroke-width'		=> true,
+						'fill-rule' 		=> true,
+					),
+
+					'main' => array(
+						'align' 			=> true,
+						'dir'				=> true,
+						'lang' 				=> true,
+						'xml:lang' 			=> true,
+						'aria-*' 			=> true,
+						'class' 			=> true,
+						'id' 				=> true,
+						'style' 			=> true,
+						'title' 			=> true,
+						'role' 				=> true,
+						'data-*' 			=> true,
+					),
+					'textarea'	=> array(
+						'autocomplete' => true,
+					),
+					'style'	=> array(),
+					'link'	=> array(
+						'rel'	=> true,
+						'id'	=> true,
+						'href'	=> true,
+						'media'	=> true,
+					),
+				);	
+		$allowedtags 			= array_merge_recursive( $context_allowed_tags, $custom_allowed_tags );
+
+		return $allowedtags;
+	}
+}
+
+if ( ! function_exists( 'ig_es_allowed_css_style' ) ) {
+	/**
+	 * Allow CSS style in WP Kses
+	 *
+	 * @since 4.5.4
+	 */
+	function ig_es_allowed_css_style( $default_allowed_attr ) {
+		$custom_allowed_css = array('display', 'opacity');
+		$allowed_attr = array_merge( $default_allowed_attr, $custom_allowed_css );
+		return $allowed_attr;
+	}
+}
+
+if ( ! function_exists( 'ig_es_increase_memory_limit' ) ) {
+	
+	/**
+	 * Return memory limit required for ES heavy operations
+	 *
+	 * @return string
+	 *
+	 * @since 4.5.4
+	 */
+	function ig_es_increase_memory_limit() {
+
+		return '256M';
+	}
+}
+
+if ( ! function_exists( 'ig_es_remove_utf8_bom' ) ) {
+	
+	/**
+	 * Remove UTF-8 BOM signature.
+	 *
+	 * @param string $string String to handle.
+	 *
+	 * @return string
+	 * 
+	 * @since 4.5.4
+	 */
+	function ig_es_remove_utf8_bom( $string = '' ) {
+
+		// Check if string contains BOM characters.
+		if ( ! empty( $string ) && 'efbbbf' === substr( bin2hex( $string ), 0, 6 ) ) {
+			// Remove BOM characters by extracting substring from the original string after the BOM characters.
+			$string = substr( $string, 3 );
+		}
+
+		return $string;
+	}
+}
+
+if ( ! function_exists( 'ig_es_covert_to_utf8_encoding' ) ) {
+	
+	/**
+	 * Function to convert existing string to its UTF-8 equivalent string.
+	 *
+	 * @param string $data String to handle.
+	 * @param bool $use_mb Flag to determine whether we should use mb_* functions while detecting and converting the encoding.
+	 *
+	 * @return string $data
+	 * 
+	 * @since 4.5.6
+	 */
+	function ig_es_covert_to_utf8_encoding( $data = '', $use_mb = false ) {
+		
+		// Check if we can use mb_* functions.
+		if ( $use_mb ) {
+			// Detect character encoding. detecting order is 1.UTF-8 2. ISO-8859-1.
+			$encoding = mb_detect_encoding( $data, 'UTF-8, ISO-8859-1', true );
+			// Convert to UTF-8 encoding from detected encoding.
+			if ( $encoding ) {
+				$data = mb_convert_encoding( $data, 'UTF-8', $encoding );
+			} else {
+				// If we can't detect the encoding then also make sure we have a valid UTF-8 encoded string.
+				$data = mb_convert_encoding( $data, 'UTF-8', 'UTF-8' );
+			}
+		} else {
+			// Remove invalid UTF-8 characters.
+			$data = wp_check_invalid_utf8( $data, true );
+		}
+
+		return $data;
+	}
+}
+
+if ( ! function_exists( 'ig_es_insert_widget_in_sidebar' ) ) {
+	/**
+	 * Insert a widget in a sidebar.
+	 * 
+	 * @param string $widget_id   ID of the widget (search, recent-posts, etc.)
+	 * @param array $widget_data  Widget settings.
+	 * @param string $sidebar     ID of the sidebar.
+	 * @param string $allow_duplicate Flag to check whether we should add widget even if added to the sidebar already.
+	 * 
+	 * @return boolean
+	 * 
+	 * @since 4.6.0
+	 */
+	function ig_es_insert_widget_in_sidebar( $widget_id, $widget_data, $sidebar, $allow_duplicate = false ) {
+		// Retrieve sidebars, widgets and their instances
+		$sidebars_widgets = get_option( 'sidebars_widgets', array() );
+		$widget_instances = get_option( 'widget_' . $widget_id, array() );
+
+		// Retrieve the key of the next widget instance
+		$numeric_keys = array_filter( array_keys( $widget_instances ), 'is_int' );
+
+		if ( ! isset( $sidebars_widgets[ $sidebar ] ) ) {
+			$sidebars_widgets[ $sidebar ] = array();
+		}
+
+		$widget_already_added = false;
+		if ( ! empty( $numeric_keys ) ) {
+			foreach ( $numeric_keys as $numeric_key ) {
+				$widget_index = array_search( $widget_id . '-' . $numeric_key, $sidebars_widgets[ $sidebar ] );
+				// Check if this sidebar has this widget in it.
+				if ( false !== $widget_index ) {
+					$widget_already_added = true;
+					break;
+				}
+			}
+		}
+
+		// Add new widget only if it already not added in the sidebar or duplicate widget is allowed.
+		if ( ! $widget_already_added || $allow_duplicate ) {
+			$next_key = $numeric_keys ? max( $numeric_keys ) + 1 : 1;
+			
+			// Add this widget to the sidebar
+			$sidebars_widgets[ $sidebar ][] = $widget_id . '-' . $next_key;
+		
+			// Add the new widget instance
+			$widget_instances[ $next_key ] = $widget_data;
+		
+			// Store updated sidebars, widgets and their instances
+			update_option( 'sidebars_widgets', $sidebars_widgets );
+			update_option( 'widget_' . $widget_id, $widget_instances );
+
+			return true;
+		}
+	
+		return false;
+	}
+}
+
+/**
+ * Method to increase response size while making http request.
+ * 
+ * @param array $args Request arguements.
+ * 
+ * @return array $args Request arguements.
+ * 
+ * @since 4.6.5
+ */
+if ( ! function_exists( 'ig_es_increase_http_response_size') ) {
+	
+	function ig_es_increase_http_response_size( $args = array() ) {
+		
+		// Increase the reponse size to 1500 KB.
+		$args['limit_response_size'] = 1536000; // 1500 KB
+		
+		return $args;
+	}
+}

@@ -7,21 +7,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class ES_DB_Blocked_Emails extends ES_DB {
 	/**
-	 * @since 4.2.2
-	 * @var $table_name
+	 * Table Name
 	 *
+	 * @since 4.2.2
+	 *
+	 * @var $table_name
 	 */
 	public $table_name;
 
 	/**
+	 * Version
+	 *
 	 * @since 4.2.2
+	 *
 	 * @var $version
 	 *
 	 */
 	public $version;
 
 	/**
+	 * Primary Key
+	 *
 	 * @since 4.2.2
+	 *
 	 * @var $primary_key
 	 *
 	 */

@@ -23,7 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @package    Email_Subscribers
  * @subpackage Email_Subscribers/public
- * @author     Your Name <email@example.com>
  */
 class Email_Subscribers_Public {
 
@@ -31,7 +30,6 @@ class Email_Subscribers_Public {
 	 * The ID of this plugin.
 	 *
 	 * @since    4.0
-	 * @access   private
 	 * @var      string $email_subscribers The ID of this plugin.
 	 */
 	private $email_subscribers;
@@ -40,7 +38,6 @@ class Email_Subscribers_Public {
 	 * The version of this plugin.
 	 *
 	 * @since    4.0
-	 * @access   private
 	 * @var      string $version The current version of this plugin.
 	 */
 	private $version;
@@ -129,7 +126,6 @@ class Email_Subscribers_Public {
 	public function es_email_subscribe_init() {
 		global $wpdb, $ig_es_tracker;
 		//initialize
-
 		new ES_Handle_Subscription();
 		new ES_Shortcode();
 
@@ -144,11 +140,13 @@ class Email_Subscribers_Public {
 			$guid        = ! empty( $data['guid'] ) ? $data['guid'] : '';
 			$message_id  = ! empty( $data['message_id'] ) ? (int) $data['message_id'] : 0;
 			$campaign_id = ! empty( $data['campaign_id'] ) ? (int) $data['campaign_id'] : 0;
+			$list_ids 	 = ! empty( $data['list_ids'] ) ? $data['list_ids'] : '';
 		} else {
-			$db_id      = ig_es_get_request_data( 'db' );
-			$email      = ig_es_get_request_data( 'email' );
-			$guid       = ig_es_get_request_data( 'guid' );
-			$message_id = $campaign_id = 0;
+			$db_id       = ig_es_get_request_data( 'db' );
+			$email       = ig_es_get_request_data( 'email' );
+			$guid        = ig_es_get_request_data( 'guid' );
+			$message_id  = 0;
+			$campaign_id = 0;
 		}
 
 		$email = sanitize_email( $email );
@@ -161,15 +159,18 @@ class Email_Subscribers_Public {
 
 				if ( $is_contact_exists ) {
 					$ids                       = array( $db_id );
-					$status                    = $subject = $content = '';
+					$status                    = '';
+					$subject                   = '';
+					$content                   = '';
 					$unsubscribed              = 0;
-					$status                    = ( $option === 'optin' ) ? 'subscribed' : 'unsubscribed';
+					$status                    = ( 'optin' === $option ) ? 'subscribed': 'unsubscribed';
 					$is_status_update_required = ES()->lists_contacts_db->is_status_update_required( $ids, $status );
+
 					if ( $is_status_update_required ) {
-						if ( $option === 'optin' ) {
+						if ( 'optin' === $option ) {
 							$message = get_option( 'ig_es_subscription_success_message' );
 							ES()->contacts_db->edit_contact_global_status( $ids, $unsubscribed );
-							ES()->lists_contacts_db->edit_subscriber_status( $ids, $status );
+							ES()->lists_contacts_db->edit_subscriber_status( $ids, $status, $list_ids  );
 							//send welcome email
 							$contact = ES()->contacts_db->get_contacts_email_name_map( array( $email ) );
 							$data    = array(
@@ -182,23 +183,36 @@ class Email_Subscribers_Public {
 							);
 
 							$lists     = ES()->lists_db->get_all_lists_name_by_contact( $db_id );
-							$list_name = implode( ", ", $lists );
+							$list_name = implode( ', ', $lists );
 
 							$data['list_name'] = $list_name;
 
 							ES()->mailer->send_welcome_email( $email, $data );
 
 							ES()->mailer->send_add_new_contact_notification_to_admins( $data );
-						} elseif ( $option === 'unsubscribe' ) {
+						} elseif ( 'unsubscribe' === $option ) {
 							$unsubscribed = 1;
 
-							$submitted         = ig_es_get_post_data( 'submitted' );
-							$unsubscribe_lists = ig_es_get_post_data( 'unsubscribe_lists', array() );
+							$submitted         = '';
+							$unsubscribe_lists = array();
 							$list_selected     = ig_es_get_request_data( 'list_selected' );
+							
+							// Check if nonce value is not empty.
+							if ( ! empty( $_POST['ig_es_unsubscribe_nonce'] ) ) {
+								// Verify nonce value.
+								if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ig_es_unsubscribe_nonce'] ) ), 'ig-es-unsubscribe-nonce' ) ) {
+									$submitted = ig_es_get_data( $_POST, 'submitted', '', true );
+									if ( ! empty( $submitted ) ) {
+										$unsubscribe_lists = ig_es_get_data( $_POST, 'unsubscribe_lists', array() );
+									}
+								} else {
+									echo esc_html__( 'Sorry, you are not allowed to access this page.', 'email-subscribers' );
+									die();
+								}
+							}
 
 							$message = get_option( 'ig_es_unsubscribe_success_message' );
-
-
+							
 							if ( ES()->is_starter() && empty( $submitted ) && empty( $unsubscribe_lists ) && ! $list_selected ) {
 								do_action( 'ig_es_update_subscriber', $db_id );
 							}
@@ -223,7 +237,6 @@ class Email_Subscribers_Public {
 							if ( count( $list_ids ) == 0 ) {
 								//update global
 								ES()->contacts_db->edit_contact_global_status( array( $db_id ), 1 );
-
 							}
 
 							do_action( 'ig_es_contact_unsubscribe', $db_id, $message_id, $campaign_id, $unsubscribe_lists );
@@ -232,7 +245,7 @@ class Email_Subscribers_Public {
 
 						do_action( 'es_redirect_to_optin_page', $option );
 					} else {
-						if ( $status === 'subscribed' ) {
+						if ( 'subscribed' === $status ) {
 							$message = __( 'You are already subscribed!', 'email-subscribers' );
 						} else {
 							$message = __( 'You are already unsubscribed!', 'email-subscribers' );
@@ -242,6 +255,7 @@ class Email_Subscribers_Public {
 				} else {
 					$message = __( 'Sorry, we couldn\'t find you. Please contact admin.', 'email-subscribers' );
 				}
+
 				// We are using $message in following file
 				include 'partials/subscription-successfull.php';
 
@@ -283,8 +297,8 @@ class Email_Subscribers_Public {
 
 	public function add_contact( $contact_data, $list_id ) {
 
-		$email = $contact_data['email'];
-
+		$email 		= $contact_data['email'];
+		
 		$default_data = array(
 			'status'     => 'verified',
 			'hash'       => ES_Common::generate_guid(),
@@ -295,29 +309,27 @@ class Email_Subscribers_Public {
 		$contact_data = wp_parse_args( $contact_data, $default_data );
 
 		$contact = ES()->contacts_db->is_contact_exist_in_list( $email, $list_id );
+
 		if ( empty( $contact['contact_id'] ) ) {
 			$contact_id = ES()->contacts_db->insert( $contact_data );
 		} else {
 			$contact_id = $contact['contact_id'];
 		}
 
-		if ( empty( $contact['list_id'] ) ) {
+		$optin_type        = get_option( 'ig_es_optin_type', true );
+		$optin_type        = ( 'double_opt_in' === $optin_type ) ? 2 : 1;
+		$list_id           = ! empty( $list_id ) ? $list_id : 1;
+		$list_contact_data = array(
+			'contact_id'    => $contact_id,
+			'status'        => 'subscribed',
+			'subscribed_at' => ig_get_current_date_time(),
+			'optin_type'    => $optin_type,
+			'subscribed_ip' => ig_es_get_ip(),
+		);
 
-			$optin_type        = get_option( 'ig_es_optin_type', true );
-			$optin_type        = ( $optin_type === 'double_opt_in' ) ? 2 : 1;
-			$list_id           = ! empty( $list_id ) ? $list_id : 1;
-			$list_contact_data = array(
-				'contact_id'    => $contact_id,
-				'status'        => 'subscribed',
-				'subscribed_at' => ig_get_current_date_time(),
-				'optin_type'    => $optin_type,
-				'subscribed_ip' => null
-			);
+		ES()->lists_contacts_db->remove_contacts_from_lists( $contact_id, $list_id );
 
-			ES()->lists_contacts_db->remove_contacts_from_lists( $contact_id, $list_id );
-
-			ES()->lists_contacts_db->add_contact_to_lists( $list_contact_data, $list_id );
-		}
+		ES()->lists_contacts_db->add_contact_to_lists( $list_contact_data, $list_id );
 
 	}
 
@@ -326,7 +338,7 @@ class Email_Subscribers_Public {
 	 *
 	 * @since 4.2
 	 */
-	function confirm_unsubscription() {
+	public function confirm_unsubscription() {
 		global $wp;
 		$get    = ig_es_get_request_data();
 		$action = home_url( add_query_arg( $get, $wp->request ) );
@@ -334,77 +346,97 @@ class Email_Subscribers_Public {
 
 		?>
 
-        <style type="text/css">
-            .ig_es_form_wrapper {
-                width: 30%;
-                margin: 0 auto;
-                border: 2px #e8e3e3 solid;
-                padding: 0.9em;
-                border-radius: 5px;
-            }
+		<style type="text/css">
+			.ig_es_form_wrapper {
+				width: 30%;
+				margin: 0 auto;
+				border: 2px #e8e3e3 solid;
+				padding: 0.9em;
+				border-radius: 5px;
+			}
 
-            .ig_es_form_heading {
-                font-size: 1.3em;
-                line-height: 1.5em;
-                margin-bottom: 0.5em;
-            }
+			.ig_es_form_heading {
+				font-size: 1.3em;
+				line-height: 1.5em;
+				margin-bottom: 0.5em;
+			}
 
-            .ig_es_list_checkbox {
-                margin-right: 0.5em;
-            }
+			.ig_es_list_checkbox {
+				margin-right: 0.5em;
+			}
 
-            .ig_es_submit {
-                color: #FFFFFF !important;
-                border-color: #03a025 !important;
-                background: #03a025 !important;
-                box-shadow: 0 1px 0 #03a025;
-                font-weight: bold;
-                height: 2.4em;
-                line-height: 1em;
-                cursor: pointer;
-                border-width: 1px;
-                border-style: solid;
-                -webkit-appearance: none;
-                border-radius: 3px;
-                white-space: nowrap;
-                box-sizing: border-box;
-                font-size: 1em;
-                padding: 0 2em;
-                margin-top: 1em;
-            }
+			.ig_es_submit {
+				color: #FFFFFF !important;
+				border-color: #03a025 !important;
+				background: #03a025 !important;
+				box-shadow: 0 1px 0 #03a025;
+				font-weight: bold;
+				height: 2.4em;
+				line-height: 1em;
+				cursor: pointer;
+				border-width: 1px;
+				border-style: solid;
+				-webkit-appearance: none;
+				border-radius: 3px;
+				white-space: nowrap;
+				box-sizing: border-box;
+				font-size: 1em;
+				padding: 0 2em;
+				margin-top: 1em;
+			}
 
-            .confirmation-no : {
-                border-color: #FF0000 !important;
-                background: #FF0000 !important;
-                box-shadow: 0 1px 0 #FF0000;
-            }
+			.confirmation-no : {
+				border-color: #FF0000 !important;
+				background: #FF0000 !important;
+				box-shadow: 0 1px 0 #FF0000;
+			}
 
-            .ig_es_submit:hover {
-                color: #FFF !important;
-                background: #0AAB2E !important;
-                border-color: #0AAB2E !important;
-            }
+			.ig_es_submit:hover {
+				color: #FFF !important;
+				background: #0AAB2E !important;
+				border-color: #0AAB2E !important;
+			}
 
-            .ig_es_form_wrapper hr {
-                display: block;
-                height: 1px;
-                border: 0;
-                border-top: 1px solid #ccc;
-                margin: 1em 0;
-                padding: 0;
-            }
+			.ig_es_form_wrapper hr {
+				display: block;
+				height: 1px;
+				border: 0;
+				border-top: 1px solid #ccc;
+				margin: 1em 0;
+				padding: 0;
+			}
 
-        </style>
+		</style>
 
-        <div class="ig_es_form_wrapper">
-            <form action="<?php echo $action; ?>" method="post" id="">
-                <div class="ig_es_form_heading"><?php _e( 'Are you sure you want to unsubscribe?', 'email-subscribers' ); ?></div>
-                <input type="hidden" name="submitted" value="submitted">
-                <input class="ig_es_submit" type="submit" name="unsubscribe" value="Yes">
-            </form>
-        </div>
+		<div class="ig_es_form_wrapper">
+			<form action="<?php echo esc_attr( $action ); ?>" method="post" id="">
+				<?php wp_nonce_field( 'ig-es-unsubscribe-nonce', 'ig_es_unsubscribe_nonce' ); ?>
+				<div class="ig_es_form_heading"><?php echo esc_html__( 'Are you sure you want to unsubscribe?', 'email-subscribers' ); ?></div>
+				<input type="hidden" name="submitted" value="submitted">
+				<input class="ig_es_submit" type="submit" name="unsubscribe" value="Yes">
+			</form>
+		</div>
 		<?php
 		die();
 	}
 
+	/**
+	 * Add Email Subscribers template types
+	 * 
+	 * @param array $template_type Template types
+	 * 
+	 * @return array $template_type Template types
+	 * 
+	 * @since 5.0.0
+	 */
+	public function add_template_type( $template_type = array() ) {
+
+		$template_type['newsletter'] = __( 'Broadcast', 'email-subscribers' );
+		
+		// Start-IG-Code.
+		$template_type['post_notification'] = __( 'Post Notification', 'email-subscribers' );
+		// End-IG-Code.
+
+		return $template_type;
+	}
 }

@@ -18,7 +18,7 @@ class es_cls_dbquery {
 		return $es_lists;
 	}
 
-	public static function es_view_subscriber_ins( $data = array(), $action = "insert" ) {
+	public static function es_view_subscriber_ins( $data = array(), $action = 'insert' ) {
 
 		if ( empty( $data['es_email_mail'] ) ) {
 			return;
@@ -52,6 +52,7 @@ class es_cls_dbquery {
 			'created_at' => ig_get_current_date_time(),
 		);
 		$contact_id = ES()->contacts_db->get_contact_id_by_email( $email );
+
 		if ( ! $contact_id ) {
 			$contact_id = ES()->contacts_db->insert( $sub_data );
 		}
@@ -59,11 +60,11 @@ class es_cls_dbquery {
 		if ( $contact_id ) {
 
 			$optin_type = get_option( 'ig_es_optin_type', true );
-			$optin_type = ( $optin_type === 'double_opt_in' ) ? 2 : 1;
+			$optin_type = ( 'double_opt_in' === $optin_type ) ? 2 : 1;
 
 			$status = 'subscribed';
 
-			if ( $optin_type == 2 ) {
+			if ( 2 == $optin_type ) {
 				$status = 'unconfirmed';
 			}
 
@@ -75,7 +76,7 @@ class es_cls_dbquery {
 				'status'        => $status,
 				'optin_type'    => $optin_type,
 				'subscribed_at' => ig_get_current_date_time(),
-				'subscribed_ip' => ig_es_get_ip()
+				'subscribed_ip' => ig_es_get_ip(),
 			);
 
 			ES()->lists_contacts_db->add_contact_to_lists( $list_contact_data, $list_id );
@@ -93,7 +94,7 @@ class es_cls_dbquery {
 				'list_name'  => $list_name
 			);
 
-			if ( $optin_type == 1 ) {
+			if ( 1 == $optin_type ) {
 
 				// Send Welcome Email.
 				ES()->mailer->send_welcome_email( $email, $data );
@@ -126,4 +127,4 @@ class es_cls_settings {
 	}
 }
 
-?>
+

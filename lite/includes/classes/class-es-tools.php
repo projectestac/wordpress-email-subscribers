@@ -12,11 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @package    Email_Subscribers
  * @subpackage Email_Subscribers/admin
- * @author     Your Name <email@example.com>
  */
 class ES_Tools {
 	// class instance
-	static $instance;
+	public static $instance;
 
 	public function __construct() {
 		// Allow only to send test email to user who have Settings & Campaigns permission
@@ -34,26 +33,27 @@ class ES_Tools {
 	 */
 	public function send_test_email() {
 
+		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
+
 		$response = array();
-		
+
 		$email = sanitize_email( ig_es_get_request_data( 'es_test_email' ) );
 
-		$subject = ig_es_get_post_data( 'subject', '' );
-		$content = wp_kses_post(ig_es_get_request_data( 'content', '', false ));
+		$subject = ig_es_get_data( $_POST, 'subject', '', true );
+		$content = wp_kses_post( ig_es_get_request_data( 'content', '', false ) );
 
 		if ( ! empty( $email ) ) {
 
 			if ( ! empty( $content ) ) {
-				$content = str_replace( "{{EMAIL}}", "User Email", $content );
-				$content = str_replace( "{{NAME}}", "Username", $content );
+				$content = str_replace( '{{EMAIL}}', 'User Email', $content );
+				$content = str_replace( '{{NAME}}', 'Username', $content );
 			}
 
 			$response = ES()->mailer->send_test_email( $email, $subject, $content );
 
-			if ( $response && $response['status'] === 'SUCCESS' ) {
+			if ( $response && 'SUCCESS' === $response['status'] ) {
 				$response['message'] = __( 'Email has been sent. Please check your inbox', 'email-subscribers' );
 			}
-
 		}
 
 		echo json_encode( $response );
@@ -69,4 +69,4 @@ class ES_Tools {
 	}
 }
 
-?>
+

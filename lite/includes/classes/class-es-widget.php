@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class ES_Widget extends WP_Widget {
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct( 'email_subscriber_widget', __( 'Email Subscribers Widget', 'email-subscribers' ), array( 'description' => __( 'Email Subscribers', 'email-subscribers' ) ) );
 	}
 
@@ -15,10 +15,10 @@ class ES_Widget extends WP_Widget {
 
 		$title = apply_filters( 'widget_title', $instance['title'] );
 
-		echo $args['before_widget'];
+		echo wp_kses_post( $args['before_widget'] );
 
 		if ( ! empty( $title ) ) {
-			echo $args['before_title'] . $title . $args['after_title'];
+			echo wp_kses_post( sprintf( '%s %s %s', $args['before_title'] . $title . $args['after_title'] ) );
 		}
 
 		$display_name      = isset( $instance['display_name'] ) ? esc_attr( $instance['display_name'] ) : '';
@@ -36,7 +36,7 @@ class ES_Widget extends WP_Widget {
 
 		ES_Shortcode::render_form( $data );
 
-		echo $args['after_widget'];
+		echo wp_kses_post( $args['after_widget'] );
 	}
 
 	public function form( $instance ) {
@@ -46,32 +46,39 @@ class ES_Widget extends WP_Widget {
 		$display_name      = isset( $instance['display_name'] ) ? esc_attr( $instance['display_name'] ) : '';
 		$subscribers_group = isset( $instance['subscribers_group'] ) ? esc_attr( $instance['subscribers_group'] ) : '';
 
-		$display_names = array( 'yes' => __( 'Yes', 'email-subscribers' ), 'no' => __( 'No', 'email-subscribers' ) );
+		$display_names = array(
+			'yes' => __( 'Yes', 'email-subscribers' ),
+			'no'  => __( 'No', 'email-subscribers' ),
+		);
 
 		?>
 
-        <p>
-            <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Widget Title:' ); ?></label>
-            <input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
-        </p>
-        <p>
-            <label for="<?php echo $this->get_field_id( 'short_desc' ); ?>"><?php _e( 'Short description' ); ?></label>
-            <input class="widefat" id="<?php echo $this->get_field_id( 'short_desc' ); ?>" name="<?php echo $this->get_field_name( 'short_desc' ); ?>" type="text" value="<?php echo esc_attr( $short_desc ); ?>">
-        </p>
-        <p>
-            <label for="widget-email-subscribers-2-es_name"><?php _e( 'Display Name Field' ); ?></label>
-            <select id="<?php echo $this->get_field_id( 'display_name' ); ?>" name="<?php echo $this->get_field_name( 'display_name' ); ?>" class="widefat" style="width:100%;">
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Widget Title:' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+		</p>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'short_desc' ) ); ?>"><?php esc_html_e( 'Short description' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'short_desc' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'short_desc' ) ); ?>" type="text" value="<?php echo esc_attr( $short_desc ); ?>">
+		</p>
+		<p>
+			<label for="widget-email-subscribers-2-es_name"><?php esc_html_e( 'Display Name Field' ); ?></label>
+			<select id="<?php echo esc_attr( $this->get_field_id( 'display_name' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'display_name' ) ); ?>" class="widefat" style="width:100%;">
 				<?php foreach ( $display_names as $name ) { ?>
-                    <option <?php selected( $display_name, $name ); ?> value="<?php echo $name; ?>"><?php echo $name; ?></option>
+					<option <?php selected( $display_name, $name ); ?> value="<?php echo esc_attr( $name ); ?>"><?php echo esc_html( $name ); ?></option>
 				<?php } ?>
-            </select>
-        </p>
-        <p>
-            <label for="widget-email-subscribers-2-es_group"><?php _e( 'Subscriber List' ); ?></label>
-            <select id="<?php echo $this->get_field_id( 'subscribers_group' ); ?>" name="<?php echo $this->get_field_name( 'subscribers_group' ); ?>" class="widefat" style="width:100%;">
-				<?php echo ES_Common::prepare_list_dropdown_options( $subscribers_group ); ?>
-            </select>
-        </p>
+			</select>
+		</p>
+		<p>
+			<label for="widget-email-subscribers-2-es_group"><?php esc_html_e( 'Subscriber List' ); ?></label>
+			<select id="<?php echo esc_attr( $this->get_field_id( 'subscribers_group' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'subscribers_group' ) ); ?>" class="widefat" style="width:100%;">
+				<?php 
+					$lists_dropdown = ES_Common::prepare_list_dropdown_options( $subscribers_group );
+					$allowedtags 	= ig_es_allowed_html_tags_in_esc();
+					echo wp_kses( $lists_dropdown , $allowedtags );
+				?>
+			</select>
+		</p>
 		<?php
 	}
 
