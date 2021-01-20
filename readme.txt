@@ -6,7 +6,7 @@ Tags: email marketing, subscription, autoresponder, post notification, welcome e
 Requires at least: 3.9
 Tested up to: 5.6
 Requires PHP: 5.6
-Stable tag: 4.6.5
+Stable tag: 4.6.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses
 
@@ -303,6 +303,12 @@ Refer [here](https://www.icegram.com/documentation/es-faq/).
 
 
 == Changelog ==
+
+**4.6.6 (14.01.2021)**
+
+* New: Now, able to map fields while importing
+* Update: Improved UI
+* Fix: YouTube video embedding issue
 
 **4.6.5 (22.12.2020)**
 

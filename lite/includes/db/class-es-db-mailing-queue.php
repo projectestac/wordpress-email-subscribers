@@ -250,17 +250,14 @@ class ES_DB_Mailing_Queue {
 	}
 
 	public static function delete_notifications( $ids ) {
-		global $wpdb;
+		global $wpbd;
 
 		$ids = esc_sql( $ids );
 
 		$ids = implode( ',', array_map( 'absint', $ids ) );
 
-		$wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->prefix}ig_mailing_queue WHERE FIND_IN_SET(id, %s)",
-				$ids
-			)
+		$wpbd->query(
+			"DELETE FROM {$wpbd->prefix}ig_mailing_queue WHERE id IN($ids)"
 		);
 	}
 

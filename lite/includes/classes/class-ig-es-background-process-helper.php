@@ -247,7 +247,9 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 				'cookies'   => $_COOKIE,
 				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 			);
-
+			
+			$args = apply_filters( 'ig_es_async_request_args', $args );
+			
 			// Make a asynchronous request.
 			$response = wp_remote_get( esc_url_raw( $admin_ajax_url ), $args );
 

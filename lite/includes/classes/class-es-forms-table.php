@@ -9,7 +9,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-class ES_Forms_Table extends WP_List_Table {
+class ES_Forms_Table extends ES_List_Table {
 
 	/**
 	 * Number of form options per page
@@ -921,52 +921,6 @@ class ES_Forms_Table extends WP_List_Table {
 		);
 	}
 
-	/**
-	 * Prepare search box
-	 *
-	 * @param string $text
-	 * @param string $input_id
-	 *
-	 * @since 4.0.0
-	 * @since 4.3.4 Added esc_attr()
-	 */
-	public function search_box( $text, $input_id ) { 
-		?>
-		<p class="search-box">
-			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_attr( $text ); ?>:</label>
-			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>"/>
-			<?php submit_button( __( 'Search forms', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
-		</p>
-		<?php 
-	}
-
-	/**
-	 * Handles data query and filter, sorting, and pagination.
-	 */
-	public function prepare_items() {
-
-		$this->_column_headers = $this->get_column_info();
-
-		/** Process bulk action */
-		$this->process_bulk_action();
-
-		$search_str = ig_es_get_request_data( 's' );
-		$this->search_box( $search_str, 'form-search-input' );
-
-		$per_page     = $this->get_items_per_page( self::$option_per_page, 25 );
-		$current_page = $this->get_pagenum();
-		$total_items  = $this->get_lists( 0, 0, true );
-
-		$this->set_pagination_args(
-			array(
-				'total_items' => $total_items, // WE have to calculate the total number of items
-				'per_page'    => $per_page, // WE have to determine how many items to show on a page
-			)
-		);
-
-		$this->items = $this->get_lists( $per_page, $current_page );
-	}
-
 	public function process_bulk_action() {
 
 		if ( 'delete' === $this->current_action() ) {
@@ -1021,6 +975,21 @@ class ES_Forms_Table extends WP_List_Table {
 
 		return $statuses[ $status ];
 	}
+
+	public function search_box( $text, $input_id) {
+		?>
+
+			<p class="search-box">
+				<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_attr( $text ); ?>:</label>
+				<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>"/>
+				<?php submit_button( __( 'Search Forms', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
+			</p>
+		<?php
+	}
+
+
+
+
 
 	/** Text displayed when no list data is available */
 	public function no_items() {

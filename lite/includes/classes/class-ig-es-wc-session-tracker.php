@@ -20,6 +20,7 @@ class IG_ES_WC_Session_Tracker {
 
 	/** 
 	 * Tracking cookie name
+	 *
 	 * @var string - cookie name
 	 **/
 	private static $tracking_key_cookie_name;

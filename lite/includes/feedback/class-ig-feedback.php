@@ -4,20 +4,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-if ( ! class_exists( 'IG_Feedback_V_1_2_4' ) ) {
+if ( ! class_exists( 'IG_Feedback_V_1_2_5' ) ) {
 	/**
 	 * IG Feedback
 	 *
 	 * The IG Feedback class adds functionality to get quick interactive feedback from users.
 	 * There are different types of feedabck widget like Stars, Emoji, Thubms Up/ Down, Number etc.
 	 *
-	 * @class       IG_Feedback_V_1_2_4
+	 * @class       IG_Feedback_V_1_2_5
 	 * @since       1.0.0
 	 * @copyright   Copyright (c) 2019, Icegram
 	 * @license     https://opensource.org/licenses/gpl-license GNU Public License
 	 * @package     feedback
 	 */
-	class IG_Feedback_V_1_2_4 {
+	class IG_Feedback_V_1_2_5 {
 
 		/**
 		 * Version of Feedback Library
@@ -26,7 +26,7 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_4' ) ) {
 		 * @var string
 		 *
 		 */
-		public $version = '1.2.4';
+		public $version = '1.2.5';
 		/**
 		 * The API URL where we will send feedback data.
 		 *

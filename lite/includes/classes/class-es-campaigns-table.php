@@ -9,7 +9,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-class ES_Campaigns_Table extends WP_List_Table {
+class ES_Campaigns_Table extends ES_List_Table {
 	/**
 	 * Number of campaigns to be shown on the page
 	 *
@@ -181,7 +181,7 @@ class ES_Campaigns_Table extends WP_List_Table {
 	 *
 	 * @return mixed
 	 */
-	public static function get_lists( $per_page = 5, $page_number = 1, $do_count_only = false ) {
+	public function get_lists( $per_page = 5, $page_number = 1, $do_count_only = false ) {
 
 		global $wpdb, $wpbd;
 
@@ -638,7 +638,7 @@ class ES_Campaigns_Table extends WP_List_Table {
 		<p class="search-box">
 			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_attr( $text ); ?>:</label>
 			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>"/>
-			<?php submit_button( __( 'Search campaigns', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
+			<?php submit_button( __( 'Search Campaigns', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
 		</p>
 		<p class="search-box search-group-box box-ma10">
 			<?php $filter_by_status = ig_es_get_request_data( 'filter_by_campaign_status' ); ?>
@@ -675,6 +675,7 @@ class ES_Campaigns_Table extends WP_List_Table {
 
 		// Note: Disable Search box for now.
 		$search = ig_es_get_request_data( 's' );
+
 		$this->search_box( $search, 'notification-search-input' );
 
 		$per_page = $this->get_items_per_page( self::$option_per_page, 25 );
@@ -737,4 +738,5 @@ class ES_Campaigns_Table extends WP_List_Table {
 			}
 		}
 	}
+
 }

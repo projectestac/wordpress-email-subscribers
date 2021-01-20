@@ -997,7 +997,7 @@ function ig_es_update_431_permanently_delete_forms() {
  * @since 4.3.1
  */
 function ig_es_update_431_delete_options() {
-	global $wpdb;
+	global $wpbd;
 
 	$options_to_delete = array(
 		'ig_es_smtp_host',
@@ -1011,13 +1011,10 @@ function ig_es_update_431_delete_options() {
 		'ig_es_unsubcontent',
 	);
 
-	$options_str = implode( ',', $options_to_delete );
+	$options_str = "'" . implode( "','", $options_to_delete ) . "'";
 
-	$wpdb->query( 
-		$wpdb->prepare(
-			"DELETE FROM {$wpdb->prefix}options WHERE FIND_IN_SET (option_name, %s)",
-			$options_str
-		)
+	$wpbd->query( 
+		"DELETE FROM {$wpbd->prefix}options WHERE option_name IN($options_str, %s)"
 	);
 }
 
@@ -1326,3 +1323,23 @@ function ig_es_update_465_db_version() {
 	ES_Install::update_db_version( '4.6.5' );
 }
 /* --------------------- ES 4.6.5(End)--------------------------- */
+
+/* --------------------- ES 4.6.6(Start)--------------------------- */
+/**
+ * Create table for storing subscribers import CSV data temporarily
+ *
+ * @since 4.6.6
+ */
+function ig_es_update_466_create_temp_import_table() {
+	ES_Install::create_tables( '4.6.6' );
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.6.6
+ */
+function ig_es_update_466_db_version() {
+	ES_Install::update_db_version( '4.6.6' );
+}
+/* --------------------- ES 4.6.6(End)--------------------------- */

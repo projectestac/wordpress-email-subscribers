@@ -331,7 +331,7 @@ class ES_DB_Workflows extends ES_DB {
 	 * @since 4.4.1
 	 */
 	public function update_status( $workflow_ids = array(), $status = 0 ) {
-		global $wpdb;
+		global $wpbd;
 
 		$updated = false;
 		if ( empty( $workflow_ids ) ) {
@@ -349,8 +349,7 @@ class ES_DB_Workflows extends ES_DB {
 		}
 
 		if ( ! empty( $workflow_ids_str ) ) {
-			// Required in WooCommerce Coding Standards when preparing dynamic query.
-			$updated = $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}ig_workflows SET status = %d WHERE FIND_IN_SET(id, %s)", $status, $workflow_ids_str ) );
+			$updated = $wpbd->query( $wpbd->prepare( "UPDATE {$wpbd->prefix}ig_workflows SET status = %d WHERE id IN ($workflow_ids_str)", $status ) );
 		}
 
 		do_action( 'ig_es_workflow_status_changed', $workflow_ids );

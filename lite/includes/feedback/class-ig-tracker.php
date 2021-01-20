@@ -4,20 +4,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-if ( ! class_exists( 'IG_Tracker_V_1_2_4' ) ) {
+if ( ! class_exists( 'IG_Tracker_V_1_2_5' ) ) {
 
 	/**
-	 * Class IG_Tracker_V_1_2_4
+	 * Class IG_Tracker_V_1_2_5
 	 *
 	 * Icegram tracker handler class is responsible for sending anonymous plugin
 	 * data to Icegram servers for users that actively allowed data tracking.
 	 *
-	 * @class       IG_Tracker_V_1_2_4
+	 * @class       IG_Tracker_V_1_2_5
 	 * @since       1.0.0
 	 *
 	 * @package     feedback
 	 */
-	class IG_Tracker_V_1_2_4 {
+	class IG_Tracker_V_1_2_5 {
 
 		/**
 		 * Get Active, Inactive or all plugins info
@@ -180,7 +180,7 @@ if ( ! class_exists( 'IG_Tracker_V_1_2_4' ) ) {
 					'author'     => $theme_data->get( 'Author' ),
 					'author_uri' => $theme_data->get( 'AuthorURI' )
 				);
-			} 
+			}
 
 			return $current_theme;
 		}
@@ -239,7 +239,7 @@ if ( ! class_exists( 'IG_Tracker_V_1_2_4' ) ) {
 				'wp_db_charset_Collate' => $wpdb->get_charset_collate(),
 				'wp_memory_limit'       => ( size_format( (int) WP_MEMORY_LIMIT * 1048576 ) ),
 				'wp_upload_size'        => ( size_format( wp_max_upload_size() ) ),
-				'filesystem_method'     => get_filesystem_method(),
+				'filesystem_method'     => function_exists('get_filesystem_method') ? get_filesystem_method() : ''
 			);
 
 			return $wp_info;

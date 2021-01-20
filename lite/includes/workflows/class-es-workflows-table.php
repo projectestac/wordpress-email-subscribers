@@ -23,7 +23,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
  *
  * @since  4.4.1
  */
-class ES_Workflows_Table extends WP_List_Table {
+class ES_Workflows_Table extends ES_List_Table {
 
 	/**
 	 * Number of workflows to show at once.
@@ -197,7 +197,7 @@ class ES_Workflows_Table extends WP_List_Table {
 	 *
 	 * @return mixed
 	 */
-	public static function get_lists( $per_page = 5, $page_number = 1, $do_count_only = false ) {
+	public function get_lists( $per_page = 5, $page_number = 1, $do_count_only = false ) {
 
 		$order_by = sanitize_sql_orderby( ig_es_get_request_data( 'orderby' ) );
 		$order    = ig_es_get_request_data( 'order' );
@@ -358,7 +358,7 @@ class ES_Workflows_Table extends WP_List_Table {
 			<label class="screen-reader-text"
 			for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_attr( $text ); ?>:</label>
 			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>" />
-			<?php submit_button( __( 'Search workflows', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
+			<?php submit_button( __( 'Search Workflows', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
 		</p>
 		<?php
 	}
@@ -375,6 +375,7 @@ class ES_Workflows_Table extends WP_List_Table {
 
 		// Note: Disable Search box for now.
 		$search = ig_es_get_request_data( 's' );
+
 		$this->search_box( $search, 'workflow-search-input' );
 
 		$per_page = $this->get_items_per_page( self::$option_per_page, 25 );
@@ -461,4 +462,5 @@ class ES_Workflows_Table extends WP_List_Table {
 			}
 		}
 	}
+
 }

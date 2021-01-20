@@ -69,7 +69,7 @@ class ES_DB_Sending_Queue {
 	}
 
 	public static function update_sent_status( $contact_ids, $message_id = 0, $status = 'Sent' ) {
-		global $wpdb;
+		global $wpbd;
 
 		$updated = false;
 		if ( 0 == $message_id ) {
@@ -86,22 +86,20 @@ class ES_DB_Sending_Queue {
 		if ( ! empty( $id_str ) ) {
 			if ( 'Sent' === $status ) {
 				$current_time = ig_get_current_date_time();
-				$updated = $wpdb->query(
-					$wpdb->prepare(
-						"UPDATE {$wpdb->prefix}ig_sending_queue SET status = %s, sent_at = %s WHERE mailing_queue_id = %d AND  FIND_IN_SET(contact_id, %s)",
+				$updated = $wpbd->query(
+					$wpbd->prepare(
+						"UPDATE {$wpbd->prefix}ig_sending_queue SET status = %s, sent_at = %s WHERE mailing_queue_id = %d AND contact_id IN($id_str)",
 						$status,
 						$current_time,
-						$message_id,
-						$id_str
+						$message_id
 					)
 				);
 			} else {
-				$updated = $wpdb->query(
-					$wpdb->prepare(
-						"UPDATE {$wpdb->prefix}ig_sending_queue SET status = %s WHERE mailing_queue_id = %d AND  FIND_IN_SET(contact_id, %s)",
+				$updated = $wpbd->query(
+					$wpbd->prepare(
+						"UPDATE {$wpbd->prefix}ig_sending_queue SET status = %s WHERE mailing_queue_id = %d AND contact_id IN($id_str)",
 						$status,
-						$message_id,
-						$id_str
+						$message_id
 					)
 				);
 			}
@@ -467,16 +465,13 @@ class ES_DB_Sending_Queue {
 	}
 
 	public static function delete_sending_queue_by_mailing_id( $mailing_queue_ids ) {
-		global $wpdb;
+		global $wpbd;
 		
 		$mailing_queue_ids = esc_sql( $mailing_queue_ids );
 		$mailing_queue_ids = implode( ',', array_map( 'absint', $mailing_queue_ids ) );
 
-		$wpdb->query( 
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->prefix}ig_sending_queue WHERE FIND_IN_SET (mailing_queue_id, %s)",
-				$mailing_queue_ids
-			)
+		$wpbd->query(
+				"DELETE FROM {$wpbd->prefix}ig_sending_queue WHERE mailing_queue_id IN ($mailing_queue_ids)"
 		);
 	}
 
@@ -585,7 +580,7 @@ class ES_DB_Sending_Queue {
 	 * @since 4.3.7
 	 */
 	public static function get_emails_id_map_by_campaign( $campaign_id = 0, $emails = array() ) {
-		global $wpdb;
+		global $wpbd;
 
 		$emails      = esc_sql( $emails );
 		$campaign_id = esc_sql( absint( $campaign_id ) );
@@ -594,14 +589,12 @@ class ES_DB_Sending_Queue {
 			return array();
 		}
 
-		$emails_str = implode( ',', $emails );
+		$emails_str = "'" . implode( "','", $emails ) . "'";
 
-		$results = $wpdb->get_results( 
-			$wpdb->prepare(
-				// We are using FIND_IN_SET since IN clause requires emails to be seperated by single quotes(') which get escaped when passed as a placeholder value in $wp->prepare.
-				"SELECT contact_id, email FROM {$wpdb->prefix}ig_sending_queue WHERE campaign_id = %d AND FIND_IN_SET( email, %s)", 
-				$campaign_id, 
-				$emails_str 
+		$results = $wpbd->get_results( 
+			$wpbd->prepare(
+				"SELECT contact_id, email FROM {$wpbd->prefix}ig_sending_queue WHERE campaign_id = %d AND email IN($emails_str)", 
+				$campaign_id
 			), 
 			ARRAY_A
 		);

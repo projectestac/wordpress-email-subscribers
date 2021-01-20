@@ -236,6 +236,11 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				'ig_es_update_465_db_version',
 			),
 
+			'4.6.6' => array(
+				'ig_es_update_466_create_temp_import_table',
+				'ig_es_update_466_db_version',
+			),
+
 		);
 
 		/**
@@ -1170,13 +1175,13 @@ if ( ! class_exists( 'ES_Install' ) ) {
 		}
 
 		/**
-		 * Create Links Table
+		 * Create WooCommerce cart and guest tables
 		 *
 		 * @param string $collate
 		 *
 		 * @return string
 		 *
-		 * @sinc 4.4.1
+		 * @sinc 4.6.5
 		 */
 		public static function get_ig_es_465_schema( $collate = '' ) {
 			global $wpdb;
@@ -1225,6 +1230,28 @@ if ( ! class_exists( 'ES_Install' ) ) {
 		}
 
 		/**
+		 * Create table for storing subscribers import CSV data temporarily
+		 *
+		 * @param string $collate
+		 *
+		 * @return string
+		 *
+		 * @since 4.6.6
+		 */
+		public static function get_ig_es_466_schema( $collate = '' ) {
+			global $wpdb;
+
+			$tables = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}ig_temp_import (
+				ID bigint(20) NOT NULL AUTO_INCREMENT,
+				data longtext NOT NULL,
+				identifier char(13) NOT NULL,
+				PRIMARY KEY (ID)
+			) $collate";
+			
+			return $tables;
+		}
+
+		/**
 		 * Collect multiple version schema
 		 *
 		 * @param string $collate
@@ -1241,6 +1268,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 			$tables .= self::get_ig_es_424_schema( $collate );
 			$tables .= self::get_ig_es_441_schema( $collate );
 			$tables .= self::get_ig_es_465_schema( $collate );
+			$tables .= self::get_ig_es_466_schema( $collate );
 
 			return $tables;
 		}

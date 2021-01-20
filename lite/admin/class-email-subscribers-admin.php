@@ -94,6 +94,8 @@ class Email_Subscribers_Admin {
 		// Disable Icegram server cron when plugin is deactivated.
 		add_action( 'ig_es_plugin_deactivate', array( $this, 'disable_server_cron' ) );
 		
+		//add_action( 'admin_init', array( $this, 'ig_es_send_additional_data_for_tracking' ) );
+		
 		// Filter to hook custom validation for specific service request.
 		add_filter( 'ig_es_service_request_custom_validation', array( $this, 'maybe_override_service_validation' ), 10, 2 );
 
@@ -189,6 +191,38 @@ class Email_Subscribers_Admin {
 	
 			// Load required html/js for dynamic WordPress editor.
 			ig_es_wp_js_editor_admin_scripts();
+		} else if ( ES()->is_es_admin_screen( $page_prefix . '_page_es_subscribers' ) ) {
+			wp_enqueue_script( $this->email_subscribers . '-subscribers', plugin_dir_url( __FILE__ ) . 'js/subscribers.js', array( 'jquery', 'plupload-all' ), $this->version, false );
+
+			$subscribers_data = array(
+				'security'                   => wp_create_nonce( 'ig-es-admin-ajax-nonce' ),
+				'i18n' => array(
+					'select_status'        => esc_html__( 'Please select the status for the importing contacts!', 'email-subscribers' ),
+					'select_emailcolumn'   => esc_html__( 'Please select at least the column with the email addresses!', 'email-subscribers' ),
+					'prepare_data'         => esc_html__( 'Preparing Data', 'email-subscribers' ),
+					/* translators: %s: Upload progress */
+					'uploading'            => esc_html__( 'Uploading...%s', 'email-subscribers' ),
+					/* translators: %s: Import progress */
+					'import_contacts'      => esc_html__( 'Importing contacts...%s', 'email-subscribers' ),
+					/* translators: %s: Import failed svg icon  */
+					'import_failed'        => esc_html__( 'Import failed! %s', 'email-subscribers' ),
+					'no_windowclose'   	   => esc_html__( 'Please do not close this window until it completes...', 'email-subscribers' ),
+					'prepare_import'       => esc_html__( 'Preparing Import...', 'email-subscribers' ),
+					/* translators: 1. Imported contacts count 2. Total contacts count 3. Failed to import count 4. Memory usage */
+					'current_stats'        => esc_html__( 'Currently %1$s of %2$s imported with %3$s errors. %4$s memory usage', 'email-subscribers' ),
+					/* translators: %s: Time left in minutes */
+					'estimate_time'        => esc_html__( 'Estimate time left: %s minutes', 'email-subscribers' ),
+					/* translators: %s: Next attempt delaly time */
+					'continues_in'         => esc_html__( 'Continues in %s seconds', 'email-subscribers' ),
+					'error_importing'      => esc_html__( 'There was a problem during importing contacts. Please check the error logs for more information!', 'email-subscribers' ),
+					'confirm_import'       => esc_html__( 'Do you really like to import these contacts?', 'email-subscribers' ),
+					/* translators: %s: Process complete svg icon  */
+					'import_complete'      => esc_html__( 'Import complete! %s', 'email-subscribers' ),
+					'onbeforeunloadimport' => esc_html__( 'You are currently importing subscribers! If you leave the page all pending subscribers don\'t get imported!', 'email-subscribers' ),
+				),
+			);
+
+			wp_localize_script( $this->email_subscribers . '-subscribers', 'ig_es_subscribers_data', $subscribers_data );
 		}
 
 		//timepicker
@@ -1110,4 +1144,39 @@ class Email_Subscribers_Admin {
 
 		return $is_request_valid;
 	}
+
+	/**
+	 * Send additional data to Icegram Server for tracking purpose
+	 *
+	 * @param
+	 *
+	 * @since 4.6.6
+	 */
+	/*public function ig_es_send_additional_data_for_tracking() {
+
+		// Send data only if user had opted for trial or user is on a premium plan.
+		$is_plan_valid 		= ES()->is_trial() || ES()->is_premium();
+
+		// Check if the data is already sent once
+		$can_send_data  	= get_option( 'ig_es_send_additional_data_for_tracking', 'yes' ); 
+
+		if ( $is_plan_valid && 'yes' === $can_send_data ) {
+			
+			update_option( 'ig_es_send_additional_data_for_tracking', 'no' );
+			
+			$url 	= 'https://api.icegram.com/';
+			$data	= array(
+				
+			);
+
+			$options         = array(
+				'timeout' => 50,
+				'method'  => 'POST',
+				'body'    => $data
+			);
+			
+			$response = wp_remote_post( $url, $options );
+		}
+
+	}*/
 }

@@ -9,7 +9,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-class ES_Contacts_Table extends WP_List_Table {
+class ES_Contacts_Table extends ES_List_Table {
 	/**
 	 * Contact lists status array
 	 *
@@ -48,7 +48,7 @@ class ES_Contacts_Table extends WP_List_Table {
 	public $lists_id_name_map = array();
 
 	/**
-	 * Last opened at 
+	 * Last opened at
 	 *
 	 * @since 4.6.5
 	 * @var array
@@ -143,7 +143,7 @@ class ES_Contacts_Table extends WP_List_Table {
 				'url'              => add_query_arg( 'action', 'import', 'admin.php?page=es_subscribers' ),
 			),
 
-			'export' => array(
+			'export'       => array(
 				'label'            => __( 'Export Contacts', 'email-subscribers' ),
 				'indicator_option' => '',
 				'indicator_label'  => '',
@@ -549,13 +549,15 @@ class ES_Contacts_Table extends WP_List_Table {
 				<div class="md:flex md:items-center md:justify-between justify-center">
 					<div class="flex-1 min-w-0">
 						<nav class="text-gray-400 my-0" aria-label="Breadcrumb">
-						<ol class="list-none p-0 inline-flex">
-							<li class="flex items-center text-sm tracking-wide">
-							<a class="hover:underline " href="admin.php?page=es_subscribers"><?php esc_html_e( 'Audience ', 'email-subscribers' ); ?></a>
-							<svg class="fill-current w-2.5 h-2.5 mx-2 mt-mx" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path></svg>
-							</li>
-						</ol>
-					</nav>
+							<ol class="list-none p-0 inline-flex">
+								<li class="flex items-center text-sm tracking-wide">
+									<a class="hover:underline " href="admin.php?page=es_subscribers"><?php esc_html_e( 'Audience ', 'email-subscribers' ); ?></a>
+									<svg class="fill-current w-2.5 h-2.5 mx-2 mt-mx" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+										<path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
+									</svg>
+								</li>
+							</ol>
+						</nav>
 						<h2 class="-mt-1 text-2xl font-medium text-gray-700 sm:leading-7 sm:truncate">
 							<?php echo esc_html( $title ); ?>
 						</h2>
@@ -767,8 +769,8 @@ class ES_Contacts_Table extends WP_List_Table {
 						<div class="h-10 relative">
 							<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
 								<svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-									<path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-									<path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+									<path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+									<path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
 								</svg>
 							</div>
 							<input id="email" class="form-input block border-gray-400 w-full pl-10 pr-12 shadow-sm  focus:bg-gray-100 sm:text-sm sm:leading-5" id="email" name="contact_data[email]" value="<?php echo esc_attr( $email ); ?>" placeholder="<?php esc_html_e( 'Enter email', 'email-subscribers' ); ?>"/>
@@ -872,13 +874,15 @@ class ES_Contacts_Table extends WP_List_Table {
 			case 'created_at':
 				return ig_es_format_date_time( $item[ $column_name ] );
 			case 'ip':
-				$subscribed_ip = ! empty ( $item['ip_address']  ) ? $item['ip_address'] : '-' ;
+				$subscribed_ip = ! empty ( $item['ip_address'] ) ? $item['ip_address'] : '-';
+
 				return $subscribed_ip;
 			case 'first_name':
 			case 'email':
 			default:
 				$column_data = isset( $item[ $column_name ] ) ? $item[ $column_name ] : '-';
-				return apply_filters( 'ig_es_contact_column_data', $column_data, $column_name, $item, $this ); 
+
+				return apply_filters( 'ig_es_contact_column_data', $column_data, $column_name, $item, $this );
 		}
 	}
 
@@ -1020,15 +1024,15 @@ class ES_Contacts_Table extends WP_List_Table {
 	 * @since 4.0.0
 	 */
 	public function get_columns() {
-		$columns = array(
-			'cb'         => '<input type="checkbox"/>',
-			'name'       => __( 'Name', 'email-subscribers' ),
-			'email'      => __( 'Email', 'email-subscribers' ),
-			'lists'      => __( 'List(s)', 'email-subscribers' ),
+		$columns      = array(
+			'cb'    => '<input type="checkbox"/>',
+			'name'  => __( 'Name', 'email-subscribers' ),
+			'email' => __( 'Email', 'email-subscribers' ),
+			'lists' => __( 'List(s)', 'email-subscribers' ),
 		);
-		$can_track_ip = apply_filters( 'ig_es_can_track_subscriber_ip', 'yes' ); 
+		$can_track_ip = apply_filters( 'ig_es_can_track_subscriber_ip', 'yes' );
 		if ( 'yes' === $can_track_ip ) {
-			$columns['ip'] =  __( 'IP', 'email-subscribers' );
+			$columns['ip'] = __( 'IP', 'email-subscribers' );
 		}
 		$columns['created_at'] = __( 'Created', 'email-subscribers' );
 
@@ -1086,7 +1090,7 @@ class ES_Contacts_Table extends WP_List_Table {
 		<p class="search-box box-ma10">
 			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_attr( $text ); ?>:</label>
 			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>"/>
-			<?php submit_button( __( 'Search contacts', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
+			<?php submit_button( __( 'Search Contacts', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
 		</p>
 		<p class="search-box search-group-box box-ma10">
 			<?php $filter_by_status = ig_es_get_request_data( 'filter_by_status' ); ?>
@@ -1108,7 +1112,6 @@ class ES_Contacts_Table extends WP_List_Table {
 				?>
 			</select>
 		</p>
-
 		<?php
 	}
 
@@ -1136,6 +1139,7 @@ class ES_Contacts_Table extends WP_List_Table {
 
 		/** Process bulk action */
 		$this->process_bulk_action();
+
 		$this->search_box( ig_es_get_request_data( 's' ), 'subscriber-search-input' );
 
 		$per_page     = $this->get_items_per_page( self::$option_per_page, 200 );

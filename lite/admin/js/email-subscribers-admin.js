@@ -96,8 +96,8 @@
 			jQuery(".es-audience-view .bulkactions #bulk-action-selector-top").after(statusselect);
 			jQuery(".es-audience-view .bulkactions #bulk-action-selector-top").after(groupselect);
 
-			//jQuery(".es-audience-view .bulkactions #bulk-action-selector-bottom").after(statusselect);
-			// jQuery(".es-audience-view .bulkactions #bulk-action-selector-bottom").after(groupselect);
+			jQuery('.groupsselect').hide();
+			jQuery('.statusesselect').hide();
 
 			jQuery("#bulk-action-selector-top").change(function () {
 				if (jQuery('option:selected', this).attr('value') == 'bulk_list_update' || jQuery('option:selected', this).attr('value') == 'bulk_list_add') {

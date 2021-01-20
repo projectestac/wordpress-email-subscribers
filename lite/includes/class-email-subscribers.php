@@ -247,6 +247,24 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $mailer;
 
 		/**
+		 * IG_ES_Trail object
+		 *
+		 * @var object|IG_ES_Trial
+		 *
+		 * @since 4.6.6
+		 */
+		public $trial;
+
+		/**
+		 * IG_ES_DB_WC_Cart object
+		 *
+		 * @var object|IG_ES_DB_WC_Cart
+		 *
+		 * @since 4.6.6
+		 */
+		public $carts_db;
+
+		/**
 		 * The loader that's responsible for maintaining and registering all hooks that power
 		 * the plugin.
 		 *
@@ -620,6 +638,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/class-email-subscribers-loader.php',
 				'lite/includes/class-email-subscribers-i18n.php',
 
+				'lite/includes/classes/class-es-list-table.php',
+
 				// Logs
 				'lite/includes/logs/class-ig-logger-interface.php',
 				'lite/includes/logs/class-ig-log-handler-interface.php',
@@ -953,6 +973,17 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		}
 
 		/**
+		 * Get trial start date
+		 *
+		 * @return false|mixed|void
+		 *
+		 * @since 4.6.6
+		 */
+		public function get_trial_start_date() {
+			return get_option( 'ig_es_trial_started_at', '' );
+		}
+
+		/**
 		 * Method to get if trial has expired or not.
 		 * 
 		 * @return bool
@@ -993,9 +1024,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public function is_trial_valid() {
 
 			// Check if user has opted for trial and it has not yet expired.
-			$is_trial_valid = $this->is_trial() && ! $this->is_trial_expired() ? true : false;
-			
-			return $is_trial_valid;
+			return $this->is_trial() && ! $this->is_trial_expired();
 		}
 
 		/**

@@ -1782,3 +1782,55 @@ div.broadcast_side_content{
 .es-mail-toggle-line{
 	height: 1.2rem !important;
 }
+
+/* Import Subscriber */
+
+.step2 {
+    display: none;
+    overflow:auto !important;
+}
+
+.step2-status, .step2-list,.progress.finished,.importing-progress.finished{
+	display: none;
+}
+
+.progress.paused span.bar,
+.progress.error span.bar,
+.importing-progress.paused span.bar,
+.importing-progress.error span.bar{
+	background: #D54E21;
+	opacity: 0.8;
+}
+
+.progress span.bar:before,.importing-progress span.bar:before{
+	content: '';
+	display: block;
+	top: -2px;
+	bottom: -2px;
+	width: 20%;
+	min-width: 50px;
+	left: 0%;
+	position: absolute;
+	background: -webkit-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255,0.2) 50%,rgba(255,255,255,0) 100%);
+	background: linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,0.2) 50%,rgba(255,255,255,0) 100%);
+	-webkit-animation: progressindicator 0.75s ease infinite;
+	animation: progressindicator 0.75s ease infinite;
+}
+
+@-webkit-keyframes progressindicator {
+	0%{left:-20%;}
+	100%{left:120%;}
+}
+
+@keyframes progressindicator {
+	0%{left:-20%;}
+	100%{left:120%;}
+}
+
+/* Import Subscriber: end; */
+
+
+.tablenav {
+	padding-top: 0px !important;
+	clear: none !important;
+}

@@ -137,7 +137,7 @@ class ES_DB_Lists_Contacts extends ES_DB {
 	 *
 	 * @since 4.3.5
 	 */
-	public function prepare_contact_data( $contact_ids = array(), $list_id ) {
+	public function prepare_contact_data( $contact_ids, $list_id ) {
 
 		if ( empty( $contact_ids ) || empty( $list_id ) ) {
 			return array();
@@ -602,7 +602,7 @@ class ES_DB_Lists_Contacts extends ES_DB {
 	 * @since 4.3.5 Removed static call
 	 */
 	public function edit_subscriber_status( $ids = array(), $status = '', $list_ids = array() ) {
-		global $wpdb;
+		global $wpbd;
 
 		if ( ! is_array( $ids ) ) {
 			$ids = array( $ids );
@@ -623,49 +623,44 @@ class ES_DB_Lists_Contacts extends ES_DB {
 			if ( ! empty ( $list_ids ) ) {
 				
 				$list_ids_str = implode( ',', $list_ids );
-				$result = $wpdb->query(
-				$wpdb->prepare(
-					"UPDATE {$wpdb->prefix}ig_lists_contacts SET status = %s, subscribed_at = %s WHERE FIND_IN_SET(contact_id, %s) AND FIND_IN_SET(list_id, %s)",
+				$result = $wpbd->query(
+				$wpbd->prepare(
+					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, subscribed_at = %s WHERE contact_id IN( {$ids_str} ) AND list_id IN( {$list_ids_str} )",
 					array(
 						$status,
 						$current_date,
-						$ids_str,
-						$list_ids_str,
 						)
 					)
 				);
 			} else { 
-				$result = $wpdb->query(
-					$wpdb->prepare(
-						"UPDATE {$wpdb->prefix}ig_lists_contacts SET status = %s, subscribed_at = %s WHERE FIND_IN_SET(contact_id, %s)",
+				$result = $wpbd->query(
+					$wpbd->prepare(
+						"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, subscribed_at = %s WHERE contact_id IN( {$ids_str} )",
 						array(
 							$status,
 							$current_date,
-							$ids_str
 						)
 					)
 				);
 			}
 			return $result;
 		} elseif ( 'unsubscribed' === $status ) {
-			return $wpdb->query(
-				$wpdb->prepare(
-					"UPDATE {$wpdb->prefix}ig_lists_contacts SET status = %s, unsubscribed_at = %s WHERE FIND_IN_SET(contact_id, %s)",
+			return $wpbd->query(
+				$wpbd->prepare(
+					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, unsubscribed_at = %s WHERE contact_id IN( {$ids_str} )",
 					array(
 						$status,
 						$current_date,
-						$ids_str
 					)
 				)
 				);
 		} elseif ( 'unconfirmed' === $status ) {
-			return $wpdb->query(
-				$wpdb->prepare( 
-					"UPDATE {$wpdb->prefix}ig_lists_contacts SET status = %s, optin_type = %d, subscribed_at = NULL, unsubscribed_at = NULL WHERE FIND_IN_SET(contact_id, %s)",
+			return $wpbd->query(
+				$wpbd->prepare( 
+					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, optin_type = %d, subscribed_at = NULL, unsubscribed_at = NULL WHERE contact_id IN( {$ids_str} )",
 					array(
 						$status,
 						IG_DOUBLE_OPTIN,
-						$ids_str
 					)
 				)
 			);
@@ -687,7 +682,7 @@ class ES_DB_Lists_Contacts extends ES_DB {
 	 * @since 4.3.5 Removed static call
 	 */
 	public function is_status_update_required( $ids = array(), $status = '' ) {
-		global $wpdb;
+		global $wpbd;
 
 		if ( ! is_array( $ids ) ) {
 			$ids = array( $ids );
@@ -696,7 +691,7 @@ class ES_DB_Lists_Contacts extends ES_DB {
 		$ids     = array_map( 'absint', $ids );
 		$ids_str = implode( ',', $ids );
 		
-		$where = $wpdb->prepare( 'FIND_IN_SET(contact_id, %s) && status != %s', $ids_str, $status );
+		$where = $wpbd->prepare( "contact_id IN($ids_str) && status != %s", $status );
 
 		if ( $this->count( $where ) ) {
 			return true;

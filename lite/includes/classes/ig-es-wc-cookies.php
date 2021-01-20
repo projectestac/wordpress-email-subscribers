@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Class IG_ES_WC_Cookies
+ *
  * @since 4.6.5
  */
 class IG_ES_WC_Cookies {
@@ -40,6 +41,7 @@ class IG_ES_WC_Cookies {
 
 	/**
 	 * Clear a cookie and also updates the $_COOKIE array.
+	 *
 	 * @param $name
 	 */
 	public static function clear( $name ) {

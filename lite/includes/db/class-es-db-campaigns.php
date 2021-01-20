@@ -179,7 +179,7 @@ class ES_DB_Campaigns extends ES_DB {
 	 * @since 4.0.0
 	 */
 	public function migrate_post_notifications() {
-		global $wpdb;
+		global $wpbd;
 
 		$campaigns_data = array();
 		$template_ids   = array();
@@ -190,7 +190,7 @@ class ES_DB_Campaigns extends ES_DB {
 
 		$es_notification_table = EMAIL_SUBSCRIBERS_NOTIFICATION_TABLE;
 
-		$total = $wpdb->get_var( $wpdb->prepare( "SELECT count(*) as total FROM {$wpdb->prefix}es_notification WHERE %d", 1 ) );
+		$total = $wpbd->get_var( $wpbd->prepare( "SELECT count(*) as total FROM {$wpbd->prefix}es_notification WHERE %d", 1 ) );
 
 		if ( $total > 0 ) {
 			$batch_size = IG_DEFAULT_BATCH_SIZE;
@@ -200,8 +200,8 @@ class ES_DB_Campaigns extends ES_DB {
 			for ( $i = 0; $i < $total_batches; $i ++ ) {
 				$batch_start = $i * $batch_size;
 				//$query         = 'SELECT * FROM ' . EMAIL_SUBSCRIBERS_NOTIFICATION_TABLE . " LIMIT {$batch_start}, {$batch_size}";
-				//$notifications = $wpdb->get_results( $query, ARRAY_A ); // WPCS: cache ok, DB call ok, unprepared SQL ok.
-				$notifications = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}es_notification LIMIT %d, %d", $batch_start, $batch_size ), ARRAY_A );
+				//$notifications = $wpbd->get_results( $query, ARRAY_A ); // WPCS: cache ok, DB call ok, unprepared SQL ok.
+				$notifications = $wpbd->get_results( $wpbd->prepare( "SELECT * FROM {$wpbd->prefix}es_notification LIMIT %d, %d", $batch_start, $batch_size ), ARRAY_A );
 				if ( count( $notifications ) > 0 ) {
 					foreach ( $notifications as $key => $notification ) {
 						$categories = ! empty( $notification['es_note_cat'] ) ? $notification['es_note_cat'] : '';
@@ -239,13 +239,10 @@ class ES_DB_Campaigns extends ES_DB {
 					$templates_data = array();
 					// Get Template Name & Slug
 					if ( count( $template_ids ) > 0 ) {
-						//$template_ids_str = implode( "', '", $template_ids );
-						//$query            = "SELECT ID, post_name, post_title FROM {$wpdb->prefix}posts WHERE id IN ({$template_ids_str})";
-						//$templates        = $wpdb->get_results( $query, ARRAY_A );
-						$template_ids_str = implode( ',', $template_ids );
+						$template_ids_str = implode( "', '", $template_ids );
+						$query            = "SELECT ID, post_name, post_title FROM {$wpbd->prefix}posts WHERE id IN ({$template_ids_str})";
+						$templates        = $wpbd->get_results( $query, ARRAY_A );
 
-						// We can use IN query only but to make WooCommerce standard compatible, we have used FIND_IN_SET.
-						$templates = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_name, post_title FROM {$wpdb->prefix}posts WHERE FIND_IN_SET(ID, %s)", $template_ids_str ), ARRAY_A );
 						foreach ( $templates as $template ) {
 							$templates_data[ $template['ID'] ] = $template;
 						}
@@ -430,7 +427,18 @@ class ES_DB_Campaigns extends ES_DB {
 	 * @since 4.2.1
 	 */
 	public function get_total_newsletters() {
-		return $this->get_total_campaigns_by_type( 'newsletter' );
+		return $this->get_total_campaigns_by_type();
+	}
+
+	/**
+	 * Get total sequence
+	 *
+	 * @return string|null
+	 *
+	 * @since 4.6.6
+	 */
+	public function get_total_sequences() {
+		return $this->get_total_campaigns_by_type( 'sequence' );
 	}
 
 	/**
@@ -697,7 +705,7 @@ class ES_DB_Campaigns extends ES_DB {
 	 * @since 4.4.4
 	 */
 	public function update_status( $campaign_ids = array(), $status = 0 ) {
-		global $wpdb;
+		global $wpbd;
 
 		$updated = false;
 		if ( empty( $campaign_ids ) ) {
@@ -706,7 +714,6 @@ class ES_DB_Campaigns extends ES_DB {
 
 		$id_str       = '';
 		$campaign_ids = esc_sql( $campaign_ids );
-
 		if ( is_array( $campaign_ids ) && count( $campaign_ids ) > 0 ) {
 			$id_str = implode( ',', $campaign_ids );
 		} elseif ( is_numeric( $campaign_ids ) ) {
@@ -715,10 +722,10 @@ class ES_DB_Campaigns extends ES_DB {
 
 		if ( ! empty( $id_str ) ) {
 
-			$updated = $wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}ig_campaigns SET status = %d WHERE FIND_IN_SET(id, %s)", $status, $id_str) );
+			$updated = $wpbd->query( $wpbd->prepare("UPDATE {$wpbd->prefix}ig_campaigns SET status = %d WHERE id IN({$id_str})", $status ) );
 
 			//Changing status of child campaigns along with its parent campaign id
-			$wpdb->query( $wpdb->prepare("UPDATE {$wpdb->prefix}ig_campaigns SET status = %d WHERE FIND_IN_SET(parent_id, %s)", $status, $id_str) );
+			$wpbd->query( $wpbd->prepare("UPDATE {$wpbd->prefix}ig_campaigns SET status = %d WHERE parent_id IN({$id_str})", $status ) );
 		}
 
 		return $updated;

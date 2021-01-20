@@ -277,7 +277,7 @@ class Export_Subscribers {
 	 */
 	public function generate_csv( $status = 'all', $list_id = 0 ) {
 
-		global $wpdb;
+		global $wpbd;
 
 		// Add filter to increase memory limit
 		add_filter( 'ig_es_memory_limit', 'ig_es_increase_memory_limit' );
@@ -288,8 +288,6 @@ class Export_Subscribers {
 		remove_filter( 'ig_es_memory_limit', 'ig_es_increase_memory_limit' );
 		
 		set_time_limit( IG_SET_TIME_LIMIT );
-
-		$email_subscribe_table = IG_CONTACTS_TABLE;
 
 		$results = array();
 		if ( 'all' === $status ) {
@@ -325,14 +323,11 @@ class Export_Subscribers {
 				);
 			}
 
-			//$contact_ids_str = "'" . implode( "' , '", $contact_ids ) . "' ";
+			$contact_ids_str = implode( ',', $contact_ids );
 
-			//$query = "SELECT `id`, `first_name`, `last_name`, `email`, `created_at` FROM {$email_subscribe_table} WHERE id IN ({$contact_ids_str})";
+			$query = "SELECT `id`, `first_name`, `last_name`, `email`, `created_at` FROM {$wpbd->prefix}ig_contacts WHERE id IN ({$contact_ids_str})";
 
-			//$subscribers = $wpdb->get_results( $query, ARRAY_A );
-
-			$contact_ids_str =  implode( ',', $contact_ids );
-			$subscribers = $wpdb->get_results( $wpdb->prepare( "SELECT id, first_name, last_name, email, created_at FROM {$wpdb->prefix}ig_contacts WHERE FIND_IN_SET(ID, %s)", $contact_ids_str ), ARRAY_A );
+			$subscribers = $wpbd->get_results( $query, ARRAY_A );
 		}
 
 		$csv_output = '';

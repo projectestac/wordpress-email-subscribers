@@ -327,7 +327,7 @@ class ES_DB_Lists extends ES_DB {
 	 *
 	 * @since 4.2.1
 	 */
-	public function update_list( $row_id = 0, $name ) {
+	public function update_list( $row_id, $name ) {
 
 		if ( empty( $row_id ) ) {
 			return;

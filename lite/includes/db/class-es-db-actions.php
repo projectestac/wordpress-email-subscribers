@@ -417,7 +417,7 @@ class ES_DB_Actions extends ES_DB {
 	 */
 	public function get_last_opened_of_contact_ids( $contact_ids = '', $filter = false ) {
 
-		global $wpdb;
+		global $wpbd;
 
 		if ( empty( $contact_ids ) ) {
 			return array();
@@ -425,7 +425,7 @@ class ES_DB_Actions extends ES_DB {
 
 		$contact_ids_str = implode( ',', $contact_ids );
 
-		$result =  $wpdb->get_results( $wpdb->prepare( "SELECT contact_id, MAX(created_at) as last_opened_at FROM {$wpdb->prefix}ig_actions WHERE FIND_IN_SET( contact_id, %s ) AND type = %d  GROUP BY contact_id", $contact_ids_str, IG_MESSAGE_OPEN ), ARRAY_A );
+		$result =  $wpbd->get_results( $wpbd->prepare( "SELECT contact_id, MAX(created_at) as last_opened_at FROM {$wpbd->prefix}ig_actions WHERE contact_id IN ({$contact_ids_str}) AND type = %d  GROUP BY contact_id", IG_MESSAGE_OPEN ), ARRAY_A );
 	
 		if ( $filter ) {
 			$last_opened_at = array_column($result, 'last_opened_at', 'contact_id');

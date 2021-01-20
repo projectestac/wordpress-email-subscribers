@@ -5,11 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
-
-class ES_Lists_Table extends WP_List_Table {
+class ES_Lists_Table extends ES_List_Table {
 	/**
 	 * ES_DB_Lists object
 	 *
@@ -600,6 +596,7 @@ class ES_Lists_Table extends WP_List_Table {
 		return $actions;
 	}
 
+
 	/**
 	 * Prepare search box
 	 *
@@ -609,7 +606,7 @@ class ES_Lists_Table extends WP_List_Table {
 	 * @since 4.0.0
 	 * @since 4.3.4 Added esc_attr()
 	 */
-	public function search_box( $text = '', $input_id = '' ) { 
+	public function search_box( $text = '', $input_id = '' ) {
 		?>
 		<p class="search-box">
 			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_attr( $text ); ?>:</label>
@@ -628,6 +625,7 @@ class ES_Lists_Table extends WP_List_Table {
 
 		/** Process bulk action */
 		$this->process_bulk_action();
+
 		$this->search_box( ig_es_get_request_data( 's' ), 'list-search-input' );
 
 		$per_page     = $this->get_items_per_page( self::$option_per_page, 25 );

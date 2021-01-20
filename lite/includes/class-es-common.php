@@ -119,61 +119,54 @@ class ES_Common {
 			// Convert URL HTML back to URL itself if it a current post URL.
 			$html = $url;
 		} else {
+
 			if ( ! class_exists( 'WP_oEmbed' ) ) {
 				require_once ABSPATH . 'wp-includes/class-wp-oembed.php';
 			}
 
-			// Increase http response size to allow fetching of youtube pages which has large page size.
-			add_filter( 'http_request_args', 'ig_es_increase_http_response_size' );
-
 			$oembed   = new WP_oEmbed();
-			$provider = $oembed->discover( $url );
-			
+			$provider = $oembed->get_provider( $url );
 			if ( ! empty( $provider ) ) {
 				$oembed_response = $oembed->fetch( $provider, $url, $attr );
-				if ( is_object( $oembed_response ) && ! empty( $oembed_response->type ) && 'video' === $oembed_response->type ) {
+				if ( is_object( $oembed_response ) && ! empty( $oembed_response->type ) && 'video' === $oembed_response->type && ! empty( $oembed_response->thumbnail_url ) ) {
 					$thumbnail_url = $oembed_response->thumbnail_url;
-					if ( ! empty( $thumbnail_url ) ) {
-						$title         = $oembed_response->title;
-						$provider_name = $oembed_response->provider_name;
-						$play_icon_url = '';
+					$title         = $oembed_response->title;
+					$provider_name = $oembed_response->provider_name;
+					$play_icon_url = '';
 
-						switch ( $provider_name ) {
-							case 'YouTube':
-								$play_icon_url = ES_PLUGIN_URL . 'lite/public/images/youtube-play-button.png';
-								break;
+					switch ( $provider_name ) {
+						case 'YouTube':
+							$play_icon_url = ES_PLUGIN_URL . 'lite/public/images/youtube-play-button.png';
+							break;
 
-							case 'Vimeo':
-								$play_icon_url = ES_PLUGIN_URL . 'lite/public/images/vimeo-play-button.png';
-								break;
+						case 'Vimeo':
+							$play_icon_url = ES_PLUGIN_URL . 'lite/public/images/vimeo-play-button.png';
+							break;
 
-							default:
-								$play_icon_url = ES_PLUGIN_URL . 'lite/public/images/default-play-button.png';
-								break;
-						}
-
-						ob_start();
-						$thumbnail_width  = ! empty( $oembed_response->width ) ? $oembed_response->width . 'px' : 'auto';
-						$thumbnail_height = ! empty( $oembed_response->height ) ? $oembed_response->height . 'px' : 'auto';
-						?>
-						<table style="margin-bottom: 1em;">
-							<tbody>
-							<tr>
-								<td style="background-image: url('<?php echo esc_url( $thumbnail_url ); ?>');height:<?php echo esc_attr( $thumbnail_height ); ?>;width:<?php echo esc_attr( $thumbnail_width ); ?>;background-size: 100% 100%;background-repeat: no-repeat;text-align:center;">
-									<a href="<?php echo esc_url( $url ); ?>" title="<?php echo esc_attr( $title ); ?>" target="_blank">
-										<img src="<?php echo esc_url( $play_icon_url ); ?>" style="height: 75px; margin: auto;">
-									</a>
-								</td>
-							</tr>
-							</tbody>
-						</table>
-						<?php
-						$html = ob_get_clean();
+						default:
+							$play_icon_url = ES_PLUGIN_URL . 'lite/public/images/default-play-button.png';
+							break;
 					}
+
+					ob_start();
+					$thumbnail_width  = ! empty( $oembed_response->width ) ? $oembed_response->width . 'px' : 'auto';
+					$thumbnail_height = ! empty( $oembed_response->height ) ? $oembed_response->height . 'px' : 'auto';
+					?>
+					<table style="margin-bottom: 1em;">
+						<tbody>
+						<tr>
+							<td style="background-image: url('<?php echo esc_url( $thumbnail_url ); ?>');height:<?php echo esc_attr( $thumbnail_height ); ?>;width:<?php echo esc_attr( $thumbnail_width ); ?>;background-size: 100% 100%;background-repeat: no-repeat;text-align:center;">
+								<a href="<?php echo esc_url( $url ); ?>" title="<?php echo esc_attr( $title ); ?>" target="_blank">
+									<img src="<?php echo esc_url( $play_icon_url ); ?>" style="height: 75px; margin: auto;">
+								</a>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+					<?php
+					$html = ob_get_clean();
 				}
 			}
-
-			remove_filter( 'http_request_args', 'ig_es_increase_http_response_size' );
 		}
 
 		return $html;
@@ -1164,6 +1157,68 @@ class ES_Common {
 	}
 
 	/**
+	 * Get all restricted settings which we can't share
+	 * @return array
+	 *
+	 * @since 4.6.6
+	 */
+	public static function get_restricted_settings() {
+
+		return array(
+			'ig_es_admin_new_contact_email_content',
+			'ig_es_admin_emails',
+			'ig_es_admin_new_contact_email_subject',
+			'ig_es_admin_notices',
+			'ig_es_confirmation_mail_content',
+			'ig_es_confirmation_mail_subject',
+			'ig_es_coupons',
+			'ig_es_cron_admin_email',
+			'ig_es_cron_admin_email_subject',
+			'ig_es_cronurl',
+			'ig_es_current_version_date_details',
+			'ig_es_custom_admin_notice_bfcm_2019',
+			'ig_es_custom_admin_notice_covid_19',
+			'ig_es_custom_admin_notice_halloween_offer_2020',
+			'ig_es_db_update_history',
+			'ig_es_default_subscriber_imported',
+			'ig_es_feedback_data',
+			'ig_es_form_submission_success_message',
+			'ig_es_last_cron_run',
+			'ig_es_last_updated_blocked_domains',
+			'ig_es_mailer_settings',
+			'ig_es_ob_skip_email_receive_error',
+			'ig_es_offer_bfcm_done_2019',
+			'ig_es_offer_covid_19',
+			'ig_es_onboarding_test_campaign_error',
+			'ig_es_opt_in_consent_text',
+			'ig_es_optin_link',
+			'ig_es_optin_page',
+			'ig_es_send_email_action_response',
+			'ig_es_roles_and_capabilities',
+			'ig_es_send_email_action_response',
+			'ig_es_sent_report_content',
+			'ig_es_sent_report_subject',
+			'ig_es_set_widget',
+			'ig_es_show_opt_in_consent',
+			'ig_es_show_sync_tab',
+			'ig_es_subscription_error_messsage',
+			'ig_es_subscription_success_message',
+			'ig_es_sync_wp_users',
+			'ig_es_unsubscribe_error_message',
+			'ig_es_unsubscribe_link',
+			'ig_es_unsubscribe_link_content',
+			'ig_es_unsubscribe_page',
+			'ig_es_unsubscribe_success_message',
+			'ig_es_update_processed_tasks',
+			'ig_es_update_tasks_to_process',
+			'ig_es_welcome_email_content',
+			'ig_es_welcome_email_subject',
+			'ig_es_email_sent_data'
+		);
+
+	}
+
+	/**
 	 * Get all ES settings
 	 *
 	 * @return array
@@ -1179,7 +1234,13 @@ class ES_Common {
 
 		$options_name_value_map = array();
 		if ( count( $results ) > 0 ) {
+			$restricted_settings = self::get_restricted_settings();
 			foreach ( $results as $result ) {
+
+				if ( in_array( $result['option_name'], $restricted_settings ) ) {
+					continue;
+				}
+
 				$options_name_value_map[ $result['option_name'] ] = $result['option_value'];
 			}
 		}
@@ -1198,18 +1259,26 @@ class ES_Common {
 
 		$total_contacts           = ES()->contacts_db->count();
 		$total_lists              = ES()->lists_db->count_lists();
+		$total_forms              = ES()->forms_db->count_forms();
 		$total_newsletters        = ES()->campaigns_db->get_total_newsletters();
 		$total_post_notifications = ES()->campaigns_db->get_total_post_notifications();
+		$total_sequences          = ES()->campaigns_db->get_total_sequences();
 
-		$meta_info = array(
+		return array(
+			'version'                  => ES_PLUGIN_VERSION,
+			'is_premium'               => ES()->is_premium() ? 'yes' : 'no',
+			'plan'                     => ES()->get_plan(),
+			'is_trial'                 => ES()->is_trial() ? 'yes' : 'no',
+			'is_trial_expired'         => ES()->is_trial_expired() ? 'yes' : 'no',
+			'trial_start_at'           => ES()->get_trial_start_date(),
 			'total_contacts'           => $total_contacts,
 			'total_lists'              => $total_lists,
+			'total_forms'              => $total_forms,
 			'total_newsletters'        => $total_newsletters,
-			'total_post_notifications' => $total_post_notifications,
+			'total_post_notifications'  => $total_post_notifications,
+			'total_sequences'          => $total_sequences,
 			'settings'                 => self::get_all_settings()
 		);
-
-		return $meta_info;
 	}
 
 	/**
@@ -1719,17 +1788,17 @@ class ES_Common {
 		$blog_url = get_bloginfo( 'url' );
 
 		// If URI is like, eg. www.way2tutorial.com/
-		$blog_url = trim($blog_url, '/');
+		$blog_url = trim( $blog_url, '/' );
 
 		// If not have http:// or https:// then prepend it
-		if (!preg_match('#^http(s)?://#', $blog_url)) {
+		if ( ! preg_match( '#^http(s)?://#', $blog_url ) ) {
 			$blog_url = 'http://' . $blog_url;
 		}
 
-		$url_parts = parse_url($blog_url);
+		$url_parts = parse_url( $blog_url );
 
 		// Remove www.
-		$domain = preg_replace('/^www\./', '', $url_parts['host']);
+		$domain = preg_replace( '/^www\./', '', $url_parts['host'] );
 
 		$hash = self::generate_hash( 5 );
 
@@ -1744,11 +1813,11 @@ class ES_Common {
 	 * @since 4.6.0
 	 */
 	public static function get_test_email() {
-		$mailbox_user = get_option('ig_es_test_mailbox_user', '');
+		$mailbox_user = get_option( 'ig_es_test_mailbox_user', '' );
 
-		if (empty($mailbox_user)) {
+		if ( empty( $mailbox_user ) ) {
 			$mailbox_user = self::generate_test_mailbox_user();
-			update_option('ig_es_test_mailbox_user', $mailbox_user);
+			update_option( 'ig_es_test_mailbox_user', $mailbox_user );
 		}
 
 		return $mailbox_user . '@box.icegram.com';
@@ -1759,7 +1828,7 @@ class ES_Common {
 	 *
 	 * @since 4.6.2
 	 */
-	public static function upsell_description_message_box( $upsell_info = array(), $echo = true ) { 
+	public static function upsell_description_message_box( $upsell_info = array(), $echo = true ) {
 		ob_start();
 		?>
 		<div class="inline-flex rounded-md shadow bg-teal-50 px-2 pt-1 my-2 w-full font-sans">
@@ -1772,53 +1841,58 @@ class ES_Common {
 					</div>
 					<div class="ml-3">
 						<h3 class="text-sm leading-5 font-medium text-blue-800 hover:underline">
-							<?php 
+							<?php
 							/* translators: 1: Anchor opening tag with href attribute 2: Target attribute  3: Anchor closing tag */
-							 echo sprintf( esc_html__('%1$s' . esc_url( $upsell_info[ 'pricing_url' ] ) . '%2$s' . esc_html( $upsell_info['upgrade_title'] ) . '%3$s', 'email-subscribers' ) , '<a href="', '" target="_blank">', '</a>' ); 
+							echo sprintf( esc_html__( '%1$s' . esc_url( $upsell_info['pricing_url'] ) . '%2$s' . esc_html( $upsell_info['upgrade_title'] ) . '%3$s', 'email-subscribers' ), '<a href="', '" target="_blank">', '</a>' );
 							?>
 						</h3>
 					</div>
 				</div>
 				<div class="mt-2 ml-8 text-sm leading-5 text-teal-700">
 					<p>
-						<?php 
-							$allowed_html_tags = ig_es_allowed_html_tags_in_esc();
-						if ( ! empty( $upsell_info[ 'upsell_message' ] ) ) {
-							echo wp_kses( $upsell_info[ 'upsell_message' ] , $allowed_html_tags ); 
+						<?php
+						$allowed_html_tags = ig_es_allowed_html_tags_in_esc();
+						if ( ! empty( $upsell_info['upsell_message'] ) ) {
+							echo wp_kses( $upsell_info['upsell_message'], $allowed_html_tags );
 						}
 
-							$timezone_format = _x( 'Y-m-d', 'timezone date format' );
-							$ig_current_date = strtotime( date_i18n( $timezone_format ) ) ;
-						if ( ( ( $ig_current_date < strtotime( '2020-11-24' ) ) || ( $ig_current_date > strtotime( '2020-12-02' ) ) ) && self::can_show_coupon('PREMIUM10')) {
+						$timezone_format = _x( 'Y-m-d', 'timezone date format' );
+						$ig_current_date = strtotime( date_i18n( $timezone_format ) );
+						if ( ( ( $ig_current_date < strtotime( '2020-11-24' ) ) || ( $ig_current_date > strtotime( '2020-12-02' ) ) ) && self::can_show_coupon( 'PREMIUM10' ) ) {
 							?>
-								<p class="mb-1 mt-3">
+					<p class="mb-1 mt-3">
+						<?php
+						echo wp_kses_post( 'Upgrade now & get <b> 10% discount!</b> <br/><br/>Use coupon code:' );
+							?>
+
+						<span class="ml-2 px-1.5 py-1 font-medium bg-yellow-100 rounded-md border-2 border-dotted border-indigo-300 select-all"><?php esc_html_e( 'PREMIUM10', 'email-subscribers' ); ?> </span>
+					</p>
+					<?php
+						}
+						if ( $upsell_info['cta_html'] ) {
+							?>
+						<div class="pt-6 text-center -ml-6 pb-2">
+							<a href="<?php echo esc_url( $upsell_info['pricing_url'] ); ?>" target="_blank" class="rounded-md border border-transparent px-3 py-2 bg-white text-sm leading-7 font-medium text-white bg-indigo-600 hover:text-white hover:bg-indigo-500 transition ease-in-out duration-150 mt-2">
+												<?php 
+							esc_html_e( 'Upgrade',
+									'email-subscribers' ); 
+												?>
+									</a>
+						</div>
 							<?php
-								echo wp_kses_post( 'Upgrade now & get <b> 10% discount!</b> <br/><br/>Use coupon code:');
-							?>
-									
-									<span class="ml-2 px-1.5 py-1 font-medium bg-yellow-100 rounded-md border-2 border-dotted border-indigo-300 select-all"><?php esc_html_e( 'PREMIUM10', 'email-subscribers' ); ?> </span>
-								</p>
-							<?php 
-						} 
-						if ( $upsell_info[ 'cta_html' ] ) { 
-							?>
-								<div class="pt-6 text-center -ml-6 pb-2">
-									<a href="<?php echo esc_url( $upsell_info[ 'pricing_url' ] ); ?>" target="_blank" class="rounded-md border border-transparent px-3 py-2 bg-white text-sm leading-7 font-medium text-white bg-indigo-600 hover:text-white hover:bg-indigo-500 transition ease-in-out duration-150 mt-2"><?php esc_html_e('Upgrade', 'email-subscribers'); ?></a>
-								</div>
-							<?php	
-						} 
+						}
 						?>
 				</div>
 			</div>
 		</div>
-					
-				<?php
-				$message_html = ob_get_clean();
-				if ( $echo ) {
-					echo wp_kses( $message_html , $allowed_html_tags );
-				} else {
-					return $message_html;
-				}
+
+		<?php
+		$message_html = ob_get_clean();
+		if ( $echo ) {
+			echo wp_kses( $message_html, $allowed_html_tags );
+		} else {
+			return $message_html;
+		}
 	}
 
 	/**
@@ -1833,10 +1907,10 @@ class ES_Common {
 	 */
 	public static function prepare_campaign_report_statuses_dropdown_options( $selected = '', $default_label = '' ) {
 
-		$statuses =  array(
-			'Sent' => __( 'Completed', 'email-subscribers' ),
+		$statuses = array(
+			'Sent'     => __( 'Completed', 'email-subscribers' ),
 			'In Queue' => __( 'In Queue', 'email-subscribers' ),
-			'Sending' => __( 'Sending', 'email-subscribers' ),
+			'Sending'  => __( 'Sending', 'email-subscribers' ),
 		);
 
 		$dropdown = '<option class="text-sm" value="">' . esc_html__( 'All Status', 'email-subscribers' ) . '</option>';

@@ -6,7 +6,7 @@
  */
 if ( ! function_exists( 'ig_es_get_additional_info' ) ) {
 
-	function ig_es_get_additional_info( $additional_info, $system_info = false ) {
+	function ig_es_get_additional_info( $additional_info = array(), $system_info = false ) {
 		global $ig_es_tracker;
 
 		$additional_info['version'] = ES_PLUGIN_VERSION;

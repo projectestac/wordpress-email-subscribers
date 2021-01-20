@@ -979,22 +979,3 @@ if ( ! function_exists( 'ig_es_insert_widget_in_sidebar' ) ) {
 	}
 }
 
-/**
- * Method to increase response size while making http request.
- * 
- * @param array $args Request arguements.
- * 
- * @return array $args Request arguements.
- * 
- * @since 4.6.5
- */
-if ( ! function_exists( 'ig_es_increase_http_response_size') ) {
-	
-	function ig_es_increase_http_response_size( $args = array() ) {
-		
-		// Increase the reponse size to 1500 KB.
-		$args['limit_response_size'] = 1536000; // 1500 KB
-		
-		return $args;
-	}
-}

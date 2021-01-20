@@ -898,10 +898,10 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 			
 			if ( ! empty( $active_subscribers ) ) {
 				$subscribers_batch_size = 5000; 
-	
+				
 				// Create batches of subscribers each containing maximum subscribers equal to $subscribers_batch_size.
 				$subscribers_batches = array_chunk( $active_subscribers, $subscribers_batch_size );
-	
+				
 				foreach ( $subscribers_batches as $key => $subscribers ) {
 					
 					$delivery_data                     = array();
