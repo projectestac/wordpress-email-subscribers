@@ -245,7 +245,18 @@ function ig_es_render_iges_merge_feedback() {
 	}
 }
 
+// XTEC ************ ELIMINAT - Removed pop up
+// 2021.02.05 @aginard
+if (is_xtec_super_admin()) {
+//************ FI
+
 add_action( 'admin_footer', 'ig_es_render_iges_merge_feedback' );
+
+// XTEC ************ ELIMINAT - Removed pop up
+// 2021.02.05 @aginard
+}
+//************ FI
+
 
 /**
  * Can load sweetalert js file
@@ -308,4 +319,14 @@ function ig_es_render_broadcast_ui_review() {
 	}
 }
 
+// XTEC ************ ELIMINAT - Removed pop up
+// 2021.02.05 @aginard
+if (is_xtec_super_admin()) {
+//************ FI
+
 add_action( 'ig_es_broadcast_created', 'ig_es_render_broadcast_ui_review' );
+
+// XTEC ************ ELIMINAT - Removed pop up
+// 2021.02.05 @aginard
+}
+//************ FI

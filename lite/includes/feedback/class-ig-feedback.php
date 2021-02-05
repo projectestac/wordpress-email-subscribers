@@ -227,6 +227,13 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_5' ) ) {
 						}
 						/************** Update Review Status (End) ********************/
 
+                        // XTEC ************ AFEGIT - Removed feedback box
+                        // 2021.02.05 @aginard
+                        if (!is_xtec_super_admin()) {
+                            $got_feedback = true;
+                        }
+                        //************ FI
+
 						if ( ! $got_feedback ) {
 
 							$review_url = "https://wordpress.org/support/plugin/{$this->plugin}/reviews/";
