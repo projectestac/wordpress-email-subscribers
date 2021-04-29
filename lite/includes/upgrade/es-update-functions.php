@@ -1325,6 +1325,7 @@ function ig_es_update_465_db_version() {
 /* --------------------- ES 4.6.5(End)--------------------------- */
 
 /* --------------------- ES 4.6.6(Start)--------------------------- */
+
 /**
  * Create table for storing subscribers import CSV data temporarily
  *
@@ -1343,3 +1344,146 @@ function ig_es_update_466_db_version() {
 	ES_Install::update_db_version( '4.6.6' );
 }
 /* --------------------- ES 4.6.6(End)--------------------------- */
+
+/* --------------------- ES 4.6.7(Start)--------------------------- */
+
+/**
+ * Add Country column in contacts table
+ *
+ * @since 4.6.7
+ */
+function ig_es_update_467_alter_contacts_table() {
+	global $wpdb;
+	
+	$cols = $wpdb->get_col( "SHOW COLUMNS FROM {$wpdb->prefix}ig_contacts" );
+
+	if ( ! in_array( 'country', $cols, true ) ) {
+		$wpdb->query(
+			"ALTER TABLE {$wpdb->prefix}ig_contacts
+			ADD COLUMN `country_code` varchar(50) NULL AFTER `ip_address`"
+		);
+	}
+}
+
+/**
+ * Add country code based on the contacts ip_address
+ *
+ * @since 4.6.7
+ */
+function ig_es_add_country_code_to_contacts_table() {
+	IG_ES_Background_Process_Helper::add_action_scheduler_task( 'ig_es_add_country_code_to_audience' );
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.6.7
+ */
+function ig_es_update_467_db_version() {
+	ES_Install::update_db_version( '4.6.7' );
+}
+
+/* --------------------- ES 4.6.7(End)--------------------------- */
+
+/* --------------------- ES 4.6.8(Start)--------------------------- */
+
+/**
+ * Create table for storing subscribers import CSV data temporarily
+ *
+ * @since 4.6.8
+ */
+function ig_es_update_468_create_unsubscribe_feedback_table() {
+	ES_Install::create_tables( '4.6.8' );
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.6.8
+ */
+function ig_es_update_468_db_version() {
+	ES_Install::update_db_version( '4.6.8' );
+}
+/* --------------------- ES 4.6.8(End)--------------------------- */
+
+/**
+ * Add meta column in wc_guests table
+ *
+ * @since 4.6.9
+ */
+function ig_es_update_469_alter_wc_guests_table() {
+	global $wpdb;
+	
+	$cols = $wpdb->get_col( "SHOW COLUMNS FROM {$wpdb->prefix}ig_wc_guests" );
+
+	if ( ! in_array( 'meta', $cols, true ) ) {
+		$wpdb->query(
+			"ALTER TABLE {$wpdb->prefix}ig_wc_guests
+			ADD COLUMN `meta` longtext NULL AFTER `last_active`"
+		);
+	}
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.6.9
+ */
+function ig_es_update_469_db_version() {
+	ES_Install::update_db_version( '4.6.9' );
+}
+
+/* --------------------- ES 4.6.9(End)--------------------------- */
+
+/* --------------------- ES 4.6.13(Start)--------------------------- */
+
+/**
+ * Migrate sequence list settings into campaign rules
+ *
+ * @since 4.6.13
+ */
+function ig_es_migrate_4613_sequence_list_settings_into_campaign_rules() {
+	
+	$args = array(
+		'include_types' => array(
+			'sequence_message'
+		),
+	);
+
+	$sequence_campaigns = ES()->campaigns_db->get_all_campaigns( $args );
+	if ( ! empty( $sequence_campaigns ) ) {
+		foreach ( $sequence_campaigns as $campaign ) {
+			$campaign_id = $campaign['id'];
+			$list_ids    = $campaign['list_ids'];
+			if ( ! empty( $campaign_id ) && ! empty( $list_ids ) ) {
+				$list_ids      = explode( ',', $list_ids );
+				$campaign_meta = ! empty( $campaign['meta'] ) ? maybe_unserialize( $campaign['meta'] ) : array();
+				if ( empty( $campaign_meta['list_conditions'] ) ) {
+					$list_conditions = array();	
+					$list_conditions_data = array(
+						'field'    => '_lists__in',
+						'operator' => 'is',
+						'value'    => array(),
+					);
+					foreach ( $list_ids as $index => $list_id ) {
+						$list_conditions_data['value'][] = $list_id;
+					}
+					$list_conditions[][] = $list_conditions_data;
+					$campaign_meta['list_conditions'] = $list_conditions;
+					ES()->campaigns_db->update_campaign_meta( $campaign_id, $campaign_meta );
+				}
+			}
+		}
+	}
+}
+
+/**
+ * Update DB version
+ *
+ * @since 4.6.13
+ */
+function ig_es_update_4613_db_version() {
+	ES_Install::update_db_version( '4.6.13' );
+}
+
+/* --------------------- ES 4.6.13(End)--------------------------- */

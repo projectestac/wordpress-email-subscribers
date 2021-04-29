@@ -119,6 +119,46 @@
 			handleBindFunction(form);
 		});
 
+		let subscription_forms = $('.es_subscription_form');
+		// Check if page contains ES subscription form.
+		if ( subscription_forms.length > 0 ) {
+			let list_ids = [];
+			jQuery(subscription_forms).find('input[name="lists[]"]').each(function(){
+				let list_id = $(this).val();
+				if ( ! isNaN( list_id ) ) {
+					list_ids.push(list_id);
+				}
+			});
+			// Send an ajax request to get updated nonce value.
+			jQuery.ajax({
+				type: 'POST',
+				url: es_data.es_ajax_url,
+				data: {
+					action: 'ig_es_get_updated_subscription_data',
+					list_ids: list_ids,
+				},
+				dataType: 'json',
+				success: function(response) {
+					if( true === response.success ) {
+						let data          = response.data;
+						let updated_nonce = data.updated_nonce;
+						// Update nonce field in each subscription form.
+						jQuery(subscription_forms).find('input[name="es-subscribe"]').each(function(){
+							$(this).val(updated_nonce);
+						});
+						let list_hashes = data.list_hashes;
+						// Update list ids with list hash
+						jQuery(subscription_forms).find('input[name="lists[]"]').each(function(){
+							let list_id = $(this).val();
+							if ( list_hashes.hasOwnProperty( list_id ) ) {
+								let list_hash = list_hashes[ list_id ];
+								$(this).val(list_hash);
+							}
+						});
+					}
+				}
+			});
+		}
 	});
 	// Compatibility of ES with IG
 	jQuery( window ).on( "init.icegram", function(e, ig) {

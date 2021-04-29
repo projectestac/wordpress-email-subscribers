@@ -67,8 +67,13 @@ class ES_Action_Add_To_List extends ES_Workflow_Action {
 				if ( ! $data_type || ! $data_type->validate( $data_item ) ) {
 					continue;
 				}
-				$data = $data_type->get_data( $data_item );
-				$this->add_contact( $list_id, $data );
+				$data = array();
+				if ( is_callable( array( $data_type, 'get_data' ) ) ) {
+					$data = $data_type->get_data( $data_item );
+				}
+				if ( ! empty( $data['email'] ) ) {
+					$this->add_contact( $list_id, $data );
+				}
 
 				// Check if we have WC_Order object.
 				if ( $data_item instanceof WC_Order && is_callable( array( $data_item, 'get_items' ) ) ) {

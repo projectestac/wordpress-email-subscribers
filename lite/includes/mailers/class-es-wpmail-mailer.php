@@ -27,7 +27,7 @@ if ( ! class_exists( 'ES_Wpmail_Mailer' ) ) {
 
 			ES()->logger->info( 'Start Sending Email Using WP Mail', $this->logger_context );
 
-			$send_mail = wp_mail( $message->to, $message->subject, $message->body, $message->headers );
+			$send_mail = wp_mail( $message->to, $message->subject, $message->body, $message->headers, $message->attachments );
 
 			if ( ! $send_mail ) {
 				global $phpmailer;

@@ -104,6 +104,204 @@ class ES_Workflow_Data_Layer {
 		return $this->get_item( 'customer' );
 	}
 
+	/**
+	 * Gets the customer email based on the data layer.
+	 *
+	 * @return string
+	 */
+	public function get_customer_email() {
+
+		$customer_email = '';
+		$customer       = $this->get_customer();
+
+		if ( $customer ) {
+			// If the customer has an account always use the account email over a order billing email
+			// The reason for this is that a customer could change their account email and their
+			// orders will not be updated.
+			$customer_email = $customer->get_email();
+		}
+
+		return $customer_email;
+	}
+
+	/**
+	 * Gets the customer billing address 1.
+	 *
+	 * @return string
+	 */
+	public function get_customer_address_1() {
+		
+		$prop     = '';
+		$customer = $this->get_customer();
+
+		if ( $customer ) {
+			$prop = $customer->get_billing_address_1();
+		}
+
+		return $prop;
+	}
+
+	/**
+	 * Gets the customer billing address 2.
+	 *
+	 * @return string
+	 */
+	public function get_customer_address_2() {
+		$prop     = '';
+		$customer = $this->get_customer();
+
+		if ( $customer ) {
+			$prop = $customer->get_billing_address_2();
+		}
+
+		return $prop;
+	}
+
+	/**
+	 * Gets the customer first name based on the data layer.
+	 *
+	 * @return string
+	 */
+	public function get_customer_first_name() {
+		$prop     = '';
+		$customer =  $this->get_customer();
+
+		if ( $customer ) {
+			$prop = $customer->get_first_name();
+		}
+
+		return $prop;
+	}
+
+
+	/**
+	 * Gets the customer last name based on the data layer.
+	 *
+	 * @return string
+	 */
+	public function get_customer_last_name() {
+		$prop     = '';
+		$customer =  $this->get_customer();
+
+		if ( $customer ) {
+			$prop = $customer->get_last_name();
+		}
+
+		return $prop;
+	}
+
+
+	/**
+	 * Gets the customer full name based on the data layer.
+	 *
+	 * @return string
+	 */
+	public function get_customer_full_name() {
+		/* translators: 1. Customer first name 2. Customer last name */
+		return trim( sprintf( _x( '%1$s %2$s', 'full name', 'email-subscribers' ), $this->get_customer_first_name(), $this->get_customer_last_name() ) );
+	}
+
+
+	/**
+	 * Gets the customer billing phone.
+	 * Doesn't parse or format.
+	 *
+	 * @return string
+	 */
+	public function get_customer_phone() {
+		$prop     = '';
+		$customer =  $this->get_customer();
+
+		if ( $customer ) {
+			$prop = $customer->get_billing_phone();
+		}
+
+		return $prop;
+	}
+
+
+	/**
+	 * Gets the customer billing company.
+	 *
+	 * @return string
+	 */
+	public function get_customer_company() {
+		$prop     = '';
+		$customer =  $this->get_customer();
+
+		if ( $customer ) {
+			$prop = $customer->get_billing_company();
+		}
+
+		return $prop;
+	}
+
+
+	/**
+	 * Gets the customer billing country code.
+	 *
+	 * @return string
+	 */
+	public function get_customer_country() {
+		$prop     = '';
+		$customer =  $this->get_customer();
+
+		if ( $customer ) {
+			$prop = $customer->get_billing_country();
+		}
+
+		return $prop;
+	}
+
+
+	/**
+	 * Gets the customer billing state.
+	 *
+	 * @return string
+	 */
+	public function get_customer_state() {
+		$prop     = '';
+		$customer =  $this->get_customer();
+
+		if ( $customer ) {
+			$prop = $customer->get_billing_state();
+		}
+
+		return $prop;
+	}
+
+
+	/**
+	 * Gets the customer billing city.
+	 *
+	 * @return string
+	 */
+	public function get_customer_city() {
+		$prop     = '';
+		$customer =  $this->get_customer();
+
+		if ( $customer ) {
+			$prop = $customer->get_billing_city();
+		}
+
+		return $prop;
+	}
+
+	/**
+	 * Gets the customer billing postcode.
+	 *
+	 * @return string
+	 */
+	public function get_customer_postcode() {
+		$prop     = '';
+		$customer =  $this->get_customer();
+
+		if ( $customer ) {
+			$prop = $customer->get_billing_postcode();
+		}
+
+		return $prop;
+	}
 
 	/**
 	 * Get cart object from data layer

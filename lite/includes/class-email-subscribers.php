@@ -666,6 +666,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/db/class-es-db-forms.php',
 				'lite/includes/db/class-es-db-blocked-emails.php',
 				'lite/includes/db/class-es-db-actions.php',
+				'lite/includes/db/class-ig-es-db-unsubscribe-feedback.php',
 				'lite/includes/db/class-ig-es-db-wc-cart.php',
 				'lite/includes/db/class-ig-es-db-wc-guest.php',
 
@@ -709,6 +710,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/classes/class-es-form-widget.php',
 				'lite/includes/classes/class-es-export-subscribers.php',
 				'lite/includes/classes/class-es-import-subscribers.php',
+				'lite/includes/classes/class-es-campaign-report.php',
 				// Start-IG-Code.
 				'lite/includes/classes/class-es-info.php',
 				// End-IG-Code.
@@ -723,6 +725,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/classes/class-es-geolocation.php',
 				'lite/includes/classes/class-es-browser.php',
 				'lite/includes/classes/class-ig-es-trial.php',
+				'lite/includes/classes/class-es-mailchimp-api.php',
 
 				// Core Functions
 				'lite/includes/es-core-functions.php',
@@ -749,7 +752,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				// Pro Feature
 				'lite/includes/pro-features.php',
 				// End-IG-Code.
-
+				
 				// Feedback Class
 				'lite/includes/feedback/class-ig-tracker.php',
 				// Start-IG-Code.
@@ -770,14 +773,19 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/workflows/abstracts/class-es-workflow-trigger.php',
 				'lite/includes/workflows/abstracts/class-es-workflow-action.php',
 				'lite/includes/workflows/abstracts/class-es-workflow-data-type.php',
+				'lite/includes/workflows/abstracts/class-ig-es-workflow-variable.php',
 				
 				// Workflow Utility
 				'lite/includes/workflows/class-es-clean.php',
 				'lite/includes/workflows/class-es-format.php',
 				'lite/includes/workflows/class-es-workflow-time-helper.php',
 				'lite/includes/workflows/class-es-workflow-datetime.php',
+				'lite/includes/workflows/class-ig-es-variables-processor.php',
+				'lite/includes/workflows/class-ig-es-workflow-variable-parser.php',
+				'lite/includes/workflows/class-ig-es-variables.php',
+				'lite/includes/workflows/class-ig-es-replace-helper.php',
 				'lite/includes/workflows/workflow-helper-functions.php',
-				
+
 				// Workflow
 				'lite/includes/workflows/class-es-workflow.php',
 				'lite/includes/workflows/class-es-workflow-factory.php',
@@ -786,6 +794,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/workflows/data-types/abstracts/class-es-data-type-form-data.php',
 				'lite/includes/workflows/data-types/class-es-data-type-user.php',
 				'lite/includes/workflows/class-es-workflow-data-types.php',
+				
+				'lite/includes/workflows/variables/class-es-workflow-data-types.php',
 				
 				// Data Layer
 				'lite/includes/workflows/class-es-workflow-data-layer.php',
@@ -841,6 +851,12 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				// Background Process Helper
 				'lite/includes/classes/class-ig-es-background-process-helper.php',
 				
+				// Subscribers Query
+				'lite/includes/classes/class-ig-es-subscriber-query.php',
+				
+				// Campaign Rules
+				'lite/admin/class-ig-es-campaign-rules.php',
+
 				'starter/starter-class-email-subscribers.php',
 				'pro/pro-class-email-subscribers.php',
 			);
@@ -1502,5 +1518,375 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			return $page_prefix;
 		}
 
+		/**
+		 * Check whether constant definition is enabled or not.
+		 *
+		 * @return bool
+		 * 
+		 * @since 4.7.0
+		 */
+		public function is_const_enabled() {
+
+			$const_enabled = defined( 'IG_ES_CONSTANT_ENABLED' ) && IG_ES_CONSTANT_ENABLED === true;
+
+			return $const_enabled;
+		}
+
+		/**
+		 * Check if mailer setting is defined through constant
+		 *
+		 * @param string $group
+		 * @param string $key
+		 *
+		 * @return bool
+		 *
+		 * @since 4.7.0
+		 */
+		public function is_const_defined( $group, $key ) {
+
+			if ( ! $this->is_const_enabled() ) {
+				return false;
+			}
+
+			$return = false;
+
+			switch ( $group ) {
+				case 'pepipost':
+					switch ( $key ) {
+						case 'api_key':
+							$return = defined( 'IG_ES_PEPIPOST_API_KEY' ) && IG_ES_PEPIPOST_API_KEY;
+							break;
+					}
+
+					break;
+				case 'smtp':
+					switch ( $key ) {
+						case 'host':
+							$return = defined( 'IG_ES_SMTP_HOST' ) && IG_ES_SMTP_HOST;
+							break;
+						case 'encryption':
+							$return = defined( 'IG_ES_SMTP_ENCRYPTION' ) && IG_ES_SMTP_ENCRYPTION;
+							break;
+						case 'port':
+							$return = defined( 'IG_ES_SMTP_PORT' ) && IG_ES_SMTP_PORT;
+							break;
+						case 'authentication':
+							$return = defined( 'IG_ES_SMTP_AUTHENTICATION' ) && IG_ES_SMTP_AUTHENTICATION;
+							break;
+						case 'username':
+							$return = defined( 'IG_ES_SMTP_USERNAME' ) && IG_ES_SMTP_USERNAME;
+							break;
+						case 'password':
+							$return = defined( 'IG_ES_SMTP_PASSWORD' ) && IG_ES_SMTP_PASSWORD;
+							break;
+					}
+
+					break;
+
+				case 'Amazon_SES':
+					switch ( $key ) {
+						case 'access_key_id':
+							$return = defined( 'IG_ES_AMAZONSES_ACCESS_KEY_ID' ) && IG_ES_AMAZONSES_ACCESS_KEY_ID;
+							break;
+						case 'secret_access_key':
+							$return = defined( 'IG_ES_AMAZONSES_SECRET_ACCESS_KEY' ) && IG_ES_AMAZONSES_SECRET_ACCESS_KEY;
+							break;
+						case 'region':
+							$return = defined( 'IG_ES_AMAZONSES_REGION' ) && IG_ES_AMAZONSES_REGION;
+							break;
+					}
+
+					break;
+
+				case 'mailgun':
+					switch ( $key ) {
+						case 'private_api_key':
+							$return = defined( 'IG_ES_MAILGUN_PRIVATE_API_KEY' ) && IG_ES_MAILGUN_PRIVATE_API_KEY;
+							break;
+						case 'domain_name':
+							$return = defined( 'IG_ES_MAILGUN_DOMAIN_NAME' ) && IG_ES_MAILGUN_DOMAIN_NAME;
+							break;
+						case 'region':
+							$return = defined( 'IG_ES_MAILGUN_REGION' ) && IG_ES_MAILGUN_REGION;
+							break;
+					}
+
+					break;
+				
+				case 'sparkpost':
+					switch ( $key ) {
+						case 'api_key':
+							$return = defined( 'IG_ES_SPARKPOST_API_KEY' ) && IG_ES_SPARKPOST_API_KEY;
+							break;
+						case 'region':
+							$return = defined( 'IG_ES_SPARKPOST_REGION' ) && IG_ES_SPARKPOST_REGION;
+							break;
+					}
+
+					break;
+
+				case 'sendgrid':
+					switch ( $key ) {
+						case 'api_key':
+							$return = defined( 'IG_ES_SENDGRID_API_KEY' ) && IG_ES_SENDGRID_API_KEY;
+							break;
+					}
+
+					break;
+
+				
+			}
+
+			return $return;
+		}
+
+		/**
+		 * Process the options values through the constants check.
+		 * If we have defined associated constant - use it instead of a DB value.
+		 *
+		 * @param string $group
+		 * @param string $key
+		 * @param mixed $value
+		 *
+		 * @since 4.7.0
+		 *
+		 * @return mixed
+		 */
+		public function get_const_value( $group, $key, $value = '' ) {
+
+			if ( ! $this->is_const_enabled() ) {
+				return $value;
+			}
+
+			$return = null;
+
+			switch ( $group ) {
+
+				case 'smtp':
+					switch ( $key ) {
+						case 'host':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_SMTP_HOST : $value;
+							break;
+						case 'encryption':
+							$return = $this->is_const_defined( $group, $key ) ? ( IG_ES_SMTP_ENCRYPTION === '' ? 'none' : IG_ES_SMTP_ENCRYPTION ) : $value;
+							break;
+						case 'port':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_SMTP_PORT : $value;
+							break;
+						case 'authentication':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_SMTP_AUTHENTICATION : $value;
+							break;
+						case 'username':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_SMTP_USERNAME : $value;
+							break;
+						case 'password':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_SMTP_PASSWORD : $value;
+							break;
+					}
+
+					break;
+
+				case 'Amazon_SES':
+					switch ( $key ) {
+						case 'access_key_id':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_AMAZONSES_ACCESS_KEY_ID : $value;
+							break;
+						case 'secret_access_key':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_AMAZONSES_SECRET_ACCESS_KEY : $value;
+							break;
+						case 'region':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_AMAZONSES_REGION : $value;
+							break;
+					}
+
+					break;
+
+				case 'mailgun':
+					switch ( $key ) {
+						case 'private_api_key':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_MAILGUN_PRIVATE_API_KEY : $value;
+							break;
+						case 'domain_name':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_MAILGUN_DOMAIN_NAME : $value;
+							break;
+						case 'region':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_MAILGUN_REGION : $value;
+							break;
+					}
+
+					break;
+
+				case 'sendgrid':
+					switch ( $key ) {
+						case 'api_key':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_SENDGRID_API_KEY : $value;
+							break;
+					}
+
+					break;
+
+				case 'sparkpost':
+					switch ( $key ) {
+						case 'api_key':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_SPARKPOST_API_KEY : $value;
+							break;
+						case 'region':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_SPARKPOST_REGION : $value;
+							break;
+					}
+
+					break;
+
+				case 'pepipost':
+					switch ( $key ) {
+						case 'api_key':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_PEPIPOST_API_KEY : $value;
+							break;
+					}
+
+					break;
+
+				default:
+					// Always return the default value if nothing from above matches the request.
+					$return = $value;
+			}
+
+			return $return;
+		}
+
+		/**
+		 * Get related constant name for given key/group pair
+		 *
+		 * @param string $group
+		 * @param string $key
+		 *
+		 * @since 4.7.0
+		 *
+		 * @return mixed
+		 */
+		public function get_const_name( $group, $key ) {
+
+			$return = '';
+			
+			if ( $this->is_const_enabled() ) {
+				switch ( $group ) {
+	
+					case 'smtp':
+						switch ( $key ) {
+							case 'host':
+								$return = 'IG_ES_SMTP_HOST';
+								break;
+							case 'port':
+								$return = 'IG_ES_SMTP_PORT';
+								break;
+							case 'encryption':
+								$return = 'IG_ES_SMTP_ENCRYPTION';
+								break;
+							case 'authentication':
+								$return = 'IG_ES_SMTP_AUTHENTICATION';
+								break;
+							case 'username':
+								$return = 'IG_ES_SMTP_USERNAME';
+								break;
+							case 'password':
+								$return = 'IG_ES_SMTP_PASSWORD';
+								break;
+						}
+	
+						break;
+	
+					case 'Amazon_SES':
+						switch ( $key ) {
+							case 'access_key_id':
+								$return = 'IG_ES_AMAZONSES_ACCESS_KEY_ID';
+								break;
+							case 'secret_access_key':
+								$return = 'IG_ES_AMAZONSES_SECRET_ACCESS_KEY';
+								break;
+							case 'region':
+								$return = 'IG_ES_AMAZONSES_REGION';
+								break;
+						}
+	
+						break;
+	
+					case 'mailgun':
+						switch ( $key ) {
+							case 'private_api_key':
+								$return = 'IG_ES_MAILGUN_PRIVATE_API_KEY';
+								break;
+							case 'domain_name':
+								$return = 'IG_ES_MAILGUN_DOMAIN_NAME';
+								break;
+							case 'region':
+								$return = 'IG_ES_MAILGUN_REGION';
+								break;
+						}
+	
+						break;
+	
+					case 'sendgrid':
+						switch ( $key ) {
+							case 'api_key':
+								$return = 'IG_ES_SENDGRID_API_KEY';
+								break;
+						}
+	
+						break;
+	
+					case 'sparkpost':
+						switch ( $key ) {
+							case 'api_key':
+								$return = 'IG_ES_SPARKPOST_API_KEY';
+								break;
+							case 'region':
+								$return = 'IG_ES_SPARKPOST_REGION';
+								break;
+						}
+	
+						break;
+	
+					case 'pepipost':
+						switch ( $key ) {
+							case 'api_key':
+								$return = 'IG_ES_PEPIPOST_API_KEY';
+								break;
+						}
+	
+						break;
+	
+					default:
+						$return = '';
+				}
+			}
+
+			return $return;
+		}
+
+		/**
+		 * Display a message of a constant that was set.
+		 *
+		 * @param string $group Group name.
+		 * @param string $key Key name.
+		 *
+		 * @return $message
+		 * 
+		 * @since 4.7.0
+		 */
+		public function get_const_set_message( $group, $key ) {
+			$constant = ES()->get_const_name( $group, $key );
+			ob_start();
+			?>
+			<?php
+			printf( /* translators: %1$s - constant that was used */
+				esc_html__( 'Value was set using constant %1$s', 'email-subscribers' ),
+				'<code>' . esc_attr( $constant ) . '</code>'
+			);
+			?>
+			<br/>
+			<?php
+			$message = ob_get_clean();
+			return $message;
+		}
 	}
 }

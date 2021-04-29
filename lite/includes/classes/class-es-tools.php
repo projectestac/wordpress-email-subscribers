@@ -49,7 +49,11 @@ class ES_Tools {
 				$content = str_replace( '{{NAME}}', 'Username', $content );
 			}
 
-			$response = ES()->mailer->send_test_email( $email, $subject, $content );
+			$attachments = ig_es_get_data( $_POST, 'attachments', array() );
+
+			$merge_tags = array( 'attachments' => $attachments );
+
+			$response = ES()->mailer->send_test_email( $email, $subject, $content, $merge_tags );
 
 			if ( $response && 'SUCCESS' === $response['status'] ) {
 				$response['message'] = __( 'Email has been sent. Please check your inbox', 'email-subscribers' );

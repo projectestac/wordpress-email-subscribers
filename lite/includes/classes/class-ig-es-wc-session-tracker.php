@@ -128,7 +128,7 @@ class IG_ES_WC_Session_Tracker {
 	/**
 	 * Returns the current guest from tracking cookie.
 	 *
-	 * @return Guest|bool
+	 * @return IG_ES_Guest|bool
 	 */
 	public static function get_current_guest() {
 		if ( ! self::session_tracking_enabled() ) {
@@ -177,7 +177,7 @@ class IG_ES_WC_Session_Tracker {
 	 * @param string $new_email
 	 * @param string $language
 	 *
-	 * @return Customer|false
+	 * @return IG_ES_Customer|false
 	 */
 	public static function set_session_by_captured_email( $new_email, $language = '' ) {
 		

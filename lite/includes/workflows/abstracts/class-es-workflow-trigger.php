@@ -237,6 +237,26 @@ abstract class ES_Workflow_Trigger {
 	}
 
 	/**
+	 * Check if there are active workflow for this trigger
+	 * 
+	 * @return bool
+	 * 
+	 * @since 4.6.10
+	 */
+	public function has_workflows() {
+		
+		$workflow_query = new ES_Workflow_Query();
+		$workflow_query->set_triggers( $this->get_name() );
+
+		$workflows = $workflow_query->get_results();
+		if ( ! empty( $workflows ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get workflow ids registered to use this trigger
 	 *
 	 * @since 4.4.1

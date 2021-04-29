@@ -67,7 +67,7 @@ class ES_Newsletters {
 				$subject     = ! empty( $broadcast_data['subject'] ) ? $broadcast_data['subject'] : '';
 
 				// Check if user has added required data for creating broadcast.
-				if ( ! empty( $broadcast_data['subject'] ) && ! empty( $broadcast_data['body'] ) && ! empty( $list_id ) && ! empty( $subject ) ) {
+				if ( ! empty( $broadcast_data['subject'] ) && ! empty( $broadcast_data['body'] ) && ! empty( $subject ) ) {
 					$broadcast_data['base_template_id'] = $template_id;
 					$broadcast_data['list_ids']         = $list_id;
 					$broadcast_data['status']           = IG_ES_CAMPAIGN_STATUS_SCHEDULED;
@@ -76,7 +76,12 @@ class ES_Newsletters {
 					$meta['es_schedule_date']           = ! empty( $broadcast_data['es_schedule_date'] ) ? $broadcast_data['es_schedule_date'] : '';
 					$meta['es_schedule_time']           = ! empty( $broadcast_data['es_schedule_time'] ) ? $broadcast_data['es_schedule_time'] : '';
 					$meta['pre_header']                 = ! empty( $broadcast_data['pre_header'] ) ? $broadcast_data['pre_header'] : '';
-					$broadcast_data['meta']             = maybe_serialize( $meta );
+
+					if ( ! empty( $meta['list_conditions'] ) ) {
+						$meta['list_conditions'] = IG_ES_Campaign_Rules::remove_empty_conditions( $meta['list_conditions'] );
+					}
+
+					$broadcast_data['meta'] = maybe_serialize( $meta );
 
 					self::es_send_email_callback( $broadcast_data );
 
@@ -117,12 +122,6 @@ class ES_Newsletters {
 				);
 			} elseif ( empty( $broadcast_data['body'] ) ) {
 				$message      = __( 'Please add message body or select template', 'email-subscribers' );
-				$message_data = array(
-					'message' => $message,
-					'type'    => 'error',
-				);
-			} elseif ( empty( $list_id ) ) {
-				$message      = __( 'Please select list.', 'email-subscribers' );
 				$message_data = array(
 					'message' => $message,
 					'type'    => 'error',
@@ -176,7 +175,7 @@ class ES_Newsletters {
 		$lists       = ES_Common::prepare_list_dropdown_options( $list_ids );
 		$from_email  = ES_Common::get_ig_option( 'from_email' );
 
-		$broadcast_id         = ! empty( $broadcast_data['id'] ) ? $broadcast_data['id'] : '';
+		$broadcast_id         = ! empty( $broadcast_data['id'] ) ? $broadcast_data['id'] : 0;
 		$broadcast_from_name  = ! empty( $broadcast_data['from_name'] ) ? $broadcast_data['from_name'] : get_option( 'ig_es_from_name' );
 		$broadcast_email      = ! empty( $broadcast_data['from_email'] ) ? $broadcast_data['from_email'] : $from_email;
 		$broadcast_reply_to   = ! empty( $broadcast_data['reply_to_email'] ) ? $broadcast_data['reply_to_email'] : $from_email;
@@ -386,16 +385,20 @@ class ES_Newsletters {
 										</select>
 									</div>
 									<div class="block py-2 mx-4 ">
-										<label for="recipients" class="text-sm font-medium leading-5 text-gray-700"><?php echo esc_html__( 'Recipients', 'email-subscribers' ); ?></label>
-										<select <?php echo esc_attr( $select_list_attr ); ?> class="block w-full h-8 mt-1 text-sm rounded-md cursor-pointer h-9 <?php echo esc_attr( $select_list_class ); ?>" name="<?php echo esc_attr( $select_list_name ); ?>" id="ig_es_broadcast_list_ids">
-											<?php
-											 echo wp_kses( $lists, $allowedtags ); 
-											?>
-										</select>
+										<?php
+											do_action( 'ig_es_show_campaign_rules', $broadcast_id, $broadcast_data );
+										?>
 										<!-- Hidden field to detect whether admin has update campaign lists or not during editing of campaign -->
 										<input type="hidden" name="broadcast_data[existing_list_ids]" value="<?php echo esc_attr( $list_ids ); ?>">
 										<div class="block mt-1">
-											<span id="ig_es_total_contacts"></span>
+											<span id="ig_es_total_contacts">
+												<h2 class='text-sm font-normal text-gray-600'>
+													<span class=""><?php echo esc_html__( 'Total recipients:', 'email-subscribers' ); ?> </span>
+													<span class='text-base font-medium text-gray-700'>
+														<span class='ig_es_list_contacts_count'></span>
+													</span>
+												</h2>
+											</span>
 										</div>
 									</div>
 
@@ -568,13 +571,13 @@ class ES_Newsletters {
 
 				// Add notification to mailing queue if not already added.
 				if ( empty( $notification ) ) {
-					// We need to set mailing queue status to Queueing to ensure it is not picked by Cron(WP Cron or ES Cron) before all of its subscribers are added to the sending queue.
-					$data['status']      = 'Queueing';
-					$data['count']       = 0; // Count would be added in background process after all subscribers are added in the sending_queue table.
+					$data['count']       = 0;
 					$mailing_queue_id    = ES_DB_Mailing_Queue::add_notification( $data );
+					$mailing_queue_hash  = $guid;
 					$should_queue_emails = true;
 				} else {
-					$notification_id     = $notification['id'];
+					$mailing_queue_id    = $notification['id'];
+					$mailing_queue_hash  = $notification['hash'];
 					$notification_status = $notification['status'];
 					// Check if notification is not sending or already sent then only update the notification.
 					if ( ! in_array( $notification_status, array( 'Sending', 'Sent' ), true ) ) {
@@ -586,27 +589,43 @@ class ES_Newsletters {
 						// Check if list has been updated, if yes then we need to delete emails from existing lists and requeue the emails from the updated lists.
 						if ( $selected_list_ids !== $existing_list_ids ) {
 							$should_queue_emails = true;
-							$mailing_queue_id    = $notification_id;
 							$data['count']       = 0;
-							$data['status']      = 'Queueing';
 						} else {
 							$data['count']       = $notification['count'];
 						}
 
-						$notification        = ES_DB_Mailing_Queue::update_notification( $notification_id, $data );
+						$notification        = ES_DB_Mailing_Queue::update_notification( $mailing_queue_id, $data );
 					}
 				}
 
-				if ( ! empty( $mailing_queue_id ) && $should_queue_emails ) {
+				if ( ! empty( $mailing_queue_id ) ) {
+					
+					if ( $should_queue_emails ) {
 
-					// Delete existing sending queue if any already present.
-					ES_DB_Sending_Queue::delete_sending_queue_by_mailing_id( array( $mailing_queue_id ) );
+						// Delete existing sending queue if any already present.
+						ES_DB_Sending_Queue::delete_sending_queue_by_mailing_id( array( $mailing_queue_id ) );
 
-					$action_args = array(
-						'mailing_queue_id' => $mailing_queue_id,
-						'list_ids'         => $list_id,
-					);
-					IG_ES_Background_Process_Helper::add_action_scheduler_task( 'ig_es_add_subscribers_to_sending_queue', $action_args );
+						ES_DB_Sending_Queue::do_insert_from_contacts_table( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
+					}
+					
+					$mailing_queue = ES_DB_Mailing_Queue::get_email_by_id( $mailing_queue_id );
+					if ( ! empty( $mailing_queue ) ) {
+		
+						$queue_start_at    = $mailing_queue['start_at'];
+						$current_timestamp = time();
+						$sending_timestamp = strtotime( $queue_start_at );
+			
+						// Check if campaign sending time has come.
+						if ( ! empty( $sending_timestamp ) && $sending_timestamp <= $current_timestamp ) {
+							$request_args = array(
+								'action'        => 'ig_es_trigger_mailing_queue_sending',
+								'campaign_hash' => $mailing_queue_hash,
+							);
+							// Send an asynchronous request to trigger sending of campaign emails.
+							IG_ES_Background_Process_Helper::send_async_ajax_request( $request_args, true );
+						}
+					
+					}
 				}
 			}
 		}
@@ -718,6 +737,10 @@ class ES_Newsletters {
 
 		$broadcast_data = ig_es_get_request_data( 'broadcast_data', array(), false );
 
+		/** 
+		 * To allow insert of new broadcast data, 
+		 * we are specifically setting $broadcast_id to null when id is empty in $broadcast_data
+		 **/
 		$broadcast_id = ! empty( $broadcast_data['id'] ) ? $broadcast_data['id'] : null;
 		$is_updating  = ! empty( $broadcast_id ) ? true : false;
 		$list_id      = ! empty( $broadcast_data['list_ids'] ) ? $broadcast_data['list_ids'] : '';
@@ -729,8 +752,12 @@ class ES_Newsletters {
 		$broadcast_data['status']           = ! empty( $broadcast_data['status'] ) ? 1 : 0;
 		$meta                               = ! empty( $broadcast_data['meta'] ) ? $broadcast_data['meta'] : array();
 		$meta['pre_header']                 = ! empty( $broadcast_data['pre_header'] ) ? $broadcast_data['pre_header'] : '';
-		$broadcast_data['meta']             = maybe_serialize( $meta );
 
+		if ( ! empty( $meta['list_conditions'] ) ) {
+			$meta['list_conditions'] = IG_ES_Campaign_Rules::remove_empty_conditions( $meta['list_conditions'] );
+		}
+
+		$broadcast_data['meta'] = maybe_serialize( $meta );
 		$broadcast_data['type'] = 'newsletter';
 		$broadcast_data['name'] = $broadcast_data['subject'];
 		$broadcast_data['slug'] = sanitize_title( sanitize_text_field( $broadcast_data['name'] ) );

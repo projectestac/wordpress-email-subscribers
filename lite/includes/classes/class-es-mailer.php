@@ -188,18 +188,11 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 
 			if ( ! empty( $admin_emails ) && is_array( $admin_emails ) && count( $admin_emails ) > 0 ) {
 
-				$name  = ! empty( $data['name'] ) ? $data['name'] : '';
-				$email = ! empty( $data['email'] ) ? $data['email'] : '';
-				$list  = ! empty( $data['list_name'] ) ? $data['list_name'] : '';
-
 				$subject = $this->get_admin_new_contact_email_subject();
-
+				$subject = $this->replace_admin_notification_merge_tags( $data, $subject );
+				
 				$content = $this->get_admin_new_contact_email_content();
-
-				$content = str_replace( '{{NAME}}', $name, $content );
-				$content = str_replace( '{{EMAIL}}', $email, $content );
-				$content = str_replace( '{{GROUP}}', '{{LIST}}', $content );
-				$content = str_replace( '{{LIST}}', $list, $content );
+				$content = $this->replace_admin_notification_merge_tags( $data, $content );
 
 				$this->add_unsubscribe_link = false;
 				$this->add_tracking_pixel   = false;
@@ -576,6 +569,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			$this->time_start = time();
 			$message_id       = ! empty( $merge_tags['message_id'] ) ? $merge_tags['message_id'] : 0;
 			$campaign_id      = ! empty( $merge_tags['campaign_id'] ) ? $merge_tags['campaign_id'] : 0;
+			$attachments      = ! empty( $merge_tags['attachments'] ) ? $merge_tags['attachments'] : array();
 
 			$sender_data   = array();
 			$campaign_type = '';
@@ -591,6 +585,25 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 						$sender_data['from_email']     = $from_email;
 						$sender_data['reply_to_email'] = $reply_to_email;
 					}
+
+					$campaign_meta = maybe_unserialize( $campaign['meta'] );
+					if ( ! empty( $campaign_meta['attachments'] ) ) {
+						$sender_data['attachments'] = array();
+						$attachments                = $campaign_meta['attachments'];
+					}
+				}
+			}
+
+			if ( ! empty( $attachments ) ) {
+				foreach ( $attachments as $attachment_id ) {
+					if ( ! $attachment_id ) {
+						continue;
+					}
+					$attached_file = get_attached_file( $attachment_id );
+					if ( ! is_file( $attached_file ) ) {
+						continue;
+					}
+					$sender_data['attachments'][ basename( $attached_file ) ] = $attached_file;
 				}
 			}
 
@@ -606,21 +619,88 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 
 			// When email in not sent through a campaign e.g. Subscription Welcome emails.
 			if ( 0 === $campaign_id ) {
-				$this->email_id_map = ES()->contacts_db->get_email_id_map( (array) $emails );
+				$this->email_id_map = ES()->contacts_db->get_email_id_map( $emails );
 			} else {
 				/**
 				 * In case of sequence message campaign, fetch contact-email mapping from contacts table, since sending_queue table isn't used to store sequence campaign data.
 				 * TODO: Please check need for using sending_queue table for other campaigns type. If it is not required, then we can remove it for other campaigns types as well.
 				 */
 				if ( 'sequence_message' === $campaign_type ) {
-					$this->email_id_map = ES()->contacts_db->get_email_id_map( (array) $emails );
+					$this->email_id_map = ES()->contacts_db->get_email_id_map( $emails );
 				} else {
 					// If the campaign isn't a sequence message, then we can fetch contact-email mapping data from sending_queue table
 					$this->email_id_map = ES_DB_Sending_Queue::get_emails_id_map_by_campaign( $campaign_id, $emails );
 				}
 			}
 
-			foreach ( (array) $emails as $email ) {
+			$total_emails_to_send = count( $emails );
+			
+			if ( $this->mailer->support_batch_sending ) {
+				
+				// If sender name is not passed then fetch it from ES settings.
+				if ( ! empty( $sender_data['from_name'] ) ) {
+					$sender_name = $sender_data['from_name'];
+				} else {
+					$sender_name = $this->get_from_name();
+				}
+
+				// If sender email is not passed then fetch it from ES settings.
+				if ( ! empty( $sender_data['from_email'] ) ) {
+					$sender_email = $sender_data['from_email'];
+				} else {
+					$sender_email = $this->get_from_email();
+				}
+
+				// If reply to email is not passed then fetch it from ES settings.
+				if ( ! empty( $sender_data['reply_to_email'] ) ) {
+					$reply_to_email = $sender_data['reply_to_email'];
+				} else if ( empty( $reply_to_email ) ) {
+					$reply_to_email = $this->get_from_email();
+				}
+				
+				$charset = get_bloginfo( 'charset' );
+				$subject = html_entity_decode( $subject, ENT_QUOTES, $charset );
+				$content = preg_replace( '/data-json=".*?"/is', '', $content );
+				$content = preg_replace( '/  +/s', ' ', $content );
+
+				if ( $this->add_unsubscribe_link ) {
+					$unsubscribe_message = get_option( 'ig_es_unsubscribe_link_content', '' );
+					$unsubscribe_message = stripslashes( $unsubscribe_message );
+					$content 			.= $unsubscribe_message;
+				}
+
+				$subject	     = $this->replace_global_tags( $subject );
+				$subject         = $this->mailer->convert_es_tags_to_mailer_tags( $subject );
+				
+				$content         = $this->replace_global_tags( $content );
+				$content         = $this->mailer->convert_es_tags_to_mailer_tags( $content );
+				$variable_string = $this->mailer->get_variable_string( 'link' );
+				$content         = $this->add_links_variables( $content, $campaign_id, $message_id, $variable_string );
+				
+				if ( $this->can_track_open() ) {
+					$tracking_image = '<img src="%recipient.tracking_pixel_url%" width="1" height="1" alt=""/>';
+					$content 	   .= $tracking_image;
+				}
+
+				$mailer_data_set = $this->mailer->set_mailer_data();
+				
+				// Error setting up mailer?
+				if ( is_wp_error( $mailer_data_set ) ) {
+					$response['status']  = 'ERROR';
+					$response['message'] = $mailer_data_set->get_error_messages();
+
+					return $response;
+				}
+
+				$this->mailer->set_from( $sender_email, $sender_name );
+				$this->mailer->set_reply_to( $reply_to_email );
+				$this->mailer->set_subject( $subject );
+				$this->mailer->set_content( array(
+					'html' => $content
+				) );
+			}
+
+			foreach ( $emails as $email_counter => $email ) {
 
 				// Clean it.
 				$email = trim( $email );
@@ -642,27 +722,59 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 					'guid'        => ig_es_get_data( $merge_tags, 'hash', '' ),
 				);
 
-				do_action( 'ig_es_before_message_send', $contact_id, $campaign_id, $message_id );
+				if ( $this->mailer->support_batch_sending ) {
+					if ( ! $this->mailer->is_batch_limit_reached() ) {
+						do_action( 'ig_es_before_message_send', $contact_id, $campaign_id, $message_id );
+						$this->mailer->add_into_batch( $email, $merge_tags );
+					}
 
-				$message = $this->build_message( $subject, $content, $email, $merge_tags, $nl2br, $sender_data );
-
-				// object | WP_Error
-				$send_response = $this->mailer->send( $message );
-
-				// Error Sending Email?
-				if ( is_wp_error( $send_response ) ) {
-					$response['status']  = 'ERROR';
-					$response['message'] = $send_response->get_error_messages();
-
-					do_action( 'ig_es_email_sending_error', $contact_id, $campaign_id, $message_id, $response );
-
-					// TODO: Log somewhere
+					if ( ( $email_counter + 1 ) >= $total_emails_to_send || $this->mailer->is_batch_limit_reached()  ) {
+						if ( ! empty( $sender_data['attachments'] )) {
+							$this->mailer->set_attachments( $sender_data['attachments'] );
+						}
+						$send_response = $this->mailer->send_batch();
+						
+						if ( ! is_wp_error( $send_response ) ) {
+							foreach ( $this->mailer->batch_data as $email_data ) {
+								$contact_id = $email_data['contact_id'];
+								do_action( 'ig_es_message_sent', $contact_id, $campaign_id, $message_id );
+							}
+						}
+						
+						$this->email_limit -= $this->mailer->current_batch_size;
+						$this->mailer->clear_batch();
+						
+						// Error Sending Email?
+						if ( is_wp_error( $send_response ) ) {
+							$response['status']  = 'ERROR';
+							$response['message'] = $send_response->get_error_messages();
+							// TODO: Log somewhere
+						}
+					}
+				} else {
+					do_action( 'ig_es_before_message_send', $contact_id, $campaign_id, $message_id );
+	
+					$message = $this->build_message( $subject, $content, $email, $merge_tags, $nl2br, $sender_data );
+	
+					// object | WP_Error
+					$send_response = $this->mailer->send( $message );
+	
+					// Error Sending Email?
+					if ( is_wp_error( $send_response ) ) {
+						$response['status']  = 'ERROR';
+						$response['message'] = $send_response->get_error_messages();
+	
+						do_action( 'ig_es_email_sending_error', $contact_id, $campaign_id, $message_id, $response );
+	
+						// TODO: Log somewhere
+					}
+	
+					do_action( 'ig_es_message_sent', $contact_id, $campaign_id, $message_id );
+	
+					// Reduce Email Sending Limit for this hour
+					$this->email_limit --;
+	
 				}
-
-				do_action( 'ig_es_message_sent', $contact_id, $campaign_id, $message_id );
-
-				// Reduce Email Sending Limit for this hour
-				$this->email_limit --;
 
 				if ( $this->limits_exceeded() ) {
 					break;
@@ -695,11 +807,13 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			$sender_name    = '';
 			$sender_email   = '';
 			$reply_to_email = '';
+			$attachments    = array();
 			// If sender data is passed .i.g. set in the campaign then use it.
 			if ( ! empty( $sender_data ) ) {
-				$sender_name    = ! empty( $sender_data['from_name'] ) ? $sender_data['from_name']  : '';
-				$sender_email   = ! empty( $sender_data['from_email'] ) ? $sender_data['from_email']: '';
-				$reply_to_email = ! empty( $sender_data['reply_to_email'] ) ? $sender_data['reply_to_email'] : '';
+				$sender_name    = ! empty( $sender_data['from_name'] ) ? $sender_data['from_name']          : '';
+				$sender_email   = ! empty( $sender_data['from_email'] ) ? $sender_data['from_email']        : '';
+				$reply_to_email = ! empty( $sender_data['reply_to_email'] ) ? $sender_data['reply_to_email']: '';
+				$attachments    = ! empty( $sender_data['attachments'] ) ? $sender_data['attachments']      : array();
 			}
 
 			// If sender name is not passed then fetch it from ES settings.
@@ -717,19 +831,24 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 				$reply_to_email = $this->get_from_email();
 			}
 
-			$subject = html_entity_decode( $subject, ENT_QUOTES, get_bloginfo( 'charset' ) );
+			$charset = get_bloginfo( 'charset' );
 
-			$message->from      = $sender_email;
-			$message->from_name = $sender_name;
-			$message->to        = $email;
-			$message->subject   = $subject;
-			$message->body      = $body;
+			$subject = html_entity_decode( $subject, ENT_QUOTES, $charset );
+
+			$message->from           = $sender_email;
+			$message->from_name      = $sender_name;
+			$message->to             = $email;
+			$message->subject        = $subject;
+			$message->body           = $body;
+			$message->attachments    = $attachments;
+			$message->reply_to_email = $reply_to_email;
+			$message->charset        = $charset;
 
 			$headers = array(
 				"From: \"$sender_name\" <$sender_email>",
 				'Return-Path: <' . $sender_email . '>',
 				'Reply-To: <' . $reply_to_email . '>',
-				'Content-Type: text/html; charset="' . get_bloginfo( 'charset' ) . '"'
+				'Content-Type: text/html; charset="' . $charset . '"'
 			);
 
 			$message->headers = $headers;
@@ -953,6 +1072,36 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		}
 
 		/**
+		 * Replace global merge tags
+		 *
+		 * @param string $content
+		 * @param array  $merge_tags
+		 *
+		 * @return mixed|string
+		 *
+		 * @since 4.7.0
+		 */
+		public function replace_global_tags( $content = '', $merge_tags = array() ) {
+			
+			$blog_name      = get_option( 'blogname' );
+			$total_contacts = ES()->contacts_db->get_total_contacts();
+			$site_url       = home_url( '/' );
+			$list_name      = ig_es_get_data( $merge_tags, 'list_name', '' );
+
+			$content = str_replace( '{{LINK}}?', '{{LINK}}&', $content );
+			$content = str_replace( '{{LINK}}', '{{UNSUBSCRIBE-LINK}}', $content );
+			$content = str_replace( '{{SUBSCRIBE-LINK}}?', '{{SUBSCRIBE-LINK}}&', $content );
+			$content = str_replace( '{{UNSUBSCRIBE-LINK}}?', '{{UNSUBSCRIBE-LINK}}&', $content );
+			$content = str_replace( '{{TOTAL-CONTACTS}}', $total_contacts, $content );
+			$content = str_replace( '{{GROUP}}', $list_name, $content );
+			$content = str_replace( '{{LIST}}', $list_name, $content );
+			$content = str_replace( '{{SITENAME}}', $blog_name, $content );
+			$content = str_replace( '{{SITEURL}}', $site_url, $content );
+
+			return $content;
+		}
+
+		/**
 		 * Convert Html to text
 		 *
 		 * @param $html
@@ -1070,6 +1219,79 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 					$pos 	  = strpos( $content, $link );
 					if ( false != $pos ) {
 						$content = preg_replace( '/' . preg_quote( $link, '/' ) . '/', $new_link, $content, 1 );
+					}
+				}
+			}
+
+			return $content;
+		}
+
+		/**
+		 * Replace links with variable string for given mailer
+		 *
+		 * @param $content
+		 * @param $campaign_id
+		 * @param $message_id
+		 * @param $variable_string
+		 *
+		 * @return string|string[]|null
+		 *
+		 * @since 4.7.0
+		 */
+		public function add_links_variables( $content, $campaign_id, $message_id, $variable_string = '' ) {
+			$this->mailer->links   = array();
+			if ( $this->can_track_clicks() ) {
+
+				// get all links from the basecontent
+				preg_match_all( '# href=(\'|")?(https?[^\'"]+)(\'|")?#', $content, $links );
+
+				$links = $links[2];
+
+				if ( empty( $links ) ) {
+					return $content;
+				}
+
+				$inserted_links = array();
+
+				foreach ( $links as $link_index => $link ) {
+
+					if ( ! isset( $inserted_links[ $link ] ) ) {
+						$index = 0;
+					} else {
+						$index = $inserted_links[ $link ] + 1;
+					}
+
+					$inserted_links[ $link ] = $index;
+
+					$result = ES()->links_db->get_link_by_campaign_id( $link, $campaign_id, $message_id, $index );
+
+					if ( is_array( $result ) && count( $result ) > 0 ) {
+						$hash = $result[0]['hash'];
+					} else {
+
+						$hash = ES_Common::generate_hash( 12 );
+
+						$link_data = array(
+							'link'        => $link,
+							'message_id'  => $message_id,
+							'campaign_id' => $campaign_id,
+							'hash'        => $hash,
+							'i'           => $index,
+						);
+
+						ES()->links_db->insert( $link_data );
+					}
+
+					if ( ! empty( $hash )) {
+						$new_link = '%' . $variable_string . '_' . $link_index . '%';
+	
+						$old_link = ' href="' . $link . '"';
+						$new_link = ' href="' . $new_link . '"';
+						$pos 	  = strpos( $content, $old_link );
+						if ( false != $pos ) {
+							$content = preg_replace( '/' . preg_quote( $old_link, '/' ) . '/', $new_link, $content, 1 );
+							$this->mailer->links[$link][] = $index;
+						}
 					}
 				}
 			}
@@ -1350,6 +1572,28 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			}
 
 			return $max_count;
+		}
+
+		/**
+		 * Replace keywords for new subscriber admin notification
+		 *
+		 * @return array
+		 *
+		 * @since 4.7.0
+		 */
+		public function replace_admin_notification_merge_tags( $data = array(), $message = '' ) {
+
+			$name  = ! empty( $data['name'] ) ? $data['name'] : '';
+			$email = ! empty( $data['email'] ) ? $data['email'] : '';
+			$list  = ! empty( $data['list_name'] ) ? $data['list_name'] : '';
+
+			$message = str_replace( '{{NAME}}', $name, $message );
+			$message = str_replace( '{{EMAIL}}', $email, $message );
+			$message = str_replace( '{{GROUP}}', '{{LIST}}', $message );
+			$message = str_replace( '{{LIST}}', $list, $message );
+
+			return $message;
+
 		}
 	}
 }

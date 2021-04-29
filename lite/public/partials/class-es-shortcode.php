@@ -183,14 +183,27 @@ class ES_Shortcode {
 		// Lists
 		if ( ! empty( $list_ids ) && $show_list ) {
 			$lists_id_name_map = ES()->lists_db->get_list_id_name_map();
-			$list_html         = self::prepare_lists_checkboxes( $lists_id_name_map, $list_ids, 1 );
+			$lists_id_hash_map = ES()->lists_db->get_list_id_hash_map( $list_ids );
+			$list_html         = self::prepare_lists_checkboxes( $lists_id_name_map, $list_ids, 1, array(), 0, 'lists[]', $lists_id_hash_map );
 		} elseif ( ! empty( $list_ids ) && ! $show_list ) {
 			$list_html = '';
-			foreach ( $list_ids as $id ) {
-				$list_html .= '<input type="hidden" name="lists[]" value="' . $id . '" />';
+			$lists     = ES()->lists_db->get_lists_by_id( $list_ids );
+			if ( ! empty( $lists ) ) {
+				foreach ( $lists as $list ) {
+					if ( ! empty( $list ) && ! empty( $list['hash'] ) ) {
+						$list_html .= '<input type="hidden" name="lists[]" value="' . $list['hash'] . '" />';
+					}
+				}
 			}
 		} elseif ( is_numeric( $list ) ) {
-			$list_html = '<input type="hidden" name="lists[]" value="' . $list . '" />';
+			$lists = ES()->lists_db->get_lists_by_id( $list );
+			$list_html = '';
+			if ( ! empty( $lists ) ) {
+				$list_hash = ! empty( $lists[0]['hash'] ) ? $lists[0]['hash'] : '';
+				if ( ! empty( $list_hash ) ) {
+					$list_html = '<input type="hidden" name="lists[]" value="' . $list_hash . '" />';
+				}
+			}
 		} else {
 			$list_data = ES()->lists_db->get_list_by_name( $list );
 			if ( empty( $list_data ) ) {
@@ -199,7 +212,14 @@ class ES_Shortcode {
 				$list_id = $list_data['id'];
 			}
 
-			$list_html = '<input type="hidden" name="lists[]" value="' . $list_id . '" />';
+			$lists = ES()->lists_db->get_lists_by_id( $list_id );
+			$list_html = '';
+			if ( ! empty( $lists ) ) {
+				$list_hash = ! empty( $lists[0]['hash'] ) ? $lists[0]['hash'] : '';
+				if ( ! empty( $list_hash ) ) {
+					$list_html = '<input type="hidden" name="lists[]" value="' . $list_hash . '" />';
+				}
+			}
 		}
 
 		// Form html
@@ -250,14 +270,13 @@ class ES_Shortcode {
 				<span class="es_spinner_image" id="spinner-image"><img src="<?php echo esc_url( $spinner_image_path ); ?>" alt="Loading"/></span>
 
 			</form>
-
 			<span class="es_subscription_message" id="es_subscription_message_<?php echo esc_attr( $unique_id ); ?>"></span>
 		</div>
 
 		<?php
 	}
 
-	public static function prepare_lists_checkboxes( $lists, $list_ids = array(), $columns = 3, $selected_lists = array(), $contact_id = 0, $name = 'lists[]' ) {
+	public static function prepare_lists_checkboxes( $lists, $list_ids = array(), $columns = 3, $selected_lists = array(), $contact_id = 0, $name = 'lists[]', $lists_id_hash_map = array() ) {
 		$lists_html = '<div><p><b class="font-medium text-gray-500 pb-2">' . __( 'Select list(s)', 'email-subscribers' ) . '*</b></p><table class="ig-es-form-list-selection"><tr>';
 		$i          = 0;
 
@@ -271,14 +290,22 @@ class ES_Shortcode {
 			}
 			$status_span = '';
 			if ( in_array( $list_id, $list_ids ) ) {
+
+				// Check if list hash has been passed for given list id, if yes then use list hash, else use list id
+				if ( ! empty( $lists_id_hash_map[ $list_id ] ) ) {
+					$list_value = $lists_id_hash_map[ $list_id ];
+				} else {
+					$list_value = $list_id;
+				}
+				
 				if ( in_array( $list_id, $selected_lists ) ) {
 					if ( ! empty( $contact_id ) ) {
 						$status_span = '<span class="es_list_contact_status ' . $list_contact_status_map[ $list_id ] . '" title="' . ucwords( $list_contact_status_map[ $list_id ] ) . '">';
 					}
 					$lists_html .= '<td class="pt-4">';
-					$lists_html .= $status_span . '<label><input type="checkbox" class="pl-6 form-checkbox" name="' . $name . '" checked="checked" value="' . $list_id . '" /><span class="pl-1 pr-6 text-gray-500 text-sm font-normal">' . $list_name . '</span></label></td>';
+					$lists_html .= $status_span . '<label><input type="checkbox" class="pl-6 form-checkbox" name="' . $name . '" checked="checked" value="' . $list_value . '" /><span class="pl-1 pr-6 text-gray-500 text-sm font-normal">' . $list_name . '</span></label></td>';
 				} else {
-					$lists_html .= '<td class="pt-4"><label><input type="checkbox" class="pl-6 form-checkbox " name="' . $name . '" value="' . $list_id . '" /><span class="pl-1 pr-6 text-gray-500 text-sm font-normal">' . $list_name . '</span></label></td>';
+					$lists_html .= '<td class="pt-4"><label><input type="checkbox" class="pl-6 form-checkbox " name="' . $name . '" value="' . $list_value . '" /><span class="pl-1 pr-6 text-gray-500 text-sm font-normal">' . $list_name . '</span></label></td>';
 				}
 				$i ++;
 			}

@@ -324,7 +324,7 @@ class Email_Subscribers_Public {
 			'status'        => 'subscribed',
 			'subscribed_at' => ig_get_current_date_time(),
 			'optin_type'    => $optin_type,
-			'subscribed_ip' => ig_es_get_ip(),
+			'subscribed_ip' => '',
 		);
 
 		ES()->lists_contacts_db->remove_contacts_from_lists( $contact_id, $list_id );
@@ -343,7 +343,16 @@ class Email_Subscribers_Public {
 		$get    = ig_es_get_request_data();
 		$action = home_url( add_query_arg( $get, $wp->request ) );
 		$action = add_query_arg( 'confirm_unsubscription', 1, $action );
+		$hash   = ig_es_get_request_data( 'hash' );
 
+		if ( ! empty( $hash ) ) {
+			$data        = ig_es_decode_request_data( $hash );
+			$email       = ! empty( $data['email'] ) ? $data['email']                  : '';
+		}
+
+		wp_register_style( 'tailwind', ES_PLUGIN_URL . 'lite/admin/dist/main.css', array(), $this->version, 'all' );
+		$es_wp_styles = wp_styles();
+		$es_wp_styles->do_item( 'tailwind' );
 		?>
 
 		<style type="text/css">
@@ -358,7 +367,7 @@ class Email_Subscribers_Public {
 			.ig_es_form_heading {
 				font-size: 1.3em;
 				line-height: 1.5em;
-				margin-bottom: 0.5em;
+				margin-bottom: 0.25em;
 			}
 
 			.ig_es_list_checkbox {
@@ -382,7 +391,6 @@ class Email_Subscribers_Public {
 				box-sizing: border-box;
 				font-size: 1em;
 				padding: 0 2em;
-				margin-top: 1em;
 			}
 
 			.confirmation-no : {
@@ -408,13 +416,42 @@ class Email_Subscribers_Public {
 
 		</style>
 
-		<div class="ig_es_form_wrapper">
-			<form action="<?php echo esc_attr( $action ); ?>" method="post" id="">
-				<?php wp_nonce_field( 'ig-es-unsubscribe-nonce', 'ig_es_unsubscribe_nonce' ); ?>
-				<div class="ig_es_form_heading"><?php echo esc_html__( 'Are you sure you want to unsubscribe?', 'email-subscribers' ); ?></div>
-				<input type="hidden" name="submitted" value="submitted">
-				<input class="ig_es_submit" type="submit" name="unsubscribe" value="Yes">
-			</form>
+		<div class="min-h-screen px-4 pt-10 pb-12 mx-auto bg-gray-100 sm:px-6 lg:px-8">
+			<section class="bg-white mt-12 py-7 shadow-md sm:rounded-lg mx-auto sm:w-2/4 xl:w-6/12">
+				<div class="flex">
+					<div class="w-full pl-6 pr-6 leading-6">
+						<form action="<?php echo esc_attr( $action ); ?>" method="post" id="">
+							<?php wp_nonce_field( 'ig-es-unsubscribe-nonce', 'ig_es_unsubscribe_nonce' ); ?>
+							<?php
+							do_action( 'ig_es_unsubscribe_form_after_start' );
+							?>
+							<?php
+							if ( ! empty( $email ) ) {
+								?>
+								<div class="ig_es_unsubscribe_header text-center pb-3 border-b border-gry-150">
+									<span class="block text-xl font-medium text-gray-600"><?php echo esc_html( $email ); ?></span>
+										<span>
+										<?php
+											echo esc_html__( 'is subscribed to our mailing list(s).', 'email-subscribers' );
+										?>
+										</span>
+								</div>
+								<?php
+							}
+							?>
+							<div class="ig_es_form_heading px-3">
+								<p class="pt-2 text-base tracking-wide text-gray-600 font-medium"><?php echo esc_html__( 'Unsubscribe from all list(s)', 'email-subscribers' ); ?></p>
+								<span class="text-sm text-gray-500"><?php echo esc_html__( 'You will be unsubscribed from receiving all future emails sent from us.', 'email-subscribers' ); ?></span>
+							</div>
+							<?php
+							do_action( 'ig_es_unsubscribe_form_before_end' );
+							?>
+							<input type="hidden" name="submitted" value="submitted">
+							<input class="ml-3 mt-4 rounded-md border border-transparent px-4 py-2 bg-white text-sm leading-5 font-medium text-white bg-indigo-600  transition ease-in-out duration-150 hover:bg-indigo-500 focus:ring-4 focus:ring-indigo-500 cursor-pointer" type="submit" name="unsubscribe" value="<?php echo esc_attr__( 'Unsubscribe', 'email-subscribers' ); ?>">
+						</form>
+					</div>
+				</div>
+			</section>
 		</div>
 		<?php
 		die();

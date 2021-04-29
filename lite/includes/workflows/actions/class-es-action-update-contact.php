@@ -45,7 +45,10 @@ class ES_Action_Update_Contact extends ES_Workflow_Action {
 					continue;
 				}
 
-				$data = $data_type->get_data( $data_item );
+				$data = array();
+				if ( is_callable( array( $data_type, 'get_data' ) ) ) {
+					$data = $data_type->get_data( $data_item );
+				}
 
 				$user_id = ! empty( $data['wp_user_id'] ) ? $data['wp_user_id'] : 0;
 

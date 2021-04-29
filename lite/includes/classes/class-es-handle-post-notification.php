@@ -113,8 +113,8 @@ class ES_Handle_Post_Notification {
 								'campaign_id' => $notification['id'],
 								'subject'     => $post_subject,
 								'body'        => $post_content,
-								'count'       => 0, // Subscribers count would be updated through background process when they are added in the sending_queue table.
-								'status'      => 'Queueing',
+								'count'       => 0,
+								'status'      => 'In Queue',
 								'start_at'    => '',
 								'finish_at'   => '',
 								'created_at'  => ig_get_current_date_time(),
@@ -129,12 +129,11 @@ class ES_Handle_Post_Notification {
 
 							// Add entry into mailing queue table
 							$mailing_queue_id = ES_DB_Mailing_Queue::add_notification( $data );
+							
 							if ( $mailing_queue_id ) {
-								$action_args = array(
-									'mailing_queue_id' => $mailing_queue_id,
-									'list_ids'         => $list_id,
-								);
-								IG_ES_Background_Process_Helper::add_action_scheduler_task( 'ig_es_add_subscribers_to_sending_queue', $action_args );
+								$mailing_queue_hash = $guid;
+								$campaign_id        = $notification['id'];
+								ES_DB_Sending_Queue::do_insert_from_contacts_table( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
 							}
 						}
 					}

@@ -107,10 +107,7 @@ class ES_DB_Lists_Contacts extends ES_DB {
 
 		if ( is_array( $list_ids ) && count( $list_ids ) > 0 ) {
 
-			$can_track_ip = apply_filters( 'ig_es_can_track_subscriber_ip', 'yes' ); 
-			if ( 'no' === $can_track_ip && ES()->is_pro() ) {
-				$contact_data['subscribed_ip'] = '';
-			}
+			$contact_data = apply_filters( 'ig_es_get_subscriber_ip', $contact_data, 'subscribed_ip' ); 
 
 			// Remove entry if it's already there in a list
 			$contact_id = ! empty( $contact_data['contact_id'] ) ? $contact_data['contact_id'] : 0;
@@ -476,6 +473,10 @@ class ES_DB_Lists_Contacts extends ES_DB {
 		if ( count( $contacts ) > 0 ) {
 			$values = array();
 
+			if ( ! is_array( $list_ids ) ) {
+				$list_ids = array( absint( $list_ids ) );
+			}
+			
 			$key = 0;
 			foreach ( $contacts as $contact_id ) {
 

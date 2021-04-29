@@ -54,6 +54,33 @@ class ES_Workflow_Admin_Edit {
 	}
 
 	/**
+	 * Method to get trigger data
+	 *
+	 * @since 4.4.1
+	 *
+	 * @param ES_Workflow_Trigger $trigger Workflow trigger.
+	 *
+	 * @return array|false
+	 */
+	public static function get_workflow_data() {
+
+		$data = array(
+			'is_new' => true,
+		);
+
+		$workflow_id = ig_es_get_request_data( 'id' );
+		if ( ! empty( $workflow_id ) && is_numeric( $workflow_id ) ) {
+			$workflow = ES_Workflow_Factory::get( $workflow_id );
+			if ( $workflow instanceof ES_Workflow ) {
+				$data['is_new']  = false;
+				$data['trigger'] = $workflow->get_trigger();
+			}
+		}
+
+		return $data;
+	}
+
+	/**
 	 * Register Workflow meta boxes
 	 *
 	 * @since 4.4.1
@@ -254,11 +281,13 @@ class ES_Workflow_Admin_Edit {
 		$meta_box_title_for_actions			= __( 'Actions', 'email-subscribers' );
 		$meta_box_title_for_save    	    = __( 'Save', 'email-subscribers' );
 		$meta_box_title_for_options 	    = __( 'Options', 'email-subscribers' );
+		$meta_box_title_for_variables 	    = __( 'Placeholders', 'email-subscribers' );
 		// $meta_box_title_for_timing  = __( 'Timing', 'email-subscribers' );
 
 		add_meta_box( 'ig_es_workflow_trigger', $meta_box_title_for_trigger, array( __CLASS__, 'trigger_metabox' ), $page_prefix . '_page_es_workflows', 'normal', 'default' );
 		add_meta_box( 'ig_es_workflow_actions', $meta_box_title_for_actions, array( __CLASS__, 'actions_metabox' ), $page_prefix . '_page_es_workflows', 'normal', 'default' );
 		add_meta_box( 'ig_es_workflow_save', $meta_box_title_for_save, array( __CLASS__, 'save_metabox' ), $page_prefix . '_page_es_workflows', 'side', 'default' );
+		add_meta_box( 'ig_es_workflow_variables', $meta_box_title_for_variables, array( __CLASS__, 'variables_metabox' ), $page_prefix . '_page_es_workflows', 'side', 'default' );
 		if ( ES()->can_upsell_features( array( 'lite', 'trial' ) ) ) {
 			do_action( 'ig_es_workflows_integration', $page_prefix ); 
 		}
@@ -388,6 +417,20 @@ class ES_Workflow_Admin_Edit {
 	public static function options_metabox() {
 		ES_Workflow_Admin::get_view(
 			'meta-box-options',
+			array(
+				'workflow' => self::$workflow,
+			)
+		);
+	}
+
+	/**
+	 * Variables workflow meta box
+	 *
+	 * @since 4.6.9
+	 */
+	public static function variables_metabox() {
+		ES_Workflow_Admin::get_view(
+			'meta-box-variables',
 			array(
 				'workflow' => self::$workflow,
 			)

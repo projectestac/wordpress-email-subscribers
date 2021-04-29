@@ -76,6 +76,7 @@ class IG_ES_DB_WC_Guest extends ES_DB {
 			'language'          => '%s',
 			'most_recent_order' => '%d',
 			'version'           => '%d',
+			'meta'              => '%s',
 		);
 	}
 
@@ -96,6 +97,7 @@ class IG_ES_DB_WC_Guest extends ES_DB {
 			'language'          => '',
 			'most_recent_order' => 0,
 			'version'           => 0,
+			'meta'              => '',
 		);
 	}
 
@@ -191,6 +193,48 @@ class IG_ES_DB_WC_Guest extends ES_DB {
 		}
 
 		return $result;
+
+	}
+
+	/**
+	 * Update meta value
+	 *
+	 * @since 4.4.1
+	 *
+	 * @param int   $queue_id Queue ID.
+	 * @param array $meta_data Meta data to update.
+	 *
+	 * @return bool|false|int
+	 */
+	public function update_meta( $queue_id = 0, $meta_data = array() ) {
+
+		$update = false;
+		if ( ! empty( $queue_id ) && ! empty( $meta_data ) ) {
+			$queue = $this->get( $queue_id );
+
+			if ( ! empty( $queue ) ) {
+
+				if ( isset( $queue['meta'] ) ) {
+					$meta = maybe_unserialize( $queue['meta'] );
+
+					// If $meta is an empty or isn't an array, then convert it to an array before adding data to it.
+					if ( empty( $meta ) || ! is_array( $meta ) ) {
+						$meta = array();
+					}
+
+					foreach ( $meta_data as $meta_key => $meta_value ) {
+						$meta[ $meta_key ] = $meta_value;
+					}
+
+					$queue['meta'] = maybe_serialize( $meta );
+
+					$update = $this->update( $queue_id, $queue );
+
+				}
+			}
+		}
+
+		return $update;
 
 	}
 }

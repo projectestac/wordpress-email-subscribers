@@ -171,8 +171,6 @@ class ES_Workflow {
 	/**
 	 * Retrieve ES_Workflow instance.
 	 *
-	 * @since 3.5.0
-	 *
 	 * @global wpdb $wpdb WordPress database abstraction object.
 	 *
 	 * @param int $workflow_id Worfklow ID.
@@ -228,6 +226,20 @@ class ES_Workflow {
 	 */
 	public function get_date_created() {
 		return $this->created_at;
+	}
+
+	/**
+	 * Get variable processor object
+	 * 
+	 * @return IG_ES_Variables_Processor
+	 */
+	public function variable_processor() {
+
+		if ( ! isset( $this->variable_processor ) ) {
+			$this->variable_processor = new IG_ES_Variables_Processor( $this );
+		}
+
+		return $this->variable_processor;
 	}
 
 	/**
@@ -742,18 +754,6 @@ class ES_Workflow {
 	}
 
 	/**
-	 * Set the trigger for the workflow.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param $trigger_name
-	 */
-	public function set_trigger_name( $trigger_name ) {
-		$this->update_meta( 'trigger_name', ES_Clean::string( $trigger_name ) );
-		unset( $this->trigger );
-	}
-
-	/**
 	 * Get the workflow trigger options.
 	 * Values will be sanitized as per the fields set on the trigger object.
 	 *
@@ -986,10 +986,9 @@ class ES_Workflow {
 	 * Get workflow meta data from meta key.
 	 * 
 	 * @param $key
-	 * @param bool $single
 	 * @return mixed
 	 */
-	public function get_meta( $key, $single = true ) {
+	public function get_meta( $key ) {
 		return isset( $this->meta[ $key ] ) ? $this->meta[ $key ] : '';
 	}
 

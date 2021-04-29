@@ -378,26 +378,27 @@ class ES_DB_Actions extends ES_DB {
 	 *
 	 * @since 4.5.2
 	 */
-	public function get_count_based_on_id_type( $campaign_id, $type, $distinct = true ) {
+	public function get_count_based_on_id_type( $campaign_id, $message_id, $type, $distinct = true ) {
 		global $wpdb;
 
 		$args = array();
 		
 		$args[] = $campaign_id;
+		$args[]	= $message_id;
 		$args[] = $type;
 
 		$count = 0;
 		if ( $distinct ) {
 			$count = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(DISTINCT(`contact_id`)) as count FROM {$wpdb->prefix}ig_actions WHERE `campaign_id`= %d AND `type` = %d",
+					"SELECT COUNT(DISTINCT(`contact_id`)) as count FROM {$wpdb->prefix}ig_actions WHERE `campaign_id`= %d AND `message_id`= %d AND `type` = %d",
 					$args
 				)
 			);
 		} else {
 			$count = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT  COUNT(`contact_id`) as count FROM {$wpdb->prefix}ig_actions WHERE `campaign_id`= %d  AND `type` = %d",
+					"SELECT  COUNT(`contact_id`) as count FROM {$wpdb->prefix}ig_actions WHERE `campaign_id`= %d  AND `message_id`= %d AND `type` = %d",
 					$args
 				)
 			);

@@ -449,7 +449,7 @@ class ES_Common {
 		if ( ! is_array( $category_names ) ) {
 			$category_names = array();
 		}
-		$checked_selected = ! in_array( 'All', $category_names ) ? "checked='checked'" : '';
+		$checked_selected = ! array_intersect( array( 'All', 'None' ), $category_names ) ? "checked='checked'" : '';
 		$category_html    = '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;" ><span class="block ml-6 pr-4 text-sm font-normal text-gray-600 pb-1"><input class="es-note-category-parent form-radio text-indigo-600" type="radio" ' . esc_attr( $checked_selected ) . ' value="selected_cat"  name="es_note_cat_parent">' . __( 'Select Categories',
 				'email-subscribers' ) . '</td></tr>';
 		foreach ( $categories as $category ) {
@@ -466,7 +466,11 @@ class ES_Common {
 		$all_html    = '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;"><span class="block ml-6 pr-4 text-sm font-normal text-gray-600 pb-1"><input type="radio" class="form-radio text-indigo-600 es-note-category-parent"  ' . esc_attr( $checked_all ) . ' value="{a}All{a}"  name="es_note_cat_parent">' . __( 'All Categories (Also include all categories which will create later)',
 				'email-subscribers' ) . '</td></tr>';
 
-		return $all_html . $category_html;
+		$checked_none = in_array( 'None', $category_names, true ) ? "checked='checked'" : '';
+		$none_html = '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;"><span class="block ml-6 pr-4 text-sm font-normal text-gray-600 pb-1"><input type="radio" class="form-radio text-indigo-600 es-note-category-parent"  ' . esc_attr( $checked_none ) . ' value="{a}None{a}"  name="es_note_cat_parent">' . __( 'None (Don\'t include post from any category)',
+		'email-subscribers' ) . '</td></tr>';
+
+		return $none_html . $all_html . $category_html;
 	}
 
 	/**
@@ -655,7 +659,7 @@ class ES_Common {
 	 * @since 4.1.0
 	 */
 	public static function convert_id_to_name( $category ) {
-		if ( 'All' != $category ) {
+		if ( ! in_array( $category, array( 'All', 'None' ), true ) ) {
 			return get_cat_name( $category );
 		} else {
 			return $category;
@@ -1158,6 +1162,7 @@ class ES_Common {
 
 	/**
 	 * Get all restricted settings which we can't share
+	 *
 	 * @return array
 	 *
 	 * @since 4.6.6
@@ -1758,12 +1763,15 @@ class ES_Common {
 	 *
 	 * @return string
 	 */
-	public static function convert_timestamp_to_date( $timestamp ) {
+	public static function convert_timestamp_to_date( $timestamp, $format = '' ) {
 
-		$convert_date_format = get_option( 'date_format' );
-		$convert_time_format = get_option( 'time_format' );
+		if ( empty( $format ) ) {
+			$convert_date_format = get_option( 'date_format' );
+			$convert_time_format = get_option( 'time_format' );
+			$format = $convert_date_format . ' ' . $convert_time_format;
+		}
 
-		return gmdate( "$convert_date_format $convert_time_format", $timestamp );
+		return gmdate( $format, $timestamp );
 	}
 
 	/**
@@ -1905,28 +1913,63 @@ class ES_Common {
 	 *
 	 * @since 4.6.5
 	 */
-	public static function prepare_campaign_report_statuses_dropdown_options( $selected = '', $default_label = '' ) {
+	public static function prepare_campaign_report_statuses_dropdown_options( $statuses = array(), $selected = '', $default_label = '' ) {
 
-		$statuses = array(
-			'Sent'     => __( 'Completed', 'email-subscribers' ),
-			'In Queue' => __( 'In Queue', 'email-subscribers' ),
-			'Sending'  => __( 'Sending', 'email-subscribers' ),
-		);
+		if ( ! empty( $statuses ) ) {
+			$dropdown = '<option class="text-sm" value="">' . esc_html__( 'All Status', 'email-subscribers' ) . '</option>';
 
-		$dropdown = '<option class="text-sm" value="">' . esc_html__( 'All Status', 'email-subscribers' ) . '</option>';
+			foreach ( $statuses as $key => $status ) {
 
-		foreach ( $statuses as $key => $status ) {
+				$dropdown .= '<option class="text-sm" value="' . esc_attr( $key ) . '" ';
 
-			$dropdown .= '<option class="text-sm" value="' . esc_attr( $key ) . '" ';
+				if ( strtolower( $selected ) === strtolower( $key ) ) {
+					$dropdown .= 'selected = selected';
+				}
 
-			if ( strtolower( $selected ) === strtolower( $key ) ) {
-				$dropdown .= 'selected = selected';
+				$dropdown .= '>' . esc_html( $status ) . '</option>';
 			}
 
-			$dropdown .= '>' . esc_html( $status ) . '</option>';
+			return $dropdown;
 		}
+	}
 
-		return $dropdown;
+	/**
+	 * Check whether the string is a valid JSON or not.
+	 *
+	 * @param string $string String we want to test if it's json.
+	 *
+	 * @return bool
+	 * 
+	 * @since 4.6.14
+	 */
+	public static function is_valid_json( $string ) {
+
+		return is_string( $string ) && is_array( json_decode( $string, true ) ) && ( json_last_error() === JSON_ERROR_NONE ) ? true : false;
+	}
+
+	/**
+	 * Get HTML for tooltip
+	 * 
+	 * @param string $tooltip_text
+	 * 
+	 * @return string $tooltip_html
+	 * 
+	 * @since 4.7.0
+	 */
+	public static function get_tooltip_html( $tooltip_text = '' ) {
+		$tooltip_html = '';
+		if ( ! empty( $tooltip_text ) ) {
+			$tooltip_html = '<div class="inline-block es-tooltip relative align-middle cursor-pointer">
+				<svg class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+				<span class="break-words invisible h-auto lg:w-48 xl:w-64 tracking-wide absolute z-70 tooltip-text bg-black text-gray-300 text-xs rounded p-3 py-2">
+					' . $tooltip_text . '
+					<svg class="absolute mt-2 text-black text-opacity-100 h-2.5 left-0" x="0px" y="0px" viewBox="0 0 255 255" xml:space="preserve">
+						<polygon class="fill-current" points="0,0 127.5,127.5 255,0"/>
+					</svg>
+				</span>
+			</div>';
+		}
+		return $tooltip_html;
 	}
 
 }

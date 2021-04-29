@@ -325,7 +325,31 @@ class ES_Campaigns_Table extends ES_List_Table {
 
 					return ES_Common::prepare_list_name_by_ids( $list_ids );
 				} else {
-					return '-';
+					$type = isset( $item['type'] ) ? $item['type'] : '';
+					$list_ids = array();
+					if ( 'newsletter' === $type && ! empty( $item['meta'] ) ) {
+						$campaign_meta = maybe_unserialize( $item['meta'] );
+						$conditions    = isset( $campaign_meta['list_conditions'] ) ? $campaign_meta['list_conditions']: array();
+						if ( ! empty( $conditions ) ) {
+							foreach ( $conditions as $i => $condition_group ) {
+								if ( ! empty( $condition_group ) ) {
+									foreach ( $condition_group as $j => $condition ) {
+										$condition_field = isset ( $condition['field'] ) ? $condition['field'] : '';
+										if ( '_lists__in' === $condition_field ) {
+											if ( ! empty( $condition['value'] ) && is_array( $condition['value'] ) ) {
+												$list_ids = array_merge( $list_ids, $condition['value'] );
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					if ( $list_ids ) {
+						return ES_Common::prepare_list_name_by_ids( $list_ids );
+					} else {
+						return '-';
+					}
 				}
 				break;
 			case 'type':
@@ -340,7 +364,13 @@ class ES_Campaigns_Table extends ES_List_Table {
 			case 'categories':
 				if ( ! empty( $item[ $column_name ] ) ) {
 					$categories = ES_Common::convert_categories_string_to_array( $item[ $column_name ], false );
-					$categories = strpos( $item[ $column_name ], '{a}All{a}' ) ? __( 'All', 'email-subscribers' ) : trim( trim( implode( ', ', $categories ) ), ',' );
+					if ( strpos( $item[ $column_name ], '{a}All{a}' ) ) {
+						$categories = __( 'All', 'email-subscribers' );
+					} else if ( strpos( $item[ $column_name ], '{a}None{a}' ) ) {
+						$categories = __( 'None', 'email-subscribers' );
+					} else {
+						$categories = trim( trim( implode( ', ', $categories ) ), ',' );
+					}
 
 					return $categories;
 				} else {

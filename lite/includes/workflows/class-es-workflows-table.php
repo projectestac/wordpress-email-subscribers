@@ -84,7 +84,7 @@ class ES_Workflows_Table extends ES_List_Table {
 	}
 
 	/**
-	 * Render Workflows table
+	 * Render Workflows list | Save/Edit Workflow page
 	 *
 	 * @since 4.4.1
 	 */

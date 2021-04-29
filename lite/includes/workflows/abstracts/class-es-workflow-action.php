@@ -298,9 +298,17 @@ abstract class ES_Workflow_Action {
 	 *
 	 * @return mixed Will vary depending on the field type specified in the action's fields.
 	 */
-	public function get_option( $field_name ) {
+	public function get_option( $field_name, $process_variables = false, $allow_html = false  ) {
 
 		$value = $this->get_option_raw( $field_name );
+
+		// Process the option value only if it's a string
+		// The value will almost always be a string but it could be a bool if the field is checkbox
+		if ( $value && is_string( $value ) ) {
+			if ( $process_variables ) {
+				$value = $this->workflow->variable_processor()->process_field( $value, $allow_html );
+			}
+		}
 
 		return apply_filters( 'ig_es_action_option', $value, $field_name, $this );
 	}

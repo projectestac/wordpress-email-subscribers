@@ -221,9 +221,16 @@ class ES_Html2Text {
 	 * @return unknown
 	 */
 	public function __construct( $html = '', $options = array() ) {
+
+		/**
+		 * It is a good practice to put func_get_args() at the start of the function to avoid a changed function parameter to leak into the original arguments.
+		 * By taking the copy early this is avoided. This behavior changed in PHP7: [https://www.php.net/manual/en/function.func-get-args.php#refsect1-function.func-get-args-notes]
+		 */
+		$func_args = func_get_args();
+		
 		// for backwards compatibility
-		if ( !is_array( $options ) ) {
-			return call_user_func_array( array( $this, 'legacyConstruct' ), func_get_args() );
+		if ( ! is_array( $options ) ) {
+			return call_user_func_array( array( $this, 'legacyConstruct' ), $func_args );
 		}
 
 		$this->html = $html;

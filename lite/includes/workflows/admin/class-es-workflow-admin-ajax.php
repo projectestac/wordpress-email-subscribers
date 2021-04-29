@@ -25,12 +25,15 @@ class ES_Workflow_Admin_Ajax {
 	 * Hook in methods
 	 *
 	 * @since 4.4.1
+	 * 
+	 * @since 4.6.9 Added modal_variable_info ajax event.
 	 */
 	public static function init() {
 		$ajax_events = array(
 			'fill_trigger_fields',
 			'fill_action_fields',
 			'toggle_workflow_status',
+			'modal_variable_info',
 		);
 
 		foreach ( $ajax_events as $ajax_event ) {
@@ -44,7 +47,7 @@ class ES_Workflow_Admin_Ajax {
 	 */
 	public static function fill_trigger_fields() {
 
-		check_ajax_referer( 'ig-es-workflow-nonce', 'security' );
+		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
 
 		$trigger_name = ig_es_get_request_data( 'trigger_name' );
 		$workflow_id  = ig_es_get_request_data( 'workflow_id' );
@@ -85,7 +88,7 @@ class ES_Workflow_Admin_Ajax {
 	 */
 	public static function fill_action_fields() {
 
-		check_ajax_referer( 'ig-es-workflow-nonce', 'security' );
+		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
 
 		$action_name   = ig_es_get_request_data( 'action_name' );
 		$action_number = ig_es_get_request_data( 'action_number' );
@@ -124,7 +127,7 @@ class ES_Workflow_Admin_Ajax {
 	 */
 	public static function toggle_workflow_status() {
 
-		check_ajax_referer( 'ig-es-workflow-nonce', 'security' );
+		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
 
 		$workflow  = ES_Workflow_Factory::get( ig_es_get_request_data( 'workflow_id' ) );
 		$new_state = ig_es_get_request_data( 'new_state' );
@@ -142,4 +145,24 @@ class ES_Workflow_Admin_Ajax {
 		}
 	}
 
+	/**
+	 * Show vairable info modal
+	 * 
+	 * @since 4.6.9
+	 */
+	public static function modal_variable_info() {
+		
+		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
+		
+		$variable = IG_ES_Variables::get_variable( ES_Clean::string( ig_es_get_request_data( 'variable' ) ) );
+
+		if ( $variable ) {
+			ES_Workflow_Admin::get_view( 'modal-variable-info', array(
+				'variable' => $variable
+			));
+			die;
+		}
+
+		wp_die( esc_html__( 'Variable not found.', 'email-subscribers' ) );
+	}
 }

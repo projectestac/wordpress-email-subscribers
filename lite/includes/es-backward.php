@@ -76,7 +76,7 @@ class es_cls_dbquery {
 				'status'        => $status,
 				'optin_type'    => $optin_type,
 				'subscribed_at' => ig_get_current_date_time(),
-				'subscribed_ip' => ig_es_get_ip(),
+				'subscribed_ip' => '',
 			);
 
 			ES()->lists_contacts_db->add_contact_to_lists( $list_contact_data, $list_id );

@@ -4,9 +4,9 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Author URI: https://www.icegram.com/
 Tags: email marketing, subscription, autoresponder, post notification, welcome email
 Requires at least: 3.9
-Tested up to: 5.6
+Tested up to: 5.7
 Requires PHP: 5.6
-Stable tag: 4.6.6
+Stable tag: 4.7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses
 
@@ -69,7 +69,8 @@ Email Subscribers is a fully-featured subscription plugin specially created keep
 > 👉  **Automatic Background Sending**
 > 👉  **Active Contacts Growth**
 > 👉  **Advance Campaign Reports**
-> 👉  **Connect with SMTP / Email Sending Services**
+> 👉  **Connect with SMTP**
+> 👉  **Send email using Mailgun, Sparkpost, Sendgrid, Peipost & Amazon SES**
 > 👉  **Email Open Tracking**
 > 👉  **Link Tracking**
 > 👉  **UTM Tracking**
@@ -303,6 +304,65 @@ Refer [here](https://www.icegram.com/documentation/es-faq/).
 
 
 == Changelog ==
+
+**4.7.0 (05.04.2021)**
+
+* New: Support for list and status fields while importing contacts through CSV
+* New: Using batch API to send emails through Mailgun [PRO]
+
+**4.6.14 (25.03.2021)**
+
+* New: Send emails using Mailgun, SparkPost and SendGrid [PRO]
+* New: Import contacts from MailChimp
+
+**4.6.13 (17.03.2021)**
+
+* New: Campaign rules to filter recipients while sending sequence emails [PRO]
+* Update: Tested upto WordPress 5.7
+* Fix: Invalid date and time for campaign reports activity table
+
+**4.6.12.1 (05.03.2021)**
+
+* Fix: Subscription issue with [Icegram](https://wordpress.org/plugins/icegram) plugin
+
+**4.6.12 (04.03.2021)**
+
+* New: Filter recipients using new campaign rules for 'is in List' and 'is not in List'[PRO] while sending broadcast
+* Update: Improved campaign report UI
+* Update: Improved securities in subscription form
+
+**4.6.11 (25.02.2021)**
+
+* New: Campaign rules to filter recipients while sending broadcast [PRO]
+* New: Added option to disable post notifications for default WordPress posts
+* Update: Improved campaign preview report UI
+
+**4.6.10 (15.02.2021)**
+
+* New: New workflow trigger for YITH WooCommerce Wishlist [PRO]
+* New: Added additional stats on campaigns reports dashboard
+* Update: Disable IP tracking in lite version by default to make GDPR compliant
+* Fix: Database vulnerability
+
+**4.6.9 (05.02.2021)**
+
+* New: Added placeholder keyword support for WooCommerce [PRO]
+* New: Added abandoned cart recovery related triggers [PRO]
+* Update: Improve campaign reports
+
+**4.6.8 (01.02.2021)**
+
+* New: Allow subscribers to provide feedback for unsubscription [PRO]
+* Update: UI Improvements
+
+**4.6.7 (21.01.2021)**
+
+* New: Show contacts' country on the audience page [PRO]
+* New: Import existing WordPress users [PRO]
+* New: Add attachments to broadcast and sequence campaigns [PRO]
+* New: Send emails using Amazon SES [PRO]
+* Update: Improved campaign report UI
+* Fix: Invalid nonce issue due to caching while subscribing
 
 **4.6.6 (14.01.2021)**
 

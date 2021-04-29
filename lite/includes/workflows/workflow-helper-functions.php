@@ -87,3 +87,66 @@ function ig_es_generate_key( $length = 25, $case_sensitive = true, $more_numbers
 	return $password;
 }
 
+/**
+ *  Does str_replace but limited to one replacement
+ *
+ * @param string$subject
+ * @param string$find
+ * @param string $replace
+ * @return string
+ */
+function ig_es_str_replace_first_match( $subject, $find, $replace = '' ) {
+	$pos = strpos($subject, $find);
+	if ( false !== $pos ) {
+		return substr_replace($subject, $replace, $pos, strlen($find));
+	}
+	return $subject;
+}
+
+/**
+ * Get country name from country code
+ * 
+ * @param string $country_code
+ * @return string|bool
+ * 
+ * @since 4.6.9
+ */
+function ig_es_get_country_name( $country_code ) {
+	$countries = WC()->countries->get_countries();
+	return isset( $countries[ $country_code ] ) ? $countries[ $country_code ] : false;
+}
+
+/**
+  * Get state name from country and state code
+ * 
+ * @param string $country_code
+ * @param string $state_code
+ * @return string|bool
+ * 
+ * @since 4.6.9
+ */
+function ig_es_get_state_name( $country_code, $state_code ) {
+	$states = WC()->countries->get_states( $country_code );
+	return isset( $states[ $state_code ] ) ? $states[ $state_code ] : false;
+}
+
+/**
+ * Get product image
+ * 
+ * @param WC_Product $product
+ * @param string $size
+ * @return array|false|string
+ * 
+* @since 4.6.9
+ */
+function ig_es_get_wc_product_image_url( $product, $size = 'shop_catalog' ) {
+
+	$image_id = $product->get_image_id();
+	if ( $image_id ) {
+		$image_url = wp_get_attachment_image_url( $image_id, $size );
+		return apply_filters( 'ig_es_email_product_image_src', $image_url, $size, $product );
+	} else {
+		$image_url = wc_placeholder_img_src( $size );
+		return apply_filters( 'ig_es_email_product_placeholder_image_src', $image_url, $size, $product );
+	}
+}

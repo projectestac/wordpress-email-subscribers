@@ -138,7 +138,7 @@ if ( ! function_exists( 'ig_es_format_date_time' ) ) {
 	 */
 	function ig_es_format_date_time( $date ) {
 
-		$local_timestamp = ( '0000-00-00 00:00:00' !== $date ) ? ES_Common::convert_date_to_wp_date( get_date_from_gmt( $date )) : '<i class="dashicons dashicons-es dashicons-minus"></i>';
+		$local_timestamp = ( '0000-00-00 00:00:00' !== $date && ! empty( $date ) )  ? ES_Common::convert_date_to_wp_date( get_date_from_gmt( $date )) : '<i class="dashicons dashicons-es dashicons-minus"></i>';
 
 		return $local_timestamp;
 	}
@@ -720,6 +720,10 @@ if ( ! function_exists( 'ig_es_allowed_html_tags_in_esc' ) ) {
 	function ig_es_allowed_html_tags_in_esc() {
 		$context_allowed_tags 	= wp_kses_allowed_html('post');
 		$custom_allowed_tags	= array(
+					'div' => array(
+						'x-data' => true,
+						'x-show' => true,
+					),		
 					'select' => array(
 						'class' 	=> true,
 						'name' 		=> true,
@@ -731,7 +735,10 @@ if ( ! function_exists( 'ig_es_allowed_html_tags_in_esc' ) ) {
 						'tab-*'		=> true,
 						'multiple'	=> true,
 						'aria-*'	=> true,
-		  
+						'disabled'	=> true,
+					),
+					'optgroup' => array(
+						'label' => true,
 					),
 					'option' => array(
 						'class' 	=> true,
@@ -829,6 +836,13 @@ if ( ! function_exists( 'ig_es_allowed_html_tags_in_esc' ) ) {
 						'href'	=> true,
 						'media'	=> true,
 					),
+					'a' => array(
+						'x-on:click' => true,
+					),
+					'polygon' => array(
+						'class'  => true,
+						'points' => true,
+					)
 				);	
 		$allowedtags 			= array_merge_recursive( $context_allowed_tags, $custom_allowed_tags );
 

@@ -22,7 +22,7 @@ if ( 'optin' === $es_page_request ) {
 			<meta http-equiv="refresh" content="10; url=<?php echo esc_url( $home_url ); ?>" charset="<?php echo esc_attr( get_option( 'blog_charset' ) ); ?>"/>
 			<?php do_action( 'es_message_head' ); ?>
 			<?php
-				wp_register_style( 'tailwind', 'https://unpkg.com/tailwindcss@^1.5.1/dist/tailwind.min.css', array(), '1.5.1', 'all' );
+				wp_register_style( 'tailwind', ES_PLUGIN_URL . 'lite/admin/dist/main.css', array(), $this->version, 'all' );
 				$es_wp_styles = wp_styles();
 				$es_wp_styles->do_item( 'tailwind' );
 			?>

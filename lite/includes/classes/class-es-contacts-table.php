@@ -867,21 +867,17 @@ class ES_Contacts_Table extends ES_List_Table {
 	 * @since 4.0.0
 	 */
 	public function column_default( $item, $column_name ) {
-		$item = apply_filters( 'es_subscribers_col_data', $item, $column_name );
+		$item = apply_filters( 'es_subscribers_col_data', $item, $column_name, $this );
 		switch ( $column_name ) {
 			case 'lists':
 				return $this->get_lists_to_show( $item['id'] );
 			case 'created_at':
 				return ig_es_format_date_time( $item[ $column_name ] );
-			case 'ip':
-				$subscribed_ip = ! empty ( $item['ip_address'] ) ? $item['ip_address'] : '-';
 
-				return $subscribed_ip;
 			case 'first_name':
 			case 'email':
 			default:
 				$column_data = isset( $item[ $column_name ] ) ? $item[ $column_name ] : '-';
-
 				return apply_filters( 'ig_es_contact_column_data', $column_data, $column_name, $item, $this );
 		}
 	}
@@ -1000,8 +996,8 @@ class ES_Contacts_Table extends ES_List_Table {
 		$delete_nonce = wp_create_nonce( 'ig_es_delete_subscriber' );
 
 		$name  = ES_Common::prepare_name_from_first_name_last_name( $item['first_name'], $item['last_name'] );
-		$title = '<strong>' . $name . '</strong>';
 
+		$title = '<strong class="pl-1">' . $name . '</strong>';		
 		$page = ig_es_get_request_data( 'page' );
 
 		$actions = array(
@@ -1025,17 +1021,13 @@ class ES_Contacts_Table extends ES_List_Table {
 	 */
 	public function get_columns() {
 		$columns      = array(
-			'cb'    => '<input type="checkbox"/>',
-			'name'  => __( 'Name', 'email-subscribers' ),
-			'email' => __( 'Email', 'email-subscribers' ),
-			'lists' => __( 'List(s)', 'email-subscribers' ),
+			'cb'   		 => '<input type="checkbox"/>',
+			'name'  	 => __( 'Name', 'email-subscribers' ),
+			'email' 	 => __( 'Email', 'email-subscribers' ),
+			'lists' 	 => __( 'List(s)', 'email-subscribers' ),
+			'created_at' => __( 'Created', 'email-subscribers' )
 		);
-		$can_track_ip = apply_filters( 'ig_es_can_track_subscriber_ip', 'yes' );
-		if ( 'yes' === $can_track_ip ) {
-			$columns['ip'] = __( 'IP', 'email-subscribers' );
-		}
-		$columns['created_at'] = __( 'Created', 'email-subscribers' );
-
+		
 		return $columns;
 	}
 

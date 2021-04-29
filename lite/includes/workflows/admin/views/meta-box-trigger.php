@@ -46,6 +46,17 @@ if ( ! ES()->is_pro() ) {
 		'Order'   => array(
 			'ig_es_wc_order_refunded' => __( 'WooCommerce Order Refunded', 'email-subscribers' ),
 		),
+		'Wishlists'	=> array(
+			'ig_es_yith_wc_wishlist' => __( 'Wishlist Item On Sale (YITH Wishlists)', 'email-subscribers' ),
+		),
+		'Carts'	=> array(
+			'ig_es_wc_cart_abandoned' 					=> __( 'Cart Abandoned', 'email-subscribers' ),
+			'ig_es_wc_cart_abandoned_registered_users'	=> __( 'Cart Abandoned - Registered Users Only', 'email-subscribers' ),
+			'ig_es_wc_cart_abandoned_guests_users' 		=> __( 'Cart Abandoned - Guests Only', 'email-subscribers' ),
+		),
+		'User' => array(
+			'ig_es_user_role_changed' => __( 'User Role Changed', 'email-subscribers' ),
+		),
 	);
 	$trigger_list = array_merge_recursive( $trigger_list, $pro_trigger_list );
 }

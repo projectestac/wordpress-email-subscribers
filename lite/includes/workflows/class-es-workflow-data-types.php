@@ -62,4 +62,13 @@ class ES_Workflow_Data_Types extends ES_Workflow_Registry {
 	public static function after_loaded( $data_type_id, $data_type ) {
 		$data_type->set_id( $data_type_id );
 	}
+
+	/**
+	 * Get non supported data types
+	 * 
+	 * @return array
+	 */
+	public static function get_non_stored_data_types() {
+		return array( 'shop' );
+	}
 }

@@ -675,7 +675,7 @@ class ES_DB_Campaigns extends ES_DB {
 						$where .= " categories LIKE '%" . $category_str . "%'";
 						if ( ( $total_categories - 1 )  === $i ) {
 							$where .= " OR categories LIKE '%all%'";
-							$where .= ')';
+							$where .= ") AND categories NOT LIKE '%none%'";
 						}
 					}
 				} else {
@@ -767,5 +767,46 @@ class ES_DB_Campaigns extends ES_DB {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Get all campaigns based on passed arguements
+	 * 
+	 * @param array $args Campaing arguements
+	 * 
+	 * @return array Array of campaigns
+	 * 
+	 * @since 4.6.11
+	 */
+	public function get_all_campaigns( $args = array() ) {
+		global $wpbd;
+
+		$where = '';
+
+		if ( ! empty( $args['include_types'] ) ) {
+			$type_count        = count( $args['include_types'] );
+			$type_placeholders = array_fill( 0, $type_count, '%s' );
+			$where .= $wpbd->prepare( 'type IN( ' . implode( ',', $type_placeholders ) . ' )', $args['include_types'] );
+		}
+
+		if ( ! empty( $args['exclude_types'] ) ) {
+			$type_count        = count( $args['exclude_types'] );
+			$type_placeholders = array_fill( 0, $type_count, '%s' );
+			$where .= $wpbd->prepare( 'type NOT IN( ' . implode( ',', $type_placeholders ) . ' )', $args['exclude_types'] );
+		}
+
+		if ( ! empty( $args['status'] ) ) {
+			$status_count        = count( $args['status'] );
+			$status_placeholders = array_fill( 0, $status_count, '%d' );
+			$where .= $wpbd->prepare( ' AND status IN( ' . implode( ',', $status_placeholders ) . ' )', $args['status'] );
+		}
+		
+		if ( ! empty( $args['campaigns_not_in'] ) ) {
+			$ids_count        = count( $args['campaigns_not_in'] );
+			$ids_placeholders = array_fill( 0, $ids_count, '%d' );
+			$where .= $wpbd->prepare( ' AND id NOT IN( ' . implode( ',', $ids_placeholders ) . ' )', $args['campaigns_not_in'] );
+		}
+
+		return $this->get_by_conditions( $where );
 	}
 }

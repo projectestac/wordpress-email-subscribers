@@ -1115,6 +1115,7 @@ div.es .last {
 	display: inline-block;
 	padding: 0 1em;
 	text-align: center;
+	width: 150px;
 }
 
 .es-mailer-logo img {
@@ -1589,6 +1590,16 @@ body[class*="_page_es_workflows"] #post-body .postbox .inside {
 	position: static;
 }
 
+.ig-es-close-variable-info-popup {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+}
+
+#ig_es_workflow_variables.postbox  {
+    z-index: 999;
+}
+
 /** Workflow CSS END */
 
 .frappe-chart .x.axis .line-vertical,
@@ -1602,12 +1613,6 @@ body[class*="_page_es_workflows"] #post-body .postbox .inside {
 	display: none;
 }
 */
-
-
-li.menu-top div.wp-menu-image img {
-	border-style: none !important;
-	display: inline;
-}
 
 /** Broadcast New UI CSS */
 /* input[type="date"]::-webkit-inner-spin-button,
@@ -1647,7 +1652,7 @@ input[type="date"]::-webkit-clear-button {
 	display: none;
 }
 
-.broadcast_preview_container {
+.broadcast_preview_container, .report_preview_container {
 	height: 300px;
 	overflow: hidden;
 	overflow-y: auto;
@@ -1783,6 +1788,35 @@ div.broadcast_side_content{
 	height: 1.2rem !important;
 }
 
+
+#es_country_flag, .es_campaign_report #country_flag{
+	width:3em !important;
+}
+
+.es_campaign_report #sr_no, .es_campaign_report #device{
+	width: 5em !important;
+}
+
+.es_campaign_report #status {
+	width: 7em !important;
+}
+
+.es_campaign_report #os{
+	width: 8em !important;
+}
+
+.es_campaign_report #email_client{
+	width: 12em !important;
+}
+
+#es-flag-icon{
+	width:2.3em !important;
+}
+
+.ig-es-attachment-container{
+	margin-left: -120px;
+	margin-right: -200px;
+}
 /* Import Subscriber */
 
 .step2 {
@@ -1790,7 +1824,7 @@ div.broadcast_side_content{
     overflow:auto !important;
 }
 
-.step2-status, .step2-list,.progress.finished,.importing-progress.finished{
+.step2-status, .step2-list,.progress.finished,.importing-progress.finished, .wrapper-start-contacts-import{
 	display: none;
 }
 
@@ -1827,6 +1861,29 @@ div.broadcast_side_content{
 	100%{left:120%;}
 }
 
+.upload-method-or {
+    font-size: 23px;
+    text-align: center;
+    line-height: 11em;
+    position: relative;
+}
+
+.upload-method-or::before {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 1px;
+    position: absolute;
+    background-color: #d2d5dc;
+    z-index: 0;
+    left: 50%;
+}
+
+.upload-method-or .seperator-text {
+    background: #fff;
+    position: relative;
+}
+
 /* Import Subscriber: end; */
 
 
@@ -1834,3 +1891,229 @@ div.broadcast_side_content{
 	padding-top: 0px !important;
 	clear: none !important;
 }
+
+.es_campaign_report table.reports{
+	position: static !important;
+}
+
+#es_campaign_report tbody {
+    counter-reset:paragraph;
+}
+
+#es_campaign_report tbody tr td.sr_no:after,
+#es_campaign_report tbody tr td.sr_no::after
+{
+    counter-increment:paragraph;
+    content: counter(paragraph);
+}
+
+.es-campaign-reports-table{
+	padding-top: 0 !important;
+}
+
+#es_campaign_report tbody tr td.country_flag{
+    font-size: 0;
+}
+
+/* Campaign Rules CSS - Start */
+.ig-es-conditions-wrap .ig-es-condition-group:after, .ig-es-conditions-wrap .ig-es-condition:after{
+	content: attr(data-operator);
+	position: absolute;
+	left: 320px;
+	padding: 3px 1px;
+	text-transform: uppercase;
+	color: #999;
+	font-size: 16px;
+	line-height: 1em;
+	z-index: 1;
+	bottom: -35px;
+}
+.ig-es-conditions-wrap .ig-es-condition:after{
+	background-color: #fff;
+	padding: 2px 10px;
+	font-size: 14px;
+	bottom: -10px;
+	left: 300px;
+}
+.ig-es-conditions-wrap .ig-es-condition-group:last-child:after, .ig-es-conditions-wrap .ig-es-condition:last-child:after, .ig-es-condition-container{
+	display: none;
+}
+.ig-es-conditions-wrap .ig-es-condition-group:last-child, .ig-es-conditions-wrap .ig-es-condition:last-child{
+	margin-bottom: 0;
+}
+.ig-es-conditions-wrap .ig-es-condition, .ig-es-conditions-wrap .ig-es-condition-empty{
+	border-bottom: 1px dotted #DFDFDF;
+	background-color: #fff;
+	position: relative;
+}
+
+.ig-es-conditions-wrap .ig-es-condition:last-child{
+	border-bottom: none;
+}
+
+.ig-es-conditions-field-fields, .ig-es-conditions-operator-fields, .ig-es-conditions-value-fields{
+	float: left;
+	max-width: 37%;
+	padding-right: 4px;
+}
+.rtl .ig-es-conditions-field-fields,.rtl .ig-es-conditions-operator-fields,.rtl .ig-es-conditions-value-fields{
+	float: right;
+	padding-right: 0px;
+	padding-left: 4px;
+}
+.ig-es-conditions-operator-fields{
+	max-width: 140px;
+}
+.ig-es-conditions-operator-field, .ig-es-conditions-value-field{
+	display: none;
+}
+.ig-es-conditions-operator-field.active, .ig-es-conditions-value-field.active{
+	display: block;
+}
+.ig-es-conditions-wrap select, .ig-es-conditions-wrap input{
+	max-width: 100%
+}
+.ig-es-conditions-wrap .ig-es-condition-empty{
+	background-color: none;
+	border: 1px dotted #DFDFDF;
+	text-align: center;
+	padding: 10px 0 10px;
+}
+.ig-es-conditions-wrap .remove-condition{
+	visibility: hidden;
+}
+
+.rtl .ig-es-conditions-wrap .remove-condition{
+	float: left;
+}
+
+.ig-es-conditions-wrap .ig-es-condition:hover .remove-condition{
+	visibility: visible;
+}
+
+/*.ig-es-conditions-wrap .add-or-condition{
+	position: absolute;
+	bottom: 12px;
+	z-index: 1;
+}
+*/
+.ig-es-conditions-wrap .datepicker.condition-value{
+	width: 100px;
+}
+.ig-es-condition .ig-es-conditions-value-field p, .ig-es-condition .ig-es-conditions-value-field ul{
+	margin: 0;
+}
+.ig-es-condition-render span.ig-es-condition-type {
+	float: left;
+	padding-right: 2px;
+}
+.rtl .ig-es-condition-render span.ig-es-condition-type {
+	float: right;
+	padding-right: 0;
+	padding-left: 4px;
+}
+.ig-es-conditions-wrap .ig-es-conditions-value-field-multiselect:first-child{
+	display: inline-block;
+}
+.ig-es-conditions-wrap .ig-es-conditions-value-field-multiselect .condition-value{
+	width: 180px;
+}
+.ig-es-conditions-wrap .ig-es-conditions-value-field-multiselect a.ig-es-condition-add-multiselect, .ig-es-conditions-wrap .ig-es-conditions-value-field-multiselect:first-child span, .ig-es-conditions-wrap .ig-es-conditions-value-field-multiselect a.ig-es-condition-remove-multiselect{
+	visibility: hidden;
+}
+.ig-es-conditions-wrap .ig-es-conditions-value-field-multiselect a{
+	cursor: pointer;
+}
+.ig-es-conditions-wrap .ig-es-conditions-value-field-multiselect:hover a.ig-es-condition-remove-multiselect, .ig-es-conditions-wrap .ig-es-conditions-value-field-multiselect:last-child a.ig-es-condition-add-multiselect{
+	visibility: visible;
+}
+
+.ig-es-conditions-wrap .ig-es-conditions-value-field-multiselect:first-child a.ig-es-condition-remove-multiselect{
+	visibility: hidden !important;
+}
+
+div.ig-es-conditions-render-wrapper::after, 
+.ig-es-conditions-render-wrapper .ig-es-conditions-render::after {
+	content: '';
+	display: block;
+	clear: both;
+}
+
+.ig-es-conditions-render-wrapper .ig-es-conditions-render {
+	margin: 10px 0 10px 0;
+	padding: 5px 0 5px 8px;
+	border: 0.5px solid rgb(210, 214, 220);
+	border-radius: 0.25rem;
+}
+
+.ig-es-conditions-wrap .ig-es-conditions-value-field-multiselect:not(:first-child) { 
+	margin-top:0.5rem;
+}
+.es-add-or-condition{
+	border: hsl(215,13.8%,54.1%);
+	color: rgb(75, 85, 99);
+	border: 1px solid hsl(215,13.8%,54.1%);
+	top:67px;
+}
+
+/*.es-report-description .ig-es-condition-render-group span, .es-report-description .ig-es-condition-render-group{
+	float:none !important;
+	clear:none !important;
+}
+
+.es-report-description .ig-es-condition-render-group, .es-report-description .ig-es-conditions-render{
+	display: inline-block !important;
+	font-weight:normal;
+}*/
+
+body[class*="es_reports"] .ig-es-condition-render-group span,
+body[class*="es_reports"] .ig-es-condition-type span,
+body[class*="es_reports"] span.ig-es-condition-type{
+	font-weight: normal;
+	color: rgba(22, 30, 46, 1);
+	padding-right:1px;
+}
+
+body[class*="es_reports"] .recipient-text {
+	position: absolute;
+    top: 12px;
+}
+
+/* Hide total contacts count on the sequence page */
+.es_sequences_wrapper .campaign-conditions-total-contacts {
+    display:none;
+}
+
+.es_sequences_wrapper .ig-es-conditions-render-wrapper, .es_sequences_wrapper .ig-es-campaign-rules{
+	width:100%;
+}
+.es_sequences_wrapper .ig-es-conditions-render-wrapper .ig-es-conditions-render{
+	border: none;
+	margin:5px 0;
+}
+
+/* Campaign Rules CSS - END */
+
+/** Tailwind tooltip Custom CSS - START */
+.es-tooltip:hover .tooltip-text {
+	visibility: visible;
+}
+
+.es-tooltip .tooltip-text  {
+	bottom: 25px;
+    transform: translate(-50%,0%);
+    left: 50%;
+	opacity: 0.9;
+}
+
+.es-tooltip .tooltip-text svg  {
+	left: 50%;
+    transform: translate(-50%, 0px);
+}
+/** Tailwind tooltip Custom CSS - END */
+
+/** Import subscribers CSS - START */
+.es-importer-logo {
+	width: 160px;
+}
+/** Import subscribers CSS - END */

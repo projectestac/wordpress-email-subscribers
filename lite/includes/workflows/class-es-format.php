@@ -193,4 +193,23 @@ class ES_Format {
 
 		return $days[ $day ];
 	}
+
+	/**
+	 * Format a price decimal value.
+	 *
+	 * Does NOT localize the decimal.
+	 *
+	 * @param float|string $number
+	 * @param int          $places
+	 * @param bool         $trim_zeros
+	 *
+	 * @return string
+	 */
+	public static function decimal( $number, $places = null, $trim_zeros = false ) {
+		if ( null === $places ) {
+			$places = wc_get_price_decimals();
+		}
+
+		return wc_format_decimal( $number, $places, $trim_zeros );
+	}
 }

@@ -110,14 +110,17 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 		 * A timeout limit of 30s is common on shared hosting.
 		 *
 		 * @param string $start_time start timestamp.
+		 * @param float $fraction Time fraction.
 		 * 
 		 * @return bool
 		 * 
 		 * @since 4.6.3
+		 * 
+		 * @since Added $fraction parameter
 		 */
-		public static function time_exceeded( $start_time = 0 ) {
+		public static function time_exceeded( $start_time = 0, $fraction = 0.6 ) {
 
-			$finish = $start_time + ( self::get_time_limit() * 0.6 );
+			$finish = $start_time + ( self::get_time_limit() * $fraction );
 			$return = false;
 
 			if ( time() >= $finish ) {
@@ -158,14 +161,16 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 		 * 
 		 * @since 4.6.3
 		 */
-		public static function add_action_scheduler_task( $action = '', $action_args = array(), $process_asynchronously = true, $should_wait = false ) {
+		public static function add_action_scheduler_task( $action = '', $action_args = array(), $process_asynchronously = true, $should_wait = false, $time = 0 ) {
 
-			if ( empty( $action ) || empty( $action_args ) ) {
+			if ( empty( $action ) ) {
 				return false;
 			}
 
 			if ( function_exists( 'as_schedule_single_action' ) ) {
-				$action_id = as_schedule_single_action( time(), $action, array( $action_args ), 'email-subscribers' );
+				$time = ! empty( $time ) ? $time : time();
+				$action_id = as_schedule_single_action( $time, $action, array( $action_args ), 'email-subscribers' );
+
 				if ( ! empty( $action_id ) ) {
 					if ( $process_asynchronously ) {
 						$request_args = array(

@@ -138,6 +138,18 @@ class ES_Geolocation {
 	 * @since 4.5.0
 	 */
 	public static function get_countries_iso_code_name_map( $country_code = '' ) {
+		
+		$countries_data = self::get_countries();
+
+		if ( isset( $countries_data[ $country_code ] ) ) {
+			return $countries_data[ $country_code ];
+		} else {
+			return '';
+		}
+	}
+
+	public static function get_countries() {
+
 		$countries_data = array(
 			'AF' => 'Afghanistan',
 			'AX' => 'Aland Islands',
@@ -386,10 +398,6 @@ class ES_Geolocation {
 			'ZW' => 'Zimbabwe',
 		);
 
-		if ( isset( $countries_data[ $country_code ] ) ) {
-			return $countries_data[ $country_code ];
-		} else {
-			return '';
-		}
+		return $countries_data;
 	}
 }

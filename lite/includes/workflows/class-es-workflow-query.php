@@ -77,16 +77,20 @@ class ES_Workflow_Query {
 	/**
 	 * Set trigger name or array of names to query.
 	 *
-	 * @param string|ES_Workflow_Trigger $trigger Workflow trigger object|name.
+	 * @param string|ES_Workflow_Trigger[] $trigger Workflow trigger object|name.
 	 */
 	public function set_triggers( $triggers ) {
 		if ( ! empty( $triggers ) ) {
-			foreach ( $triggers as $trigger ) {
-				if ( $trigger instanceof ES_Workflow_Trigger ) {
-					$this->triggers[] = $trigger->get_name();
-				} else {
-					$this->triggers[] = $trigger;
+			if ( is_array( $triggers ) ) {
+				foreach ( $triggers as $trigger ) {
+					if ( $trigger instanceof ES_Workflow_Trigger ) {
+						$this->triggers[] = $trigger->get_name();
+					} else {
+						$this->triggers[] = $trigger;
+					}
 				}
+			} else if ( is_string( $triggers ) ) {
+				$this->triggers[] = $triggers;
 			}
 		}
 	}

@@ -99,6 +99,10 @@ class Email_Subscribers_Admin {
 		// Filter to hook custom validation for specific service request.
 		add_filter( 'ig_es_service_request_custom_validation', array( $this, 'maybe_override_service_validation' ), 10, 2 );
 
+		// Ajax handler for email preview
+		add_action( 'wp_ajax_ig_es_preview_email_report', array( $this, 'preview_email_in_report' ) );
+		add_action( 'wp_ajax_ajax_fetch_report_list', array( $this, 'ajax_fetch_report_list_callback'));
+
 		if ( class_exists( 'IG_ES_Premium_Services_UI' ) ) {
 			IG_ES_Premium_Services_UI::instance();
 		}
@@ -135,7 +139,7 @@ class Email_Subscribers_Admin {
 		wp_enqueue_style( 'ig-es-style', plugin_dir_url( __FILE__ ) . 'dist/main.css', array(), $this->version, 'all' );
 
 		$get_page = ig_es_get_request_data( 'page' );
-		if ( ! empty( $get_page ) && 'es_reports' === $get_page ) {
+		if ( ! empty( $get_page ) && ( 'es_reports' === $get_page || 'es_subscribers' === $get_page ) ) {
 			wp_enqueue_style( 'flag-icon-css', 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css', array(), $this->version, 'all' );
 		}
 	}
@@ -151,36 +155,66 @@ class Email_Subscribers_Admin {
 			return;
 		}
 
+		$get_page = ig_es_get_request_data( 'page' );
+
 		wp_enqueue_script( $this->email_subscribers, plugin_dir_url( __FILE__ ) . 'js/email-subscribers-admin.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-tabs' ), $this->version, false );
 
 		$ig_es_js_data = array(
 			'security'  => wp_create_nonce( 'ig-es-admin-ajax-nonce' ),
 			'i18n_data' => array(
+				// Broadcast messages.
 				'ajax_error_message'              => __( 'An error has occured. Please try again later.', 'email-subscribers' ),
 				'broadcast_draft_success_message' => __( 'Broadcast saved as draft successfully.', 'email-subscribers' ),
 				'broadcast_draft_error_message'   => __( 'An error has occured while saving the broadcast. Please try again later.', 'email-subscribers' ),
 				'broadcast_subject_empty_message' => __( 'Please add a broadcast subject before saving.', 'email-subscribers' ),
 				'empty_template_message'          => __( 'Please add email body.', 'email-subscribers' ),
+				'remove_conditions_message'       => __( 'Do you really like to remove all conditions?', 'email-subscribers' ),
+				
+				// Workflows messages.
+				'no_trigger_message'          	=> __( 'Please select a trigger before saving the workflow.', 'email-subscribers' ),
+				'no_actions_message'          	=> __( 'Please add some actions before saving the workflow.', 'email-subscribers' ),
+				'no_action_selected_message'  	=> __( 'Please select an action that this workflow should perform before saving the workflow.', 'email-subscribers' ),
+				'trigger_change_message'      	=> __( 'Changing the trigger will remove existing actions. Do you want to proceed anyway?.', 'email-subscribers' ),
+				'placeholder_copied_message'  	=> __( 'Copied!', 'email-subscribers' ),
+				'delete_confirmation_message' 	=> __( 'Are you sure?', 'email-subscribers' ),
+
+				// Import subscribers messages.
+				'select_status'        		  	=> esc_html__( 'Please select the status for the importing contacts!', 'email-subscribers' ),
+				'select_list'          		  	=> esc_html__( 'Please select a list for importing contacts!', 'email-subscribers' ),
+				'select_email_column'  		  	=> esc_html__( 'Please select the email address column!', 'email-subscribers' ),
+				'prepare_data'         		  	=> esc_html__( 'Preparing Data', 'email-subscribers' ),
+				/* translators: %s: Upload progress */
+				'uploading'            		  	=> esc_html__( 'Uploading...%s', 'email-subscribers' ),
+				/* translators: %s: Import progress */
+				'import_contacts'      		  	=> esc_html__( 'Importing contacts...%s', 'email-subscribers' ),
+				/* translators: %s: Import failed svg icon  */
+				'import_failed'        		  	=> esc_html__( 'Import failed! %s', 'email-subscribers' ),
+				'no_windowclose'   	   		  	=> esc_html__( 'Please do not close this window until it completes...', 'email-subscribers' ),
+				'prepare_import'       		  	=> esc_html__( 'Preparing Import...', 'email-subscribers' ),
+				/* translators: 1. Imported contacts count 2. Total contacts count 3. Failed to import count 4. Memory usage */
+				'current_stats'        		  	=> esc_html__( 'Currently %1$s of %2$s imported with %3$s errors. %4$s memory usage', 'email-subscribers' ),
+				/* translators: %s: Time left in minutes */
+				'estimate_time'        			=> esc_html__( 'Estimate time left: %s minutes', 'email-subscribers' ),
+				/* translators: %s: Next attempt delaly time */
+				'continues_in'         			=> esc_html__( 'Continues in %s seconds', 'email-subscribers' ),
+				'error_importing'      			=> esc_html__( 'There was a problem during importing contacts. Please check the error logs for more information!', 'email-subscribers' ),
+				'confirm_import'       			=> esc_html__( 'Do you really like to import these contacts?', 'email-subscribers' ),
+				/* translators: %s: Process complete svg icon  */
+				'import_complete'      			=> esc_html__( 'Import complete! %s', 'email-subscribers' ),
+				'onbeforeunloadimport' 			=> esc_html__( 'You are currently importing subscribers! If you leave the page all pending subscribers don\'t get imported!', 'email-subscribers' ),
+				'api_verification_success' 		=> esc_html__( 'API is valid. Fetching lists...', 'email-subscribers' ),
+				'mailchimp_notice_nowindow_close' => esc_html__( 'Fetching contacts from MailChimp...Please do not close this window', 'email-subscribers' ),
 			),
+			'is_pro' => ES()->is_pro(),
 		);
 
 		wp_localize_script( $this->email_subscribers, 'ig_es_js_data', $ig_es_js_data );
 
-		$page_prefix = ES()->get_admin_page_prefix();
+		if ( 'es_workflows' === $get_page ) {
 
-		if ( ES()->is_es_admin_screen( $page_prefix . '_page_es_workflows' ) ) {
-
-			wp_enqueue_script( $this->email_subscribers . '-workflows', plugin_dir_url( __FILE__ ) . 'js/ig-es-workflows.js', array( 'jquery', 'jquery-ui-datepicker' ), $this->version, false );
-
-			$workflows_data = array(
-				'security'                   => wp_create_nonce( 'ig-es-workflow-nonce' ),
-				'no_trigger_message'         => __( 'Please select a trigger before saving the workflow.', 'email-subscribers' ),
-				'no_actions_message'         => __( 'Please add some actions before saving the workflow.', 'email-subscribers' ),
-				'no_action_selected_message' => __( 'Please select an action that this workflow should perform before saving the workflow.', 'email-subscribers' ),
-				'trigger_change_message'     => __( 'Changing the trigger will remove existing actions. Do you want to proceed anyway?.', 'email-subscribers' ),
-			);
-
-			wp_localize_script( $this->email_subscribers . '-workflows', 'ig_es_workflows_data', $workflows_data );
+			if ( ! wp_script_is( 'clipboard', 'registered' ) ) {
+				wp_enqueue_script( 'clipboard', plugin_dir_url( __FILE__ ) . 'js/clipboard.js', array( 'jquery' ), '2.0.6', false );
+			}
 
 			if ( ! function_exists( 'ig_es_wp_js_editor_admin_scripts' ) ) {
 				/**
@@ -191,45 +225,24 @@ class Email_Subscribers_Admin {
 	
 			// Load required html/js for dynamic WordPress editor.
 			ig_es_wp_js_editor_admin_scripts();
-		} else if ( ES()->is_es_admin_screen( $page_prefix . '_page_es_subscribers' ) ) {
-			wp_enqueue_script( $this->email_subscribers . '-subscribers', plugin_dir_url( __FILE__ ) . 'js/subscribers.js', array( 'jquery', 'plupload-all' ), $this->version, false );
 
-			$subscribers_data = array(
-				'security'                   => wp_create_nonce( 'ig-es-admin-ajax-nonce' ),
-				'i18n' => array(
-					'select_status'        => esc_html__( 'Please select the status for the importing contacts!', 'email-subscribers' ),
-					'select_emailcolumn'   => esc_html__( 'Please select at least the column with the email addresses!', 'email-subscribers' ),
-					'prepare_data'         => esc_html__( 'Preparing Data', 'email-subscribers' ),
-					/* translators: %s: Upload progress */
-					'uploading'            => esc_html__( 'Uploading...%s', 'email-subscribers' ),
-					/* translators: %s: Import progress */
-					'import_contacts'      => esc_html__( 'Importing contacts...%s', 'email-subscribers' ),
-					/* translators: %s: Import failed svg icon  */
-					'import_failed'        => esc_html__( 'Import failed! %s', 'email-subscribers' ),
-					'no_windowclose'   	   => esc_html__( 'Please do not close this window until it completes...', 'email-subscribers' ),
-					'prepare_import'       => esc_html__( 'Preparing Import...', 'email-subscribers' ),
-					/* translators: 1. Imported contacts count 2. Total contacts count 3. Failed to import count 4. Memory usage */
-					'current_stats'        => esc_html__( 'Currently %1$s of %2$s imported with %3$s errors. %4$s memory usage', 'email-subscribers' ),
-					/* translators: %s: Time left in minutes */
-					'estimate_time'        => esc_html__( 'Estimate time left: %s minutes', 'email-subscribers' ),
-					/* translators: %s: Next attempt delaly time */
-					'continues_in'         => esc_html__( 'Continues in %s seconds', 'email-subscribers' ),
-					'error_importing'      => esc_html__( 'There was a problem during importing contacts. Please check the error logs for more information!', 'email-subscribers' ),
-					'confirm_import'       => esc_html__( 'Do you really like to import these contacts?', 'email-subscribers' ),
-					/* translators: %s: Process complete svg icon  */
-					'import_complete'      => esc_html__( 'Import complete! %s', 'email-subscribers' ),
-					'onbeforeunloadimport' => esc_html__( 'You are currently importing subscribers! If you leave the page all pending subscribers don\'t get imported!', 'email-subscribers' ),
-				),
-			);
+			// Localize additional required data for workflow functionality
+			$workflows_data = ES_Workflow_Admin_Edit::get_workflow_data();
+			wp_localize_script( $this->email_subscribers, 'ig_es_workflows_data', $workflows_data );
+		} else if ( 'es_subscribers' === $get_page ) {
 
-			wp_localize_script( $this->email_subscribers . '-subscribers', 'ig_es_subscribers_data', $subscribers_data );
+			$action = ig_es_get_request_data( 'action' );
+			if ( 'import' === $action ) {
+				// Library to handle CSV file upload.
+				wp_enqueue_script( 'plupload-all' );
+			}
 		}
 
 		//timepicker
 		wp_register_script( $this->email_subscribers . '-timepicker', plugin_dir_url( __FILE__ ) . 'js/jquery.timepicker.js', array( 'jquery' ), ES_PLUGIN_VERSION, true );
 		wp_enqueue_script( $this->email_subscribers . '-timepicker' );
 
-		$get_page = ig_es_get_request_data( 'page' );
+		
 		if ( ! empty( $get_page ) && 'es_dashboard' === $get_page || 'es_reports' === $get_page ) {
 			wp_enqueue_script( 'frappe-js', 'https://unpkg.com/frappe-charts@1.5.2/dist/frappe-charts.min.iife.js', array( 'jquery' ), $this->version, false );
 		}
@@ -617,16 +630,36 @@ class Email_Subscribers_Admin {
 
 	public function count_contacts_by_list() {
 
-		$list_id = ig_es_get_request_data( 'list_id', 0 );
-		$status  = ig_es_get_request_data( 'status', 'all' );
+		$list_id    = ig_es_get_request_data( 'list_id', 0 );
+		$status     = ig_es_get_request_data( 'status', 'all' );
+		$conditions = ig_es_get_request_data( 'conditions', array() );
+		$get_count  = ig_es_get_request_data( 'get_count', 'no' );
 
-		if ( 0 == $list_id ) {
+		if ( 0 == $list_id && empty( $conditions) ) {
 			return 0;
 		}
 
-		$total_count = ES()->lists_contacts_db->get_total_count_by_list( $list_id, $status );
+		$response_data = array();
+		
+		if ( ! empty( $conditions ) ) {
+			if ( 'yes' === $get_count ) {
+				$args = array(
+					'lists'        => $list_id,
+					'conditions'   => $conditions,
+					'status'       => $status,
+					'return_count' => true,
+				);
+				$query = new IG_ES_Subscribers_Query();
+				$response_data['total'] = $query->run( $args );
+			}
+			ob_start();
+			do_action( 'ig_es_campaign_show_conditions', $conditions );
+			$response_data['conditions_html'] = ob_get_clean();
+		} else {
+			$response_data['total'] = ES()->lists_contacts_db->get_total_count_by_list( $list_id, $status );
+		}
 
-		die( json_encode( array( 'total' => $total_count ) ) );
+		die( json_encode( $response_data ) );
 	}
 
 	public function get_template_content() {
@@ -1179,4 +1212,57 @@ class Email_Subscribers_Admin {
 		}
 
 	}*/
+
+	/**
+	 * Method to preview email through AJAX
+	 * 
+	 * @since 4.6.11
+	 */
+	public function preview_email_in_report() {
+
+		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
+		$report_id  	 = ig_es_get_request_data( 'campaign_id' );
+		$campaign_type   = ig_es_get_request_data( 'campaign_type' );
+		$nonce  		 = ig_es_get_request_data( 'security' );
+		$response 		 = array();
+		$email_body 	 = '';
+		if ( ! empty( $report_id ) ) {
+
+			if ( ! empty( $campaign_type ) && 'sequence_message' === $campaign_type ) {
+				$email_body		 = ES()->campaigns_db->get_campaign_by_id( $report_id );
+			} else {
+				$email_body 	 = ES_DB_Mailing_Queue::get_email_by_id( $report_id );
+			}
+
+			$es_email_type = get_option( 'ig_es_email_type' );    // Not the ideal way. Email type can differ while previewing sent email.
+			$response['template_html'] = ES_Common::es_process_template_body( $email_body['body'] );
+			/*if ( 'WP HTML MAIL' == $es_email_type || 'PHP HTML MAIL' == $es_email_type ) {
+				$response['template_html'] = ES_Common::es_process_template_body( $email_body['body'] );
+			} else {
+				$response['template_html'] = str_replace( '<br />', "\r\n", $email_body['body'] );
+				$response['template_html'] = str_replace( '<br>', "\r\n", $email_body['body'] );
+			}
+			*/	
+		}
+
+		if ( ! empty( $response ) ) {
+			wp_send_json_success( $response );
+		} else {
+			wp_send_json_error();
+		}
+		?>
+		
+	<?php
+	}
+
+	/**
+	 * Method to display Activity table in Reports through Ajax
+	 *
+	 * @since 4.6.12
+	 */
+	public function ajax_fetch_report_list_callback() {
+
+		$wp_list_table = new ES_Campaign_Report();
+		$wp_list_table->ajax_response();
+	}
 }

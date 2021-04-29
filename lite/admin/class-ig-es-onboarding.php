@@ -493,7 +493,6 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$admin_name  = get_option( 'admin_email' );
 			$user        = get_user_by( 'email', $admin_email );
 			$wp_user_id  = 0;
-			$ip_address	 = ig_es_get_ip();
 			if ( $user instanceof WP_User ) {
 				$wp_user_id = $user->ID;
 			}
@@ -505,7 +504,6 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				'last_name'    => '',
 				'email'        => $admin_email,
 				'source'       => 'admin',
-				'ip_address'   => $ip_address,
 				'form_id'      => 0,
 				'status'       => 'verified',
 				'unsubscribed' => 0,
@@ -522,7 +520,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 					'status'        => 'subscribed',
 					'optin_type'    => IG_SINGLE_OPTIN,
 					'subscribed_at' => ig_get_current_date_time(),
-					'subscribed_ip' => $ip_address,
+					'subscribed_ip' => '',
 				);
 
 				if ( ! empty( $default_list_id ) ) {

@@ -29,21 +29,73 @@ if ( ! class_exists( 'ES_Phpmail_Mailer' ) ) {
 		 */
 		public function send( ES_Message $message ) {
 
-			ES()->logger->info( 'Start Sending Email Using PHP Mail', $this->logger_context );
+			global $wp_version;
 
-			$message->headers[] = 'MIME-Version: 1.0';
-			$message->headers[] = 'X-Mailer: PHP' . phpversion();
+			ES()->logger->info( 'Start Sending Email Using PHP Mail', $this->logger_context );			
+
+			if ( version_compare( $wp_version, '5.5', '<' ) ) {
+				require_once ABSPATH . WPINC . '/class-phpmailer.php';
+			} else {
+				require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
+				require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
 			
-			$headers = implode("\n", $message->headers);
-			$send    = mail( $message->to, $message->subject, $message->body, $headers );
+				// Check if PHPMailer class already exists before creating an alias for it.
+				if ( ! class_exists( 'PHPMailer' ) ) {
+					class_alias( PHPMailer\PHPMailer\PHPMailer::class, 'PHPMailer' );
+				}
 
-			if ( ! $send ) {
-				return $this->do_response( 'error', 'Error in Email Sending' );
+				// Check if phpmailerException class already exists before creating an alias for it.
+				if ( ! class_exists( 'phpmailerException' ) ) {
+					class_alias( PHPMailer\PHPMailer\Exception::class, 'phpmailerException' );
+				}
+			}
+			
+			$phpmailer = new PHPMailer( true );
+			$phpmailer->From          = $message->from;
+			$phpmailer->FromName      = $message->from_name;
+			$phpmailer->CharSet       = $message->charset;
+			$phpmailer->ClearAllRecipients();
+			$phpmailer->clearAttachments();
+			$phpmailer->clearCustomHeaders();
+			$phpmailer->clearReplyTos();
+
+			$phpmailer->addAddress( $message->to );
+			$phpmailer->addReplyTo( $message->from, $message->from_name );
+
+			$phpmailer->WordWrap = 50;
+			$phpmailer->isHTML( true );
+
+			$phpmailer->Subject = $message->subject;
+			$phpmailer->Body    = $message->body;
+			$phpmailer->AltBody = $message->body_text; //Text Email Body for non html email client
+
+			if ( ! empty( $message->attachments ) ) {
+				$attachments = $message->attachments;
+				foreach ( $attachments as $attachment ) {
+					try {
+						$phpmailer->addAttachment( $attachment );
+					} catch ( phpmailerException $e ) {
+						continue;
+					}
+				}
+			}
+			
+			try {
+				if ( ! $phpmailer->send() ) {
+					ES()->logger->error( '[Error in Email Sending] : ' . $message->to . ' Error: ' . $phpmailer->ErrorInfo, $this->logger_context );
+
+					return $this->do_response( 'error', $phpmailer->ErrorInfo );
+				}
+			} catch ( Exception $e ) {
+				ES()->logger->error( '[Error in Email Sending] : ' . $message->to . ' Error: ' . $e->getMessage(), $this->logger_context );
+
+				return $this->do_response( 'error', $e->getMessage() );
 			}
 
 			ES()->logger->info( 'Email Sent Successfully Using PHP Mail', $this->logger_context );
 
 			return $this->do_response( 'success' );
+
 		}
 
 	}

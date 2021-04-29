@@ -118,6 +118,8 @@ class ES_Cron {
 	 */
 	public function schedule() {
 
+		global $ig_es_tracker;
+
 		// Add worker only once
 		if ( ! wp_next_scheduled( 'ig_es_cron_auto_responder' ) ) {
 			wp_schedule_event( floor( time() / 300 ) * 300 - 120, 'ig_es_cron_interval', 'ig_es_cron_auto_responder' );
@@ -127,9 +129,23 @@ class ES_Cron {
 			wp_schedule_event( floor( time() / 300 ) * 300, 'ig_es_cron_interval', 'ig_es_cron_worker' );
 		}
 
-		if ( ! wp_next_scheduled( 'ig_es_wc_abandoned_cart_worker' ) ) {
-			wp_schedule_event( floor( time() / 300 ) * 300, 'ig_es_two_minutes', 'ig_es_wc_abandoned_cart_worker' );
+		$is_woocommerce_active = $ig_es_tracker::is_plugin_activated( 'woocommerce/woocommerce.php' );
+
+		if ( $is_woocommerce_active && ES()->is_pro() ) {
+
+			if ( IG_ES_Abandoned_Cart_Options::is_cart_tracking_enabled() ) {
+				
+				if ( ! wp_next_scheduled( 'ig_es_wc_abandoned_cart_worker' ) ) {
+					wp_schedule_event( floor( time() / 300 ) * 300, 'ig_es_two_minutes', 'ig_es_wc_abandoned_cart_worker' );
+				}
+			}
+	
+			// Cron job to detect WooCommerce products which are on sale.
+			if ( ! wp_next_scheduled( 'ig_es_wc_products_on_sale_worker' ) ) {
+				wp_schedule_event( floor( time() / 300 ) * 300, 'ig_es_fifteen_minutes', 'ig_es_wc_products_on_sale_worker' );
+			}
 		}
+
 
 	}
 
@@ -247,6 +263,11 @@ class ES_Cron {
 		$schedules['ig_es_two_minutes'] = array(
 			'interval' => 120,
 			'display'  => esc_html__( 'Two minutes', 'email-subscribers' ),
+		);
+
+		$schedules['ig_es_fifteen_minutes'] = array(
+			'interval' => 900,
+			'display'  => esc_html__( 'Fifteen minutes', 'email-subscribers' ),
 		);
 
 		return $schedules;
@@ -535,6 +556,9 @@ class ES_Cron {
 	}
 
 	/**
+	 * Handle Data Request
+	 *
+	 * @since 4.6.6
 	 *
 	 */
 	public function handle_data_request() {

@@ -92,6 +92,26 @@ if ( ! class_exists( 'ES_Message' ) ) {
 		 */
 		public $from_name = '';
 
+		/**
+		 * Attachments for email
+		 * 
+		 * @since 4.6.7
+		 */
+		public $attachments = array();
+
+		/**
+		 * Reply to email
+		 * 
+		 * @since 4.6.7
+		 */
+		public $reply_to_email = '';
+
+		/**
+		 * Character set
+		 * 
+		 * @since 4.6.7
+		 */
+		public $charset = '';
 
 		public function __construct() {
 
