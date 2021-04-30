@@ -1314,7 +1314,19 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				require_once plugin_dir_path( __FILE__ ) . 'class-email-subscribers-deactivator.php';
 
 				// Start-IG-Code.
+
+				// XTEC ************ AFEGIT - Blocked access to action scheduler to all users but xtecadmin
+				// 2021.04.30 @aginard
+				if (is_xtec_super_admin()) {
+				//************ FI
+
 				require_once plugin_dir_path( __FILE__ ) . 'libraries/action-scheduler/action-scheduler.php';
+
+				// XTEC ************ AFEGIT - Blocked access to action scheduler to all users but xtecadmin
+				// 2021.04.30 @aginard
+				}
+				//************ FI
+
 				// End-IG-Code.
 
 				self::$instance->email_subscribers = 'email-subscribers';
