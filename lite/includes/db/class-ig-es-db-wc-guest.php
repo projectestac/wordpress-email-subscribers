@@ -15,14 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * IG_ES_DB_WC_Guest class
  *
- *@since 4.6.5
+ * @since 4.6.5
  */
 class IG_ES_DB_WC_Guest extends ES_DB {
 
 	/**
 	 * Guest queue table name
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 * @var $table_name
 	 */
 	public $table_name;
@@ -30,7 +30,7 @@ class IG_ES_DB_WC_Guest extends ES_DB {
 	/**
 	 * Guest queue table version
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 * @var $version
 	 */
 	public $version;
@@ -38,7 +38,7 @@ class IG_ES_DB_WC_Guest extends ES_DB {
 	/**
 	 * Guest queue table primary key
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 * @var $primary_key
 	 */
 	public $primary_key;
@@ -46,7 +46,7 @@ class IG_ES_DB_WC_Guest extends ES_DB {
 	/**
 	 * IG_ES_DB_WC_Guest constructor.
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 */
 	public function __construct() {
 		global $wpdb;
@@ -62,7 +62,7 @@ class IG_ES_DB_WC_Guest extends ES_DB {
 	/**
 	 * Returns Guest queue table's columns
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 *
 	 * @return array Guest queue table columns
 	 */
@@ -83,7 +83,7 @@ class IG_ES_DB_WC_Guest extends ES_DB {
 	/**
 	 * Returns default values for Guest columns
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 *
 	 * @return array default values for Guest columns
 	 */
@@ -110,7 +110,7 @@ class IG_ES_DB_WC_Guest extends ES_DB {
 	 *
 	 * @return mixed $result Query result
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 */
 	public function get_carts( $query_args = array(), $output = ARRAY_A, $do_count_only = false ) {
 

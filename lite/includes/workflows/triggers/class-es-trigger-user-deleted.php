@@ -21,7 +21,7 @@ class ES_Trigger_User_Deleted extends ES_Workflow_Trigger {
 	 *
 	 * @var array
 	 */
-	public $supplied_data_items = array( 'user' );
+	public $supplied_data_items = array( 'subscriber' );
 
 	/**
 	 * Load trigger admin props.
@@ -53,12 +53,22 @@ class ES_Trigger_User_Deleted extends ES_Workflow_Trigger {
 			return;
 		}
 
-		// Prepare data.
-		$data = array(
-			'user' => $user,
-		);
+		$email = $user->user_email;
 
-		$this->maybe_run( $data );
+		if ( ! empty( $email ) ) {
+
+			$subscriber = array(
+				'email' => $email,
+			);
+
+			// Prepare data.
+			$data = array(
+				'subscriber' => $subscriber,
+			);
+
+			$this->maybe_run( $data );
+		}
+		
 	}
 
 
@@ -71,9 +81,9 @@ class ES_Trigger_User_Deleted extends ES_Workflow_Trigger {
 	 */
 	public function validate_workflow( $workflow ) {
 
-		$user = $workflow->data_layer()->get_item( 'user' );
+		$subscriber = $workflow->data_layer()->get_item( 'subscriber' );
 
-		if ( ! $user ) {
+		if ( ! $subscriber ) {
 			return false;
 		}
 

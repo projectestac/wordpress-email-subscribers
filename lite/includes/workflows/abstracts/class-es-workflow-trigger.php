@@ -157,7 +157,7 @@ abstract class ES_Workflow_Trigger {
 	 * Field loader
 	 *
 	 * @since 4.4.1
-	 * 
+	 *
 	 * @modified 4.5.3 Added new action trigger_name_load_extra_fields to allow loading of extra fields for given trigger.
 	 */
 	public function maybe_load_fields() {
@@ -188,7 +188,7 @@ abstract class ES_Workflow_Trigger {
 	 * Add trigger option field
 	 *
 	 * @param object $option Option object.
-	 * 
+	 *
 	 * @since 4.4.6
 	 */
 	public function add_field( $option ) {
@@ -212,7 +212,7 @@ abstract class ES_Workflow_Trigger {
 	 * @param string $name Field name.
 	 *
 	 * @return ES_Field|false
-	 * 
+	 *
 	 * @since 4.4.6
 	 */
 	public function get_field( $name ) {
@@ -238,13 +238,13 @@ abstract class ES_Workflow_Trigger {
 
 	/**
 	 * Check if there are active workflow for this trigger
-	 * 
+	 *
 	 * @return bool
-	 * 
+	 *
 	 * @since 4.6.10
 	 */
 	public function has_workflows() {
-		
+
 		$workflow_query = new ES_Workflow_Query();
 		$workflow_query->set_triggers( $this->get_name() );
 

@@ -60,7 +60,6 @@ class IG_ES_Workflow_Variable_Parser {
 	public function parse( $variable_string ) {
 
 		$matches = array();
-		$parameters = array();
 
 		// extract the variable name (first part) of the variable string, e.g. 'customer.email'
 		preg_match('/([a-z._0-9])+/', $variable_string, $matches, PREG_OFFSET_CAPTURE );
@@ -79,22 +78,7 @@ class IG_ES_Workflow_Variable_Parser {
 		list( $type, $field ) = explode( '.', $name, 2 );
 
 		$parameter_string = trim( substr( $variable_string, $matches[1][1] + 1 ) );
-		$parameter_string = trim( ig_es_str_replace_first_match( $parameter_string, '|' ) ); // remove pipe
-
-		$parameters_split = preg_split('/(,)(?=(?:[^\']|\'[^\']*\')*$)/', $parameter_string );
-
-		foreach ( $parameters_split as $parameter ) {
-			if ( ! strstr( $parameter, ':' ) ) {
-				continue;
-			}
-
-			list( $key, $value ) = explode( ':', $parameter, 2 );
-
-			$key = ES_Clean::string( $key );
-			$value = ES_Clean::string( $this->unquote( $value ) );
-
-			$parameters[ $key ] = $value;
-		}
+		$parameters       = $this->parse_parameters_from_string( $parameter_string );
 
 		$this->name = $name;
 		$this->type = $type;
@@ -104,6 +88,38 @@ class IG_ES_Workflow_Variable_Parser {
 
 		return true;
 
+	}
+
+	/**
+	 * Extract the parameters from the keyword
+	 *
+	 * @param $parameter_string
+	 *
+	 * @return array
+	 *
+	 * @since 5.3.5
+	 */
+	public function parse_parameters_from_string( $parameter_string ) {
+		$parameters       = array();
+		$parameter_string = trim( ig_es_str_replace_first_match( $parameter_string, '|' ) ); // remove pipe
+		$parameters_split = preg_split( '/(,)(?=(?:[^\']|\'[^\']*\')*$)/', $parameter_string );
+
+		foreach ( $parameters_split as $parameter ) {
+			if ( strstr( $parameter, ':' ) ) {
+				list( $key, $value ) = explode( ':', $parameter, 2 );
+			} else if ( strstr( $parameter, '=' ) ) {
+				list( $key, $value ) = explode( '=', $parameter, 2 );
+			} else {
+				continue;
+			}
+
+			$key   = ES_Clean::string( $key );
+			$value = ES_Clean::string( $this->unquote( $value ) );
+
+			$parameters[ $key ] = $value;
+		}
+
+		return $parameters;
 	}
 
 

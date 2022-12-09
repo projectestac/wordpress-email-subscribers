@@ -6,14 +6,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Base class for workflow placeholder variables
- * 
  */
 abstract class IG_ES_Workflow_Variable {
 
 	/**
 	 * Variable name
 	 * wc_order.id, cart.link, user.first_name etc
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $name;
@@ -35,22 +34,22 @@ abstract class IG_ES_Workflow_Variable {
 	/**
 	 * Variable data type
 	 * e.g. wc_order in wc_order.id, cart in cart.link, user in user.first_name etc
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $data_type;
 
-	/** 
+	/**
 	 * Variable data field
 	 * e.g. id in wc_order.id, link in cart.link, first_name in user.first_name etc
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $data_field;
 
 	/**
 	 * Does variable support fallback value in case no value is found
-	 * 
+	 *
 	 * @var bool
 	 */
 	public $use_fallback = true;
@@ -97,14 +96,14 @@ abstract class IG_ES_Workflow_Variable {
 	 * @param $name
 	 */
 	public function setup( $name ) {
-		$this->name = $name;
+		$this->name                                 = $name;
 		list( $this->data_type, $this->data_field ) = explode( '.', $this->name );
 	}
 
 
 	/**
 	 * Get variable description
-	 * 
+	 *
 	 * @return string
 	 */
 	public function get_description() {
@@ -126,7 +125,7 @@ abstract class IG_ES_Workflow_Variable {
 
 	/**
 	 * Get variable name
-	 * 
+	 *
 	 * @return string
 	 */
 	public function get_name() {
@@ -136,7 +135,7 @@ abstract class IG_ES_Workflow_Variable {
 
 	/**
 	 * Get variable data type
-	 * 
+	 *
 	 * @return string
 	 */
 	public function get_data_type() {
@@ -146,7 +145,7 @@ abstract class IG_ES_Workflow_Variable {
 
 	/**
 	 * Get variable data field
-	 * 
+	 *
 	 * @return string
 	 */
 	public function get_data_field() {
@@ -178,6 +177,9 @@ abstract class IG_ES_Workflow_Variable {
 		$field->set_required( $required );
 		$field->set_placeholder( $placeholder );
 		$field->meta = $extra;
+		if ( $required ) {
+			$field->add_extra_attr( 'data-required', 'yes' );
+		}
 
 		$this->add_parameter_field( $field );
 	}
@@ -198,6 +200,34 @@ abstract class IG_ES_Workflow_Variable {
 		$field->set_required( $required );
 		$field->set_options( $options );
 		$field->meta = $extra;
+		if ( $required ) {
+			$field->add_extra_attr( 'data-required', 'yes' );
+		}
+
+		$this->add_parameter_field( $field );
+	}
+
+	/**
+	 * Add a number parameter field to the variable.
+	 *
+	 * @param string $name
+	 * @param string $description
+	 * @param bool   $required
+	 * @param string $placeholder
+	 * @param array  $extra
+	 *
+	 * @since 5.3.4
+	 */
+	public function add_parameter_number_field( $name, $description, $required = false, $placeholder = '', $extra = array()) {
+		$field = new ES_Number();
+		$field->set_name( $name );
+		$field->set_description( $description );
+		$field->set_required( $required );
+		$field->set_placeholder( $placeholder );
+		$field->meta = $extra;
+		if ( $required ) {
+			$field->add_extra_attr( 'data-required', 'yes' );
+		}
 
 		$this->add_parameter_field( $field );
 	}

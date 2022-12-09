@@ -32,7 +32,7 @@ class ES_Mailchimp_API {
 
 	/**
 	 * Get total items
-	 * 
+	 *
 	 * @since 4.6.14
 	 */
 	public function get_total_items() {
@@ -41,7 +41,7 @@ class ES_Mailchimp_API {
 
 	/**
 	 * Verify API Key
-	 * 
+	 *
 	 * @since 4.6.14
 	 */
 	public function ping() {
@@ -50,7 +50,7 @@ class ES_Mailchimp_API {
 
 	/**
 	 * Get list of audience lists
-	 * 
+	 *
 	 * @since 4.6.14
 	 */
 	public function lists( $args = array() ) {
@@ -60,7 +60,7 @@ class ES_Mailchimp_API {
 
 	/**
 	 * Get specific audience list
-	 * 
+	 *
 	 * @since 4.6.14
 	 */
 	public function get_list( $list_id, $args = array() ) {
@@ -71,7 +71,7 @@ class ES_Mailchimp_API {
 	 * Get contacts from specific list
 	 *
 	 * @param list_id
-	 * 
+	 *
 	 * @since 4.6.14
 	 */
 	public function members( $list_id, $args = array() ) {
@@ -89,7 +89,7 @@ class ES_Mailchimp_API {
 
 	/**
 	 * Get data from Mailchimp API (Lists, contacts)
-	 * 
+	 *
 	 * @since 4.6.14
 	 */
 	private function do_call( $method, $action, $args = array(), $timeout = 15 ) {

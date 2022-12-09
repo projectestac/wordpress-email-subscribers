@@ -18,16 +18,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class ES_Geolocation {
 
+
 	/**
 	 * API endpoints for geolocating an IP address
 	 *
 	 * @var array
 	 */
 	private static $geoip_apis = array(
-		'icegram_api_url' => 'http://api.icegram.com/geo/%s',
-		'ipinfo.io'       => 'https://ipinfo.io/%s/json',
-		'ip-api.com'      => 'http://ip-api.com/json/%s',
+		'ipinfo.io'  => 'https://ipinfo.io/%s/json',
+		'ip-api.com' => 'http://ip-api.com/json/%s',
 	);
+
+	/**
+	 * Icegram API endpoints for geolocating an IP address
+	 *
+	 * @var string
+	 *
+	 * @since 4.7.3
+	 */
+	private static $icegram_api_url = 'http://api.icegram.com/geo/';
 
 	/**
 	 * Geolocate an IP address.
@@ -62,6 +71,29 @@ class ES_Geolocation {
 		$geolocation = self::geolocate_via_api( $ip_address );
 
 		return $geolocation;
+	}
+
+	/**
+	 * Convert the String TimeZone to seconds
+	 *
+	 * @param $timezone
+	 *
+	 * @return string
+	 */
+	public static function convert_timezone_to_seconds( $timezone ) {
+		if ( empty( $timezone ) ) {
+			return '+0:00';
+		}
+		try {
+			$current = timezone_open( $timezone );
+			$utcTime = new DateTime( 'now', new DateTimeZone( 'UTC' ) );
+			$offset_in_secs = $current->getOffset( $utcTime );
+			$hours_and_sec  = gmdate( 'H:i', abs( $offset_in_secs ) );
+
+			return stripos( $offset_in_secs, '-' ) === false ? "+{$hours_and_sec}" : "-{$hours_and_sec}";
+		} catch ( Exception $exception ) {
+			return '+0:00';
+		}
 	}
 
 	/**
@@ -101,17 +133,16 @@ class ES_Geolocation {
 						case 'ipinfo.io':
 							$data         = json_decode( $response['body'] );
 							$country_code = isset( $data->country ) ? $data->country : '';
+							$timezone     = isset( $data->timezone ) ? self::convert_timezone_to_seconds( $data->timezone ) : '+0:00';
 							break;
 						case 'ip-api.com':
 							$data         = json_decode( $response['body'] );
 							$country_code = isset( $data->countryCode ) ? $data->countryCode : ''; // @codingStandardsIgnoreLine
-							break;
-						case 'icegram_api_url':
-							$data         = json_decode( $response['body'] );
-							$country_code = isset( $data->country_code ) ? $data->country_code : ''; // @codingStandardsIgnoreLine
+							$timezone     = isset( $data->timezone ) ? self::convert_timezone_to_seconds( $data->timezone ) : '+0:00';
 							break;
 						default:
 							$country_code = apply_filters( 'ig_es_geolocation_geoip_response_' . $service_name, '', $response['body'] );
+							$timezone     = apply_filters( 'ig_es_geolocation_geoip_timezone_response_' . $service_name, '', $response['body'] );
 							break;
 					}
 
@@ -119,7 +150,27 @@ class ES_Geolocation {
 
 					if ( $country_code ) {
 						$geo_ip_data['country_code'] = $country_code;
+						$geo_ip_data['timezone']     = $timezone;
 						break;
+					}
+				}
+			}
+
+			// Use Icegram geo location API incase if we still don't have the location data.
+			if ( empty( $geo_ip_data ) ) {
+				$response = wp_safe_remote_get(
+					self::$icegram_api_url . $ip_address,
+					array(
+						'timeout' => 2,
+					)
+				);
+				if ( ! is_wp_error( $response ) && $response['body'] ) {
+					$data         = json_decode( $response['body'] );
+					$country_code = isset( $data->country_code ) ? $data->country_code : '';
+					$timezone     = isset( $data->timezone ) ? self::convert_timezone_to_seconds( $data->timezone ) : '+0:00';
+					if ( $country_code ) {
+						$geo_ip_data['country_code'] = $country_code;
+						$geo_ip_data['timezone']     = $timezone;
 					}
 				}
 			}
@@ -138,7 +189,7 @@ class ES_Geolocation {
 	 * @since 4.5.0
 	 */
 	public static function get_countries_iso_code_name_map( $country_code = '' ) {
-		
+
 		$countries_data = self::get_countries();
 
 		if ( isset( $countries_data[ $country_code ] ) ) {

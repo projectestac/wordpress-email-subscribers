@@ -37,21 +37,40 @@ class ES_Tools {
 
 		$response = array();
 
-		$email = sanitize_email( ig_es_get_request_data( 'es_test_email' ) );
-
-		$subject = ig_es_get_data( $_POST, 'subject', '', true );
-		$content = wp_kses_post( ig_es_get_request_data( 'content', '', false ) );
+		$email         = sanitize_email( ig_es_get_request_data( 'es_test_email' ) );
+		$campaign_id   = ig_es_get_data( $_POST, 'campaign_id', 0, true );
+		$campaign_type = ig_es_get_data( $_POST, 'campaign_type', '', true );
+		$template_id   = ig_es_get_data( $_POST, 'template_id', 0, true );
+		$subject       = ig_es_get_data( $_POST, 'subject', '', true );
+		$content       = ig_es_get_request_data( 'content', '', false );
+		$attachments   = ig_es_get_data( $_POST, 'attachments', array(), true );
 
 		if ( ! empty( $email ) ) {
 
-			if ( ! empty( $content ) ) {
-				$content = str_replace( '{{EMAIL}}', 'User Email', $content );
-				$content = str_replace( '{{NAME}}', 'Username', $content );
+			$merge_tags = array( 'attachments' => $attachments );
+
+			if ( ! empty( $campaign_id ) ) {
+				$campaign_data = array(
+					'id'               => $campaign_id,
+					'type'             => $campaign_type,
+					'base_template_id' => $template_id,
+					'subject'          => $subject,
+					'body'             => $content,
+				);
+				if ( IG_CAMPAIGN_TYPE_POST_NOTIFICATION === $campaign_type ) {
+					$campaign_data = ES_Campaign_Admin::replace_post_notification_merge_tags_with_sample_post( $campaign_data );
+				} elseif ( IG_CAMPAIGN_TYPE_POST_DIGEST === $campaign_type ) {
+					$campaign_data = ES_Campaign_Admin::replace_post_digest_merge_tags_with_sample_posts( $campaign_data );
+				}
+
+				$merge_tags['campaign_id'] = $campaign_id;
+
+				$subject = $campaign_data['subject'];
+				$content = $campaign_data['body'];
 			}
 
-			$attachments = ig_es_get_data( $_POST, 'attachments', array() );
 
-			$merge_tags = array( 'attachments' => $attachments );
+			$content = ES_Common::es_process_template_body( $content, $template_id, $campaign_id );
 
 			$response = ES()->mailer->send_test_email( $email, $subject, $content, $merge_tags );
 

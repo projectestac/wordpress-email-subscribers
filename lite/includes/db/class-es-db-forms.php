@@ -6,31 +6,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class ES_DB_Forms extends ES_DB {
-	
+
 	/**
 	 * Table name
-	 * 
+	 *
 	 * @since 4.2.2
 	 * @var string
-	 *
 	 */
 	public $table_name;
 
 	/**
 	 * Table DB version
-	 * 
+	 *
 	 * @since 4.2.2
 	 * @var string
-	 *
 	 */
 	public $version;
 
 	/**
 	 * Table primary key column name
-	 * 
+	 *
 	 * @since 4.2.2
 	 * @var string
-	 *
 	 */
 	public $primary_key;
 
@@ -68,7 +65,7 @@ class ES_DB_Forms extends ES_DB {
 			'created_at' => '%s',
 			'updated_at' => '%s',
 			'deleted_at' => '%s',
-			'af_id'      => '%d'
+			'af_id'      => '%d',
 		);
 	}
 
@@ -86,7 +83,7 @@ class ES_DB_Forms extends ES_DB {
 			'created_at' => ig_get_current_date_time(),
 			'updated_at' => null,
 			'deleted_at' => null,
-			'af_id'      => 0
+			'af_id'      => 0,
 		);
 	}
 
@@ -228,62 +225,62 @@ class ES_DB_Forms extends ES_DB {
 
 					$body = array(
 						array(
-							'type'   => 'text',
-							'name'   => 'Name',
-							'id'     => 'name',
-							'params' => array(
+							'type'     => 'text',
+							'name'     => 'Name',
+							'id'       => 'name',
+							'params'   => array(
 								'label'    => 'Name',
 								'show'     => ( 'YES' === $es_af_name ) ? true : false,
-								'required' => ( 'YES' === $es_af_name_mand ) ? true : false
+								'required' => ( 'YES' === $es_af_name_mand ) ? true : false,
 							),
 
-							'position' => 1
+							'position' => 1,
 						),
 
 						array(
-							'type'   => 'text',
-							'name'   => 'Email',
-							'id'     => 'email',
-							'params' => array(
+							'type'     => 'text',
+							'name'     => 'Email',
+							'id'       => 'email',
+							'params'   => array(
 								'label'    => 'Email',
 								'show'     => ( 'YES' === $es_af_email ) ? true : false,
-								'required' => ( 'YES' === $es_af_email_mand ) ? true : false
+								'required' => ( 'YES' === $es_af_email_mand ) ? true : false,
 							),
 
-							'position' => 2
+							'position' => 2,
 						),
 
 						array(
-							'type'   => 'checkbox',
-							'name'   => 'Lists',
-							'id'     => 'lists',
-							'params' => array(
+							'type'     => 'checkbox',
+							'name'     => 'Lists',
+							'id'       => 'lists',
+							'params'   => array(
 								'label'    => 'Lists',
 								'show'     => ( 'YES' === $es_af_group ) ? true : false,
 								'required' => ( 'YES' === $es_af_group_mand ) ? true : false,
-								'values'   => $list_ids
+								'values'   => $list_ids,
 							),
 
-							'position' => 3
+							'position' => 3,
 						),
 
 						array(
-							'type'   => 'submit',
-							'name'   => 'submit',
-							'id'     => 'submit',
-							'params' => array(
+							'type'     => 'submit',
+							'name'     => 'submit',
+							'id'       => 'submit',
+							'params'   => array(
 								'label' => 'Subscribe',
-								'show'  => true
+								'show'  => true,
 							),
 
-							'position' => 4
+							'position' => 4,
 						),
 
 					);
 
 					$settings = array(
 						'lists' => $list_ids,
-						'desc'  => $es_af_desc
+						'desc'  => $es_af_desc,
 					);
 
 					$data[ $key ]['name']       = $es_af_title;

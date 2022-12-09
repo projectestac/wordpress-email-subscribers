@@ -1,0 +1,13 @@
+.es-form-field-container .gjs-row {
+    margin-bottom: 0.6em;
+}
+
+.es-form-field-container label.es-field-label {
+    display: block;
+}
+
+@media (max-width: 320px) {
+    .es-form-field-container {
+        padding: 1rem;
+    }
+}

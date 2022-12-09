@@ -5,31 +5,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class ES_DB_Lists extends ES_DB {
-	
+
 	/**
 	 * Table name
-	 * 
+	 *
 	 * @since 4.0.0
 	 * @var $table_name
-	 *
 	 */
 	public $table_name;
-	
+
 	/**
 	 * Table DB version
-	 * 
+	 *
 	 * @since 4.0.0
 	 * @var $version
-	 *
 	 */
 	public $version;
-	
+
 	/**
 	 * Table primary key column name
-	 * 
+	 *
 	 * @since 4.0.0
 	 * @var $primary_key
-	 *
 	 */
 	public $primary_key;
 
@@ -49,7 +46,6 @@ class ES_DB_Lists extends ES_DB {
 
 		$this->version = '1.0';
 
-
 	}
 
 	/**
@@ -61,13 +57,14 @@ class ES_DB_Lists extends ES_DB {
 	 */
 	public function get_columns() {
 		return array(
-			'id'         => '%d',
-			'slug'       => '%s',
-			'name'       => '%s',
-			'hash'       => '%s',
-			'created_at' => '%s',
-			'updated_at' => '%s',
-			'deleted_at' => '%s',
+			'id'         	=> '%d',
+			'slug'       	=> '%s',
+			'name'       	=> '%s',
+			'description'   => '%s',
+			'hash'       	=> '%s',
+			'created_at' 	=> '%s',
+			'updated_at' 	=> '%s',
+			'deleted_at' 	=> '%s',
 		);
 	}
 
@@ -78,12 +75,13 @@ class ES_DB_Lists extends ES_DB {
 	 */
 	public function get_column_defaults() {
 		return array(
-			'slug'       => null,
-			'name'       => null,
-			'hash'       => null,
-			'created_at' => ig_get_current_date_time(),
-			'updated_at' => null,
-			'deleted_at' => null,
+			'slug'       	=> null,
+			'name'       	=> null,
+			'description'   => null,
+			'hash'       	=> null,
+			'created_at' 	=> ig_get_current_date_time(),
+			'updated_at' 	=> null,
+			'deleted_at' 	=> null,
 		);
 	}
 
@@ -102,7 +100,7 @@ class ES_DB_Lists extends ES_DB {
 	 * Get list id name map
 	 *
 	 * @param string $list_id
-	 * @param bool $flip
+	 * @param bool   $flip
 	 *
 	 * @return array|mixed|string
 	 *
@@ -155,7 +153,8 @@ class ES_DB_Lists extends ES_DB {
 
 		return $list;
 
-		/* TODO: Keep for sometime. Remove it after complete verification/ testing
+		/*
+		 TODO: Keep for sometime. Remove it after complete verification/ testing
 		global $wpdb;
 
 		$lists = array();
@@ -204,9 +203,9 @@ class ES_DB_Lists extends ES_DB {
 	 * @since 4.6.12
 	 */
 	public function get_lists_by_id( $list_ids = array() ) {
-		
+
 		global $wpdb;
-		
+
 		if ( empty( $list_ids ) ) {
 			return array();
 		}
@@ -237,11 +236,11 @@ class ES_DB_Lists extends ES_DB {
 	public function get_all_lists_name_by_contact( $id ) {
 		global $wpdb;
 
-		$res  = $wpdb->get_col(
+		$res = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT `name` FROM {$wpdb->prefix}ig_lists WHERE id IN ( SELECT list_id FROM {$wpdb->prefix}ig_lists_contacts WHERE contact_id = %d )",
 				$id
-			)			
+			)
 		);
 
 		return $res;
@@ -294,16 +293,27 @@ class ES_DB_Lists extends ES_DB {
 	 * @return int
 	 *
 	 * @since 4.0.0
-	 * 
+	 *
 	 * @modified 4.4.3 Added $slug parameter.
+	 *
+	 * @modified 5.0.4 Updated $list parameter from string to array
 	 */
-	public function add_list( $list = '', $slug = '' ) {
+	public function add_list( $list = array(), $slug = '' ) {
 
-		if ( empty( $list ) || ! is_scalar( $list ) ) {
+		if ( empty( $list ) ) {
 			return 0;
 		}
 
-		$lower_list = strtolower( $list );
+		$list_data = $list;
+
+		//To handle case where only list name is passed as a string
+		if ( ! is_array( $list ) ) {
+			$list_data = array( 
+				'name' => $list, 
+			);
+		}
+
+		$lower_list = strtolower( $list_data['name'] );
 
 		$is_list_exists = $this->is_list_exists( $lower_list );
 
@@ -312,9 +322,10 @@ class ES_DB_Lists extends ES_DB {
 		}
 
 		$data = array(
-			'slug' => ! empty( $slug ) ? $slug : sanitize_title( $list ),
-			'name' => $list,
-			'hash' => ES_Common::generate_hash( 12 ),
+			'slug' 		  => ! empty( $slug ) ? $slug : sanitize_title( $list_data['name'] ),
+			'name' 		  => $list_data['name'],
+			'description' => isset( $list_data['desc'] ) ? $list_data['desc'] : '',
+			'hash' 		  => ES_Common::generate_hash( 12 ),
 		);
 
 		return $this->insert( $data );
@@ -349,22 +360,23 @@ class ES_DB_Lists extends ES_DB {
 	/**
 	 * Update List
 	 *
-	 * @param int $row_id
+	 * @param int   $row_id
 	 * @param array $data
 	 *
 	 * @return bool|void
 	 *
 	 * @since 4.2.1
 	 */
-	public function update_list( $row_id, $name ) {
+	public function update_list( $row_id, $list_data ) {
 
 		if ( empty( $row_id ) ) {
 			return;
 		}
 
 		$data = array(
-			'name'       => $name,
-			'updated_at' => ig_get_current_date_time()
+			'name'       	=> $list_data['name'],
+			'description'   => $list_data['desc'],
+			'updated_at' 	=> ig_get_current_date_time(),
 		);
 
 		return $this->update( $row_id, $data );
@@ -414,6 +426,24 @@ class ES_DB_Lists extends ES_DB {
 	}
 
 	/**
+	 * Get list names by ids
+	 *
+	 * @param array $list_ids List ids
+	 *
+	 * @return array $list_names List name
+	 */
+	public function get_list_name_by_ids( $list_ids = array() ) {
+		$lists_id_name_map = ES()->lists_db->get_list_id_name_map();
+		$list_names        = array();
+		foreach ( $list_ids as $list_id ) {
+			if ( ! empty( $lists_id_name_map[ $list_id ] ) ) {
+				$list_names[ $list_id ] = $lists_id_name_map[ $list_id ];
+			}
+		}
+		return $list_names;
+	}
+
+	/**
 	 * Delete lists
 	 *
 	 * @param $ids
@@ -429,7 +459,7 @@ class ES_DB_Lists extends ES_DB {
 		if ( is_array( $ids ) && count( $ids ) > 0 ) {
 
 			foreach ( $ids as $id ) {
-				$this->delete( absint($id) );
+				$this->delete( absint( $id ) );
 
 				/**
 				 * Take necessary cleanup steps using this hook
@@ -469,5 +499,34 @@ class ES_DB_Lists extends ES_DB {
 		return $list_hash_map;
 	}
 
+	/**
+	 * Get lists by hash
+	 *
+	 * @param array $list_hashes
+	 *
+	 * @return array
+	 *
+	 * @since 4.7.5
+	 */
+	public function get_lists_by_hash( $list_hashes = array() ) {
 
+		global $wpbd;
+
+		if ( empty( $list_hashes ) ) {
+			return array();
+		}
+
+		if ( ! is_array( $list_hashes ) ) {
+			$list_hashes = array( $list_hashes );
+		}
+
+		$hash_count        = count( $list_hashes );
+		$hash_placeholders = array_fill( 0, $hash_count, '%s' );
+		$where             = $wpbd->prepare(
+			'hash IN( ' . implode( ',', $hash_placeholders ) . ')',
+			$list_hashes
+		);
+
+		return $this->get_by_conditions( $where );
+	}
 }

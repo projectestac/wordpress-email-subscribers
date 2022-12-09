@@ -1,0 +1,830 @@
+/* Powered By link */
+.ig_powered_by, .ig_powered_by a, a.ig_powered_by {
+    color: #A8A8A8 !important;
+    text-decoration: none;
+}
+.ig_cta_overlay{width: 100%; height: 100%; top: 0; left: 0; background: #E6E6E6; z-index: 1000000; position: fixed; opacity: 0.5; } .ig_cta_spinner{background : url('../images/spinner-2x.gif') no-repeat no-repeat center; height: 100%; }
+
+/* Make border none for all buttons under icegram, to have our style */
+/*todo :test this and check with all wp themes and icegram themes*/
+.icegram .ig_button, 
+.icegram input[type="submit"], 
+.icegram input[type="button"]{
+    border: none; /* Safari/Chrome, other WebKit */    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+    box-shadow:none;
+}
+/** TODO : check the need of this while testing **/
+/*
+.icegram .ig_button:hover,
+.icegram input[type="submit"]:hover,
+.icegram input[type="button"]:hover,
+.icegram .ig_button:active,
+.icegram input[type="submit"]:active,
+.icegram input[type="button"]:active{
+    border: none; 
+}
+*/
+
+/*
+    Making p tag margin uniform to all icegram message type.
+    It can be override with default.css and theme.css if required
+*/
+.ig_message p{ 
+    margin: 0;
+    padding: 0;
+    line-height: inherit;
+    font-size: inherit;
+}
+
+.ig_clear_fix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.ig_form_response_text{
+    margin:.5em auto; 
+    padding: .5em;
+    text-align:center;
+}
+
+/****************** Embed Form: Start *******************/
+
+ .ig_form_container{
+    display: none;
+    position: relative;
+    height: 100%;
+    z-index: 10;
+    padding: .7em 1em;
+    text-align: left;
+    line-height: 1; /* Safari/Chrome, other WebKit */    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+.ig_form_container form{
+    margin: 0;
+    padding: 0;
+    font-size: 100%; 
+}
+
+.ig_form_container textarea,
+.ig_form_container select{
+    height: 2.25em;
+}
+/*.ig_form_container textarea{
+    height: 4.25em;
+}*/
+.ig_form_container input[type=checkbox]{
+    height: 1.25em !important;
+}
+
+.ig_form_container .ig_form_header{
+    /*font-size: 1.5em;*/
+    width: 98%;
+    /*margin: 0 auto;*/
+    text-align: left;
+}
+.ig_form_container .ig_form_footer{
+    font-size: .8em;
+    /*margin: 0 auto;*/
+    width: 98%;
+    clear: both;
+    text-align: left;
+}
+
+.ig_form_container .ig_form_els{
+    margin:.3em 1% .3em 0; 
+}
+
+.ig_form_left .ig_form_container.layout_left{
+    display: block;
+    padding: 1em .7em;
+}
+
+.ig_form_right .ig_form_container.layout_right{
+    display: block;
+    padding: 1em .7em;
+    float: left;
+}
+
+.ig_form_bottom .ig_form_container.layout_bottom{
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.ig_form_inline .ig_form_container.layout_inline{
+    display: block;
+    width: 100%;
+    padding: .5em;
+    background-color: transparent !important;
+    color: inherit !important;
+}
+.ig_form_bottom .ig_form_container.layout_bottom .ig_embed_form_container,
+.ig_form_inline .ig_form_container.layout_inline .ig_embed_form_container{
+    /*text-align: center;*/
+}
+
+.ig_form_left .ig_form_container.layout_left .ig_form_els,
+.ig_form_right .ig_form_container.layout_right .ig_form_els{
+    margin: .5em auto;
+
+}
+.ig_form_bottom .ig_form_container.layout_bottom .ig_form_els{
+    display: inline-block;
+    float: left;
+}
+
+.ig_form_inline .ig_form_container.layout_inline .ig_form_els{
+    display: inline-block;
+    float: left;
+}
+
+.ig_form_bottom .ig_form_container.layout_bottom .ig_full .ig_form_els,
+.ig_form_inline .ig_form_container.layout_inline .ig_full .ig_form_els{
+    width: 99%;
+}
+
+.ig_form_bottom .ig_form_container.layout_bottom .ig_half .ig_form_els,
+.ig_form_inline .ig_form_container.layout_inline .ig_half .ig_form_els{
+    width: 49%;
+}
+
+.ig_form_bottom .ig_form_container.layout_bottom .ig_third .ig_form_els,
+.ig_form_inline .ig_form_container.layout_inline .ig_third .ig_form_els{
+    width: 32%;
+}
+
+.ig_form_bottom .ig_form_container.layout_bottom .ig_quater .ig_form_els,
+.ig_form_inline .ig_form_container.layout_inline .ig_quater .ig_form_els{
+    /*width: 22%;*/
+    width: 24%;
+}
+
+.ig_form_container .ig_form_els input{
+    height: 2.25em;
+    line-height: 2.2em;
+}
+.ig_form_container .ig_form_els input,
+.ig_form_container .ig_form_els button,
+.ig_form_container .ig_form_els label,
+.ig_form_container .ig_form_els textarea,
+.ig_form_container .ig_form_els select{
+    width: 99%;
+    font-size: 1em;
+    text-align: left;
+    display: block;
+    margin: 0 auto; /* Safari/Chrome, other WebKit */    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+}
+.ig_form_container .ig_form_els .ig_button {
+    text-align: center;
+}
+.ig_form_container .ig_form_els textarea,
+.ig_form_container .ig_form_els select{
+    padding-left:   .5em;
+}
+.ig_form_container .ig_form_els textarea{
+    padding-top: .5em; 
+}
+
+/*TODO : make it work for every message type.. every layout*/
+.ig_form_container .ig_form_els.ig_form_el_radio {
+    height: 2.25em !important;
+    line-height: 2.2em;
+}
+.ig_form_container .ig_form_els.ig_form_el_radio input{
+    width: auto ! important;
+    display: inline;
+    margin: 0 .3em;
+    height: 1em !important;
+}
+
+.ig_form_container .ig_form_els.ig_form_el_radio input[type="checkbox"] {
+    display: inline-block !important;
+    margin: 0 0.3em;
+    height: 1em !important;
+}
+.ig_form_container .ig_form_els.ig_form_el_radio input[type="checkbox"]::before {
+    margin: -0.85rem 0 0 -0.65em;
+}
+
+
+.ig_form_bottom .ig_form_container.layout_bottom .ig_quater .ig_form_els.ig_form_el_radio,
+.ig_form_inline .ig_form_container.layout_inline .ig_quater .ig_form_els.ig_form_el_radio{
+    display: inline;
+}
+.ig_form_bottom .ig_form_container.layout_bottom .ig_quater .ig_form_els.ig_form_el_radio label,
+.ig_form_inline .ig_form_container.layout_inline .ig_quater .ig_form_els.ig_form_el_radio label{
+    width: auto;
+    display: inline;
+}
+
+.ig_form_left .ig_form_container.layout_left .ig_button_label,
+.ig_form_right .ig_form_container.layout_right .ig_button_label{
+    display: none;
+}
+
+.ig_form_inline .ig_form_container.layout_inline .ig_button_label,
+.ig_form_bottom .ig_form_container.layout_bottom .ig_button_label{
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+}
+
+/* Form Button CSS */
+.ig_form_inline .ig_form_container.layout_inline .ig_button,
+.ig_form_inline .ig_form_container.layout_inline input[type="submit"],
+.ig_form_inline .ig_form_container.layout_inline input[type="button"],
+.ig_form_bottom .ig_form_container.layout_bottom .ig_button,
+.ig_form_bottom .ig_form_container.layout_bottom input[type="submit"],
+.ig_form_bottom .ig_form_container.layout_bottom input[type="button"], 
+.ig_form_left .ig_form_container.layout_left .ig_button,
+.ig_form_left .ig_form_container.layout_left input[type="submit"],
+.ig_form_left .ig_form_container.layout_left input[type="button"], 
+.ig_form_right .ig_form_container.layout_right .ig_button,
+.ig_form_right .ig_form_container.layout_right input[type="submit"],
+.ig_form_right .ig_form_container.layout_right input[type="button"] {
+    width: 99% ;
+    font-size: 1em;
+    float: none;
+    margin: 0 auto!important;
+    text-align: center;
+    display: block;
+    -ms-transform: inherit;
+    -webkit-transform: inherit;
+    transform: inherit;
+    opacity: 1;
+}
+
+/* End */
+
+
+/****** Form Styles: Start ******/
+.ig_form_container:before{
+    content: '';
+    padding: 0;
+    margin: 0;
+    position: absolute; /* Safari/Chrome, other WebKit */    /* Firefox, other Gecko */
+    box-sizing: content-box;         /* Opera/IE 8+ */
+}
+
+/****** Form Style: Style 0 ******/
+
+.ig_form_style_0 .ig_form_container:before{
+    display: none;
+}
+
+.ig_form_style_0 .ig_form_container .ig_form_els input{
+    height: 2.25em;
+    line-height: 2.2em;
+    padding: inherit;
+    padding-left: .5em;
+}
+
+.ig_form_style_0 .ig_form_container .ig_form_els .ig_button:hover,
+.ig_form_style_0 .ig_form_container .ig_form_els .ig_button:focus,
+.ig_form_style_0 .ig_form_container .ig_form_els .ig_button{
+    height: 2.25em;
+    line-height: 2.2em;
+    /*border: inherit; */
+    padding: inherit;
+}
+
+/****** Form Style: Style 1 ******/
+
+.ig_form_style_1 .ig_form_container:before{
+    border-width: 0;
+    border-style: solid;
+    border-color: #000 !important;
+    opacity: .3;
+    top: 0;
+}
+
+.ig_form_left.ig_form_style_1 .ig_form_container:before{
+    right: 0;
+    height: inherit;
+    border-left-width: .22em;
+}
+.ig_form_right.ig_form_style_1 .ig_form_container:before{
+    left: 0;
+    height: inherit;
+    border-left-width: .22em;
+}
+.ig_form_bottom.ig_form_style_1 .ig_form_container:before{
+    left: 0;
+    width: 100%;
+    border-top-width: .22em;
+}
+.ig_form_inline.ig_form_style_1 .ig_form_container:before{
+    display: none;
+}
+
+.ig_form_style_5 .ig_form_container .ig_form_els input:not(.ig_button),
+.ig_form_style_6 .ig_form_container .ig_form_els input:not(.ig_button),
+.ig_form_style_1 .ig_form_container .ig_form_els input:not(.ig_button){
+    border: 1px solid #ccc;
+}
+.ig_form_style_5 .ig_form_container .ig_form_els input,
+.ig_form_style_6 .ig_form_container .ig_form_els input,
+.ig_form_style_1 .ig_form_container .ig_form_els input{
+    height: 2.25em;
+    line-height: 2.2em;
+    border-radius: .2em;
+    box-shadow: none;
+    padding: inherit;
+    padding-left: .5em;
+}
+.ig_form_style_5 .ig_form_container .ig_form_els input:focus:not(.ig_button),
+.ig_form_style_5 .ig_form_container .ig_form_els input:hover:not(.ig_button),
+.ig_form_style_6 .ig_form_container .ig_form_els input:focus:not(.ig_button),
+.ig_form_style_6 .ig_form_container .ig_form_els input:hover:not(.ig_button),
+.ig_form_style_1 .ig_form_container .ig_form_els input:focus:not(.ig_button),
+.ig_form_style_1 .ig_form_container .ig_form_els input:hover:not(.ig_button){
+    border-color: #999;
+}
+.ig_form_style_5 .ig_form_container .ig_form_els input:focus,
+.ig_form_style_5 .ig_form_container .ig_form_els input:hover,
+.ig_form_style_6 .ig_form_container .ig_form_els input:focus,
+.ig_form_style_6 .ig_form_container .ig_form_els input:hover,
+.ig_form_style_1 .ig_form_container .ig_form_els input:focus,
+.ig_form_style_1 .ig_form_container .ig_form_els input:hover{
+    height: 2.25em;
+    line-height: 2.2em;
+    padding: inherit;
+    padding-left: .5em;
+}
+.ig_form_style_5 .ig_form_container .ig_form_els .ig_button:hover,
+.ig_form_style_5 .ig_form_container .ig_form_els .ig_button:focus,
+.ig_form_style_5 .ig_form_container .ig_form_els .ig_button,
+.ig_form_style_6 .ig_form_container .ig_form_els .ig_button:hover,
+.ig_form_style_6 .ig_form_container .ig_form_els .ig_button:focus,
+.ig_form_style_6 .ig_form_container .ig_form_els .ig_button,
+.ig_form_style_1 .ig_form_container .ig_form_els .ig_button:hover,
+.ig_form_style_1 .ig_form_container .ig_form_els .ig_button:focus,
+.ig_form_style_1 .ig_form_container .ig_form_els .ig_button{
+    height: 2.25em;
+    line-height: 2.2em;
+    /*border: inherit; */
+    padding: inherit;
+}
+
+/****** Form Style: Style 2 ******/
+
+.ig_form_bottom.ig_form_style_2 .ig_form_container.layout_bottom  .ig_form_els,
+.ig_form_inline.ig_form_style_2 .ig_form_container.layout_inline  .ig_form_els{
+    margin-right: 0;
+    margin-left: 0;    
+}
+.ig_form_bottom.ig_form_style_2 .ig_form_container.layout_bottom  .ig_form_els .ig_button,
+.ig_form_inline.ig_form_style_2 .ig_form_container.layout_inline  .ig_form_els .ig_button,
+.ig_form_left.ig_form_style_2 .ig_form_container.layout_left  .ig_form_els .ig_button,
+.ig_form_right.ig_form_style_2 .ig_form_container.layout_right  .ig_form_els .ig_button{
+    padding: inherit;    
+}
+.ig_form_left.ig_form_style_2 .ig_form_container.layout_left  .ig_form_els input,
+.ig_form_right.ig_form_style_2 .ig_form_container.layout_right  .ig_form_els input{
+    padding-left: 1em;
+}
+
+.ig_form_left.ig_form_style_2 .ig_form_container.layout_left  .ig_form_els .ig_button,
+.ig_form_left.ig_form_style_2 .ig_form_container.layout_left  .ig_form_els input,
+.ig_form_right.ig_form_style_2 .ig_form_container.layout_right  .ig_form_els .ig_button,
+.ig_form_right.ig_form_style_2 .ig_form_container.layout_right  .ig_form_els input{
+    height: 2.25em;
+    line-height: 2.2em;
+    border-radius: 2em;
+}
+.ig_form_left.ig_form_style_2 .ig_form_container.layout_left  .ig_form_els label,
+.ig_form_right.ig_form_style_2 .ig_form_container.layout_right  .ig_form_els label{
+    padding-left: 1em;
+}
+
+.ig_form_bottom.ig_form_style_2 .ig_form_container.layout_bottom  .ig_form_els .ig_button,
+.ig_form_inline.ig_form_style_2 .ig_form_container.layout_inline  .ig_form_els .ig_button,
+.ig_form_bottom.ig_form_style_2 .ig_form_container.layout_bottom  .ig_form_els input,
+.ig_form_inline.ig_form_style_2 .ig_form_container.layout_inline  .ig_form_els input{
+    height: 2.25em;
+    line-height: 2.2em;
+    width: 100%;
+    border-width: 2px;
+    border-right-width: 0; 
+}
+
+.ig_form_bottom.ig_form_style_2 .ig_form_container.layout_bottom  .ig_form_els.ig_form_els_first input,
+.ig_form_inline.ig_form_style_2 .ig_form_container.layout_inline  .ig_form_els.ig_form_els_first input{
+    border-radius: 2em 0 0 2em;
+    padding-left: 1em;
+}
+
+.ig_form_bottom.ig_form_style_2 .ig_form_container.layout_bottom  .ig_form_els.ig_form_els_first label,
+.ig_form_inline.ig_form_style_2 .ig_form_container.layout_inline  .ig_form_els.ig_form_els_first label{
+    padding-left: 1em;
+}
+
+.ig_form_bottom.ig_form_style_2 .ig_form_container.layout_bottom  .ig_form_els.ig_form_els_last input,
+.ig_form_inline.ig_form_style_2 .ig_form_container.layout_inline  .ig_form_els.ig_form_els_last input{
+    border-radius: 0 2em 2em 0;
+}
+
+/****** Form Style: Style 3 ******/
+
+.ig_form_style_3 .ig_form_container .ig_form_els input:not(.ig_button){
+    border: 1px solid rgba(255,255,255,.3);
+}
+.ig_form_style_3 .ig_form_container .ig_form_els input{
+    height: 2.25em;
+    line-height: 2.2em;
+    box-shadow: none;
+    padding: inherit;
+    padding-left: .5em;
+    background-color: rgba(0, 0, 0, .3);
+    /*color: inherit;*/
+}
+.ig_form_style_3 .ig_form_container .ig_form_els input:focus:not(.ig_button),
+.ig_form_style_3 .ig_form_container .ig_form_els input:hover:not(.ig_button){
+    border-color: rgba(255,255,255,.6);
+}
+.ig_form_style_3 .ig_form_container .ig_form_els input:focus,
+.ig_form_style_3 .ig_form_container .ig_form_els input:hover{
+    height: 2.25em;
+    line-height: 2.2em;
+    padding: inherit;
+    padding-left: .5em;
+}
+.ig_form_style_3 .ig_form_container .ig_form_els .ig_button:hover,
+.ig_form_style_3 .ig_form_container .ig_form_els .ig_button:focus,
+.ig_form_style_3 .ig_form_container .ig_form_els .ig_button{
+    height: 2.25em;
+    line-height: 2.2em;
+    /*border: inherit; */
+    padding: inherit;
+}
+.ig_form_style_3 .ig_form_container .ig_form_els ::-webkit-input-placeholder { /* WebKit browsers */
+    color: rgba(255,255,255,.5);
+}
+.ig_form_style_3 .ig_form_container .ig_form_els :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color: rgba(255,255,255,.5);
+   opacity:  1;
+}
+.ig_form_style_3 .ig_form_container .ig_form_els ::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color: rgba(255,255,255,.5);
+   opacity:  1;
+}
+.ig_form_style_3 .ig_form_container .ig_form_els :-ms-input-placeholder { /* Internet Explorer 10+ */
+   color: rgba(255,255,255,.5);
+}
+
+/****** Form Style: Style 4 ******/
+
+.ig_form_bottom.ig_form_style_4 .ig_content{
+    margin-bottom: 1.3em;
+}
+.ig_form_style_4 .ig_form_container:before{
+    /*opacity: .4;*/
+    border-style: solid;
+    /*top: -1.2em;
+    left: -1.3em;
+    border-width: 1.3em;*/
+    top: -1em;
+    left: -1em;
+    width: 100%;
+    height: 100%;
+    border-width: 1em;
+    z-index: -1;
+    box-shadow: 0 0px 15px rgba(0,0,0,0.7);
+}
+
+.ig_form_bottom.ig_form_style_4 .ig_form_container:before{
+    /*top: 0;*/
+    /*border-bottom-width: 0;*/
+}
+.ig_form_right.ig_form_style_4 .ig_form_container:before{
+    left: inherit;
+    right: -1em;
+}
+.ig_form_inline.ig_form_style_4 .ig_form_container:before{
+    display: none;
+}
+
+.ig_form_style_4 .ig_form_container .ig_form_els input{
+    height: 2.25em;
+    line-height: 2.2em;
+    padding: inherit;
+    padding-left: .5em;
+}
+
+.ig_form_style_4 .ig_form_container .ig_form_els .ig_button:hover,
+.ig_form_style_4 .ig_form_container .ig_form_els .ig_button:focus,
+.ig_form_style_4 .ig_form_container .ig_form_els .ig_button{
+    height: 2.25em;
+    line-height: 2.2em;
+    /*border: inherit; */
+    padding: inherit;
+}
+
+
+/****** Form Style: Style 5 ******/
+
+.ig_form_bottom.ig_form_style_5 .ig_form_container.layout_bottom  .ig_form_els_first,
+.ig_form_inline.ig_form_style_5 .ig_form_container.layout_inline  .ig_form_els_first{
+    width: 68%;
+}
+
+.ig_form_bottom.ig_form_style_5 .ig_form_container.layout_bottom  .ig_form_els_last,
+.ig_form_inline.ig_form_style_5 .ig_form_container.layout_inline  .ig_form_els_last{
+    width: 30%;
+}
+
+/****** Form Style: Style 6 ******/
+
+.ig_form_style_6 .ig_form_container.layout_bottom .ig_full .ig_form_els,
+.ig_form_style_6 .ig_form_container.layout_inline .ig_full .ig_form_els,
+.ig_form_style_6 .ig_form_container.layout_bottom .ig_half .ig_form_els,
+.ig_form_style_6 .ig_form_container.layout_inline .ig_half .ig_form_els,
+.ig_form_style_6 .ig_form_container.layout_bottom .ig_third .ig_form_els,
+.ig_form_style_6 .ig_form_container.layout_inline .ig_third .ig_form_els,
+.ig_form_style_6 .ig_form_container.layout_bottom .ig_quater .ig_form_els,
+.ig_form_style_6 .ig_form_container.layout_inline .ig_quater .ig_form_els{
+    width: 99%;
+    margin: .5em auto 0 auto;
+}
+
+/****** Form Styles: End ******/
+
+
+/****************** Embed Form: End *******************/
+
+
+/***************Animations: Start******************/
+/*** Appear: Start ***/
+
+.ig_anim_appear_in {
+    -webkit-animation: IgFadeIn 0.9s;
+    animation: IgFadeIn 0.9s;
+    visibility: visible;
+}
+@-webkit-keyframes IgFadeIn {
+  0% {opacity: 0; }
+  50% {opacity: 0.5; }
+  100% {opacity: 1; }
+}
+
+@keyframes IgFadeIn {
+  0% {opacity: 0; }
+  50% {opacity: 0.5; }
+  100% {opacity: 1; }
+}
+.ig_anim_appear_out {
+    -webkit-animation: IgFadeOut 0.9s;
+    animation: IgFadeOut 0.9s;
+}
+
+@-webkit-keyframes IgFadeOut {
+  0% {opacity: 1; }
+  99.5% {opacity: 0.5; }
+  100% {opacity: 1; }
+}
+
+@keyframes IgFadeOut {
+  0% {opacity: 1; }
+  99.5% {opacity: 0.5; }
+  100% {opacity: 1; }
+}
+
+
+
+/*** Appear: End***/
+
+/*** Slide: Start ***/
+/****-Slide Left: Start-***/ 
+.ig_left.ig_anim_slide_in{
+    animation-name: IgSlideInLeft;
+    -moz-animation-name: IgSlideInLeft;    
+    -webkit-animation-name: IgSlideInLeft;    
+
+    animation-duration: 0.5s; 
+    -moz-animation-duration: 0.5s;
+    -webkit-animation-duration: 0.5s;
+
+    animation-timing-function: ease;    
+    -moz-animation-timing-function: ease;
+    -webkit-animation-timing-function: ease;
+}
+@-webkit-keyframes IgSlideInLeft {
+  0% {-webkit-transform: translate3d(-100%, 0, 0);}
+  100% {-webkit-transform: none;}
+}
+
+@keyframes IgSlideInLeft {
+  0% {-webkit-transform: translate3d(-100%, 0, 0);transform: translate3d(-100%, 0, 0);}
+  100% {-webkit-transform: none;transform: none;}
+}
+.ig_left.ig_anim_slide_out{
+    animation-name: IgFadeOutLeft;
+    -moz-animation-name: IgFadeOutLeft;    
+    -webkit-animation-name: IgFadeOutLeft;    
+
+    animation-duration: 0.9s; 
+    -moz-animation-duration: 0.9s;
+    -webkit-animation-duration: 0.9s;
+
+    animation-timing-function: ease;    
+    -moz-animation-timing-function: ease;
+    -webkit-animation-timing-function: ease;
+
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes IgFadeOutLeft {
+  0% {opacity: 1; -webkit-transform: translate3d( 0%, 0, 0);}
+  99.5% {opacity: 0; -webkit-transform: translate3d(-100%, 0, 0);}
+  100% {opacity: 1; -webkit-transform: translate3d(-100%, 0, 0);}
+}
+
+@keyframes IgFadeOutLeft {
+  0% {opacity: 1; -webkit-transform: translate3d(0%, 0, 0); transform: translate3d(0%, 0, 0); }
+  99.5% {opacity: 0; -webkit-transform: translate3d(-100%, 0, 0); transform: translate3d(-100%, 0, 0); }
+  100% {opacity: 1; -webkit-transform: translate3d(-100%, 0, 0); transform: translate3d(-100%, 0, 0);  }
+}
+
+/****-Slide Left: End-***/ 
+
+/****-Slide Right: Start-***/ 
+.ig_right.ig_anim_slide_in{
+     animation-name: IgSlideInRight;
+    -moz-animation-name: IgSlideInRight;    
+    -webkit-animation-name: IgSlideInRight;    
+
+    animation-duration: 0.5s; 
+    -moz-animation-duration: 0.5s;
+    -webkit-animation-duration: 0.5s;
+
+    animation-timing-function: ease;    
+    -moz-animation-timing-function: ease;
+    -webkit-animation-timing-function: ease;
+}
+
+@-webkit-keyframes IgSlideInRight {
+  0% {-webkit-transform: translate3d(100%, 0, 0);}
+  100% {-webkit-transform: none; }
+}
+
+@keyframes IgSlideInRight {
+  0% { -webkit-transform: translate3d(100%, 0, 0); transform: translate3d(100%, 0, 0); }
+  100% { -webkit-transform: none; transform: none; }
+}
+
+.ig_right.ig_anim_slide_out{
+    animation-name: IgFadeOutRight;
+    -moz-animation-name: IgFadeOutRight;    
+    -webkit-animation-name: IgFadeOutRight;    
+
+    animation-duration: 0.9s; 
+    -moz-animation-duration: 0.9s;
+    -webkit-animation-duration: 0.9s;
+
+    animation-timing-function: ease;    
+    -moz-animation-timing-function: ease;
+    -webkit-animation-timing-function: ease;
+
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes IgFadeOutRight {
+  0% {opacity: 1; -webkit-transform: translate3d(0%, 0, 0);}
+  99.5% {opacity: 0; -webkit-transform: translate3d(100%, 0, 0);}
+  100% {opacity: 1; -webkit-transform: translate3d(100%, 0, 0);}
+}
+
+@keyframes IgFadeOutRight {
+  0% {opacity: 1; -webkit-transform: translate3d(0%, 0, 0); transform: translate3d(0%, 0, 0);}
+  99.5% {opacity: 0; -webkit-transform: translate3d(100%, 0, 0); transform: translate3d(100%, 0, 0); }
+  100% {opacity: 1; -webkit-transform: translate3d(100%, 0, 0); transform: translate3d(100%, 0, 0); }
+}
+/****-Slide Right: End-***/ 
+
+/****-Slide Up : start***/ 
+.ig_bottom.ig_anim_slide_in,
+.ig_bottom .ig_anim_slide_in{
+    animation-name: IgSlideInUp;
+    -moz-animation-name: IgSlideInUp;    
+    -webkit-animation-name: IgSlideInUp;    
+
+    animation-duration: 0.5s; 
+    -moz-animation-duration: 0.5s;
+    -webkit-animation-duration: 0.5s;
+
+    animation-timing-function: ease;    
+    -moz-animation-timing-function: ease;
+    -webkit-animation-timing-function: ease;
+}
+@-webkit-keyframes IgSlideInUp {
+  0% {-webkit-transform: translate3d(0, 100%, 0);}
+  100% {-webkit-transform: none;}
+}
+
+@keyframes IgSlideInUp {
+  0% {-webkit-transform: translate3d(0, 100%, 0);transform: translate3d(0, 100%, 0); }
+  100% {-webkit-transform: none;transform: none; }
+}
+
+.ig_bottom.ig_anim_slide_out,
+.ig_bottom .ig_anim_slide_out{
+    animation-name: IgFadeOutDown;
+    -moz-animation-name: IgFadeOutDown;    
+    -webkit-animation-name: IgFadeOutDown;    
+
+    animation-duration: 0.9s; 
+    -moz-animation-duration: 0.9s;
+    -webkit-animation-duration: 0.9s;
+
+    animation-timing-function: ease;    
+    -moz-animation-timing-function: ease;
+    -webkit-animation-timing-function: ease;
+
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes IgFadeOutDown {
+  0% {opacity: 1; -webkit-transform: translate3d(0, 0%, 0);}
+  99.5% {opacity: 0; -webkit-transform: translate3d(0, 100%, 0);}
+  100% {opacity: 1; -webkit-transform: translate3d(0, 100%, 0);}
+}
+
+@keyframes IgFadeOutDown {
+  0% {opacity: 1; -webkit-transform: translate3d(0, 0%, 0); transform: translate3d(0, 0%, 0);}
+  99.5% {opacity: 0; -webkit-transform: translate3d(0, 100%, 0); transform: translate3d(0, 100%, 0); }
+  100% {opacity: 1; -webkit-transform: translate3d(0, 100%, 0); transform: translate3d(0, 100%, 0);}
+}
+
+/****-Slide Up: End-***/ 
+
+/****-Slide Down: Start-***/ 
+.ig_anim_slide_in,
+.ig_top.ig_anim_slide_in,
+.ig_top .ig_anim_slide_in{
+    animation-name: IgSlideInDown;
+    -moz-animation-name: IgSlideInDown;    
+    -webkit-animation-name: IgSlideInDown;    
+
+    animation-duration: 0.5s; 
+    -moz-animation-duration: 0.5s;
+    -webkit-animation-duration: 0.5s;
+
+    animation-timing-function: ease;    
+    -moz-animation-timing-function: ease;
+    -webkit-animation-timing-function: ease;
+}
+@-webkit-keyframes IgSlideInDown {
+  0% {-webkit-transform: translate3d(0, -100%, 0);}
+  100% {-webkit-transform: none; }
+}
+
+@keyframes IgSlideInDown {
+  0% { -webkit-transform: translate3d(0, -100%, 0); transform: translate3d(0, -100%, 0); }
+  100% {-webkit-transform: none;transform: none; }
+}
+
+.ig_anim_slide_out,
+.ig_top.ig_anim_slide_out,
+.ig_top .ig_anim_slide_out{
+    animation-name: IgFadeOutUp;
+    -moz-animation-name: IgFadeOutUp;    
+    -webkit-animation-name: IgFadeOutUp;    
+
+    animation-duration: 0.9s; 
+    -moz-animation-duration: 0.9s;
+    -webkit-animation-duration: 0.9s;
+
+    animation-timing-function: ease;    
+    -moz-animation-timing-function: ease;
+    -webkit-animation-timing-function: ease;
+
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+@-webkit-keyframes IgFadeOutUp {
+    0% {opacity: 1; -webkit-transform: translate3d(0,  0%, 0);}
+    99.5% {opacity: 0; -webkit-transform: translate3d(0, -100%, 0);}
+    100% {opacity: 1; -webkit-transform: translate3d(0, -100%, 0);}
+}
+
+@keyframes IgFadeOutUp {
+  0% {opacity: 1; -webkit-transform: translate3d(0, 0%, 0); transform: translate3d(0, 0%, 0);}
+  99.5% {opacity: 0; -webkit-transform: translate3d(0, -100%, 0); transform: translate3d(0, -100%, 0); }
+  100% {opacity: 1; -webkit-transform: translate3d(0, -100%, 0); transform: translate3d(0, -100%, 0);}
+}
+
+/****-Slide Down: End***/ 
+
+/*** Slide: End***/
+/****************Animation: End******************/
+

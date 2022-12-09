@@ -64,13 +64,13 @@ class ES_Lists_Table extends ES_List_Table {
 
 		?>
 		<div class="wrap pt-4 font-sans">
-			<?php 
+			<?php
 			if ( 'new' === $action ) {
 				$this->es_new_lists_callback();
 			} elseif ( 'edit' === $action ) {
 				$list = ig_es_get_request_data( 'list' );
 				echo wp_kses_post( $this->edit_list( absint( $list ) ) );
-			} else { 
+			} else {
 				?>
 
 		<div class="max-w-full -mt-3 font-sans">
@@ -88,7 +88,7 @@ class ES_Lists_Table extends ES_List_Table {
 						<h2 class="-mt-1.5 text-2xl font-medium text-gray-700 sm:leading-7 sm:truncate"> <?php esc_html_e( 'Lists', 'email-subscribers' ); ?>
 						</h2>
 					</div>
-					<div class="mt-4"> <a href="admin.php?page=es_lists&action=new" class="ig-es-title-button ml-2"><?php esc_html_e('Add New', 'email-subscribers'); ?></a>
+					<div class="mt-4"> <a href="admin.php?page=es_lists&action=new" class="ig-es-title-button ml-2"><?php esc_html_e( 'Add New', 'email-subscribers' ); ?></a>
 					</div>
 				</div>
 			</header>
@@ -116,7 +116,7 @@ class ES_Lists_Table extends ES_List_Table {
 				<br class="clear">
 			</div>
 		</div>
-				<?php 
+				<?php
 			}
 	}
 
@@ -131,14 +131,17 @@ class ES_Lists_Table extends ES_List_Table {
 
 		$nonce     = $data['nonce'];
 		$list_name = $data['list_name'];
-
+		$list_id   = ig_es_get_request_data('list');
+		
+		$existing_list_data  = $this->db->get_list_by_name( $list_name );
+		
 		$status  = 'error';
 		$message = '';
 		if ( ! wp_verify_nonce( $nonce, 'es_list' ) ) {
 			$message = __( 'You do not have permission to edit list', 'email-subscribers' );
 		} elseif ( empty( $list_name ) ) {
 			$message = __( 'Please add list name', 'email-subscribers' );
-		} elseif ( $this->db->is_list_exists( $list_name ) ) {
+		} elseif ( $this->db->is_list_exists( $list_name ) && isset( $existing_list_data['id'] ) && $existing_list_data['id'] != $list_id  ) {
 			$message = __( 'List already exists. Please choose a different name', 'email-subscribers' );
 		} else {
 			$status = 'success';
@@ -161,10 +164,12 @@ class ES_Lists_Table extends ES_List_Table {
 
 			$nonce     = ig_es_get_request_data( '_wpnonce' );
 			$list_name = ig_es_get_request_data( 'list_name' );
+			$list_desc = ig_es_get_request_data( 'list_desc' );
 
 			$validate_data = array(
 				'nonce'     => $nonce,
 				'list_name' => $list_name,
+				'list_desc' => $list_desc,
 			);
 
 			$response = $this->validate_data( $validate_data );
@@ -179,6 +184,7 @@ class ES_Lists_Table extends ES_List_Table {
 
 			$data = array(
 				'list_name' => $list_name,
+				'list_desc' => $list_desc,
 			);
 
 			$save = $this->save_list( null, $data );
@@ -209,10 +215,12 @@ class ES_Lists_Table extends ES_List_Table {
 
 			$nonce     = ig_es_get_request_data( '_wpnonce' );
 			$list_name = ig_es_get_request_data( 'list_name' );
+			$list_desc = ig_es_get_request_data( 'list_desc' );
 
 			$validate_data = array(
 				'nonce'     => $nonce,
 				'list_name' => $list_name,
+				'list_desc' => $list_desc,
 			);
 
 			$response = $this->validate_data( $validate_data );
@@ -227,19 +235,23 @@ class ES_Lists_Table extends ES_List_Table {
 
 			$data = array(
 				'list_name' => $list_name,
+				'list_desc' => $list_desc,
+				'hash'      => isset( $list['hash'] ) ? $list['hash'] : '',
 			);
 
 			$save = $this->save_list( $id, $data );
 			if ( $save ) {
 				$message = __( 'List updated successfully!', 'email-subscribers' );
 				ES_Common::show_message( $message, 'success' );
-			} 
+			}
 		} else {
 
 			$id = $list['id'];
 
 			$data = array(
 				'list_name' => $list['name'],
+				'list_desc' => $list['description'],
+				'hash' 		=> $list['hash'],
 			);
 
 		}
@@ -261,7 +273,7 @@ class ES_Lists_Table extends ES_List_Table {
 		}
 
 		$list_name = isset( $data['list_name'] ) ? $data['list_name'] : '';
-
+		$list_desc = isset( $data['list_desc'] ) ? $data['list_desc'] : '';
 		$nonce = wp_create_nonce( 'es_list' );
 
 		?>
@@ -276,7 +288,7 @@ class ES_Lists_Table extends ES_List_Table {
 								<a class="hover:underline " href="admin.php?page=es_subscribers"><?php esc_html_e( 'Audience ', 'email-subscribers' ); ?></a>
 								<svg class="fill-current w-2.5 h-2.5 mx-2 mt-mx" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path></svg>
 
-								<a class="hover:underline" href="admin.php?page=es_lists&action=manage-lists"><?php esc_html_e(' Lists ', 'email-subscribers'); ?></a> 
+								<a class="hover:underline" href="admin.php?page=es_lists&action=manage-lists"><?php esc_html_e( ' Lists ', 'email-subscribers' ); ?></a> 
 								 <svg class="fill-current w-2.5 h-2.5 mx-2 mt-mx" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path></svg>
 								 </li>
 							</ol>
@@ -300,9 +312,9 @@ class ES_Lists_Table extends ES_List_Table {
 						<div id="post-body" class="metabox-holder column-1 mt-0.5">
 							<div id="post-body-content">
 								<div class="bg-white shadow-md rounded-lg mt-5">
-									<form class="ml-5 mr-4 text-left pt-8 flex-row mt-2 item-center " method="post" action="admin.php?page=es_lists&action=<?php echo esc_attr( $action ); ?>&list=<?php echo esc_attr( $id ); ?>&_wpnonce=<?php echo esc_attr( $nonce ); ?>">
+									<form class="ml-5 mr-4 text-left pt-8 mt-2 item-center " method="post" action="admin.php?page=es_lists&action=<?php echo esc_attr( $action ); ?>&list=<?php echo esc_attr( $id ); ?>&_wpnonce=<?php echo esc_attr( $nonce ); ?>">
 
-										<div class="flex flex-row ">
+										<div class="flex flex-row border-b border-gray-100">
 											<div class="flex w-1/5">
 												<div class="ml-4 pt-6 px-3	">
 													<label for="name" class="block text-sm leading-5 font-medium text-gray-600"><?php esc_html_e( 'List name', 'email-subscribers' ); ?></label>
@@ -317,12 +329,63 @@ class ES_Lists_Table extends ES_List_Table {
 												</div>
 											</div>
 										</div>
+
+										<div class="flex flex-row border-b border-gray-100">
+											<div class="flex w-1/5">
+												<div class="ml-4 pt-6 px-3	">
+													<label for="name" class="block text-sm leading-5 font-medium text-gray-600"><?php esc_html_e( 'Description', 'email-subscribers' ); ?></label>
+												</div>
+											</div>
+											<div class="flex">
+												<div class="ml-16 mb-4 mr-4 mt-4">
+													<div class="relative">
+														<textarea class="form-textarea text-sm" rows="2" cols="40" name="list_desc"><?php echo esc_html( $list_desc ); ?></textarea>
+														
+													</div>
+												</div>
+											</div>
+										</div>
+
 										<?php
+										if ( 'edit' === $action ) {
+											?>
+										<div class="flex flex-row border-b border-gray-100">
+											<div class="flex w-1/5">
+												<div class="ml-4 pt-4 px-3">
+													<label for="name" class="block text-sm leading-5 font-medium text-gray-600">
+												   <?php 
+													   $allowedtags     = ig_es_allowed_html_tags_in_esc();
+													   $tooltip_html = ES_Common::get_tooltip_html( __( 'Unique hash key that can be used to subscribe users to the list from external sites.', 'email-subscribers' ) );
+													   esc_html_e( 'Hash', 'email-subscribers' ); 
+													?>
+													&nbsp;
+													<?php echo wp_kses( $tooltip_html, $allowedtags ); ?>
+													</label>
+												</div>
+											</div>
+											<div class="flex">
+												<div class="ml-16 mb-4 mr-4 mt-4">
+													<div class="relative">
+														<code class="select-all p-1 text-md font-medium text-sm">
+														   <?php 
+															$hash = isset( $data['hash'] ) ? $data['hash'] : '';
+															echo esc_html( $hash ); 
+															?>
+																
+														</code>
+														
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<?php
+										}
 										$submit_button_text = $is_new ? __( 'Save List', 'email-subscribers' ) : __( 'Save Changes', 'email-subscribers' );
 										?>
 										<input type="hidden" name="submitted" value="submitted"/>
-										<input type="submit" name="submit" id="submit" class="cursor-pointer align-middle ig-es-primary-button px-4 py-2 my-4 ml-6 mr-2" value="<?php echo esc_attr( $submit_button_text ); ?>"/>
-										<a href="admin.php?page=es_lists&action=manage-lists" class="cursor-pointer align-middle rounded-md border border-indigo-600 hover:shadow-md focus:outline-none focus:shadow-outline-indigo text-sm leading-5 font-medium transition ease-in-out duration-150 px-4 my-2 py-2 mx-2 "><?php esc_html_e( 'Cancel', 'email-subscribers' ); ?></a>
+										<p><input type="submit" name="submit" id="submit" class="cursor-pointer align-middle ig-es-primary-button px-4 py-2 my-4 ml-6 mr-2" value="<?php echo esc_attr( $submit_button_text ); ?>"/>
+										<a href="admin.php?page=es_lists&action=manage-lists" class="cursor-pointer align-middle rounded-md border border-indigo-600 hover:shadow-md focus:outline-none focus:shadow-outline-indigo text-sm leading-5 font-medium transition ease-in-out duration-150 px-4 my-2 py-2 mx-2 "><?php esc_html_e( 'Cancel', 'email-subscribers' ); ?></a></p>
 									</form>
 								</div>
 							</div>
@@ -349,11 +412,17 @@ class ES_Lists_Table extends ES_List_Table {
 	 */
 	public function save_list( $id, $data ) {
 		$name = sanitize_text_field( $data['list_name'] );
+		$desc = isset( $data['list_desc'] ) ? sanitize_text_field( $data['list_desc'] ) : '';
+
+		$list = array(
+			'name' => $name,
+			'desc' => $desc,
+		);
 
 		if ( ! empty( $id ) ) {
-			$return = $this->db->update_list( $id, $name );
+			$return = $this->db->update_list( $id, $list );
 		} else {
-			$return = $this->db->add_list( $name );
+			$return = $this->db->add_list( $list );
 		}
 
 		return $return;
@@ -380,7 +449,7 @@ class ES_Lists_Table extends ES_List_Table {
 			$sql = 'SELECT * FROM ' . IG_LISTS_TABLE;
 		}
 
-		$args  = array(); 
+		$args  = array();
 		$query = array();
 
 		$add_where_clause = false;
@@ -453,7 +522,7 @@ class ES_Lists_Table extends ES_List_Table {
 				if ( $count > 0 ) {
 					$url = admin_url( 'admin.php?page=es_subscribers&filter_by_status=subscribed&filter_by_list_id=' . $item['id'] );
 					/* translators: 1: Subscribed-Filter url  2: Count */
-					$count = sprintf( __( '<a href="%1$s" target="_blank">%2$d</a>', 'email-subscribers' ), $url, $count );
+					$count = '<a href="' . $url . '" target="_blank">' . number_format( $count ) . '</a>';
 				}
 
 				return $count;
@@ -464,7 +533,7 @@ class ES_Lists_Table extends ES_List_Table {
 				if ( $count > 0 ) {
 					$url = admin_url( 'admin.php?page=es_subscribers&filter_by_status=unsubscribed&filter_by_list_id=' . $item['id'] );
 					/* translators: 1: Unsubscribed-Filter url  2: Count */
-					$count = sprintf( __( '<a href="%1$s" target="_blank">%2$d</a>', 'email-subscribers' ), $url, $count );
+					$count = '<a href="' . $url . '" target="_blank">' . number_format( $count ) . '</a>';
 				}
 
 				return $count;
@@ -475,7 +544,7 @@ class ES_Lists_Table extends ES_List_Table {
 				if ( $count > 0 ) {
 					$url = admin_url( 'admin.php?page=es_subscribers&filter_by_status=unconfirmed&filter_by_list_id=' . $item['id'] );
 					/* translators: 1: Unconfirmed-Filter url  2: Count */
-					$count = sprintf( __( '<a href="%1$s" target="_blank">%2$d</a>', 'email-subscribers' ), $url, $count );
+					$count = '<a href="' . $url . '" target="_blank">' . number_format( $count ) . '</a>';
 				}
 
 				return $count;
@@ -486,19 +555,27 @@ class ES_Lists_Table extends ES_List_Table {
 				if ( $count > 0 ) {
 					$url = admin_url( 'admin.php?page=es_subscribers&filter_by_list_id=' . $item['id'] );
 					/* translators: 1: All contacts flters  2: Count */
-					$count = sprintf( __( '<a href="%1$s" target="_blank">%2$d</a>', 'email-subscribers' ), $url, $count );
+					$count = '<a href="' . $url . '" target="_blank">' . number_format( $count ) . '</a>';
 				}
 
 				return $count;
 				break;
 
-			case 'created_at':
-				return ig_es_format_date_time( $item[ $column_name ] );
-				break;
-
 			case 'export':
 				$export_nonce = wp_create_nonce( 'ig-es-subscriber-export-nonce' );
 				return "<a href='admin.php?page=download_report&report=users&status=select_list&list_id={$item['id']}&export-nonce={$export_nonce}'><svg fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24' class='w-8 h-8 text-indigo-600 hover:text-indigo-500 active:text-indigo-600'><path d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'></path></svg></a>";
+				break;
+
+			case 'description':
+				if ( empty( $item['description'] ) ) {
+					return '-';
+				}
+				
+				$description  = '<span class="es_list_desc" title="' . $item['description'] . '">';
+				$description .= strlen( $item['description'] ) > 50 ? substr( $item['description'], 0, 50 ) . '...' : $item['description'];
+				$description .= '</span>';
+				
+				return $description;
 				break;
 
 			default:
@@ -536,10 +613,9 @@ class ES_Lists_Table extends ES_List_Table {
 		if ( 1 != $item['id'] ) {
 			$page    = ig_es_get_request_data( 'page' );
 			$actions = array(
-				/* translators: 1: Page  2: Edit action  3: List id  4: List nonce  */
-				'edit'   => sprintf( __( '<a href="?page=%1$s&action=%2$s&list=%3$s&_wpnonce=%4$s" class="text-indigo-600">Edit</a>', 'email-subscribers' ), esc_attr( $page ), 'edit', absint( $item['id'] ), $list_nonce ),
-				/* translators: 1: Page  2: Delete action  3: List id  4: List nonce  */
-				'delete' => sprintf( __( '<a href="?page=%1$s&action=%2$s&list=%3$s&_wpnonce=%4$s" onclick="return checkDelete()">Delete</a>', 'email-subscribers' ), esc_attr( $page ), 'delete', absint( $item['id'] ), $list_nonce )
+				'edit'   => '<a href="?page=' . esc_attr( $page ) . '&action=edit&list=' . absint( $item['id'] ) . '&_wpnonce=' . $list_nonce . '" class="text-indigo-600">' . esc_html__( 'Edit', 'email-subscribers' ) . '</a>',
+
+				'delete' => '<a href="?page=' . esc_attr( $page ) . '&action=delete&list=' . absint( $item['id'] ) . '&_wpnonce=' . $list_nonce . '" onclick="return checkDelete()">' . esc_html__( 'Delete', 'email-subscribers' ) . '</a>',
 			);
 		}
 
@@ -554,14 +630,16 @@ class ES_Lists_Table extends ES_List_Table {
 	 */
 	public function get_columns() {
 
+		$allowedtags  = ig_es_allowed_html_tags_in_esc();
+
 		$columns = array(
 			'cb'           => '<input type="checkbox" />',
 			'name'         => __( 'Name', 'email-subscribers' ),
+			'description'  => __( 'Description', 'email-subscribers' ),
 			'subscribed'   => __( 'Subscribed', 'email-subscribers' ),
 			'unsubscribed' => __( 'Unsubscribed', 'email-subscribers' ),
 			'unconfirmed'  => __( 'Unconfirmed', 'email-subscribers' ),
 			'all_contacts' => __( 'All contacts', 'email-subscribers' ),
-			'created_at'   => __( 'Created', 'email-subscribers' ),
 			'export'       => __( 'Export', 'email-subscribers' ),
 		);
 
@@ -613,7 +691,7 @@ class ES_Lists_Table extends ES_List_Table {
 			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>"/>
 			<?php submit_button( __( 'Search lists', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
 		</p>
-		<?php 
+		<?php
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Email Subscribers' time field
+ * Icegram Express' time field
  *
  * @since       4.4.1
  * @version     1.0

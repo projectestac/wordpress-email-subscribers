@@ -18,10 +18,13 @@ class ES_Send_Test_Email {
 	 *
 	 * @since 4.6.0
 	 */
-	public function send_test_email() {
+	public function send_test_email( $params = array() ) {
 
-		$email = ES_Common::get_test_email();
-
+		if ( !empty( $params['email'] )) {
+			$email = $params['email'];
+		} else {
+			$email = ES_Common::get_test_email();
+		}
 		$response = array( 'status' => 'ERROR' );
 
 		if ( ! empty( $email ) ) {

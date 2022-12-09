@@ -1,6 +1,6 @@
 <?php
 /**
- * Email Subscribers' WP Editor field
+ * Icegram Express' WP Editor field
  *
  * @since       4.5.3
  * @version     1.0
@@ -37,7 +37,8 @@ class ES_WP_Editor extends ES_Field {
 	 * @since 4.5.3
 	 */
 	public function render( $value ) {
-		$id    = 'ig-es-wp-editor-' . uniqid();
+
+		$id    = $this->get_id();
 		$value = ES_Clean::editor_content( $value );
 
 		// If it is an ajax request then load wp editor using js library.

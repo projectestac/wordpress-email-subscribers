@@ -91,30 +91,16 @@ class es_cls_dbquery {
 				'email'      => $email,
 				'contact_id' => $contact_id,
 				'guid'       => $guid,
-				'list_name'  => $list_name
+				'list_name'  => $list_name,
+				'list_ids'   => array( $list_id ),
+				'source'     => 'rm',
 			);
 
 			if ( 1 == $optin_type ) {
-
-				// Send Welcome Email.
-				ES()->mailer->send_welcome_email( $email, $data );
-
-				$list_name     = ES()->lists_db->get_list_id_name_map( $list_id );
-				$template_data = array(
-					'name'       => $name,
-					'first_name' => $sub_data['first_name'],
-					'last_name'  => $sub_data['last_name'],
-					'email'      => $email,
-					'list_name'  => $list_name
-				);
-
-				ES()->mailer->send_add_new_contact_notification_to_admins( $template_data );
-
+				do_action( 'ig_es_contact_subscribed', $data );
 			} else {
-				// Send Confirmation mail
-				ES()->mailer->send_double_optin_email( $email, $data );
+				do_action( 'ig_es_contact_unconfirmed', $data );
 			}
-
 		}
 	}
 

@@ -111,16 +111,16 @@ class Export_Subscribers {
 			}*/
 
 			$export_nonce = wp_create_nonce( 'ig-es-subscriber-export-nonce' );
-			$url = "admin.php?page=download_report&report=users&status={$key}&export-nonce={$export_nonce}";
+			$url          = "admin.php?page=download_report&report=users&status={$key}&export-nonce={$export_nonce}";
 
 			?>
 
 			<tr class="border-b text-sm font-normal text-gray-700 border-gray-200" id="ig_es_export_<?php echo esc_attr( $key ); ?>">
 				<td class="py-2 pl-10 w-1/12"><?php echo esc_html( $i ); ?></td>
 				<td class="py-2 pl-4 w-2/12">
-					<?php 
+					<?php
 						$allowedtags = ig_es_allowed_html_tags_in_esc();
-						echo wp_kses( $export_list , $allowedtags );
+						echo wp_kses( $export_list, $allowedtags );
 					?>
 				</td>
 				<td class="py-2 pl-8  w-2/12 font-medium ig_es_total_contacts"><?php echo esc_html( $this->count_subscribers( $key ) ); ?></td>
@@ -186,12 +186,12 @@ class Export_Subscribers {
 				</table>
 			</form>
 		</div>
-		<?php 
+		<?php
 	}
 
 
 	/**
-	 * Count total subscribers 
+	 * Count total subscribers
 	 *
 	 * @param string $status
 	 *
@@ -281,12 +281,12 @@ class Export_Subscribers {
 
 		// Add filter to increase memory limit
 		add_filter( 'ig_es_memory_limit', 'ig_es_increase_memory_limit' );
-					
+
 		wp_raise_memory_limit( 'ig_es' );
 
 		// Remove the added filter function so that it won't be called again if wp_raise_memory_limit called later on.
 		remove_filter( 'ig_es_memory_limit', 'ig_es_increase_memory_limit' );
-		
+
 		set_time_limit( IG_SET_TIME_LIMIT );
 
 		$results = array();
@@ -312,7 +312,7 @@ class Export_Subscribers {
 			$contact_ids      = array();
 			foreach ( $results as $result ) {
 
-				if ( ! in_array( $result['contact_id'], $contact_ids ) ) {
+				if ( ! in_array( $result['contact_id'], $contact_ids, true ) ) {
 					$contact_ids[] = $result['contact_id'];
 				}
 

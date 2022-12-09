@@ -5,6 +5,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! class_exists( 'ES_Wpmail_Mailer' ) ) {
 
 	class ES_Wpmail_Mailer extends ES_Base_Mailer {
+
+		/**
+		 * Mailer name
+		 *
+		 * @since 4.8.5
+		 * @var
+		 */
+		public $name = 'WP Mail';
+
+		/**
+		 * Mailer Slug
+		 *
+		 * @since 4.8.5
+		 * @var
+		 */
+		public $slug = 'wp_mail';
+
 		/**
 		 * ES_Wpmail_Mailer constructor.
 		 *
@@ -32,7 +49,11 @@ if ( ! class_exists( 'ES_Wpmail_Mailer' ) ) {
 			if ( ! $send_mail ) {
 				global $phpmailer;
 
-				$message = wp_strip_all_tags( $phpmailer->ErrorInfo );
+				if ( is_object( $phpmailer ) && $phpmailer->ErrorInfo ) {
+					$message = wp_strip_all_tags( $phpmailer->ErrorInfo );
+				} else {
+					$message = __( 'WP Mail Error: Unknown', 'email-subscribers' );
+				}
 
 				return $this->do_response( 'error', $message );
 			}

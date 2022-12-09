@@ -1,7 +1,7 @@
 <?php
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
-	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
 class ES_List_Table extends WP_List_Table {
@@ -11,7 +11,6 @@ class ES_List_Table extends WP_List_Table {
 	 *
 	 * @since 4.6.6
 	 * @var int
-	 *
 	 */
 	public $per_page = 10;
 
@@ -31,15 +30,17 @@ class ES_List_Table extends WP_List_Table {
 		$this->search_box( $search_str, 'form-search-input' );
 
 		$per_page = $this->get_items_per_page( static::$option_per_page, 25 );
-		//$per_page = $this->per_page; // Show Max 10 records per page
+		// $per_page = $this->per_page; // Show Max 10 records per page
 
 		$current_page = $this->get_pagenum();
 		$total_items  = $this->get_lists( 0, 0, true );
 
-		$this->set_pagination_args( array(
-			'total_items' => $total_items, //WE have to calculate the total number of items
-			'per_page'    => $per_page //WE have to determine how many items to show on a page
-		) );
+		$this->set_pagination_args(
+			array(
+				'total_items' => $total_items, // WE have to calculate the total number of items
+				'per_page'    => $per_page, // WE have to determine how many items to show on a page
+			)
+		);
 
 		$this->items = $this->get_lists( $per_page, $current_page );
 	}
@@ -47,8 +48,8 @@ class ES_List_Table extends WP_List_Table {
 	/**
 	 * Get Lists
 	 *
-	 * @param int $per_page
-	 * @param int $current_page
+	 * @param int   $per_page
+	 * @param int   $current_page
 	 * @param false $do_count_only
 	 *
 	 * @since 4.6.6
@@ -96,13 +97,12 @@ class ES_List_Table extends WP_List_Table {
 	 * Add Row action
 	 *
 	 * @param string[] $actions
-	 * @param bool $always_visible
-	 * @param string $class
+	 * @param bool     $always_visible
+	 * @param string   $class
 	 *
 	 * @return string
 	 *
 	 * @since 4.6.6
-	 *
 	 */
 	protected function row_actions( $actions, $always_visible = false, $class = '' ) {
 		$action_count = count( $actions );
@@ -116,7 +116,7 @@ class ES_List_Table extends WP_List_Table {
 		foreach ( $actions as $action => $link ) {
 			++ $i;
 			( $i == $action_count ) ? $sep = '' : $sep = ' | ';
-			$out .= "<span class='$action'>$link$sep</span>";
+			$out                          .= "<span class='$action'>$link$sep</span>";
 		}
 		$out .= '</div>';
 

@@ -21,10 +21,9 @@ if ( ! class_exists( 'ES_Install' ) ) {
 		 *
 		 * @since 4.2.0
 		 * @var array
-		 *
 		 */
 		public static $logger_context = array(
-			'source' => 'ig_es_db_updates'
+			'source' => 'ig_es_db_updates',
 		);
 
 		/**
@@ -32,39 +31,38 @@ if ( ! class_exists( 'ES_Install' ) ) {
 		 *
 		 * @since 4.0.0
 		 * @var array
-		 *
 		 */
 		private static $db_updates = array(
 
 			'3.2.0' => array(
 				'ig_es_update_320_add_sync_option',
-				'ig_es_update_320_db_version'
+				'ig_es_update_320_db_version',
 			),
 
 			'3.2.7' => array(
 				'ig_es_update_327_change_email_type',
-				'ig_es_update_327_db_version'
+				'ig_es_update_327_db_version',
 			),
 
 			'3.3.0' => array(
 				'ig_es_update_330_import_options',
-				'ig_es_update_330_db_version'
+				'ig_es_update_330_db_version',
 			),
 
 			'3.3.6' => array(
 				'ig_es_update_336_add_template_slug',
-				'ig_es_update_336_db_version'
+				'ig_es_update_336_db_version',
 			),
 
 			'3.4.0' => array(
 				'ig_es_update_340_migrate_templates_to_cpt',
 				'ig_es_update_340_migrate_keywords',
-				'ig_es_update_340_db_version'
+				'ig_es_update_340_db_version',
 			),
 
 			'3.5.16' => array(
 				'ig_es_update_3516_create_subscribers_ips_table',
-				'ig_es_update_3516_db_version'
+				'ig_es_update_3516_db_version',
 			),
 
 
@@ -88,40 +86,40 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				'ig_es_update_400_migrate_post_notifications',
 				'ig_es_update_400_migrate_notifications',
 				'ig_es_update_400_migrate_group_selectors_forms',
-				'ig_es_update_400_db_version'
+				'ig_es_update_400_db_version',
 			),
 
 			'4.0.1' => array(
 				'ig_es_update_401_migrate_newsletters',
-				'ig_es_update_401_db_version'
+				'ig_es_update_401_db_version',
 			),
 
 			'4.0.2' => array(
 				'ig_es_update_402_migrate_post_notification_es_template_type',
-				'ig_es_update_402_db_version'
+				'ig_es_update_402_db_version',
 			),
 
 			'4.0.3' => array(
 				'ig_es_update_403_alter_campaigns_table',
 				'ig_es_update_403_alter_mailing_queue_table',
-				'ig_es_update_403_db_version'
+				'ig_es_update_403_db_version',
 			),
 
 			'4.0.5' => array(
 				'ig_es_update_405_alter_forms_table',
 				'ig_es_update_405_alter_lists_table',
 				'ig_es_update_405_migrate_widgets',
-				'ig_es_update_405_db_version'
+				'ig_es_update_405_db_version',
 			),
 
 			'4.0.10' => array(
-				'ig_es_update_4010_db_version'
+				'ig_es_update_4010_db_version',
 			),
 
 			'4.0.11' => array(
 				'ig_es_update_4011_migrate_newsletter_es_template_type',
 				'ig_es_update_4011_update_campaign_id_in_mailing_queue',
-				'ig_es_update_4011_db_version'
+				'ig_es_update_4011_db_version',
 			),
 
 			'4.0.15' => array(
@@ -131,48 +129,48 @@ if ( ! class_exists( 'ES_Install' ) ) {
 
 			'4.1.1' => array(
 				'ig_es_update_411_alter_contacts_table',
-				'ig_es_update_411_db_version'
+				'ig_es_update_411_db_version',
 			),
 
 			'4.1.7' => array(
 				'ig_es_update_417_alter_campaigns_table',
 				'ig_es_update_417_alter_mailing_queue_table',
-				'ig_es_update_417_db_version'
+				'ig_es_update_417_db_version',
 			),
 
 			'4.1.13' => array(
 				'ig_es_update_4113_migrate_categories_in_campaigns_table',
 				'ig_es_update_4113_create_files',
-				'ig_es_update_4113_db_version'
+				'ig_es_update_4113_db_version',
 			),
 			'4.1.15' => array(
 				'ig_es_update_4115_add_form_submission_option',
 				'ig_es_update_4115_migrate_db_update_history',
-				'ig_es_update_4115_db_version'
+				'ig_es_update_4115_db_version',
 			),
 
 			'4.2.0' => array(
 				'ig_es_update_420_alter_campaigns_table',
 				'ig_es_update_420_create_tables',
 				'ig_es_update_420_migrate_mailer_options',
-				'ig_es_update_420_db_version'
+				'ig_es_update_420_db_version',
 			),
 
 			'4.2.1' => array(
 				'ig_es_update_421_drop_tables',
 				'ig_es_update_421_create_tables',
-				'ig_es_update_421_db_version'
+				'ig_es_update_421_db_version',
 			),
 
 			'4.2.4' => array(
 				'ig_es_update_424_drop_tables',
 				'ig_es_update_424_create_tables',
-				'ig_es_update_424_db_version'
+				'ig_es_update_424_db_version',
 			),
 
 			'4.3.0' => array(
 				'ig_es_update_430_alter_campaigns_table',
-				'ig_es_update_430_db_version'
+				'ig_es_update_430_db_version',
 			),
 
 			'4.3.1' => array(
@@ -180,43 +178,43 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				'ig_es_update_431_permanently_delete_lists',
 				'ig_es_update_431_permanently_delete_forms',
 				'ig_es_update_431_disable_autoload_options',
-				'ig_es_update_431_db_version'
+				'ig_es_update_431_db_version',
 			),
 
 			'4.3.2' => array(
 				'ig_es_update_432_import_bfcm_templates',
-				'ig_es_update_432_db_version'
+				'ig_es_update_432_db_version',
 			),
 
 			'4.3.4' => array(
 				'ig_es_update_434_permanently_delete_campaigns',
-				'ig_es_update_434_db_version'
+				'ig_es_update_434_db_version',
 			),
 
 			'4.4.1' => array(
 				'ig_es_update_441_create_tables',
 				'ig_es_update_441_migrate_audience_sync_settings',
-				'ig_es_update_441_db_version'
+				'ig_es_update_441_db_version',
 			),
 
 			'4.4.2' => array(
 				'ig_es_update_442_set_workflows_default_permission',
-				'ig_es_update_442_db_version'
+				'ig_es_update_442_db_version',
 			),
 
 			'4.4.9' => array(
 				'ig_es_update_449_create_tables',
-				'ig_es_update_449_db_version'
+				'ig_es_update_449_db_version',
 			),
 
 			'4.4.10' => array(
 				'ig_es_update_4410_load_templates',
-				'ig_es_update_4410_db_version'
+				'ig_es_update_4410_db_version',
 			),
 
 			'4.5.0' => array(
 				'ig_es_update_450_alter_actions_table',
-				'ig_es_update_450_db_version'
+				'ig_es_update_450_db_version',
 			),
 
 			'4.5.7' => array(
@@ -231,32 +229,82 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				'ig_es_update_463_db_version',
 			),
 
-			'4.6.5' => array(
+			'4.6.5'  => array(
 				'ig_es_update_465_create_tables',
 				'ig_es_update_465_db_version',
 			),
-			'4.6.6' => array(
+			'4.6.6'  => array(
 				'ig_es_update_466_create_temp_import_table',
 				'ig_es_update_466_db_version',
 			),
-			'4.6.7' => array(
+			'4.6.7'  => array(
 				'ig_es_update_467_alter_contacts_table',
 				'ig_es_add_country_code_to_contacts_table',
 				'ig_es_update_467_db_version',
 			),
-			'4.6.8' => array(
+			'4.6.8'  => array(
 				'ig_es_update_468_create_unsubscribe_feedback_table',
 				'ig_es_update_468_db_version',
 			),
-			'4.6.9' => array(
+			'4.6.9'  => array(
 				'ig_es_update_469_alter_wc_guests_table',
 				'ig_es_update_469_db_version',
 			),
 			'4.6.13' => array(
 				'ig_es_migrate_4613_sequence_list_settings_into_campaign_rules',
 				'ig_es_update_4613_db_version',
-			)
-
+			),
+			'4.7.8'  => array(
+				'ig_es_add_index_to_list_contacts_table',
+				'ig_es_update_478_db_version',
+			),
+			'4.7.9'  => array(
+				'ig_es_add_primay_key_to_actions_table',
+				'ig_es_update_479_db_version',
+			),
+			'4.8.3'  => array(
+				'ig_es_add_engagement_score_to_contacts_table',
+				'ig_es_calculate_existing_subscribers_engagement_score',
+				'ig_es_update_483_db_version',
+			),
+			'4.8.4'  => array(
+				'ig_es_update_484_create_custom_field_table',
+				'ig_es_update_484_db_version',
+			),
+			'4.9.0'  => array(
+				'ig_es_update_490_alter_contacts_table',
+				'ig_es_update_490_db_version',
+			),
+			'5.0.1'  => array(
+				'ig_es_update_501_migrate_notifications_into_workflows',
+				'ig_es_update_501_db_version',
+			),
+			'5.0.3'  => array(
+				'ig_es_update_503_alter_contacts_table',
+				'ig_es_update_503_alter_sending_queue_table',
+				'ig_es_add_timezone_to_contacts_table',
+				'ig_es_update_503_db_version',
+			),
+			'5.0.4'  => array(
+				'ig_es_update_504_alter_lists_table',
+				'ig_es_update_504_db_version',
+			),
+			'5.1.0'  => array(
+				'ig_es_migrate_post_campaigns_list_settings_into_campaign_rules',
+				'ig_es_update_510_db_version',
+			),
+			'5.3.8'  => array(
+				'ig_es_mark_system_workflows',
+				'ig_es_update_538_db_version',
+			),
+			'5.4.0'  => array(
+				'ig_es_update_540_alter_contacts_table',
+				'ig_es_update_540_db_version',
+			),
+			'5.5.0'  => array(
+				'ig_es_migrate_workflow_trigger_conditions_to_rules',
+				'ig_es_update_550_db_version',
+			),
 		);
 
 		/**
@@ -293,8 +341,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 
 				self::install();
 			}
-			// Do we need to load templates?
-			self::load_templates();
+			
 		}
 
 		/**
@@ -317,13 +364,13 @@ if ( ! class_exists( 'ES_Install' ) ) {
 
 				self::update( true );
 
-				//ES_Admin_Notices::add_notice( 'update' );
+				// ES_Admin_Notices::add_notice( 'update' );
 			}
 
 			if ( ! empty( $_GET['force_update_ig_es'] ) ) {
 				check_admin_referer( 'ig_es_force_db_update', 'ig_es_force_db_update_nonce' );
 				self::update();
-				//ES_Admin_Notices::add_notice( 'update' );
+				// ES_Admin_Notices::add_notice( 'update' );
 				wp_safe_redirect( admin_url( 'admin.php?page=es_settings' ) );
 				exit;
 			}
@@ -336,6 +383,8 @@ if ( ! class_exists( 'ES_Install' ) ) {
 		 */
 		public static function install() {
 
+			// Create Files
+			self::create_files();
 
 			if ( ! is_blog_installed() ) {
 				self::$logger->error( 'Blog is not installed.', self::$logger_context );
@@ -352,17 +401,12 @@ if ( ! class_exists( 'ES_Install' ) ) {
 
 			if ( self::is_new_install() ) {
 
-				self::$logger->info( 'It seems new Email Subscribers. Start Installation process.', self::$logger_context );
+				self::$logger->info( 'It seems new Icegram Express (formerly known as Email Subscribers & Newsletters). Start Installation process.', self::$logger_context );
 
 				// If we made it till here nothing is running yet, lets set the transient now.
 				set_transient( 'ig_es_installing', 'yes', MINUTE_IN_SECONDS * 10 );
 
 				ig_es_maybe_define_constant( 'IG_ES_INSTALLING', true );
-
-				// Create Files
-				self::create_files();
-
-				self::$logger->info( 'Create Files.', self::$logger_context );
 
 				// Create Tables
 				self::create_tables();
@@ -373,10 +417,6 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				self::create_options();
 
 				self::$logger->info( 'Create Options.', self::$logger_context );
-
-				self::load_templates();
-
-				self::$logger->info( 'Load readymade template', self::$logger_context );
 
 				self::$logger->info( 'Installation Complete.', self::$logger_context );
 			}
@@ -419,7 +459,6 @@ if ( ! class_exists( 'ES_Install' ) ) {
 			 *
 			 * If we found 'current_sa_email_subscribers_db_version' option, which means it's a
 			 * migration from ES 3.5.x
-			 *
 			 */
 			return is_null( get_option( 'ig_es_db_version', null ) ) && is_null( get_option( 'current_sa_email_subscribers_db_version', null ) ) && is_null( get_option( 'email-subscribers', null ) );
 		}
@@ -470,7 +509,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 					self::update();
 				} else {
 					self::$logger->info( 'Show update notice.', self::$logger_context );
-					//ES_Admin_Notices::add_notice( 'update' );
+					// ES_Admin_Notices::add_notice( 'update' );
 				}
 			} else {
 				self::$logger->info( 'Database is upto date' );
@@ -583,7 +622,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				foreach ( $batch as $key => $value ) {
 
 					$is_value_exists = true;
-					//$task_transient = $value . '_processed';
+					// $task_transient = $value . '_processed';
 					$ig_es_update_processed_tasks = get_option( 'ig_es_update_processed_tasks', array() );
 					$task                         = false; // By default it's set to false
 
@@ -607,13 +646,12 @@ if ( ! class_exists( 'ES_Install' ) ) {
 
 						unset( $batch[ $key ] );
 					}
-
 				}
 
 				update_option( 'ig_es_update_tasks_to_process', $batch );
 			}
 
-			//Delete update transient
+			// Delete update transient
 			delete_transient( 'ig_es_updating' );
 		}
 
@@ -708,7 +746,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 			$sender_details['name']  = $blog_name;
 			$sender_details['email'] = $admin_email;
 
-			//check if installed WP Mail SMTP
+			// check if installed WP Mail SMTP
 			if ( in_array( 'wp-mail-smtp/wp_mail_smtp.php', $active_plugins ) ) {
 				$wp_mail_smtp_settings = get_option( 'wp_mail_smtp', array() );
 
@@ -740,7 +778,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 			$latest_db_version = self::get_latest_db_version_to_update();
 
 			$ig_es_db_update_history = array(
-				$latest_db_version => ig_get_current_date_time()
+				$latest_db_version => ig_get_current_date_time(),
 			);
 
 			$sender_details = self::get_sender_details();
@@ -758,12 +796,11 @@ if ( ! class_exists( 'ES_Install' ) ) {
 			$report .= "Unique ID: {{UNIQUE}}\n";
 			$report .= "Start Time: {{STARTTIME}}\n";
 			$report .= "End Time: {{ENDTIME}}\n";
-			$report .= "For more information, login to your dashboard and go to Reports menu in Email Subscribers.\n\n";
+			$report .= "For more information, login to your dashboard and go to Reports menu in Icegram Express.\n\n";
 			$report .= 'Thank You.';
 
-
 			$new_contact_email_subject = 'One more contact joins our tribe!';
-			$new_contact_email_content = "Hi,\r\n\r\nYour friendly Email Subscribers notification bot here!\r\n\r\n{{NAME}} ({{EMAIL}}) joined our tribe just now.\r\n\r\nWhich list/s? {{LIST}}\r\n\r\nIf you know this person, or if they are an influencer, you may want to reach out to them personally!\r\n\r\nLater...";
+			$new_contact_email_content = "Hi,\r\n\r\nYour friendly Icegram Express (formerly known as Email Subscribers & Newsletters) notification bot here!\r\n\r\n{{NAME}} ({{EMAIL}}) joined our tribe just now.\r\n\r\nWhich list/s? {{LIST}}\r\n\r\nIf you know this person, or if they are an influencer, you may want to reach out to them personally!\r\n\r\nLater...";
 
 			$confirmation_email_subject = 'Thanks!';
 			$confirmation_email_content = "Hi {{NAME}},\r\n\r\nJust one more step before we share the awesomeness from {{SITENAME}}!\r\n\r\nPlease confirm your subscription by clicking on <a href='{{SUBSCRIBE-LINK}}'>this link</a>\r\n\r\nThanks!";
@@ -780,55 +817,199 @@ if ( ! class_exists( 'ES_Install' ) ) {
 			$unsubscribe_error_message = "Urrgh.. Something's wrong..\r\n\r\nAre you sure that email address is on our file? There was some problem in completing your request.\r\n\r\nPlease try again after some time - or contact us if the problem persists.\r\n\r\n";
 
 			$options = array(
-				'ig_es_from_name'                       => array( 'default' => $sender_details['name'], 'old_option' => 'ig_es_fromname' ),
-				'ig_es_from_email'                      => array( 'default' => $sender_details['email'], 'old_option' => 'ig_es_fromemail' ),
-				'ig_es_admin_new_contact_email_subject' => array( 'default' => $new_contact_email_subject, 'old_option' => 'ig_es_admin_new_sub_subject' ),
-				'ig_es_admin_new_contact_email_content' => array( 'default' => $new_contact_email_content, 'old_option' => 'ig_es_admin_new_sub_content' ),
-				'ig_es_admin_emails'                    => array( 'default' => $admin_email, 'old_option' => 'ig_es_adminemail' ),
-				'ig_es_confirmation_mail_subject'       => array( 'default' => $confirmation_email_subject, 'old_option' => 'ig_es_confirmsubject' ),
-				'ig_es_confirmation_mail_content'       => array( 'default' => $confirmation_email_content, 'old_option' => 'ig_es_confirmcontent' ),
-				'ig_es_enable_welcome_email'            => array( 'default' => 'yes', 'old_option' => 'ig_es_welcomeemail', 'action' => 'convert_space_to_underscore' ),
-				'ig_es_welcome_email_subject'           => array( 'default' => $welcome_email_subject, 'old_option' => 'ig_es_welcomesubject' ),
-				'ig_es_welcome_email_content'           => array( 'default' => $welcome_email_content, 'old_option' => 'ig_es_welcomecontent' ),
-				'ig_es_enable_cron_admin_email'         => array( 'default' => 'yes', 'old_option' => 'ig_es_enable_cron_adminmail' ),
-				'ig_es_cron_admin_email'                => array( 'default' => $cron_admin_email, 'old_option' => 'ig_es_cron_adminmail' ),
-				'ig_es_cronurl'                         => array( 'default' => $cronurl, 'old_option' => 'ig_es_cronurl' ),
-				'ig_es_hourly_email_send_limit'         => array( 'default' => 300, 'old_option' => 'ig_es_cron_mailcount' ),
-				'ig_es_sent_report_subject'             => array( 'default' => 'Your email has been sent', 'old_option' => 'ig_es_sentreport_subject' ),
-				'ig_es_sent_report_content'             => array( 'default' => $report, 'old_option' => 'ig_es_sentreport' ),
-				'ig_es_unsubscribe_link'                => array( 'default' => $unsublink, 'old_option' => 'ig_es_unsublink' ),
-				'ig_es_optin_link'                      => array( 'default' => $optinlink, 'old_option' => 'ig_es_optinlink' ),
-				'ig_es_unsubscribe_link_content'        => array( 'default' => $unsubscribe_link_content, 'old_option' => 'ig_es_unsubcontent' ),
-				'ig_es_email_type'                      => array( 'default' => 'wp_html_mail', 'old_option' => 'ig_es_emailtype', 'action' => 'convert_space_to_underscore' ),
-				'ig_es_notify_admin'                    => array( 'default' => 'yes', 'old_option' => 'ig_es_notifyadmin', 'action' => 'convert_space_to_underscore' ),
-				'ig_es_optin_type'                      => array( 'default' => 'double_opt_in', 'old_option' => 'ig_es_optintype', 'action' => 'convert_space_to_underscore' ),
-				'ig_es_subscription_error_messsage'     => array( 'default' => $subscription_error_message, 'old_option' => 'ig_es_suberror' ),
-				'ig_es_subscription_success_message'    => array( 'default' => 'You have been successfully subscribed.', 'old_option' => 'ig_es_successmsg' ),
-				'ig_es_unsubscribe_error_message'       => array( 'default' => $unsubscribe_error_message, 'old_option' => 'ig_es_unsuberror' ),
-				'ig_es_unsubscribe_success_message'     => array( 'default' => $unsubscribe_message, 'old_option' => 'ig_es_unsubtext' ),
-				'ig_es_post_image_size'                 => array( 'default' => 'thumbnail', 'old_option' => 'ig_es_post_image_size' ),
-				'ig_es_db_version'                      => array( 'default' => $latest_db_version, 'old_option' => 'current_sa_email_subscribers_db_version' ),
-				'ig_es_current_version_date_details'    => array( 'default' => '', 'old_option' => '' ),
-				'ig_es_enable_captcha'                  => array( 'default' => '', 'old_option' => '' ),
-				'ig_es_roles_and_capabilities'          => array( 'default' => '', 'old_option' => 'ig_es_rolesandcapabilities' ),
-				'ig_es_sample_data_imported'            => array( 'default' => 'no', 'old_option' => '' ),
-				'ig_es_default_subscriber_imported'     => array( 'default' => 'no', 'old_option' => '' ),
-				'ig_es_set_widget'                      => array( 'default' => '', 'old_option' => '' ),
-				'ig_es_sync_wp_users'                   => array( 'default' => array(), 'old_option' => '' ),
-				'ig_es_blocked_domains'                 => array( 'default' => 'mail.ru' ),
-				'ig_es_disable_wp_cron'                 => array( 'default' => 'no' ),
-				'ig_es_track_email_opens'               => array( 'default' => 'yes' ),
-				'ig_es_show_opt_in_consent'             => array( 'default' => 'yes' ),
-				'ig_es_opt_in_consent_text'             => array( 'default' => '' ),
-				'ig_es_installed_on'                    => array( 'default' => ig_get_current_date_time(), 'old_option' => '' ),
-				'ig_es_form_submission_success_message' => array( 'default' => __( 'Your subscription was successful! Kindly check your mailbox and confirm your subscription. If you don\'t see the email within a few minutes, check the spam/junk folder.', 'email-subscribers' ), 'old_option' => '' ),
-				'ig_es_db_update_history'               => array( 'default' => $ig_es_db_update_history ),
-				'ig_es_email_sent_data'                 => array( 'default' => array() ),
-				'ig_es_mailer_settings'                 => array( 'default' => array( 'mailer' => 'wpmail' ), 'old_option' => '' ),
-				'ig_es_user_roles'                      => array( 'default' => self::get_default_permissions(), 'old_option' => '' ),
-				'ig_es_cron_interval'                   => array( 'default' => IG_ES_CRON_INTERVAL, 'old_option' => '' ),
-				'ig_es_max_email_send_at_once'          => array( 'default' => IG_ES_MAX_EMAIL_SEND_AT_ONCE, 'old_option' => '' ),
-				'ig_es_test_mailbox_user'               => array( 'default' => ES_Common::generate_test_mailbox_user(), 'old_option' => '' ),
+				'ig_es_from_name'                                 => array(
+					'default'    => $sender_details['name'],
+					'old_option' => 'ig_es_fromname',
+				),
+				'ig_es_from_email'                                => array(
+					'default'    => $sender_details['email'],
+					'old_option' => 'ig_es_fromemail',
+				),
+				'ig_es_admin_new_contact_email_subject'           => array(
+					'default'    => $new_contact_email_subject,
+					'old_option' => 'ig_es_admin_new_sub_subject',
+				),
+				'ig_es_admin_new_contact_email_content'           => array(
+					'default'    => $new_contact_email_content,
+					'old_option' => 'ig_es_admin_new_sub_content',
+				),
+				'ig_es_admin_emails'                              => array(
+					'default'    => $admin_email,
+					'old_option' => 'ig_es_adminemail',
+				),
+				'ig_es_confirmation_mail_subject'                 => array(
+					'default'    => $confirmation_email_subject,
+					'old_option' => 'ig_es_confirmsubject',
+				),
+				'ig_es_confirmation_mail_content'                 => array(
+					'default'    => $confirmation_email_content,
+					'old_option' => 'ig_es_confirmcontent',
+				),
+				'ig_es_enable_welcome_email'                      => array(
+					'default'    => 'yes',
+					'old_option' => 'ig_es_welcomeemail',
+					'action'     => 'convert_space_to_underscore',
+				),
+				'ig_es_welcome_email_subject'                     => array(
+					'default'    => $welcome_email_subject,
+					'old_option' => 'ig_es_welcomesubject',
+				),
+				'ig_es_welcome_email_content'                     => array(
+					'default'    => $welcome_email_content,
+					'old_option' => 'ig_es_welcomecontent',
+				),
+				'ig_es_enable_cron_admin_email'                   => array(
+					'default'    => 'yes',
+					'old_option' => 'ig_es_enable_cron_adminmail',
+				),
+				'ig_es_enable_summary_automation'                 => array(
+					'default'    => 'yes',
+					'old_option' => 'ig_es_enable_summary_automation',
+				),
+				'ig_es_run_cron_on'                               => array(
+					'default'    => 'monday',
+					'old_option' => 'ig_es_run_cron_on',
+				),
+				'ig_es_run_cron_time'                             => array(
+					'default'    => '4pm',
+					'old_option' => 'ig_es_run_cron_time',
+				),
+				'ig_es_cron_admin_email'                          => array(
+					'default'    => $cron_admin_email,
+					'old_option' => 'ig_es_cron_adminmail',
+				),
+				'ig_es_cronurl'                                   => array(
+					'default'    => $cronurl,
+					'old_option' => 'ig_es_cronurl',
+				),
+				'ig_es_hourly_email_send_limit'                   => array(
+					'default'    => 300,
+					'old_option' => 'ig_es_cron_mailcount',
+				),
+				'ig_es_sent_report_subject'                       => array(
+					'default'    => 'Your email has been sent',
+					'old_option' => 'ig_es_sentreport_subject',
+				),
+				'ig_es_sent_report_content'                       => array(
+					'default'    => $report,
+					'old_option' => 'ig_es_sentreport',
+				),
+				'ig_es_unsubscribe_link'                          => array(
+					'default'    => $unsublink,
+					'old_option' => 'ig_es_unsublink',
+				),
+				'ig_es_optin_link'                                => array(
+					'default'    => $optinlink,
+					'old_option' => 'ig_es_optinlink',
+				),
+				'ig_es_unsubscribe_link_content'                  => array(
+					'default'    => $unsubscribe_link_content,
+					'old_option' => 'ig_es_unsubcontent',
+				),
+				'ig_es_email_type'                                => array(
+					'default'    => 'wp_html_mail',
+					'old_option' => 'ig_es_emailtype',
+					'action'     => 'convert_space_to_underscore',
+				),
+				'ig_es_notify_admin'                              => array(
+					'default'    => 'yes',
+					'old_option' => 'ig_es_notifyadmin',
+					'action'     => 'convert_space_to_underscore',
+				),
+				'ig_es_optin_type'                                => array(
+					'default'    => 'double_opt_in',
+					'old_option' => 'ig_es_optintype',
+					'action'     => 'convert_space_to_underscore',
+				),
+				'ig_es_subscription_error_messsage'               => array(
+					'default'    => $subscription_error_message,
+					'old_option' => 'ig_es_suberror',
+				),
+				'ig_es_subscription_success_message'              => array(
+					'default'    => 'You have been successfully subscribed.',
+					'old_option' => 'ig_es_successmsg',
+				),
+				'ig_es_unsubscribe_error_message'                 => array(
+					'default'    => $unsubscribe_error_message,
+					'old_option' => 'ig_es_unsuberror',
+				),
+				'ig_es_unsubscribe_success_message'               => array(
+					'default'    => $unsubscribe_message,
+					'old_option' => 'ig_es_unsubtext',
+				),
+				'ig_es_post_image_size'                           => array(
+					'default'    => 'thumbnail',
+					'old_option' => 'ig_es_post_image_size',
+				),
+				'ig_es_db_version'                                => array(
+					'default'    => $latest_db_version,
+					'old_option' => 'current_sa_email_subscribers_db_version',
+				),
+				'ig_es_current_version_date_details'              => array(
+					'default'    => '',
+					'old_option' => '',
+				),
+				'ig_es_enable_captcha'                            => array(
+					'default'    => '',
+					'old_option' => '',
+				),
+				'ig_es_roles_and_capabilities'                    => array(
+					'default'    => '',
+					'old_option' => 'ig_es_rolesandcapabilities',
+				),
+				'ig_es_sample_data_imported'                      => array(
+					'default'    => 'no',
+					'old_option' => '',
+				),
+				'ig_es_default_subscriber_imported'               => array(
+					'default'    => 'no',
+					'old_option' => '',
+				),
+				'ig_es_set_widget'                                => array(
+					'default'    => '',
+					'old_option' => '',
+				),
+				'ig_es_sync_wp_users'                             => array(
+					'default'    => array(),
+					'old_option' => '',
+				),
+				'ig_es_blocked_domains'                           => array( 'default' => 'mail.ru' ),
+				'ig_es_disable_wp_cron'                           => array( 'default' => 'no' ),
+				'ig_es_enable_sending_mails_in_customer_timezone' => array( 'default' => 'no' ),
+				'ig_es_track_email_opens'                         => array( 'default' => 'yes' ),
+				'ig_es_enable_ajax_form_submission'               => array( 'default' => 'no' ),
+				'ig_es_show_opt_in_consent'                       => array( 'default' => 'yes' ),
+				'ig_es_opt_in_consent_text'                       => array( 'default' => 'Subscribe to our email updates as well.' ),
+				'ig_es_installed_on'                              => array(
+					'default'    => ig_get_current_date_time(),
+					'old_option' => '',
+				),
+				'ig_es_form_submission_success_message'           => array(
+					'default'    => __( 'Your subscription was successful! Kindly check your mailbox and confirm your subscription. If you don\'t see the email within a few minutes, check the spam/junk folder.', 'email-subscribers' ),
+					'old_option' => '',
+				),
+				'ig_es_db_update_history'                         => array( 'default' => $ig_es_db_update_history ),
+				'ig_es_email_sent_data'                           => array( 'default' => array() ),
+				'ig_es_mailer_settings'                           => array(
+					'default'    => array( 'mailer' => 'wpmail' ),
+					'old_option' => '',
+				),
+				'ig_es_user_roles'                                => array(
+					'default'    => self::get_default_permissions(),
+					'old_option' => '',
+				),
+				'ig_es_cron_interval'                             => array(
+					'default'    => IG_ES_CRON_INTERVAL,
+					'old_option' => '',
+				),
+				'ig_es_max_email_send_at_once'                    => array(
+					'default'    => IG_ES_MAX_EMAIL_SEND_AT_ONCE,
+					'old_option' => '',
+				),				
+				'ig_es_test_mailbox_user'                         => array(
+					'default'    => ES_Common::generate_test_mailbox_user(),
+					'old_option' => '',
+				),
 			);
 
 			return $options;
@@ -906,10 +1087,14 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				`source` varchar(50) DEFAULT NULL,
 				`ip_address` varchar(50) DEFAULT NULL,
 				`country_code` varchar(50) DEFAULT NULL,
+				`bounce_status` enum('0','1','2') NOT NULL DEFAULT '0',
+				`timezone` varchar(255) NULL DEFAULT NULL,
 				`form_id` int(10) NOT NULL DEFAULT '0',
 				`status` varchar(10) DEFAULT NULL,
+				`reference_site` varchar(255) NULL DEFAULT NULL,
 				`unsubscribed` tinyint(1) NOT NULL DEFAULT '0',
 				`hash` varchar(50) DEFAULT NULL,
+				`engagement_score` float DEFAULT NULL,
 				`created_at` datetime DEFAULT NULL,
 				`updated_at` datetime DEFAULT NULL,
 				`is_verified` tinyint(1) DEFAULT '0',
@@ -958,6 +1143,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				`id` int(10) NOT NULL AUTO_INCREMENT,
 				`slug` varchar(255) NOT NULL,
 				`name` varchar(255) NOT NULL,
+				`description` varchar(255) DEFAULT NULL,
 				`hash` varchar(12) NOT NULL,
 				`created_at` datetime DEFAULT NULL,
 				`updated_at` datetime DEFAULT NULL,
@@ -976,7 +1162,8 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				`subscribed_ip` varchar(45) DEFAULT NULL,
 				`unsubscribed_at` datetime DEFAULT NULL,
 				`unsubscribed_ip` varchar(45) DEFAULT NULL,
-				 PRIMARY KEY  (id)
+				 PRIMARY KEY  (id),
+				 KEY `contact_id` (contact_id)
             ) $collate;
 
             CREATE TABLE `{$wpdb->prefix}ig_mailing_queue` (
@@ -1007,6 +1194,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				`status` varchar(50) DEFAULT NULL,
 				`links` longtext,
 				`opened` int(1) DEFAULT NULL,
+				`send_at` DATETIME NULL DEFAULT NULL,
 				`sent_at` datetime DEFAULT NULL,
 				`opened_at` datetime DEFAULT NULL,
                 PRIMARY KEY  (id)
@@ -1090,6 +1278,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
             ) $collate;
 
 			CREATE TABLE `{$wpdb->prefix}ig_actions` (
+			  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			  `contact_id` bigint(20) UNSIGNED DEFAULT NULL,
 			  `message_id` bigint(20) UNSIGNED DEFAULT NULL,
 			  `campaign_id` bigint(20) UNSIGNED DEFAULT NULL,
@@ -1105,11 +1294,12 @@ if ( ! class_exists( 'ES_Install' ) ) {
 			  `os` varchar(50) DEFAULT NULL,
 			  `created_at` int(11) UNSIGNED NOT NULL DEFAULT 0,
 			  `updated_at` int(11) UNSIGNED NOT NULL DEFAULT 0,
+			  PRIMARY KEY (id),
 			  UNIQUE KEY `id` (`contact_id`,`message_id`, `campaign_id`,`type`,`link_id`, `list_id`),
-                KEY `contact_id` (`contact_id`),
-                KEY `message_id` (`message_id`),
-                KEY `campaign_id` (`campaign_id`),
-                KEY `type` (`type`)
+              KEY `contact_id` (`contact_id`),
+              KEY `message_id` (`message_id`),
+              KEY `campaign_id` (`campaign_id`),
+              KEY `type` (`type`)
 			) $collate;
 		";
 
@@ -1243,7 +1433,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				KEY version (version)
 				) $collate;
 			";
-			
+
 			return $tables;
 		}
 
@@ -1265,7 +1455,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				`identifier` char(13) NOT NULL,
 				PRIMARY KEY (ID)
 			) $collate;";
-			
+
 			return $tables;
 		}
 
@@ -1294,7 +1484,31 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				`meta` longtext DEFAULT NULL,
 				PRIMARY KEY (id)
 			) $collate;";
-			
+
+			return $tables;
+		}
+
+		/**
+		 * Create table for storing custom fields
+		 *
+		 * @param string $collate
+		 *
+		 * @return string
+		 *
+		 * @since 4.8.4
+		 */
+		public static function get_ig_es_484_schema( $collate = '' ) {
+			global $wpdb;
+
+			$tables = "CREATE TABLE {$wpdb->prefix}ig_custom_fields (
+				`id` int(10) NOT NULL AUTO_INCREMENT,
+				`slug` varchar(100) NOT NULL,
+				`label` varchar(100) NOT NULL,
+				`type` varchar(50) NOT NULL,
+				`meta` longtext DEFAULT NULL,
+				PRIMARY KEY (id)
+			) $collate;";
+
 			return $tables;
 		}
 
@@ -1317,6 +1531,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 			$tables .= self::get_ig_es_465_schema( $collate );
 			$tables .= self::get_ig_es_466_schema( $collate );
 			$tables .= self::get_ig_es_468_schema( $collate );
+			$tables .= self::get_ig_es_484_schema( $collate );
 
 			return $tables;
 		}
@@ -1327,7 +1542,8 @@ if ( ! class_exists( 'ES_Install' ) ) {
 		 * @since 4.3.2
 		 */
 		public static function load_templates( $force = false ) {
-			//TODO :: Add template with custom post type
+			
+			// TODO :: Add template with custom post type
 			global $wpdb;
 
 			$plan = 'lite';
@@ -1373,8 +1589,8 @@ if ( ! class_exists( 'ES_Install' ) ) {
 							'post_name'    => $slug,
 							'meta_input'   => array(
 								'es_template_type' => $template['es_email_type'],
-								'es_custom_css'    => $template['es_custom_css']
-							)
+								'es_custom_css'    => $template['es_custom_css'],
+							),
 						);
 						// Insert the post into the database.
 						$last_inserted_id = wp_insert_post( $es_post );
@@ -1414,7 +1630,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				'post_mime_type' => $wp_filetype['type'],
 				'post_title'     => sanitize_file_name( $filename ),
 				'post_content'   => '',
-				'post_status'    => 'inherit'
+				'post_status'    => 'inherit',
 			);
 			$attach_id   = wp_insert_attachment( $attachment, $file, $post_id );
 			require_once ABSPATH . 'wp-admin/includes/image.php';
@@ -1455,6 +1671,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 					if ( $file_handle ) {
 						fwrite( $file_handle, $file['content'] );
 						fclose( $file_handle );
+						self::$logger->info( 'Created file ' . $file['file'], self::$logger_context );
 					}
 				}
 			}
@@ -1470,27 +1687,27 @@ if ( ! class_exists( 'ES_Install' ) ) {
 		public static function get_default_permissions() {
 
 			$campaigns_permission = array(
-				'administrator' => 'yes'
+				'administrator' => 'yes',
 			);
 
 			$reports_permission = array(
-				'administrator' => 'yes'
+				'administrator' => 'yes',
 			);
 
 			$sequence_permission = array(
-				'administrator' => 'yes'
+				'administrator' => 'yes',
 			);
 
 			$audience_permission = array(
-				'administrator' => 'yes'
+				'administrator' => 'yes',
 			);
 
 			$forms_permission = array(
-				'administrator' => 'yes'
+				'administrator' => 'yes',
 			);
 
 			$workflows_permission = array(
-				'administrator' => 'yes'
+				'administrator' => 'yes',
 			);
 
 			$es_roles_default_permission['campaigns'] = $campaigns_permission;

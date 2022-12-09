@@ -51,21 +51,50 @@ class ES_DB_Sending_Queue {
 	}
 
 	public static function get_emails_to_be_sent_by_hash( $guid, $limit ) {
-		global $wpdb;
-
-		$subscribers = $wpdb->get_results(
-			$wpdb->prepare( 
-				"SELECT * FROM {$wpdb->prefix}ig_sending_queue WHERE status = %s AND mailing_queue_hash = %s ORDER BY id LIMIT 0, %d",
+		global $wpbd;
+		$where       = apply_filters( 'ig_es_get_emails_to_be_sent_by_hash_condition', 'AND 1=1' );
+		$subscribers = $wpbd->get_results(
+			$wpbd->prepare(
+				"SELECT * FROM {$wpbd->prefix}ig_sending_queue WHERE status IN( %s, %s, %s ) AND mailing_queue_hash = %s $where ORDER BY FIELD(`status`, %s, %s, %s) LIMIT 0, %d",
 				array(
-					'In Queue',
+					IG_ES_SENDING_QUEUE_STATUS_QUEUED,
+					IG_ES_SENDING_QUEUE_STATUS_SENDING,
+					IG_ES_SENDING_QUEUE_STATUS_FAILED,
 					$guid,
-					$limit
+					IG_ES_SENDING_QUEUE_STATUS_QUEUED,
+					IG_ES_SENDING_QUEUE_STATUS_SENDING,
+					IG_ES_SENDING_QUEUE_STATUS_FAILED,
+					$limit,
 				)
 			),
 			ARRAY_A
 		);
 
 		return $subscribers;
+	}
+
+	/**
+	 * Get contact queued emails
+	 *
+	 * @param int $contact_id
+	 *
+	 * @return array $queued_emails
+	 *
+	 * @since 4.7.6
+	 */
+	public static function get_queued_emails( $contact_id ) {
+		global $wpdb;
+
+		$queued_emails = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$wpdb->prefix}ig_sending_queue WHERE contact_id = %d AND status = %s",
+				$contact_id,
+				'In Queue'
+			),
+			ARRAY_A
+		);
+
+		return $queued_emails;
 	}
 
 	public static function update_sent_status( $contact_ids, $message_id = 0, $status = 'Sent' ) {
@@ -86,7 +115,7 @@ class ES_DB_Sending_Queue {
 		if ( ! empty( $id_str ) ) {
 			if ( 'Sent' === $status ) {
 				$current_time = ig_get_current_date_time();
-				$updated = $wpbd->query(
+				$updated      = $wpbd->query(
 					$wpbd->prepare(
 						"UPDATE {$wpbd->prefix}ig_sending_queue SET status = %s, sent_at = %s WHERE mailing_queue_id = %d AND contact_id IN($id_str)",
 						$status,
@@ -110,16 +139,34 @@ class ES_DB_Sending_Queue {
 	}
 
 	/* count cron email */
-	public static function get_total_emails_to_be_sent_by_hash( $notification_hash = '' ) {
+	public static function get_total_emails_to_be_sent_by_hash( $notification_hash = '', $statuses = array() ) {
 
-		global $wpdb;
+		global $wpbd;
 
 		$result = 0;
 		if ( ! empty( $notification_hash ) ) {
-			$result = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE mailing_queue_hash = %s AND status = %s",
-					array( $notification_hash, 'In Queue' )
+
+			
+			$params = array( $notification_hash );
+			
+			if ( empty( $statuses ) ) {
+				$statuses = array(
+					IG_ES_SENDING_QUEUE_STATUS_QUEUED,
+					IG_ES_SENDING_QUEUE_STATUS_SENDING,
+					IG_ES_SENDING_QUEUE_STATUS_FAILED,
+				);
+			}
+
+			
+			$statuses_count        = count( $statuses );
+			$statuses_placeholders = array_fill( 0, $statuses_count, '%s' );
+			
+			$params = array_merge( $params, $statuses );
+			
+			$result = $wpbd->get_var(
+				$wpbd->prepare(
+					"SELECT COUNT(*) AS count FROM {$wpbd->prefix}ig_sending_queue WHERE mailing_queue_hash = %s AND status IN ( " . implode( ',', $statuses_placeholders ) . ' )',
+					$params
 				)
 			);
 		}
@@ -132,12 +179,22 @@ class ES_DB_Sending_Queue {
 
 		global $wpdb;
 
-		$result = $wpdb->get_var( 
+		$result = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE status = %s",
-				array( 'In Queue' )
+				"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue
+					WHERE
+					`mailing_queue_id` IN( SELECT id FROM {$wpdb->prefix}ig_mailing_queue WHERE status IN( %s, %s ) )
+					AND
+					status IN ( %s, %s, %s )",
+				array(
+					IG_ES_MAILING_QUEUE_STATUS_QUEUED,
+					IG_ES_MAILING_QUEUE_STATUS_SENDING,
+					IG_ES_SENDING_QUEUE_STATUS_QUEUED,
+					IG_ES_SENDING_QUEUE_STATUS_SENDING,
+					IG_ES_SENDING_QUEUE_STATUS_FAILED
+				)
 			)
-		 );
+		);
 
 		return $result;
 
@@ -149,10 +206,11 @@ class ES_DB_Sending_Queue {
 
 		$result = 0;
 		if ( '' != $notification_hash ) {
+			$sent_status = IG_ES_SENDING_QUEUE_STATUS_SENT;
 			$result = $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE mailing_queue_hash = %s AND status = %s",
-					array( $notification_hash, 'Sent' )
+					array( $notification_hash, $sent_status )
 				)
 			);
 		}
@@ -183,8 +241,8 @@ class ES_DB_Sending_Queue {
 				if ( $result === $wpdb->prefix . 'es_deliverreport' ) {
 					$emails = $wpdb->get_results(
 						$wpdb->prepare(
-							"SELECT * FROM {$wpdb->prefix}es_deliverreport WHERE es_deliver_sentguid = %s", 
-							array( $notification_hash ) 
+							"SELECT * FROM {$wpdb->prefix}es_deliverreport WHERE es_deliver_sentguid = %s",
+							array( $notification_hash )
 						),
 						ARRAY_A
 					);
@@ -263,47 +321,60 @@ class ES_DB_Sending_Queue {
 
 	/**
 	 * Method to insert sending queue data from contact table.
-	 * 
-	 * @param int $mailing_queue_id Mailing queue ID.
-	 * @param string $mailing_queue_hash Mailing Hash.
-	 * @param int $campaign_id Campaign ID.
+	 *
+	 * @param int          $mailing_queue_id Mailing queue ID.
+	 * @param string       $mailing_queue_hash Mailing Hash.
+	 * @param int          $campaign_id Campaign ID.
 	 * @param array|string $list_ids List IDs seperated by commas if string i.e. '1,2,3' or array( 1, 2, 3 ) if array.
-	 * 
+	 *
 	 * @return bool $is_inserted Is contacts inserted into sending_queue table.
-	 * 
+	 *
 	 * @since 4.6.4
 	 */
 	public static function do_insert_from_contacts_table( $mailing_queue_id = 0, $mailing_queue_hash = '', $campaign_id = 0, $list_ids = array() ) {
 
 		global $wpbd;
-	
+
 		$is_inserted = false;
-	
+
 		if ( empty( $mailing_queue_id ) || empty( $mailing_queue_hash ) || empty( $campaign_id ) ) {
 			return $is_inserted;
 		}
-	
+
 		$column_defaults = self::get_column_defaults();
-	
+
 		$queue_status    = 'In Queue';
-		$queue_links     = isset( $column_defaults['links'] ) ? $column_defaults['links']    : '';
-		$queue_opened    = isset( $column_defaults['opened'] ) ? $column_defaults['opened']  : 0;
-		$queue_sent_at   = isset( $column_defaults['sent_at'] ) ? $column_defaults['sent_at']: null;
+		$queue_links     = isset( $column_defaults['links'] ) ? $column_defaults['links'] : '';
+		$queue_opened    = isset( $column_defaults['opened'] ) ? $column_defaults['opened'] : 0;
+		$queue_sent_at   = isset( $column_defaults['sent_at'] ) ? $column_defaults['sent_at'] : null;
 		$queue_opened_at = isset( $column_defaults['opened_at'] ) ? $column_defaults['opened_at'] : null;
-	
+
 		$campaign = ES()->campaigns_db->get( $campaign_id );
-		$args = array(
+		$args     = array(
 			'select'     => array( 'subscribers.id' ),
 			'lists'      => $list_ids,
 			'return_sql' => true, // This flag will return the required sql query
-			'orderby'    => array( 'id'),
+			'orderby'    => array( 'id' ),
+			'status'	=> 'subscribed',
+			'subscriber_status' => array( 'verified' ),
 		);
+		
+		$schedule_base_time = current_time( 'mysql' );
+		$scheduled_utc_time = current_time( 'mysql', true );
+		$current_utc_time   = current_time( 'mysql', true );
+		$send_immediately   = true;
 		if ( ! empty( $campaign ) && ! empty( $campaign['meta'] ) ) {
 			$campaign_meta = maybe_unserialize( $campaign['meta'] );
 			if ( ! empty( $campaign_meta['list_conditions'] ) ) {
 				$args['conditions'] = $campaign_meta['list_conditions'];
 			}
+			if ( isset( $campaign_meta['scheduling_option'] ) && isset( $campaign_meta['date'] ) && isset( $campaign_meta['es_schedule_date'] ) && isset( $campaign_meta['es_schedule_time'] ) && 'schedule_later' == $campaign_meta['scheduling_option'] ) {
+				$schedule_base_time = gmdate( 'Y-m-d G:i:s', strtotime( "{$campaign_meta['es_schedule_date']} {$campaign_meta['es_schedule_time']}" ) );
+				$scheduled_utc_time = $campaign_meta['date'];
+				$send_immediately   = false;
+			}
 		}
+
 		$query     = new IG_ES_Subscribers_Query();
 		$sql_query = $query->run( $args );
 
@@ -317,7 +388,22 @@ class ES_DB_Sending_Queue {
 			$queue_sent_at,
 			$queue_opened_at,
 		);
-	
+
+		if ($send_immediately) {
+			$send_at_query = $wpbd->prepare('%s AS `send_at`', array($current_utc_time));
+		} else {
+			$send_at_query = $wpbd->prepare("
+			CASE 
+				WHEN `timezone` IS null THEN %s
+		        ELSE 
+		            CASE
+		                WHEN CONVERT_TZ(%s,`timezone`,'+0:00') < %s THEN DATE_ADD(CONVERT_TZ(%s,`timezone`,'+0:00'), INTERVAL 86400 SECOND)
+		                ELSE CONVERT_TZ(%s,`timezone`,'+0:00')
+		            END
+		    END AS `send_at`
+			", array($scheduled_utc_time,$schedule_base_time,$current_utc_time,$schedule_base_time,$schedule_base_time));
+		}
+
 		$total_contacts_added = $wpbd->query(
 			$wpbd->prepare(
 				"INSERT INTO `{$wpbd->prefix}ig_sending_queue` 
@@ -332,7 +418,8 @@ class ES_DB_Sending_Queue {
 					`links`,
 					`opened`,
 					`sent_at`,
-					`opened_at`
+					`opened_at`,
+				 	`send_at`
 				)
 				SELECT 
 					%d AS `mailing_queue_id`,
@@ -345,31 +432,31 @@ class ES_DB_Sending_Queue {
 					%s AS `links`,
 					%d AS `opened`,
 					%s AS `sent_at`,
-					%s AS `opened_at`
+					%s AS `opened_at`,
+			       	{$send_at_query}
 				FROM `{$wpbd->prefix}ig_contacts` AS `ig_contacts` 
 				WHERE id IN ( " . $sql_query . ')
 				GROUP BY `ig_contacts`.`email`',
 				$query_args
 			)
 		);
-	
+
 		// Check if contacts added.
 		if ( ! empty( $total_contacts_added ) ) {
 			$is_inserted = true;
-			ES_DB_Mailing_Queue::update_subscribers_count( $mailing_queue_hash, $total_contacts_added );
 		} else {
-	
+
 			// If some how above sql query fails then queue emails using old approach.
 			// i.e. Preparing data for insert query in PHP and then doing insert.
-			
+
 			// Converto to an array if already not an array.
 			if ( ! is_array( $list_ids ) ) {
 				$list_ids = explode( ',', $list_ids );
 			}
-	
-			$subscribers       = ES()->contacts_db->get_active_contacts_by_list_id( $list_ids );
-			$subscribers_count = count( $subscribers );
-			if ( $subscribers_count > 0 ) {
+
+			$subscribers          = ES()->contacts_db->get_active_contacts_by_list_id( $list_ids );
+			$total_contacts_added = count( $subscribers );
+			if ( $total_contacts_added > 0 ) {
 				// Add entry into sending queue table
 				$delivery_data                     = array();
 				$delivery_data['hash']             = $mailing_queue_hash;
@@ -377,13 +464,18 @@ class ES_DB_Sending_Queue {
 				$delivery_data['subscribers']      = $subscribers;
 				$delivery_data['campaign_id']      = $campaign_id;
 				$delivery_data['mailing_queue_id'] = $mailing_queue_id;
-				$is_inserted = self::do_batch_insert( $delivery_data );
-				if ( $is_inserted ) {
-					ES_DB_Mailing_Queue::update_subscribers_count( $mailing_queue_hash, $subscribers_count );
-				}
+				$is_inserted                       = self::do_batch_insert( $delivery_data );
 			}
 		}
-	
+
+		if ( $is_inserted ) {
+			$data = array(
+				'count' => $total_contacts_added,
+				'status' => IG_ES_MAILING_QUEUE_STATUS_QUEUED
+			);
+			ES_DB_Mailing_Queue::update_mailing_queue( $mailing_queue_id, $data );
+		}
+
 		return $is_inserted;
 	}
 
@@ -405,7 +497,7 @@ class ES_DB_Sending_Queue {
 	}
 
 	/*
-	 * Commenting for now as we might need this function in the future. 
+	 * Commenting for now as we might need this function in the future.
 	public static function migrate_reports_data() {
 		global $wpdb;
 
@@ -579,7 +671,7 @@ class ES_DB_Sending_Queue {
 		}
 	}
 	*/
-	
+
 	public static function delete_records_from_delivereport( $ids ) {
 		global $wpbd;
 
@@ -592,12 +684,12 @@ class ES_DB_Sending_Queue {
 
 	public static function delete_sending_queue_by_mailing_id( $mailing_queue_ids ) {
 		global $wpbd;
-		
+
 		$mailing_queue_ids = esc_sql( $mailing_queue_ids );
 		$mailing_queue_ids = implode( ',', array_map( 'absint', $mailing_queue_ids ) );
 
 		$wpbd->query(
-				"DELETE FROM {$wpbd->prefix}ig_sending_queue WHERE mailing_queue_id IN ($mailing_queue_ids)"
+			"DELETE FROM {$wpbd->prefix}ig_sending_queue WHERE mailing_queue_id IN ($mailing_queue_ids)"
 		);
 	}
 
@@ -608,25 +700,13 @@ class ES_DB_Sending_Queue {
 
 		$result = 0;
 
-		if ( '' != $hash ) {
+		if ( '' !== $hash ) {
 			$result = $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE opened = 1 AND mailing_queue_hash = %s",
 					array( $hash )
 				)
 			);
-
-			if ( 0 == $result ) {
-				$table_name = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'es_deliverreport' ) );
-				if ( $table_name === $wpdb->prefix . 'es_deliverreport' ) {
-					$result = $wpdb->get_var(
-						$wpdb->prepare(
-							"SELECT COUNT(*) AS count FROM {$wpdb->prefix}es_deliverreport WHERE es_deliver_status = 'Viewed' AND  es_deliver_sentguid = %s",
-							array( $hash )
-						)
-					);
-				}
-			}
 
 		}
 
@@ -643,7 +723,7 @@ class ES_DB_Sending_Queue {
 		if ( '' != $hash ) {
 			$result = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE mailing_queue_hash = %s", 
+					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE mailing_queue_hash = %s",
 					array( $hash )
 				)
 			);
@@ -694,11 +774,11 @@ class ES_DB_Sending_Queue {
 		return $wpbd->get_var( $wpbd->prepare( $query, $args ) );
 	}
 
-	
+
 	/**
 	 * Get Email => ID map based on Sending Queue table
-	 * 
-	 * @param int $campaign_id
+	 *
+	 * @param int   $campaign_id
 	 * @param array $emails
 	 *
 	 * @return array
@@ -717,11 +797,11 @@ class ES_DB_Sending_Queue {
 
 		$emails_str = "'" . implode( "','", $emails ) . "'";
 
-		$results = $wpbd->get_results( 
+		$results = $wpbd->get_results(
 			$wpbd->prepare(
-				"SELECT contact_id, email FROM {$wpbd->prefix}ig_sending_queue WHERE campaign_id = %d AND email IN($emails_str)", 
+				"SELECT contact_id, email FROM {$wpbd->prefix}ig_sending_queue WHERE campaign_id = %d AND email IN($emails_str)",
 				$campaign_id
-			), 
+			),
 			ARRAY_A
 		);
 
@@ -758,6 +838,33 @@ class ES_DB_Sending_Queue {
 		}
 
 		return $emails;
+	}
+
+	/**
+	 * Delete contacts from the sending queue
+	 *
+	 * @param array $contact_ids
+	 * @param int   $message_id
+	 *
+	 * @since 4.7.6
+	 */
+	public static function delete_contacts( $contact_ids, $message_id ) {
+
+		global $wpbd;
+
+		if ( ! empty( $contact_ids ) && ! empty( $message_id ) ) {
+			$ids_count        = count( $contact_ids );
+			$ids_placeholders = array_fill( 0, $ids_count, '%d' );
+			$query_args       = $contact_ids;
+			$query_args[]     = $message_id;
+
+			$wpbd->query(
+				$wpbd->prepare(
+					"DELETE FROM {$wpbd->prefix}ig_sending_queue WHERE contact_id IN( " . implode( ',', $ids_placeholders ) . ' ) AND mailing_queue_id = %d',
+					$query_args
+				)
+			);
+		}
 	}
 
 

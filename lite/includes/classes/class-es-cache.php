@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/** 
+/**
  * Cache implementation of the plugin
  *
  * @credit - Inspired by the WooCommerce Cache implementation.
@@ -19,10 +19,9 @@ if ( ! class_exists( 'ES_Cache' ) ) {
 	class ES_Cache {
 
 		/**
-		 * Cache enabled/disabled 
+		 * Cache enabled/disabled
 		 *
 		 * @var bool
-		 *
 		 */
 		public static $enabled = true;
 
@@ -30,7 +29,6 @@ if ( ! class_exists( 'ES_Cache' ) ) {
 		 * Get default transient expiration
 		 *
 		 * @return mixed|void
-		 *
 		 */
 		public static function get_default_transient_expiration() {
 			return apply_filters( 'ig_es_cache_default_expiration', 10 );
@@ -102,21 +100,21 @@ if ( ! class_exists( 'ES_Cache' ) ) {
 		}
 
 		/**
-		 * Only gets if key is not falsy
+		 * Get the data
 		 *
-		 * @param string $key
-		 * @param string $group
+		 * @param $key
+		 * @param $group
+		 * @param false $force
+		 * @param null  $found
 		 *
-		 * @return bool|mixed
-		 *
-		 * @since 4.4.0
+		 * @return false|mixed
 		 */
-		public static function get( $key, $group ) {
+		public static function get( $key, $group, $force = false, &$found = null ) {
 			if ( ! $key ) {
 				return false;
 			}
 
-			return wp_cache_get( (string) $key, "ig_es_$group" );
+			return wp_cache_get( (string) $key, "ig_es_$group", $force, $found );
 		}
 
 		/**
@@ -129,11 +127,13 @@ if ( ! class_exists( 'ES_Cache' ) ) {
 		 *
 		 * @since 4.4.0
 		 */
-		public static function exists( $key, $group ) {
+		public static function is_exists( $key, $group ) {
 			if ( ! $key ) {
 				return false;
 			}
+
 			$found = false;
+
 			wp_cache_get( (string) $key, "ig_es_$group", false, $found );
 
 			return $found;
@@ -153,6 +153,33 @@ if ( ! class_exists( 'ES_Cache' ) ) {
 				return;
 			}
 			wp_cache_delete( (string) $key, "ig_es_$group" );
+		}
+
+		/**
+		 * Generate cache key
+		 *
+		 * @param string $string
+		 *
+		 * @return boolean $exists_in_cache
+		 *
+		 * @since 4.7.2
+		 */
+		public static function generate_key( $string = '' ) {
+			$cache_key = '';
+			if ( ! empty( $string ) ) {
+				$cache_key = md5( $string ); // Convert to md5 hash string
+			}
+
+			return $cache_key;
+		}
+
+		/**
+		 * Flush cache
+		 *
+		 * @since 4.7.2
+		 */
+		public static function flush() {
+			wp_cache_flush();
 		}
 
 	}

@@ -43,6 +43,10 @@ class ES_Workflow_Loader {
 		if ( is_admin() ) {
 			$this->admin = new ES_Workflow_Admin();
 			ES_Workflow_Admin::init();
+
+			if ( ES()->is_pro() ) {
+				ES_Pro_Workflow_Admin::init();
+			}
 		}
 	}
 

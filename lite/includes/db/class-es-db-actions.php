@@ -10,7 +10,6 @@ class ES_DB_Actions extends ES_DB {
 	 *
 	 * @since 4.2.1
 	 * @var $table_name
-	 *
 	 */
 	public $table_name;
 
@@ -19,7 +18,6 @@ class ES_DB_Actions extends ES_DB {
 	 *
 	 * @since 4.2.1
 	 * @var $version
-	 *
 	 */
 	public $version;
 
@@ -28,7 +26,6 @@ class ES_DB_Actions extends ES_DB {
 	 *
 	 * @since 4.2.1
 	 * @var $primary_key
-	 *
 	 */
 	public $primary_key;
 
@@ -62,7 +59,7 @@ class ES_DB_Actions extends ES_DB {
 			'count'        => '%d',
 			'link_id'      => '%d',
 			'list_id'      => '%d',
-			'ip'     	   => '%s',
+			'ip'           => '%s',
 			'country'      => '%s',
 			'device'       => '%s',
 			'browser'      => '%s',
@@ -87,14 +84,14 @@ class ES_DB_Actions extends ES_DB {
 			'count'        => 0,
 			'link_id'      => 0,
 			'list_id'      => 0,
-			'ip'     	   => '',
+			'ip'           => '',
 			'country'      => '',
 			'device'       => '',
 			'browser'      => '',
 			'email_client' => '',
 			'os'           => '',
 			'created_at'   => ig_es_get_current_gmt_timestamp(),
-			'updated_at'   => ig_es_get_current_gmt_timestamp()
+			'updated_at'   => ig_es_get_current_gmt_timestamp(),
 		);
 	}
 
@@ -110,23 +107,37 @@ class ES_DB_Actions extends ES_DB {
 	 */
 	public function add( $args, $explicit = true ) {
 
-		global $wpdb, $wpbd;
+		global $wpbd;
 
 		$ig_actions_table = IG_ACTIONS_TABLE;
 
-		$args_keys     = array_keys( $args );
+		$args_keys = array_keys( $args );
+
 		$args_keys_str = implode( ', ', $args_keys );
 
 		$sql = "INSERT INTO $ig_actions_table ($args_keys_str)";
 
-		$args_values = array_values( $args );
-		$args_values = esc_sql( $args_values );
+		$args_values_array = array();
+		if ( is_array( $args['contact_id'] ) ) {
+			$contact_ids = $args['contact_id'];
+			foreach ( $contact_ids as $contact_id ) {
+				$args['contact_id'] = $contact_id;
 
-		$args_values_str = $this->prepare_for_in_query( $args_values );
+				$args_values = array_values( $args );
+				$args_values = esc_sql( $args_values );
 
-		$sql .= " VALUES ($args_values_str) ON DUPLICATE KEY UPDATE";
+				$args_values_array[] = $this->prepare_for_in_query( $args_values );
+			}
+		} else {
+			$args_values = array_values( $args );
+			$args_values = esc_sql( $args_values );
 
-		$sql .= ( $explicit ) ? $wpdb->prepare( ' created_at = created_at, count = count+1, updated_at = %d, ip = %s, country = %s, browser = %s, device = %s, os = %s, email_client = %s', ig_es_get_current_gmt_timestamp(), $args['ip'], $args['country'], $args['browser'], $args['device'], $args['os'], $args['email_client'] ) : ' count = values(count)';
+			$args_values_array[] = $this->prepare_for_in_query( $args_values );
+		}
+
+		$sql .= ' VALUES ( ' . implode( '), (', $args_values_array ) . ' )';
+		$sql .= ' ON DUPLICATE KEY UPDATE';
+		$sql .= ( $explicit ) ? $wpbd->prepare( ' created_at = created_at, count = count+1, updated_at = %d, ip = %s, country = %s, browser = %s, device = %s, os = %s, email_client = %s', ig_es_get_current_gmt_timestamp(), $args['ip'], $args['country'], $args['browser'], $args['device'], $args['os'], $args['email_client'] ) : ' count = values(count)';
 
 		$result = $wpbd->query( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
@@ -150,14 +161,14 @@ class ES_DB_Actions extends ES_DB {
 		global $wpdb;
 
 		$args = array(
-			IG_LINK_CLICK
+			IG_LINK_CLICK,
 		);
 
 		$total_contacts_clicked = 0;
 		if ( $distinct ) {
 			if ( 0 != $days ) {
-				$days   = esc_sql( $days );
-				$args[] = $days;
+				$days                   = esc_sql( $days );
+				$args[]                 = $days;
 				$total_contacts_clicked = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT COUNT(DISTINCT(`contact_id`)) FROM {$wpdb->prefix}ig_actions WHERE `type` = %d AND created_at >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY))",
@@ -174,8 +185,8 @@ class ES_DB_Actions extends ES_DB {
 			}
 		} else {
 			if ( 0 != $days ) {
-				$days   = esc_sql( $days );
-				$args[] = $days;
+				$days                   = esc_sql( $days );
+				$args[]                 = $days;
 				$total_contacts_clicked = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT COUNT(`contact_id`) FROM {$wpdb->prefix}ig_actions WHERE `type` = %d AND created_at >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY))",
@@ -201,21 +212,19 @@ class ES_DB_Actions extends ES_DB {
 	 * @param int $days
 	 *
 	 * @return string|null
-	 *
-	 * 
 	 */
 	public function get_total_contact_lost( $days = 0, $distinct = true ) {
 		global $wpdb;
 
 		$args = array(
-			IG_CONTACT_UNSUBSCRIBE
+			IG_CONTACT_UNSUBSCRIBE,
 		);
 
 		$total_emails_unsubscribed = 0;
 		if ( $distinct ) {
 			if ( 0 != $days ) {
-				$days   = esc_sql( $days );
-				$args[] = $days;
+				$days                      = esc_sql( $days );
+				$args[]                    = $days;
 				$total_emails_unsubscribed = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT COUNT(DISTINCT(`contact_id`)) FROM {$wpdb->prefix}ig_actions WHERE `type` = %d AND created_at >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY))",
@@ -232,8 +241,8 @@ class ES_DB_Actions extends ES_DB {
 			}
 		} else {
 			if ( 0 != $days ) {
-				$days   = esc_sql( $days );
-				$args[] = $days;
+				$days                      = esc_sql( $days );
+				$args[]                    = $days;
 				$total_emails_unsubscribed = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT COUNT(`contact_id`) FROM {$wpdb->prefix}ig_actions WHERE `type` = %d AND created_at >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY))",
@@ -268,14 +277,14 @@ class ES_DB_Actions extends ES_DB {
 		global $wpdb;
 
 		$args = array(
-			IG_MESSAGE_OPEN
+			IG_MESSAGE_OPEN,
 		);
 
 		$total_emails_opened = 0;
 		if ( $distinct ) {
 			if ( 0 != $days ) {
-				$days   = esc_sql( $days );
-				$args[] = $days;
+				$days                = esc_sql( $days );
+				$args[]              = $days;
 				$total_emails_opened = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT COUNT(DISTINCT(`contact_id`)) FROM {$wpdb->prefix}ig_actions WHERE `type` = %d AND created_at >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY))",
@@ -292,8 +301,8 @@ class ES_DB_Actions extends ES_DB {
 			}
 		} else {
 			if ( 0 != $days ) {
-				$days   = esc_sql( $days );
-				$args[] = $days;
+				$days                = esc_sql( $days );
+				$args[]              = $days;
 				$total_emails_opened = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT COUNT(`contact_id`) FROM {$wpdb->prefix}ig_actions WHERE `type` = %d AND created_at >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY))",
@@ -326,14 +335,14 @@ class ES_DB_Actions extends ES_DB {
 		global $wpdb;
 
 		$args = array(
-			IG_MESSAGE_SENT
+			IG_MESSAGE_SENT,
 		);
 
 		$total_emails_sent = 0;
 		if ( $distinct ) {
 			if ( 0 != $days ) {
-				$days   = esc_sql( $days );
-				$args[] = $days;
+				$days              = esc_sql( $days );
+				$args[]            = $days;
 				$total_emails_sent = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT COUNT(DISTINCT(`contact_id`)) FROM {$wpdb->prefix}ig_actions WHERE `type` = %d AND created_at >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY))",
@@ -350,8 +359,8 @@ class ES_DB_Actions extends ES_DB {
 			}
 		} else {
 			if ( 0 != $days ) {
-				$days   = esc_sql( $days );
-				$args[] = $days;
+				$days              = esc_sql( $days );
+				$args[]            = $days;
 				$total_emails_sent = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT COUNT(`contact_id`) FROM {$wpdb->prefix}ig_actions WHERE `type` = %d AND created_at >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY))",
@@ -372,36 +381,43 @@ class ES_DB_Actions extends ES_DB {
 	}
 
 	/**
-	 * Get contact count based on campaign_id and type 
+	 * Get contact count based on campaign_id and type
 	 *
 	 * @return string|null
 	 *
 	 * @since 4.5.2
 	 */
 	public function get_count_based_on_id_type( $campaign_id, $message_id, $type, $distinct = true ) {
-		global $wpdb;
+		global $wpbd;
 
 		$args = array();
-		
+
 		$args[] = $campaign_id;
-		$args[]	= $message_id;
+		$args[] = $message_id;
 		$args[] = $type;
 
 		$count = 0;
 		if ( $distinct ) {
-			$count = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT COUNT(DISTINCT(`contact_id`)) as count FROM {$wpdb->prefix}ig_actions WHERE `campaign_id`= %d AND `message_id`= %d AND `type` = %d",
-					$args
-				)
+			$query = $wpbd->prepare(
+				"SELECT COUNT(DISTINCT(`contact_id`)) as count FROM {$wpbd->prefix}ig_actions WHERE `campaign_id`= %d AND `message_id`= %d AND `type` = %d",
+				$args
 			);
 		} else {
-			$count = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT  COUNT(`contact_id`) as count FROM {$wpdb->prefix}ig_actions WHERE `campaign_id`= %d  AND `message_id`= %d AND `type` = %d",
-					$args
-				)
+			$query = $wpbd->prepare(
+				"SELECT  COUNT(`contact_id`) as count FROM {$wpbd->prefix}ig_actions WHERE `campaign_id`= %d  AND `message_id`= %d AND `type` = %d",
+				$args
 			);
+		}
+
+		$cache_key       = ES_Cache::generate_key( $query );
+		$exists_in_cache = ES_Cache::is_exists( $cache_key, 'query' );
+		if ( ! $exists_in_cache ) {
+			$count = $wpbd->get_var(
+				$query
+			);
+			ES_Cache::set( $cache_key, $count, 'query' );
+		} else {
+			$count = ES_Cache::get( $cache_key, 'query' );
 		}
 
 		return $count;
@@ -426,13 +442,13 @@ class ES_DB_Actions extends ES_DB {
 
 		$contact_ids_str = implode( ',', $contact_ids );
 
-		$result =  $wpbd->get_results( $wpbd->prepare( "SELECT contact_id, MAX(created_at) as last_opened_at FROM {$wpbd->prefix}ig_actions WHERE contact_id IN ({$contact_ids_str}) AND type = %d  GROUP BY contact_id", IG_MESSAGE_OPEN ), ARRAY_A );
-	
+		$result = $wpbd->get_results( $wpbd->prepare( "SELECT contact_id, MAX(created_at) as last_opened_at FROM {$wpbd->prefix}ig_actions WHERE contact_id IN ({$contact_ids_str}) AND type = %d  GROUP BY contact_id", IG_MESSAGE_OPEN ), ARRAY_A );
+
 		if ( $filter ) {
-			$last_opened_at = array_column($result, 'last_opened_at', 'contact_id');
+			$last_opened_at = array_column( $result, 'last_opened_at', 'contact_id' );
 			foreach ( $last_opened_at as $contact_id => $timestamp ) {
-				$convert_date_format = get_option( 'date_format' );
-				$convert_time_format = get_option( 'time_format' );
+				$convert_date_format           = get_option( 'date_format' );
+				$convert_time_format           = get_option( 'time_format' );
 				$last_opened_at[ $contact_id ] = get_date_from_gmt( gmdate( 'Y-m-d H:i:s', $timestamp ), $convert_date_format . ' ' . $convert_time_format );
 			}
 			return $last_opened_at;

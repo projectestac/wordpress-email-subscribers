@@ -1,5 +1,9 @@
 <?php
 	$onboarding_step = IG_ES_Onboarding::get_onboarding_step();
+	$current_year    = gmdate( 'Y' );
+	$admin_email     = get_option( 'admin_email' );
+	$from_name       = get_option( 'ig_es_from_name' );
+	$from_email      = get_option( 'ig_es_from_email' );
 ?>
 <!-- Start-IG-Code -->
 <div class="mx-auto mt-6 sm:mt-5">
@@ -9,8 +13,6 @@
 <div id="slider-wrapper font-sans">
 	<div id="slider">
 		<div class="sp es-send-email-screen<?php echo esc_attr( 1 === $onboarding_step ? ' active' : '' ); ?>" style="<?php echo esc_attr( 1 === $onboarding_step ? '' : 'display:none' ); ?>">
-			<?php $from_name = get_option( 'ig_es_from_name' ); ?>
-			<?php $from_email = get_option( 'ig_es_from_email' ); ?>
 
 			<section class="mx-auto my-6 sm:my-7">
 			  <div
@@ -35,30 +37,33 @@
 
 				<div class="flex-1">
 				  <div class="p-4 md:px-8 md:py-5">
-					<span class="text-xs text-gray-400"><?php echo esc_html__( 'STEP 1 of 3', 'email-subscribers'); ?> </span>
+					<span class="text-xs text-gray-400"><?php echo esc_html__( 'STEP 1 of 3', 'email-subscribers' ); ?> </span>
 					<h3
 					  class="mb-1 text-2xl font-bold leading-snug text-gray-800 sm:text-3xl"
 					>
-					 <?php echo esc_html__( 'Welcome!', 'email-subscribers'); ?>
+						<?php echo esc_html__( 'Welcome!', 'email-subscribers' ); ?>
 					</h3>
 					<form id="es-send-email-form">
 					<div class="space-y-5 text-gray-800">
 					 <p class="text-base -mb-2">
-					   <?php 
-						echo esc_html__( 'We\'ve simplified and automated email marketing, so you can get
-		                results quickly.', 'email-subscribers'); 
+						<?php
+						echo esc_html__(
+							'We\'ve simplified and automated email marketing, so you can get
+		                results quickly.',
+							'email-subscribers'
+						);
 						?>
 					  </p>
-				   
+
 					  <div class="space-y-1">
-						<h3 class="text-base font-medium text-gray-900"><?php echo esc_html__( 'Essentials:', 'email-subscribers'); ?></h3>
+						<h3 class="text-base font-medium text-gray-900"><?php echo esc_html__( 'Essentials:', 'email-subscribers' ); ?></h3>
 
 						<div
 						  class="space-y-2 text-sm sm:space-y-0 sm:space-x-4 sm:flex sm:items-center"
 						>
 
 						  <div class="w-full sm:w-1/2">
-							<label for="es_from_name"><?php echo esc_html__( '"From" name for emails: ', 'email-subscribers'); ?></label>
+							<label for="es_from_name"><?php echo esc_html__( '"From" name for emails: ', 'email-subscribers' ); ?></label>
 							<input
 							  id="es_from_name" name="es_from_name" value="<?php echo esc_attr( $from_name ); ?>" required
 							  class="es_from_name block w-full mt-1 text-sm transition duration-150 ease-in-out rounded-md shadow-sm form-input sm:leading-5"
@@ -67,7 +72,7 @@
 						  </div>
 
 						  <div class="w-full sm:w-1/2">
-							<label for="es_from_email"><?php echo esc_html__( '"From" email: ', 'email-subscribers'); ?></label>
+							<label for="es_from_email"><?php echo esc_html__( '"From" email: ', 'email-subscribers' ); ?></label>
 							<input type="email"
 							  id="es_from_email" name="es_from_email" value="<?php echo esc_attr( $from_email ); ?>" required
 							  class="es_from_email es_onboard_email block w-full mt-1 text-sm transition duration-150 ease-in-out rounded-md shadow-sm form-input sm:leading-5"
@@ -78,21 +83,24 @@
 					  </div>
 					  <div class="">
 						<h3 class="text-base font-medium text-gray-900">
-						  <?php echo esc_html__( 'Email delivery testing:', 'email-subscribers'); ?>
+							<?php echo esc_html__( 'Email delivery testing:', 'email-subscribers' ); ?>
 						</h3>
 
 						<p class="text-sm leading-6 pt-1">
-						  <?php 
-							echo esc_html__( 'Add a couple of your own email addresses below. We will add
-		                  them to your audience lists.', 'email-subscribers'); 
+							<?php
+							echo esc_html__(
+								'Add a couple of your own email addresses below. We will add
+		                  them to your audience lists.',
+								'email-subscribers'
+							);
 							?>
 						</p>
 						<div
 						  class="my-2 space-y-2 sm:my-0 sm:space-y-0 sm:space-x-4 sm:flex sm:items-center"
 						>
 						  <div class="w-full sm:w-1/2">
-							<input type="email" 
-							  name="es_test_email[]" 
+							<input type="email"
+							  name="es_test_email[]"
 							  required
 							  class="es_email es_onboard_email block w-full text-sm transition duration-150 ease-in-out rounded-md shadow-sm form-input sm:leading-5"
 							  placeholder="name@domain.com"
@@ -107,31 +115,31 @@
 						  </div>
 						</div>
 					  </div>
-				  
+
 					  <div class="space-y-1 leading-5">
-						<h3 class="text-base font-medium text-gray-900 -mb-0.5"><?php echo esc_html__( 'Your preferences:', 'email-subscribers'); ?></h3>
+						<h3 class="text-base font-medium text-gray-900 -mb-0.5"><?php echo esc_html__( 'Your preferences:', 'email-subscribers' ); ?></h3>
 						<!-- Start-IG-Code -->
 						<?php if ( ! ES()->is_premium() ) { ?>
-						<div class="flex pt-1">
-						  <div class="pt-1">
-							<input
-							  id="es_free_trial_preference"
-							  type="checkbox"
-							  checked="checked"
-							  class="w-4 h-4 transition duration-150 ease-in-out form-checkbox"
-							/>
-						  </div>
-						  <div class="pl-3">
-							<label for="es_free_trial_preference" class="text-sm">
-							 <?php
-								/* translators: 1: Trial period in days. */
-								echo esc_html__( sprintf( 'Enable %s days free trial of premium features - email delivery testing, automatic background sending, spam protection and more', ES()->trial->get_trial_period( 'in_days' ) ), 'email-subscribers' ); 
-								?>
-							</label>
-						  </div>
-						</div>
+							<div class="flex pt-1">
+								<div class="pt-1">
+									<input
+									id="es_allow_tracking"
+									type="checkbox"
+									checked="checked"
+									class="w-4 h-4 transition duration-150 ease-in-out form-checkbox"
+									/>
+								</div>
+								<div class="pl-3">
+									<label for="es_allow_tracking" class="text-sm">
+									<?php
+										/* translators: %s. Plugin name. */
+										echo sprintf( esc_html__( 'Help us to improve %s by opting in to share non-sensitive plugin usage data. No personal data is tracked or stored.', 'email-subscribers' ), '<strong>Icegram Express (formerly known as Email Subscribers & Newsletters)</strong>' );
+									?>
+									</label>
+								</div>
+							</div>
 						<?php } ?>
-						
+
 						<div class="flex">
 						  <div class="pt-1">
 							<input
@@ -143,9 +151,12 @@
 						  </div>
 						  <div class="pl-3">
 							<label for="es_post_notification_preference" class="text-sm">
-							 <?php 
-								echo esc_html__( 'I want to send email notifications when new blog posts are
-		                      published', 'email-subscribers'); 
+								<?php
+								echo esc_html__(
+									'I want to send email notifications when new blog posts are
+		                      published',
+									'email-subscribers'
+								);
 								?>
 							</label>
 						  </div>
@@ -162,9 +173,12 @@
 						  </div>
 						  <div class="pl-3">
 							<label for="ig_es_enable_double_optin" class="text-sm">
-							  <?php 
-								echo esc_html__( 'Enable double opt-in (people have to click a confirmation
-		                      link in email before they\'re subscribed)', 'email-subscribers'); 
+								<?php
+								echo esc_html__(
+									'Enable double opt-in (people have to click a confirmation
+		                      link in email before they\'re subscribed)',
+									'email-subscribers'
+								);
 								?>
 							</label>
 						  </div>
@@ -179,7 +193,7 @@
 						  </div>
 						  <div class="pl-3">
 							<label for="ig_es_add_gdpr_consent" class="text-sm">
-							   <?php echo esc_html__( 'Add GDPR consent in subscription forms', 'email-subscribers'); ?>
+								<?php echo esc_html__( 'Add GDPR consent in subscription forms', 'email-subscribers' ); ?>
 							</label>
 						  </div>
 						</div>
@@ -192,7 +206,7 @@
 					  type="button" id="es-button-send"
 					  class="es-button-send relative inline-flex items-center px-4 py-2 text-base font-medium leading-5 text-white bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:shadow-outline"
 					>
-					  <?php echo esc_html__( 'Ok, set it up for me →', 'email-subscribers'); ?>
+						<?php echo esc_html__( 'Ok, set it up for me →', 'email-subscribers' ); ?>
 					</button>
 				  </div>
 				</div>
@@ -222,17 +236,20 @@
 
 				<div class="flex-1">
 				  <div style="height:33.2rem" class="p-4 md:px-8 md:py-5">
-					<span class="text-xs text-gray-400"><?php echo esc_html__( 'STEP 2 of 3', 'email-subscribers'); ?> </span>
+					<span class="text-xs text-gray-400"><?php echo esc_html__( 'STEP 2 of 3', 'email-subscribers' ); ?> </span>
 					<h3
 					  class="mb-2 text-2xl font-bold leading-snug text-gray-800 sm:text-3xl"
 					>
-					  <?php echo esc_html__( 'Hold on, personalizing for you...', 'email-subscribers'); ?>
+						<?php echo esc_html__( 'Hold on, personalizing for you...', 'email-subscribers' ); ?>
 					</h3>
 					<div class="space-y-4 text-gray-800">
 					  <p class="text-base">
-					   <?php 
-						echo esc_html__( 'We\'ll create audience lists, campaigns and a subscription form.
-		                And then try to send a test email to make sure everything works.', 'email-subscribers'); 
+						<?php
+						echo esc_html__(
+							'We\'ll create audience lists, campaigns and a subscription form.
+		                And then try to send a test email to make sure everything works.',
+							'email-subscribers'
+						);
 						?>
 					  </p>
 					  <ul class="space-y-4 text-sm font-medium leading-5 text-gray-400">
@@ -242,13 +259,13 @@
 							<span class="relative block w-2 h-2 bg-indigo-700 rounded-full"></span>
 						  </div>
 						  <p class="text-sm text-indigo-800">
-							<?php 
+							<?php
 							/* translators: 1: Main List 2: Test List */
-							echo sprintf( esc_html__('Creating audience lists - %1$s &amp; %2$s', 'email-subscribers'), esc_html( IG_MAIN_LIST ), esc_html( IG_DEFAULT_LIST ) );
+							echo sprintf( esc_html__( 'Creating audience lists - %1$s &amp; %2$s', 'email-subscribers' ), esc_html( IG_MAIN_LIST ), esc_html( IG_DEFAULT_LIST ) );
 							?>
 						  </p>
 						</li>
-						
+
 						<li id="ig-es-onboard-create_contacts_and_add_to_list" class="flex items-start space-x-3 group">
 						  <div
 							class="relative pt-1 flex items-center justify-center flex-shrink-0 w-5 h-5"
@@ -258,9 +275,9 @@
 							></span>
 						  </div>
 						  <p class="text-sm">
-							<?php echo esc_html__('Subscribing you and ', 'email-subscribers'); ?>
-							<span id="es_onboarding_emails_list"></span> 
-							<?php echo esc_html__(' to these lists', 'email-subscribers'); ?>
+							<?php echo esc_html__( 'Subscribing you and ', 'email-subscribers' ); ?>
+							<span id="es_onboarding_emails_list"></span>
+							<?php echo esc_html__( ' to these lists', 'email-subscribers' ); ?>
 						  </p>
 						</li>
 
@@ -272,7 +289,7 @@
 							  class="block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400"
 							></span>
 						  </div>
-						  <p class="text-sm"><?php echo esc_html__('Creating a campaign - newsletter broadcast test', 'email-subscribers'); ?></p>
+						  <p class="text-sm"><?php echo esc_html__( 'Creating a campaign - newsletter broadcast test', 'email-subscribers' ); ?></p>
 						</li>
 
 						<!-- Start-IG-Code -->
@@ -284,7 +301,7 @@
 							  class="block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400"
 							></span>
 						  </div>
-						  <p class="text-sm"><?php echo esc_html__('Creating a campaign - new post notification test', 'email-subscribers'); ?></p>
+						  <p class="text-sm"><?php echo esc_html__( 'Creating a campaign - new post notification test', 'email-subscribers' ); ?></p>
 						</li>
 						<!-- End-IG-Code -->
 
@@ -296,7 +313,7 @@
 							  class="block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400"
 							></span>
 						  </div>
-						  <p class="text-sm"><?php echo esc_html__('Creating a subscription opt-in form for the Main list', 'email-subscribers'); ?></p>
+						  <p class="text-sm"><?php echo esc_html__( 'Creating a subscription opt-in form for the Main list', 'email-subscribers' ); ?></p>
 						</li>
 
 						<li id="ig-es-onboard-add_widget_to_sidebar" class="flex items-start space-x-3 group">
@@ -308,9 +325,12 @@
 							></span>
 						  </div>
 						  <p class="text-sm">
-							<?php 
-							echo esc_html__('Adding the form to an active sidebar, so you can show it on
-		                    the site', 'email-subscribers'); 
+							<?php
+							echo esc_html__(
+								'Adding the form to an active sidebar, so you can show it on
+		                    the site',
+								'email-subscribers'
+							);
 							?>
 						  </p>
 						</li>
@@ -324,7 +344,7 @@
 							></span>
 						  </div>
 						  <div>
-							<p class="text-sm"><?php echo esc_html__('Testing email delivery...', 'email-subscribers'); ?></p>
+							<p class="text-sm"><?php echo esc_html__( 'Testing email delivery...', 'email-subscribers' ); ?></p>
 							<ul class="mt-3 space-y-2 font-normal sm:space-y-3" id="ig-es-onboard-test-email-delivery-tasks-list">
 							<li id="ig-es-onboard-queue_default_broadcast_newsletter" class="flex items-start space-x-3 group">
 								<div
@@ -334,7 +354,7 @@
 									class="block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400"
 								></span>
 								</div>
-								<p class="text-sm"><?php echo esc_html__('Queuing up campaign - newsletter broadcast test', 'email-subscribers'); ?></p>
+								<p class="text-sm"><?php echo esc_html__( 'Queuing up campaign - newsletter broadcast test', 'email-subscribers' ); ?></p>
 							</li>
 							<li id="ig-es-onboard-dispatch_emails_from_server" class="flex items-start space-x-3 group">
 								<div
@@ -344,7 +364,7 @@
 									class="block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400"
 								></span>
 								</div>
-								<p class="text-sm"><?php echo esc_html__('Dispatching emails from your server', 'email-subscribers'); ?></p>
+								<p class="text-sm"><?php echo esc_html__( 'Dispatching emails from your server', 'email-subscribers' ); ?></p>
 							</li>
 							<li id="ig-es-onboard-check_test_email_on_server" class="flex items-start space-x-3 group">
 								<div
@@ -355,7 +375,7 @@
 								></span>
 								</div>
 								<p class="text-sm">
-								<?php echo esc_html__('Waiting for test email to arrive on destination server', 'email-subscribers'); ?>
+								<?php echo esc_html__( 'Waiting for test email to arrive on destination server', 'email-subscribers' ); ?>
 								</p>
 							</li>
 							<li id="ig-es-onboard-evaluate_email_delivery" class="flex items-start space-x-3 group">
@@ -366,7 +386,7 @@
 									class="block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400"
 								></span>
 								</div>
-								<p class="text-sm"><?php echo esc_html__('Excellent! Email delivery setup is working well!', 'email-subscribers'); ?></p>
+								<p class="text-sm"><?php echo esc_html__( 'Excellent! Email delivery setup is working well!', 'email-subscribers' ); ?></p>
 							</li>
 							</ul>
 						</div>
@@ -381,7 +401,7 @@
 					class="relative inline-flex items-center px-4 py-2 text-base font-medium leading-5 text-white bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:shadow-outline"
 					data-error-text="<?php echo esc_attr__( 'Continue anyway →', 'email-subscribers' ); ?>"
 					>
-					<?php echo esc_html__('All good, let\'s finish up →', 'email-subscribers'); ?>
+					<?php echo esc_html__( 'All good, let\'s finish up →', 'email-subscribers' ); ?>
 					</button>
 				</div>
 			</div>
@@ -416,38 +436,83 @@
 				<div class="flex-1">
 					<form id="ig-es-onboarding-final-steps-form">
 						<div style="height:33.2rem" class="p-4 md:px-8 md:py-5">
-							<span class="text-xs text-gray-400"><?php echo esc_html__('STEP 3 of 3', 'email-subscribers'); ?> </span>
+							<span class="text-xs text-gray-400"><?php echo esc_html__( 'STEP 3 of 3', 'email-subscribers' ); ?> </span>
 							<h3
 							  class="mb-2 text-2xl font-bold leading-snug text-gray-800 sm:text-3xl"
 							>
-							  <?php echo esc_html__('Done! Now speed up your success!', 'email-subscribers'); ?>
+								<?php echo esc_html__( 'Done! Now speed up your success!', 'email-subscribers' ); ?>
 							</h3>
-							<input type="hidden"  id="sign-up-list" name="list" value="hN8OkYzujUlKgDgfCTEcIA"/>
-							  <input type="hidden" id="sign-up-form-source" name="form-source" value=""/>
+							<input type="hidden"  id="sign-up-list" name="list[]" value="<?php echo esc_attr( ES()->get_es_optin_list_hash() ); ?>"/>
+							<?php
+							if ( ! ES()->is_premium() ) {
+								?>
+								<input type="hidden" id="es-trial-list" name="list[]" value="<?php echo esc_attr( ES()->trial->get_es_trial_list_hash() ); ?>" />
+								<?php
+							}
+							?>
+							  <input type="hidden" id="sign-up-form-source" name="form-source" value="es-onboarding"/>
 							<div class="space-y-3 text-gray-800">
-							  
 								<div class="space-y-5 text-gray-800">
-							  <p class="text-base -mb-1"><?php echo esc_html__('Setup is complete. Couple of things to support you...', 'email-subscribers'); ?>
+							  <p class="text-base -mb-1"><?php echo esc_html__( 'Setup is complete. Couple of things to support you...', 'email-subscribers' ); ?>
 							  </p>
 							  <!-- Start-IG-Code -->
 							  <div class="">
-								<h3 class="text-base font-medium text-gray-900">
-								  <?php echo esc_html__('Free course: WordPress Email Marketing Masterclass 2020', 'email-subscribers'); ?>
-								</h3>
-								<p class="pt-2 text-sm leading-6">
-								  <?php 
-									echo esc_html__('How to build your list, make sure your email reach your
-				                  audience and influence your audience.', 'email-subscribers'); 
+								<?php
+								if ( ! ES()->is_premium() ) {
+									$trial_period_in_days = ES()->trial->get_trial_period( 'in_days' );
 									?>
-								</p>
-								<div
-								  class="pt-1 space-y-2 text-sm sm:space-y-0 sm:space-x-4 sm:flex sm:items-center"
-								>
+									<h3 class="text-base font-medium text-gray-900">
+										<?php
+											/* translators: %d. Trial period in days */
+											echo sprintf( esc_html__( 'Sign up for free trial of premium features', 'email-subscribers' ), esc_html( $trial_period_in_days ) );
+										?>
+									</h3>
+									<p class="pt-2 text-xm leading-6">
+										<?php
+											/* translators: %d. Trial period in days */
+											echo sprintf( esc_html__(
+												'Get %d days free trial of managed email sending, advance spam
+										protection, security, email deliverability checks and more. Premium features will be disabled
+										automatically after the trial if you don\'t continue.',
+												'email-subscribers'
+											), esc_html( $trial_period_in_days ) );
+										?>
+									</p>
+									<p class="pt-2 text-sm leading-6">
+										<?php
+											/* translators: %d. Current year */
+											echo sprintf( esc_html__( 'Also, get free WordPress Email Marketing Masterclass %d Course and grow your audience.', 'email-subscribers' ), esc_html( $current_year ) );
+										?>
+									</p>
+									<?php
+								} else {
+									?>
+									<h3 class="text-base font-medium text-gray-900">
+										<?php
+											/* translators: %d. Current year */
+											echo sprintf( esc_html__( 'Free course: WordPress Email Marketing Masterclass %d', 'email-subscribers' ), esc_html( $current_year ) );
+										?>
+									</h3>
+									<p class="pt-2 text-sm leading-6">
+										<?php
+										echo esc_html__(
+											'How to build your list, make sure your email reach your
+									audience and influence your audience.',
+											'email-subscribers'
+										);
+										?>
+									</p>
+									<?php
+								}
+								?>
+									<div
+									class="pt-1 space-y-2 text-sm sm:space-y-0 sm:space-x-4 sm:flex sm:items-center"
+									>
 								  <div class="w-full sm:w-1/2">
 									<input
 									  id="ig-es-sign-up-name"
 									  class="block w-full mt-1 text-sm transition duration-150 ease-in-out rounded-md shadow-sm form-input sm:leading-5"
-									  placeholder="Your name"
+									  placeholder="<?php echo esc_html__('Your name', 'email-subscribers' ); ?>"
 									/>
 								  </div>
 
@@ -456,62 +521,33 @@
 									type="email"
 									  id="ig-es-sign-up-email"
 									  class="es_onboard_email block w-full mt-1 text-sm transition duration-150 ease-in-out rounded-md shadow-sm form-input sm:leading-5"
-									  placeholder="Your email"
+									  placeholder="<?php echo esc_html__('Your email', 'email-subscribers' ); ?>"
+									  value="<?php echo esc_attr( $admin_email ); ?>"
 									/>
 								  </div>
 								</div>
 							  </div>
 
-							 <?php if ( ! ES()->is_premium() ) { ?>
-							  <div id="es_free_trial_option">
-								<h3 class="text-base font-medium text-gray-900 pt-2">
-									<?php echo esc_html__('Premium features for free:', 'email-subscribers'); ?>
-								</h3>
 
-								<p class="text-sm leading-6 pt-1">
-									<?php 
-									/* translators: 1: Trial period in days. */
-									echo esc_html__( sprintf( 'Get %s days free trial of managed email sending, advance spam
-				                  protection, security, email deliverability checks and more. No
-				                  credit card required. Premium features will be disabled
-				                  automatically after the trial if you don\'t continue.', ES()->trial->get_trial_period( 'in_days' ) ), 'email-subscribers' ); 
-									?>
-								</p>
-								<div class="flex my-2 sm:my-0 pt-1">
-								  <div class="pt-1">
-									<input
-									  id="es_free_pro_trial"
-									  type="checkbox"
-									  checked="checked"
-									  class="w-4 h-4 transition duration-150 ease-in-out form-checkbox"
-									/>
-								  </div>
-								  <div class="pl-3">
-									<label for="es_free_pro_trial" class="text-sm">
-									  <?php echo esc_html__('Yes, start the trial', 'email-subscribers'); ?>
-									</label>
-								  </div>
-								</div>
-							  </div>
-							  <?php } ?>
 							  <!-- End-IG-Code -->
-							  
+
 							  <div class="space-y-1">
 								<h3 class="text-base font-medium text-gray-900 pt-2">
-								  <?php echo esc_html__('Recommended next steps:', 'email-subscribers'); ?>
+									<?php echo esc_html__( 'Recommended next steps:', 'email-subscribers' ); ?>
 								</h3>
 								<ul class="ml-4 space-y-2 text-sm list-disc pt-1.5">
-								  <li><?php echo esc_html__('Review "Settings" and make adjustments if needed', 'email-subscribers'); ?></li>
-								  <li><?php echo esc_html__('Import your contacts, create new campaigns and test', 'email-subscribers'); ?></li>
+								  <li><?php echo esc_html__( 'Review "Settings" and make adjustments if needed', 'email-subscribers' ); ?></li>
+								  <li><?php echo esc_html__( 'Import your contacts, create new campaigns and test', 'email-subscribers' ); ?></li>
 								  <!-- Start-IG-Code -->
 								  <li>
-									<?php echo esc_html__('Review', 'email-subscribers'); ?>
+									<?php echo esc_html__( 'Review', 'email-subscribers' ); ?>
 									<a
 									  class="text-indigo-800 hover:underline"
 									  href="https://www.icegram.com/knowledgebase_category/email-subscribers/"
-									  ><?php echo esc_html__('documentation', 'email-subscribers'); ?></a
+									  target="_blank"
+									  ><?php echo esc_html__( 'documentation', 'email-subscribers' ); ?></a
 									>
-									<?php echo esc_html__('if you need any help', 'email-subscribers'); ?>	
+									<?php echo esc_html__( 'if you need any help', 'email-subscribers' ); ?>
 								  </li>
 								  <!-- End-IG-Code -->
 								</ul>
@@ -522,18 +558,22 @@
 					</form>
 				  <div class="px-4 py-3 text-right bg-gray-50 md:px-8">
 					<button
-					  type="button" id="ig-es-finish-onboarding-process"
-					  class="relative inline-flex items-center px-4 py-2 text-base font-medium leading-5 text-white bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:shadow-outline"
-					>
-					  <?php echo esc_html__('Complete setup &amp; take me to "Settings" →', 'email-subscribers'); ?>
+					  type="button" id="ig-es-complete-onboarding"
+					  class="relative inline-flex items-center px-4 py-2 text-base font-medium leading-5 text-white bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:shadow-outline">
+						<span class="mr-1"><?php echo esc_html__( 'Complete setup &amp; take me to "Dashboard" ', 'email-subscribers' ); ?></span>
+						<span class="es-btn-arrow"> → </span>
+						<svg style="display:none" class="es-btn-loader h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+								<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+								<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+						</svg>
 					</button>
 				  </div>
 				</div>
 			   </div>
 			</section>
 		  </div>
-	
-		<div class="sp es-receive-error" style="display:none">
+
+		<div class="sp es-popup-message" style="display:none">
 			<div class="fixed flex inset-0 overflow-x-hidden overflow-y-auto z-50 flex justify-center w-full h-full" style="background-color: rgba(0,0,0,.5);">
 				<section class="absolute flex justify-center mx-auto md:mx-auto lg:mx-auto my-12 sm:my-12 lg:my-24">
 				  <div
@@ -561,25 +601,28 @@
 							</div>
 							<div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 								  <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-headline">
-									<?php echo esc_html__('Email sending did not work', 'email-subscribers'); ?>
+									<?php echo esc_html__( 'Email sending did not work', 'email-subscribers' ); ?>
 								</h3>
 								  <div class="mt-2 space-y-4 leading-5 text-gray-800">
 									<div>
 									  <p class="font-medium text-sm text-gray-900">
-									   <?php echo esc_html__('Here\'s the error we encountered:', 'email-subscribers'); ?>
+										<?php echo esc_html__( 'Here\'s the error we encountered:', 'email-subscribers' ); ?>
 									  </p>
-									  <div class="bg-red-50 px-1 py-0.5 text-sm font-mono ig-es-onboarding-error">
+									  <div class="px-1 py-0.5 text-sm font-mono message">
 										[error-message]
 									  </div>
 									</div>
-									<p id="ig-es-email-delivery-error-message" class="text-sm">
-									 
+									<p class="additional-message text-sm">
+
 									</p>
-									<p class="font-medium text-sm">
-									  <?php 
-										echo esc_html__('We recommend you solve this problem quickly after completing
+									<p class="error-message font-medium text-sm">
+										<?php
+										echo esc_html__(
+											'We recommend you solve this problem quickly after completing
 					                  the setup. Do make sure emails are getting delivered before
-					                  you send any real campaigns.', 'email-subscribers'); 
+					                  you send any real campaigns.',
+											'email-subscribers'
+										);
 										?>
 									</p>
 								  </div>
@@ -593,13 +636,13 @@
 						  id="es-delivery-error-button"
 						  class="es-delivery-error-button relative inline-flex items-center px-4 py-2 text-base font-medium leading-5 text-white bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:shadow-outline"
 						>
-						 <?php echo esc_html__(' Understood, continue for now →', 'email-subscribers'); ?>
+							<?php echo esc_html__( ' Understood, continue for now →', 'email-subscribers' ); ?>
 						</button>
 					  </span>
 					</div>
 					</div>
 				</section>
 			</div>
-		</div>			
+		</div>
 	</div>
 </div>

@@ -29,6 +29,8 @@ class ES_Workflow_Admin {
 	public static function init() {
 
 		ES_Workflow_Admin_Ajax::init();
+		ES_Workflow_Admin_Edit::init();
+		ES_Workflow_Gallery::init();
 	}
 
 	/**

@@ -151,6 +151,33 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 			return $data;
 		}
 
+
+		/**
+		 * Get contacts growth percentage
+		 *
+		 * @param int $days
+		 *
+		 * @return float|integer
+		 *
+		 * @since 4.8.0
+		 */
+		public static function get_contacts_growth_percentage( $days = 60 ) {
+			//For example, It will get last 60'days subscribers count
+			$present_subscribers_count = ES()->lists_contacts_db->get_subscribed_contacts_count( $days );
+			//For example, It will get last 120'days subscribers count
+			$past_to_present_subscribers_count = ES()->lists_contacts_db->get_subscribed_contacts_count( $days * 2 );
+			//For example, It will get last 60-120'days subscribers count
+			$past_subscribers_count = intval( $past_to_present_subscribers_count ) - intval( $present_subscribers_count );
+
+			if ( $past_subscribers_count <= 0 && $present_subscribers_count <= 0 ) {
+				return 0;
+			} elseif ( $past_subscribers_count <= 0 && $present_subscribers_count > 0 ) {
+				return 100;
+			} else {
+				return round( ( $present_subscribers_count - $past_subscribers_count ) / $past_subscribers_count * 100, 2 );
+			}
+		}
+
 		/**
 		 * Collect dashboard reports data
 		 *
@@ -158,7 +185,7 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 		 *
 		 * @since 4.4.0
 		 */
-		public static function get_dashboard_reports_data( $refresh = false ) {
+		public static function get_dashboard_reports_data( $source, $refresh = false, $days = 60, $campaign_count = 5 ) {
 
 			/**
 			 * - Get Total Contacts
@@ -181,19 +208,20 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 				}
 			}
 
-			$total_contacts  = self::get_total_contacts();
-			$total_forms     = ES()->forms_db->count_forms();
-			$total_lists     = ES()->lists_db->count_lists();
-			$total_campaigns = ES()->campaigns_db->get_total_campaigns();
+			$total_contacts            = self::get_total_contacts();
+			$total_forms               = ES()->forms_db->count_forms();
+			$total_lists               = ES()->lists_db->count_lists();
+			$total_campaigns           = ES()->campaigns_db->get_total_campaigns();
+			$total_contacts_subscribed = self::get_total_subscribed_contacts( $days );
 
-			$total_email_opens  = self::get_total_contacts_opened_emails( 60, false );
-			$total_links_clicks = self::get_total_contacts_clicks_links( 60, false );
-			$total_message_sent = self::get_total_emails_sent( 60, false );
-			$total_contact_lost = self::get_total_contact_lost( 60, false );
-			$contacts_growth = self::get_contacts_growth();
+			$total_email_opens  = self::get_total_contacts_opened_emails( $days, false );
+			$total_links_clicks = self::get_total_contacts_clicks_links( $days, false );
+			$total_message_sent = self::get_total_emails_sent( $days, false );
+			$total_contact_lost = self::get_total_unsubscribed_contacts( $days );
+			$contacts_growth    = self::get_contacts_growth();
 
 			$total_open_rate  = 0;
-			$total_click_rate = 0; 
+			$total_click_rate = 0;
 			$total_lost_rate  = 0;
 			if ( $total_message_sent > 0 ) {
 				$total_open_rate  = ( $total_email_opens ) / $total_message_sent;
@@ -217,23 +245,72 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 
 			$data = array();
 
-			$data = apply_filters( 'ig_es_reports_data', $data );
+			$can_show = self::can_show_campaign_stats( $source );
+			if ( $can_show ) {
+
+				$data = self::get_campaign_stats( $campaign_count );
+			}
+
+			
 
 			$reports_data = array(
-				'total_contacts'     => $total_contacts,
-				'total_lists'        => $total_lists,
-				'total_forms'        => $total_forms,
-				'total_campaigns'    => $total_campaigns,
-				'total_email_opens'  => $total_email_opens,
-				'total_message_sent' => $total_message_sent,
-				'total_contact_lost' => $total_contact_lost,
-				'avg_open_rate'      => number_format( $avg_open_rate, 2 ),
-				'avg_click_rate'     => number_format( $avg_click_rate, 2 ),
-				'total_open_rate'    => number_format( $total_open_rate, 2 ),
-				'total_click_rate'   => $total_click_rate,
-				'total_lost_rate'    => $total_lost_rate,
-				'contacts_growth'    => $contacts_growth,
+				'total_contacts'            => number_format( $total_contacts ),
+				'total_lists'               => number_format( $total_lists ),
+				'total_forms'               => number_format( $total_forms ),
+				'total_campaigns'           => number_format( $total_campaigns ),
+				'total_contacts_subscribed' => number_format( $total_contacts_subscribed ),
+				'total_email_opens'         => number_format( $total_email_opens ),
+				'total_links_clicks'         => number_format( $total_links_clicks ),
+				'total_message_sent'        => number_format( $total_message_sent ),
+				'total_contact_lost'        => number_format( $total_contact_lost ),
+				'avg_open_rate'             => number_format( $avg_open_rate, 2 ),
+				'avg_click_rate'            => number_format( $avg_click_rate, 2 ),
+				'total_open_rate'           => number_format( $total_open_rate, 2 ),
+				'total_click_rate'          => $total_click_rate,
+				'total_lost_rate'           => $total_lost_rate,
+				'contacts_growth'           => $contacts_growth,
 			);
+
+			$is_dashboard_page = 'es_dashboard' === $source;
+			if ( $is_dashboard_page ) {
+				$comparison_days         = 120;
+				$last_four_months_opens  = self::get_total_contacts_opened_emails( $comparison_days, false );
+				
+				$open_before_two_months  = $last_four_months_opens - $total_email_opens;
+				if ( $open_before_two_months > 0 ) {
+					$open_percentage_growth = ( ( $total_email_opens - $open_before_two_months ) / $open_before_two_months ) * 100;
+				} elseif ( 0 === (int) $total_email_opens && 0 === (int) $open_before_two_months) {
+					$open_percentage_growth = 0;
+				} else {
+					$open_percentage_growth = 100;
+				}
+
+				$last_four_months_clicks = self::get_total_contacts_clicks_links( $comparison_days, false );
+				$click_before_two_months = $last_four_months_clicks - $total_links_clicks;
+				if ( $click_before_two_months > 0 ) {
+					$click_percentage_growth = ( ( $total_links_clicks - $click_before_two_months ) / $click_before_two_months ) * 100;
+				} elseif ( 0 === (int) $total_links_clicks && 0 === (int) $click_before_two_months) {
+					$click_percentage_growth = 0;
+				} else {
+					$click_percentage_growth = 100;
+				}
+
+				$reports_data['open_percentage_growth']  = number_format_i18n( $open_percentage_growth, 2 );
+				$reports_data['open_before_two_months']  = number_format_i18n( $open_before_two_months );
+				$reports_data['click_percentage_growth'] = number_format_i18n( $click_percentage_growth, 2 );
+				$reports_data['click_before_two_months'] = number_format_i18n( $click_before_two_months );
+				
+				$start_time  = strtotime( '-' . $days . ' days', time() );
+				
+				if ( ES()->is_pro() ) {
+					$average_engagement_score = ES_Engagement_Score::get_average_engagement_score( $start_time );
+	
+					$reports_data['average_engagement_score'] = number_format_i18n( $average_engagement_score, 1 );
+				}
+
+				$top_performing_campaigns 				  = self::get_top_performing_campaigns( $start_time );
+				$reports_data['top_performing_campaigns'] = $top_performing_campaigns;
+			}
 
 			$data = array_merge( $data, $reports_data );
 
@@ -242,6 +319,300 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 			return $data;
 		}
 
+		/**
+		 * Get Campaigns Stats
+		 *
+		 * @return array
+		 *
+		 * @since 4.7.8
+		 */
+		public static function get_campaign_stats( $total_campaigns = 5 ) {
 
+			global $wpdb;
+
+			$campaigns = ES_DB_Mailing_Queue::get_recent_campaigns( $total_campaigns );
+
+			$campaigns_data = array();
+			if ( ! empty( $campaigns ) && count( $campaigns ) > 0 ) {
+
+				foreach ( $campaigns as $key => $campaign ) {
+
+					$message_id  = $campaign['id'];
+					$campaign_id = $campaign['campaign_id'];
+
+					if ( 0 == $campaign_id ) {
+						continue;
+					}
+
+					$results = $wpdb->get_results( $wpdb->prepare( "SELECT type, count(DISTINCT (contact_id) ) as total FROM {$wpdb->prefix}ig_actions WHERE message_id = %d AND campaign_id = %d GROUP BY type", $message_id, $campaign_id ), ARRAY_A );
+
+					$stats     = array();
+					$type      = '';
+					$type_text = '';
+
+					if ( count( $results ) > 0 ) {
+
+						foreach ( $results as $result ) {
+
+							$type  = $result['type'];
+							$total = $result['total'];
+
+							switch ( $type ) {
+								case IG_MESSAGE_SENT:
+									$type_text = 'total_sent';
+									break;
+								case IG_MESSAGE_OPEN:
+									$type_text = 'total_opens';
+									break;
+								case IG_LINK_CLICK:
+									$type_text = 'total_clicks';
+									break;
+								case IG_CONTACT_UNSUBSCRIBE:
+									$type_text = 'total_unsubscribe';
+									break;
+							}
+
+							$stats[ $type_text ] = $total;
+						}
+					}
+
+					$stats = wp_parse_args(
+						$stats,
+						array(
+							'total_sent'        => 0,
+							'total_opens'       => 0,
+							'total_clicks'      => 0,
+							'total_unsubscribe' => 0,
+						)
+					);
+
+					if ( 0 != $stats['total_sent'] ) {
+						$campaign_opens_rate  = ( $stats['total_opens'] * 100 ) / $stats['total_sent'];
+						$campaign_clicks_rate = ( $stats['total_clicks'] * 100 ) / $stats['total_sent'];
+						$campaign_losts_rate  = ( $stats['total_unsubscribe'] * 100 ) / $stats['total_sent'];
+					} else {
+						$campaign_opens_rate  = 0;
+						$campaign_clicks_rate = 0;
+						$campaign_losts_rate  = 0;
+					}
+
+					$campaign_type = ES()->campaigns_db->get_column( 'type', $campaign_id );
+
+					if ( 'newsletter' === $campaign_type ) {
+						$type = __( 'Broadcast', 'email-subscribers' );
+					} elseif ( 'post_notification' === $campaign_type ) {
+						$type = __( 'Post Notification', 'email-subscribers' );
+					} elseif ( 'post_digest' === $campaign_type ) {
+						$type = __( 'Post Digest', 'email-subscribers' );
+					}
+
+					$start_at  = gmdate( 'd F', strtotime( $campaign['start_at'] ) );
+					$finish_at = gmdate( 'd F', strtotime( $campaign['finish_at'] ) );
+
+					$campaigns_data[ $key ]                         = $stats;
+					$campaigns_data[ $key ]['title']                = $campaign['subject'];
+					$campaigns_data[ $key ]['hash']                 = $campaign['hash'];
+					$campaigns_data[ $key ]['status']               = $campaign['status'];
+					$campaigns_data[ $key ]['campaign_type']        = $campaign_type;
+					$campaigns_data[ $key ]['type']                 = $type;
+					$campaigns_data[ $key ]['campaign_opens_rate']  = round( $campaign_opens_rate );
+					$campaigns_data[ $key ]['campaign_clicks_rate'] = round( $campaign_clicks_rate );
+					$campaigns_data[ $key ]['campaign_losts_rate']  = round( $campaign_losts_rate );
+					$campaigns_data[ $key ]['start_at']             = $start_at;
+					$campaigns_data[ $key ]['finish_at']            = $finish_at;
+				}
+			}
+			$data['campaigns'] = $campaigns_data;
+
+			return $data;
+		}
+
+		public static function can_show_campaign_stats( $source = '' ) {
+			if ( 'es_dashboard' === $source && ! ES()->is_pro() ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		public static function get_top_performing_campaigns( $start_time, $campaign_count = 3 ) {
+			global $wpdb;
+			
+			$top_campaigns = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT campaign_id,message_id, SUM( IF( `type` = 2, 1, 0 ) ) AS 'sent',SUM(IF( `type` = 3, 1, 0 )) AS 'opens_count', (SUM(IF( `type` = 3, 1, 0 ))/SUM( IF( `type` = 2, 1, 0 ))) * 100 AS opened_percentage FROM `{$wpdb->prefix}ig_actions` WHERE campaign_id IS NOT NULL AND message_id IS NOT NULL AND message_id != 0 AND updated_at > %d GROUP BY campaign_id, message_id ORDER BY `opened_percentage` DESC LIMIT %d",
+					$start_time,
+					$campaign_count
+				),
+				ARRAY_A
+			);
+
+			return $top_campaigns;
+		}
+
+		public static function show_device_opens_stats( $device_opens_data ) {
+			
+				//Graph for Device Opens
+				$device_opened = array();
+				$device_label  = array();
+				ob_start();
+			if ( ! empty( $device_opens_data ) && ! empty( array_filter( $device_opens_data ) ) ) {
+				$device_label  = array_map( 'ucfirst' , array_keys( $device_opens_data ) );
+				$device_opened = array_values( $device_opens_data );
+					
+				?>
+			<div class="relative bg-white mt-2" id="device_open_graph"></div>
+			
+			<?php
+			} else {
+				?>
+				<div class="mt-2 bg-white text-sm text-gray-500 py-3 px-6 tracking-wide">
+					<?php echo esc_html__( 'No device data found', 'email-subscribers' ); ?>
+				</div>
+				<?php
+			}
+			$stats_html = ob_get_clean();
+			$allowedtags     = ig_es_allowed_html_tags_in_esc();
+			//$stats_html = ES_Common::get_tooltip_html( $stats_html );
+			echo wp_kses( $stats_html, $allowedtags );
+			?>
+			<script type="text/javascript">
+
+				jQuery(document).ready(function ($) {
+					let device_data = {
+						labels: <?php echo json_encode( $device_label ); ?>,
+						datasets: [
+							{
+								name: "device", 
+								type: "pie",
+								values: <?php echo json_encode( $device_opened ); ?>,
+							}
+						]
+					}
+
+					const device_chart = new frappe.Chart("#device_open_graph", {
+						title: "",
+						data: device_data,
+						type: 'pie',
+						colors: ['#743ee2', '#5DADE2', '#F6608B'],
+						height: 30,
+						width:30,
+						maxSlices: 3,
+					});
+
+				});
+			</script>
+			<?php
+		}
+
+		public static function show_sources_stats( $subscriber_source_counts ) {
+			
+			
+			//Graph for Device Opens
+			$source_opened = array();
+			$source_label  = array();
+			ob_start();
+			if ( ! empty( $subscriber_source_counts ) && ! empty( array_filter( $subscriber_source_counts ) ) ) {
+				$source_label  = array_map( 'ucfirst' , array_keys( $subscriber_source_counts ) );
+				$source_opened = array_values( $subscriber_source_counts );
+				?>
+		<div class="bg-white mt-2" id="sources_graph"></div>
+		
+		<?php
+			} else {
+				?>
+			<div class="mt-2 bg-white text-sm text-gray-500 py-3 px-6">
+				<?php echo esc_html__( 'No source data found', 'email-subscribers' ); ?>
+			</div>
+			<?php
+			}
+		$stats_html = ob_get_clean();
+		$allowedtags     = ig_es_allowed_html_tags_in_esc();
+		//$stats_html = ES_Common::get_tooltip_html( $stats_html );
+		echo wp_kses( $stats_html, $allowedtags );
+			?>
+		<script type="text/javascript">
+
+			jQuery(document).ready(function ($) {
+				let source_data = {
+					labels: <?php echo json_encode( $source_label ); ?>,
+					datasets: [
+						{
+							name: "source", 
+							type: "percentage",
+							values: <?php echo json_encode( $source_opened ); ?>,
+						}
+					]
+				}
+
+				const source_chart = new frappe.Chart("#sources_graph", {
+					title: "",
+					data: source_data,
+					type: 'percentage',
+					colors: ['#743ee2', '#5DADE2', '#F6608B'],
+					height: 80,
+					maxSlices: 3,
+				});
+
+			});
+		</script>
+		<?php
+		}
+
+		public static function show_unsubscribe_feedback_percentage_stats( $feedback_percentages ) {
+			
+			
+			//Graph for Device Opens
+			$unsubscribe_feedback_opened = array();
+			$unsubscribe_feedback_label  = array();
+			ob_start();
+			if ( ! empty( $feedback_percentages ) && ! empty( array_filter( $feedback_percentages ) ) ) {
+				$unsubscribe_feedback_label  = array_map( 'ucfirst' , array_keys( $feedback_percentages ) );
+				$unsubscribe_feedback_opened = array_values( $feedback_percentages );
+			
+				?>
+	<div class="relative bg-white mt-2 rounded-md shadow" id="unsubscribe_feedbacks_graph"></div>
+	
+		<?php
+			} else {
+				?>
+		<div class="mt-2 bg-white text-sm text-gray-500 rounded-md shadow py-3 px-6 tracking-wide">
+				<?php echo esc_html__( 'No data found', 'email-subscribers' ); ?>
+		</div>
+			<?php
+			}
+		$stats_html  = ob_get_clean();
+		$allowedtags = ig_es_allowed_html_tags_in_esc();
+		$stats_html  = ES_Common::get_tooltip_html( $stats_html );
+		echo wp_kses( $stats_html, $allowedtags );
+			?>
+	<script type="text/javascript">
+
+		jQuery(document).ready(function ($) {
+			let unsubscribe_feedback_data = {
+				labels: <?php echo json_encode( $unsubscribe_feedback_label ); ?>,
+				datasets: [
+					{
+						name: "unsubscribe_feedback", 
+						type: "pie",
+						values: <?php echo json_encode( $unsubscribe_feedback_opened ); ?>,
+					}
+				]
+			}
+
+			const unsubscribe_feedback_chart = new frappe.Chart("#unsubscribe_feedbacks_graph", {
+				title: "",
+				data: unsubscribe_feedback_data,
+				type: 'pie',
+				colors: ['#743ee2', '#5DADE2', '#F6608B'],
+				height: 280,
+				maxSlices: 3,
+			});
+
+		});
+	</script>
+	<?php
+		}
 	}
+
 }

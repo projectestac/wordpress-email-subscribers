@@ -68,18 +68,18 @@ class ES_Handle_Sync_Wp_User {
 				</th>
 				<td>
 					<select name="form_data[es_registered]" id="es_email_status">
-						<option value='NO' 
-						<?php 
+						<option value='NO'
+						<?php
 						if ('NO' == $form_data['es_registered'] ) {
 							echo "selected='selected'";
-						} 
+						}
 						?>
 						><?php esc_html_e( 'No', 'email-subscribers' ); ?></option>
-						<option value='YES' 
-						<?php 
+						<option value='YES'
+						<?php
 						if ( 'YES' == $form_data['es_registered'] ) {
 							echo "selected='selected'";
-						} 
+						}
 						?>
 						><?php esc_html_e( 'Yes', 'email-subscribers' ); ?></option>
 					</select>
@@ -94,9 +94,9 @@ class ES_Handle_Sync_Wp_User {
 				</th>
 				<td>
 					<select name="form_data[es_registered_group]">
-						<?php 
-						$lists_dropdown = ES_Common::prepare_list_dropdown_options( $form_data['es_registered_group'], 'Select List' ); 
-						$allowedtags 	= ig_es_allowed_html_tags_in_esc();
+						<?php
+						$lists_dropdown = ES_Common::prepare_list_dropdown_options( $form_data['es_registered_group'], 'Select List' );
+						$allowedtags    = ig_es_allowed_html_tags_in_esc();
 						echo wp_kses( $lists_dropdown , $allowedtags );
 						?>
 					</select>
@@ -259,7 +259,7 @@ class ES_Handle_Sync_Wp_User {
 					<?php
 					$workflows_page_url = menu_page_url( 'es_workflows', false );
 					/* translators: %s: Link to Workflow page */
-					echo wp_kses_post( sprintf( __( 'Hey!!! now sync users using Email Subscribers\' workflows. <a href="%s" class="text-indigo-400">Create new workflows</a>', 'email-subscribers' ), $workflows_page_url ) );
+					echo wp_kses_post( sprintf( __( 'Hey!!! now sync users using Icegram Express (formerly known as Email Subscribers & Newsletters)\' workflows. <a href="%s" class="text-indigo-400">Create new workflows</a>', 'email-subscribers' ), $workflows_page_url ) );
 					?>
 				</span>
 				</div>

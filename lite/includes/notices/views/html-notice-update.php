@@ -16,7 +16,7 @@ $update_url = wp_nonce_url(
 ?>
 <div id="message" class="updated">
 	<p>
-		<strong><?php esc_html_e( 'Email Subscribers data update', 'email-subscribers' ); ?></strong> &#8211; <?php esc_html_e( 'We need to update your data store to the latest version.', 'email-subscribers' ); ?>
+		<strong><?php esc_html_e( 'Icegram Express data update', 'email-subscribers' ); ?></strong> &#8211; <?php esc_html_e( 'We need to update your data store to the latest version.', 'email-subscribers' ); ?>
 	</p>
 	<p class="submit">
 		<a href="<?php echo esc_url( $update_url ); ?>" class="es-update-now button-primary">

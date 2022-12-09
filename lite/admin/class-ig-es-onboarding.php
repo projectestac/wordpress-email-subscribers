@@ -16,10 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
-	
+
 	/**
 	 * The onboarding-specific functionality of the plugin.
-	 *
 	 */
 	class IG_ES_Onboarding {
 
@@ -29,31 +28,29 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 		 * @var Onboarding instance
 		 */
 		protected static $instance = null;
-		
+
 		/**
 		 * Added Logger Context
 		 *
 		 * @since 4.6.0
 		 * @var array
-		 *
 		 */
 		protected static $logger_context = array(
-			'source' => 'ig_es_onboarding'
+			'source' => 'ig_es_onboarding',
 		);
-		
+
 		/**
 		 * Variable to hold all onboarding tasks list
 		 *
 		 * @since 4.6.0
 		 * @var array
-		 *
 		 */
 		private static $all_onboarding_tasks = array(
-			'configuration_tasks' => array(
+			'configuration_tasks'        => array(
 				'set_settings',
 				'create_default_lists',
 				'create_contacts_and_add_to_list',
-				'add_workflow_for_user_registration',
+				'add_default_workflows',
 				'create_default_newsletter_broadcast',
 				'create_default_post_notification',
 				'create_default_subscription_form',
@@ -65,68 +62,62 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				'check_test_email_on_server',
 				'evaluate_email_delivery',
 			),
-			'completion_tasks' => array(
-				'subscribe_to_klawoo',
+			'completion_tasks'           => array(
+				'subscribe_to_es',
 				'save_final_configuration',
-			)
+			),
 		);
 
 		/**
 		 * Option name for current task name.
-		 * 
+		 *
 		 * @since 4.6.0
 		 * @var array
-		 *
 		 */
 		private static $onboarding_current_task_option = 'ig_es_onboarding_current_task';
 
 		/**
 		 * Option name which holds common data between tasks.
-		 * 
+		 *
 		 * E.g. created subscription form id from create_default_subscription_form function so we can use it in add_widget_to_sidebar
 		 *
 		 * @since 4.6.0
 		 * @var array
-		 *
 		 */
 		private static $onboarding_tasks_data_option = 'ig_es_onboarding_tasks_data';
 
 		/**
 		 * Option name which holds tasks which are done.
-		 * 
+		 *
 		 * @since 4.6.0
 		 * @var array
-		 *
 		 */
 		private static $onboarding_tasks_done_option = 'ig_es_onboarding_tasks_done';
-		
+
 		/**
 		 * Option name which holds tasks which are failed.
-		 * 
+		 *
 		 * @since 4.6.0
 		 * @var array
-		 *
 		 */
 		private static $onboarding_tasks_failed_option = 'ig_es_onboarding_tasks_failed';
 
 		/**
 		 * Option name which holds tasks which are skipped due to dependency on other tasks.
-		 * 
+		 *
 		 * @since 4.6.0
 		 * @var array
-		 *
 		 */
 		private static $onboarding_tasks_skipped_option = 'ig_es_onboarding_tasks_skipped';
 
 		/**
 		 * Option name which store the step which has been completed.
-		 * 
+		 *
 		 * @since 4.6.0
 		 * @var string
-		 *
 		 */
 		private static $onboarding_step_option = 'ig_es_onboarding_step';
-		
+
 		/**
 		 * Initialize the class and set its properties.
 		 *
@@ -136,10 +127,10 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 			add_action( 'wp_ajax_ig_es_handle_request', array( $this, 'handle_request' ) );
 		}
-	
+
 		/**
 		 * Get class instance.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public static function instance() {
@@ -148,14 +139,14 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			}
 			return self::$instance;
 		}
-		
+
 		/**
 		 * Register the JavaScript for the onboarding process.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function enqueue_scripts() {
-	
+
 			if ( ! ES()->is_es_admin_screen() ) {
 				return;
 			}
@@ -173,14 +164,14 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				}
 			}
 		}
-		
+
 		/**
 		 * Method to perform configuration and list, ES form, campaigns creation related operations in the onboarding
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function handle_request() {
-	
+
 			$response = array();
 
 			check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
@@ -196,10 +187,10 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 			wp_send_json( $response );
 		}
-		
+
 		/**
 		 * Method to perform configuration and list, ES form, campaigns creation related operations in the onboarding
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function ajax_perform_configuration_tasks() {
@@ -210,7 +201,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to perform email delivery tasks.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function ajax_queue_default_broadcast_newsletter() {
@@ -219,7 +210,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to perform email delivery tasks.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function ajax_dispatch_emails_from_server() {
@@ -228,7 +219,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to perform email delivery tasks.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function ajax_check_test_email_on_server() {
@@ -238,45 +229,36 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to perform email delivery tasks.
-		 * 
-		 * @since 4.6.0
-		 */
-		public function ajax_checking_spam_score_delivery_metrics() {
-			return $this->perform_onboarding_tasks( 'email_delivery_check_tasks', 'checking_spam_score_delivery_metrics' );
-		}
-
-		/**
-		 * Method to perform email delivery tasks.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function ajax_evaluate_email_delivery() {
 			return $this->perform_onboarding_tasks( 'email_delivery_check_tasks', 'evaluate_email_delivery' );
 		}
-		
+
 		/**
 		 * Method to perform email delivery tasks.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
-		public function ajax_finishing_onboarding() {
+		public function ajax_complete_onboarding() {
 
 			$response = $this->perform_onboarding_tasks( 'completion_tasks' );
 
 			// Delete the onboarding data used during onboarding process.
 			$this->delete_onboarding_data();
 
-			$settings_url             = admin_url( 'admin.php?page=es_settings' );
-			$response['redirect_url'] = $settings_url;
-			
+			$dashboard_url            = admin_url( 'admin.php?page=es_dashboard' );
+			$response['redirect_url'] = $dashboard_url;
+
 			return $response;
 		}
 
 		/**
 		 * Method to updatee the onboarding step
-		 * 
-		 * @return bool 
-		 * 
+		 *
+		 * @return bool
+		 *
 		 * @since 4.6.0
 		 */
 		public static function ajax_update_onboarding_step() {
@@ -296,10 +278,10 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to perform give onboarding tasks types.
-		 * 
+		 *
 		 * @param string $task_group Tasks group
 		 * @param string $task_name Specific task
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function perform_onboarding_tasks( $task_group = '', $task_name = '' ) {
@@ -328,13 +310,13 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			}
 
 			$onboarding_tasks_done = get_option( self::$onboarding_tasks_done_option, array() );
-			$current_tasks_done    = ! empty( $onboarding_tasks_done[$task_group] ) ? $onboarding_tasks_done[$task_group] : array();
-			
+			$current_tasks_done    = ! empty( $onboarding_tasks_done[ $task_group ] ) ? $onboarding_tasks_done[ $task_group ] : array();
+
 			$onboarding_tasks_failed = get_option( self::$onboarding_tasks_failed_option, array() );
-			$current_tasks_failed    = ! empty( $onboarding_tasks_failed[$task_group] ) ? $onboarding_tasks_failed[$task_group] : array();
+			$current_tasks_failed    = ! empty( $onboarding_tasks_failed[ $task_group ] ) ? $onboarding_tasks_failed[ $task_group ] : array();
 
 			$onboarding_tasks_skipped = get_option( self::$onboarding_tasks_skipped_option, array() );
-			$current_tasks_skipped    = ! empty( $onboarding_tasks_skipped[$task_group] ) ? $onboarding_tasks_skipped[$task_group] : array();
+			$current_tasks_skipped    = ! empty( $onboarding_tasks_skipped[ $task_group ] ) ? $onboarding_tasks_skipped[ $task_group ] : array();
 
 			$onboarding_tasks_data = get_option( self::$onboarding_tasks_data_option, array() );
 			if ( ! empty( $current_tasks ) ) {
@@ -348,10 +330,10 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 							$task_response = call_user_func( array( $this, $current_task ) );
 							if ( 'success' === $task_response['status'] ) {
 								if ( ! empty( $task_response['tasks_data'] ) ) {
-									if ( ! isset( $onboarding_tasks_data[$current_task] ) ) {
-										$onboarding_tasks_data[$current_task] = array();
+									if ( ! isset( $onboarding_tasks_data[ $current_task ] ) ) {
+										$onboarding_tasks_data[ $current_task ] = array();
 									}
-									$onboarding_tasks_data[$current_task] = array_merge( $onboarding_tasks_data[$current_task], $task_response['tasks_data'] );
+									$onboarding_tasks_data[ $current_task ] = array_merge( $onboarding_tasks_data[ $current_task ], $task_response['tasks_data'] );
 								}
 								$logger->info( 'Task Done:' . $current_task, self::$logger_context );
 								// Set success status only if not already set else it can override error/skipped statuses set previously from other tasks.
@@ -359,20 +341,20 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 									$response['status'] = 'success';
 								}
 								$current_tasks_done[] = $current_task;
-							} else if ( 'skipped' === $task_response['status'] ) {
-								$response['status'] = 'skipped';
+							} elseif ( 'skipped' === $task_response['status'] ) {
+								$response['status']      = 'skipped';
 								$current_tasks_skipped[] = $current_task;
 							} else {
 								$logger->info( 'Task Failed:' . $current_task, self::$logger_context );
-								$response['status'] = 'error';
+								$response['status']     = 'error';
 								$current_tasks_failed[] = $current_task;
 							}
-							
-							$response['tasks'][$current_task] = $task_response;
 
-							$onboarding_tasks_done[$task_group]    = $current_tasks_done;
-							$onboarding_tasks_failed[$task_group]  = $current_tasks_failed;
-							$onboarding_tasks_skipped[$task_group] = $current_tasks_skipped;
+							$response['tasks'][ $current_task ] = $task_response;
+
+							$onboarding_tasks_done[ $task_group ]    = $current_tasks_done;
+							$onboarding_tasks_failed[ $task_group ]  = $current_tasks_failed;
+							$onboarding_tasks_skipped[ $task_group ] = $current_tasks_skipped;
 
 							update_option( self::$onboarding_tasks_done_option, $onboarding_tasks_done );
 							update_option( self::$onboarding_tasks_failed_option, $onboarding_tasks_failed );
@@ -383,7 +365,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 							$logger->info( 'Missing Task:' . $current_task, self::$logger_context );
 						}
 					} else {
-						$response['tasks'][$current_task] = array(
+						$response['tasks'][ $current_task ] = array(
 							'status' => 'success',
 						);
 						$logger->info( 'Task already done:' . $current_task, self::$logger_context );
@@ -396,7 +378,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Set settings required for ES settings.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function set_settings() {
@@ -408,15 +390,14 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$from_name           = ig_es_get_request_data( 'es_from_name', '' );
 			$from_email          = ig_es_get_request_data( 'es_from_email', '' );
 			$enable_double_optin = ig_es_get_request_data( 'enable_double_optin', 'yes' );
-			$optin_type          = 'yes' === $enable_double_optin ? 'double_opt_in': 'single_opt_in';
-			$is_trial            = ig_es_get_request_data( 'is_trial', '' );
-
-			if ( ! empty( $is_trial ) ) {
-				// Add trial preferences.
-				ES()->add_trial_data( $is_trial, time() );
-			}
+			$optin_type          = 'yes' === $enable_double_optin ? 'double_opt_in' : 'single_opt_in';
+			$allow_tracking      = ig_es_get_request_data( 'allow_tracking', '' );
 
 			update_option( 'ig_es_optin_type', $optin_type );
+
+			if ( ! empty( $allow_tracking ) ) {
+				update_option( 'ig_es_allow_tracking', $allow_tracking );
+			}
 
 			if ( ! empty( $from_name ) && ! empty( $from_email ) ) {
 				update_option( 'ig_es_from_name', $from_name );
@@ -435,12 +416,12 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 		 * @since 4.0.0
 		 */
 		public function create_default_lists() {
-	
+
 			$response = array(
 				'status' => 'error',
 			);
-	
-			$default_list   = ES()->lists_db->get_list_by_name( IG_DEFAULT_LIST );
+
+			$default_list = ES()->lists_db->get_list_by_name( IG_DEFAULT_LIST );
 			// Check if list already not exists.
 			if ( empty( $default_list['id'] ) ) {
 				// Add default list.
@@ -448,7 +429,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			} else {
 				$default_list_id = $default_list['id'];
 			}
-			
+
 			$main_list = ES()->lists_db->get_list_by_name( IG_MAIN_LIST );
 			// Check if list already not exists.
 			if ( empty( $main_list['id'] ) ) {
@@ -464,13 +445,16 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			} else {
 				/* translators: 1. Main list name. 2. Default list name. */
 				$response['message'] = sprintf( __( 'Unable to create %1$s and %2$s list.', 'email-subscribers' ), IG_MAIN_LIST, IG_DEFAULT_LIST );
-				$response['status'] = 'error';
+				$response['status']  = 'error';
 			}
 
 			return $response;
 		}
-		
+
 		public function create_contacts_and_add_to_list() {
+
+			// Flush cache to make sure we get data from DB instead of cache
+			ES_Cache::flush();
 
 			// Get default list data.
 			$default_list_id = 0;
@@ -508,12 +492,12 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				'status'       => 'verified',
 				'unsubscribed' => 0,
 				'hash'         => ES_Common::generate_guid(),
-				'created_at'   => ig_get_current_date_time()
+				'created_at'   => ig_get_current_date_time(),
 			);
 
 			$contact_id = ES()->contacts_db->insert( $data );
 			if ( $contact_id ) {
-				
+
 				// Prepare admin contact list data.
 				$data = array(
 					'contact_id'    => $contact_id,
@@ -552,7 +536,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 						'status'       => 'verified',
 						'unsubscribed' => 0,
 						'hash'         => ES_Common::generate_guid(),
-						'created_at'   => ig_get_current_date_time()
+						'created_at'   => ig_get_current_date_time(),
 					);
 					$contact_id = ES()->contacts_db->insert( $data );
 					if ( $contact_id ) {
@@ -563,7 +547,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 							'subscribed_at' => ig_get_current_date_time(),
 							'subscribed_ip' => null,
 						);
-	
+
 						$contacts_added = ES()->lists_contacts_db->add_contact_to_lists( $data, $default_list_id );
 						if ( $contacts_added ) {
 							$response['status'] = 'success';
@@ -577,44 +561,59 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Add user registration workflow
-		 * 
+		 *
 		 * @return $response
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
-		public function add_workflow_for_user_registration() {
+		public function add_default_workflows() {
+
 
 			$response = array(
 				'status' => 'error',
 			);
 
-			$workflow_query_args = array(
-				'trigger_name' => 'ig_es_user_registered',
-			);
-	
-			$workflows = ES()->workflows_db->get_workflows( $workflow_query_args );
+			$admin_emails = ES()->mailer->get_admin_emails();
+			if ( ! empty( $admin_emails ) ) {
+				$admin_emails = implode( ',', $admin_emails );
+			}
+			
+			$default_workflows = array();
 
-			// Add workflow only if there is no workflow for user registration already present.
-			if ( empty( $workflows ) ) {
-				$main_list = ES()->lists_db->get_list_by_name( IG_MAIN_LIST );
+			$notification_workflows = ES()->workflows_db->get_notification_workflows();
+			if ( ! empty( $notification_workflows ) ) {
+				$default_workflows = $notification_workflows;
+			}
 
-				// Check if Main list exists.
-				if ( ! empty( $main_list ) ) {
-					$workflow_title               = __( 'User Registered', 'email-subscribers' );
-					$workflow_name                = sanitize_title( $workflow_title );
-					$trigger_name                 = 'ig_es_user_registered';
-					$main_list_id                 = $main_list['id'];
-					$workflow_meta                = array();
-					$workflow_meta['when_to_run'] = 'immediately';
-					$workflow_status              = 0;
-					
-					$workflow_actions = array(
+			$main_list = ES()->lists_db->get_list_by_name( IG_MAIN_LIST );
+			if ( ! empty( $main_list['id'] ) ) {
+				$main_list_id 		 = $main_list['id'];
+				$default_workflows[] = array(
+					'trigger_name' => 'ig_es_user_registered',
+					/* translators: Main list name */
+					'title' 	   => sprintf( __( 'Add to %s list when someone registers', 'email-subscribers' ), IG_MAIN_LIST ),
+					'actions'	   => array(
 						array(
 							'action_name' => 'ig_es_add_to_list',
 							'ig-es-list'  => ES_Clean::id( $main_list_id ),
-						),
-					);
+						)
+					),
+					'status' => 0
+				);
+			}
 
+			if ( ! empty( $default_workflows ) ) {
+				foreach ( $default_workflows as $workflow ) {
+					$workflow_title               = $workflow['title'];
+					$workflow_name                = sanitize_title( $workflow_title );
+					$trigger_name                 = $workflow['trigger_name'];
+					$workflow_meta                = array();
+					$workflow_meta['when_to_run'] = 'immediately';
+					$workflow_status              = $workflow['status'];
+					$workflow_type                = isset( $workflow['type'] ) ? $workflow['type'] : IG_ES_WORKFLOW_TYPE_USER;
+	
+					$workflow_actions = $workflow['actions'];
+	
 					$workflow_data = array(
 						'name'         => $workflow_name,
 						'title'        => $workflow_title,
@@ -623,18 +622,19 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 						'meta'         => maybe_serialize( $workflow_meta ),
 						'priority'     => 0,
 						'status'       => $workflow_status,
+						'type'		   => $workflow_type,
 					);
-
+	
 					$workflow_id = ES()->workflows_db->insert_workflow( $workflow_data );
 					if ( $workflow_id ) {
 						$response['status'] = 'success';
 					}
 				}
 			}
-
+			
 			return $response;
 		}
-		
+
 		/**
 		 * Create default form
 		 *
@@ -650,66 +650,66 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$default_list = ES()->lists_db->get_list_by_name( IG_MAIN_LIST );
 			$list_id      = $default_list['id'];
 
-			$body         = array(
+			$body = array(
 				array(
-					'type'   => 'text',
-					'name'   => 'Name',
-					'id'     => 'name',
-					'params' => array(
+					'type'     => 'text',
+					'name'     => 'Name',
+					'id'       => 'name',
+					'params'   => array(
 						'label'    => 'Name',
 						'show'     => true,
-						'required' => true
+						'required' => true,
 					),
 
-					'position' => 1
+					'position' => 1,
 				),
 
 				array(
-					'type'   => 'text',
-					'name'   => 'Email',
-					'id'     => 'email',
-					'params' => array(
+					'type'     => 'text',
+					'name'     => 'Email',
+					'id'       => 'email',
+					'params'   => array(
 						'label'    => 'Email',
 						'show'     => true,
-						'required' => true
+						'required' => true,
 					),
 
-					'position' => 2
+					'position' => 2,
 				),
 
 				array(
-					'type'   => 'checkbox',
-					'name'   => 'Lists',
-					'id'     => 'lists',
-					'params' => array(
+					'type'     => 'checkbox',
+					'name'     => 'Lists',
+					'id'       => 'lists',
+					'params'   => array(
 						'label'    => 'Lists',
 						'show'     => false,
 						'required' => true,
-						'values'   => array( $list_id )
+						'values'   => array( $list_id ),
 					),
 
-					'position' => 3
+					'position' => 3,
 				),
 
 				array(
-					'type'   => 'submit',
-					'name'   => 'submit',
-					'id'     => 'submit',
-					'params' => array(
+					'type'     => 'submit',
+					'name'     => 'submit',
+					'id'       => 'submit',
+					'params'   => array(
 						'label' => 'Subscribe',
-						'show'  => true
+						'show'  => true,
 					),
 
-					'position' => 4
+					'position' => 4,
 				),
 
 			);
 
 			$settings = array(
 				'lists' => array( $list_id ),
-				'desc'  => ''
+				'desc'  => '',
 			);
-			
+
 			$add_gdpr_consent = ig_es_get_request_data( 'add_gdpr_consent', '' );
 
 			// Add GDPR setting if admin has opted for.
@@ -730,9 +730,9 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			// Add Form.
 			$form_id = ES()->forms_db->add_form( $form_data );
 			if ( ! empty( $form_id ) ) {
-				$response['status'] = 'success';
+				$response['status']     = 'success';
 				$response['tasks_data'] = array(
-					'form_id' => $form_id
+					'form_id' => $form_id,
 				);
 			} else {
 				$response['status'] = 'error';
@@ -740,10 +740,10 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 			return $response;
 		}
-		
+
 		/**
 		 * Add ES widget to active sidebar
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function add_widget_to_sidebar() {
@@ -761,15 +761,15 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 						$onboarding_tasks_data = get_option( self::$onboarding_tasks_data_option, array() );
 						// Get created form id from create_default_subscription_form task's data.
 						if ( ! empty( $onboarding_tasks_data['create_default_subscription_form']['form_id'] ) ) {
-							$form_id     = $onboarding_tasks_data['create_default_subscription_form']['form_id'];
-							$widget_data = array(
+							$form_id      = $onboarding_tasks_data['create_default_subscription_form']['form_id'];
+							$widget_data  = array(
 								'form_id' => $form_id,
 							);
 							$widget_added = ig_es_insert_widget_in_sidebar( 'email-subscribers-form', $widget_data, $sidebar_id );
 							if ( $widget_added ) {
 								$response['status']     = 'success';
 								$response['tasks_data'] = array(
-									'sidebar_id' => $sidebar_id,
+									'sidebar_id'   => $sidebar_id,
 									'sidebar_name' => $sidebar['name'],
 								);
 								/* translators: Active sidebar name. */
@@ -787,10 +787,10 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 					}
 				}
 			}
-			
+
 			return $response;
 		}
-		
+
 		/**
 		 * Create and send default broadcast while onboarding
 		 *
@@ -813,12 +813,12 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 			// First Create Default Template.
 			// Start-IG-Code.
-			$sample  = '<strong style="color: #990000">What can you achieve using Email Subscribers?</strong><p>Add subscription forms on website, send HTML newsletters & automatically notify subscribers about new blog posts once it is published.';
+			$sample = '<strong style="color: #990000">What can you achieve using Icegram Express (formerly known as Email Subscribers & Newsletters)?</strong><p>Add subscription forms on website, send HTML newsletters & automatically notify subscribers about new blog posts once it is published.';
 			// End-IG-Code.
 			// Start-Woo-Code.
-			$sample  = '<strong style="color: #990000">What can you achieve using Email Subscribers?</strong><p>Add subscription forms on website, send HTML newsletters.';
+			$sample = '<strong style="color: #990000">What can you achieve using Icegram Express (formerly known as Email Subscribers & Newsletters)?</strong><p>Add subscription forms on website, send HTML newsletters.';
 			// End-Woo-Code.
-			$sample .= ' You can also Import or Export subscribers from any list to Email Subscribers.</p>';
+			$sample .= ' You can also Import or Export subscribers from any list to Icegram Express (formerly known as Email Subscribers & Newsletters).</p>';
 			$sample .= ' <strong style="color: #990000">Plugin Features</strong><ol>';
 			// Start-IG-Code.
 			$sample .= ' <li>Send notification emails to subscribers when new blog posts are published.</li>';
@@ -833,21 +833,8 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$sample .= ' </ol>';
 			$sample .= ' <strong>Thanks & Regards,</strong><br/>Admin<br/>';
 
-			$title   = esc_html__( 'Welcome To Email Subscribers', 'email-subscribers' );
-			$subject = esc_html__( 'Welcome To Email Subscribers', 'email-subscribers' );
-
-			$es_post = array(
-				'post_title'   => $title,
-				'post_content' => $sample,
-				'post_status'  => 'publish',
-				'post_type'    => 'es_template',
-				'meta_input'   => array(
-					'es_template_type' => 'newsletter'
-				)
-			);
-
-			// Insert the post into the database
-			$post_id = wp_insert_post( $es_post );
+			$title   = esc_html__( 'Welcome To Icegram Express (formerly known as Email Subscribers & Newsletters)', 'email-subscribers' );
+			$subject = esc_html__( 'Welcome To Icegram Express (formerly known as Email Subscribers & Newsletters)', 'email-subscribers' );
 
 			// Create Broadcast Campaign
 
@@ -856,30 +843,40 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			if ( ! empty( $default_list ) ) {
 				$list_id = $default_list['id'];
 
-				if ( ! empty( $post_id ) ) {
+				$data['slug']             = sanitize_title( $title );
+				$data['name']             = $title;
+				$data['subject']          = $subject;
+				$data['type']             = IG_CAMPAIGN_TYPE_NEWSLETTER;
+				$data['from_email']       = $from_email;
+				$data['reply_to_email']   = $from_email;
+				$data['from_name']        = $from_name;
+				$data['reply_to_name']    = $from_name;
+				$data['body']             = $sample;
+				$data['status']           = 1;
 
-					$data['slug']             = sanitize_title( $title );
-					$data['name']             = $title;
-					$data['subject']          = $subject;
-					$data['type']             = 'newsletter';
-					$data['from_email']       = $from_email;
-					$data['reply_to_email']	  = $from_email;
-					$data['from_name']        = $from_name;
-					$data['reply_to_name'] 	  = $from_name;
-					$data['list_ids']         = $list_id;
-					$data['base_template_id'] = $post_id;
-					$data['body']             = $sample;
-					$data['status']           = 1;
+				$meta = array(
+					'enable_open_tracking' => ES()->mailer->can_track_open() ? 'yes' : 'no',
+					'enable_link_tracking' => ES()->mailer->can_track_clicks() ? 'yes' : 'no',
+					'list_conditions' => array(
+						array(
+							array(
+								'field'    => '_lists__in',
+								'operator' => 'is',
+								'value'    => $list_id,
+							)
+						),
+					),
+				);
 
-					$broadcast_id = ES()->campaigns_db->save_campaign( $data );
+				$data['meta'] = maybe_serialize( $meta );
 
-					if ( $broadcast_id ) {
-						$response['status']     = 'success';
-						$response['tasks_data'] = array(
-							'broadcast_id' => $broadcast_id,
-						);
-					}
+				$broadcast_id = ES()->campaigns_db->save_campaign( $data );
 
+				if ( $broadcast_id ) {
+					$response['status']     = 'success';
+					$response['tasks_data'] = array(
+						'broadcast_id' => $broadcast_id,
+					);
 				}
 			}
 
@@ -888,9 +885,9 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to queue created default newsletter broadcast.
-		 * 
+		 *
 		 * @since 4.6.0
-		 */ 
+		 */
 		public function queue_default_broadcast_newsletter() {
 
 			$response = array(
@@ -898,8 +895,8 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			);
 
 			$onboarding_tasks_data = get_option( self::$onboarding_tasks_data_option, array() );
-			$campaign_id           = ! empty( $onboarding_tasks_data['create_default_newsletter_broadcast']['broadcast_id'] ) ? $onboarding_tasks_data['create_default_newsletter_broadcast']['broadcast_id']: 0;
-			
+			$campaign_id           = ! empty( $onboarding_tasks_data['create_default_newsletter_broadcast']['broadcast_id'] ) ? $onboarding_tasks_data['create_default_newsletter_broadcast']['broadcast_id'] : 0;
+
 			if ( ! empty( $campaign_id ) ) {
 				$default_list = ES()->lists_db->get_list_by_name( IG_DEFAULT_LIST );
 				if ( ! empty( $default_list ) ) {
@@ -907,7 +904,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 					$subscribers = ES()->contacts_db->get_active_contacts_by_list_id( $list_id );
 					if ( ! empty( $subscribers ) && count( $subscribers ) > 0 ) {
 						$content_body = ES()->campaigns_db->get_column( 'body', $campaign_id );
-						$title		  = ES()->campaigns_db->get_column( 'name', $campaign_id );
+						$title        = ES()->campaigns_db->get_column( 'name', $campaign_id );
 						$guid         = ES_Common::generate_guid( 6 );
 						$now          = ig_get_current_date_time();
 
@@ -923,9 +920,9 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 							'created_at'  => $now,
 							'updated_at'  => $now,
 						);
-	
+
 						$report_id = ES_DB_Mailing_Queue::add_notification( $data );
-	
+
 						$delivery_data                     = array();
 						$delivery_data['hash']             = $guid;
 						$delivery_data['subscribers']      = $subscribers;
@@ -948,7 +945,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to send default broadcast campaign.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function dispatch_emails_from_server() {
@@ -957,19 +954,12 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				'status' => 'error',
 			);
 
-			// Send test email to Icegram API only if trial is valid or user is premium user.
-			if ( ES()->is_trial_valid() || ES()->is_premium() ) {
-				
-				$service = new ES_Send_Test_Email();
-				$res     = $service->send_test_email();
-			}
-
 			$onboarding_tasks_data = get_option( self::$onboarding_tasks_data_option, array() );
-			$campaign_id           = ! empty( $onboarding_tasks_data['create_default_newsletter_broadcast']['broadcast_id'] ) ? $onboarding_tasks_data['create_default_newsletter_broadcast']['broadcast_id']: 0;
+			$campaign_id           = ! empty( $onboarding_tasks_data['create_default_newsletter_broadcast']['broadcast_id'] ) ? $onboarding_tasks_data['create_default_newsletter_broadcast']['broadcast_id'] : 0;
 			$report_id             = ! empty( $onboarding_tasks_data['queue_default_broadcast_newsletter']['report_id'] ) ? $onboarding_tasks_data['queue_default_broadcast_newsletter']['report_id'] : 0;
-	
+
 			if ( ! empty( $campaign_id ) && ! empty( $report_id ) ) {
-	
+
 				$content_body      = ES()->campaigns_db->get_column( 'body', $campaign_id );
 				$title             = ES()->campaigns_db->get_column( 'name', $campaign_id );
 				$email_created     = time();
@@ -994,7 +984,8 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				}
 
 				ES_DB_Mailing_Queue::update_sent_status( $notification_guid, 'Sending' );
-
+				ES()->mailer->add_tracking_pixel   = true;
+				ES()->mailer->add_unsubscribe_link = true;
 				$res = ES()->mailer->send( $title, $email_template, $emails, $merge_tags );
 
 				ES_DB_Mailing_Queue::update_sent_status( $notification_guid, 'Sent' );
@@ -1005,19 +996,25 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 						update_option( 'ig_es_onboarding_test_campaign_success', 'yes' );
 					} else {
 						$response['status']             = 'error';
-						$response['message']            = ! empty( $res['message'] ) ? $res['message']: '';
+						$response['message']            = ! empty( $res['message'] ) ? $res['message'] : '';
 						$response['additional_message'] = __( 'Seems like your server is not setup correctly to send emails. Please confirm if you\'re getting any other emails from within WordPress', 'email-subscribers' );
 						update_option( 'ig_es_onboarding_test_campaign_error', 'yes' );
 					}
 				}
 			}
 
+			// Send a test email to our ETP service.
+			if ( 'success' === $response['status'] ) {
+				$service = new ES_Send_Test_Email();
+				$service->send_test_email();
+			}
+
 			return $response;
 		}
 
 		/**
-		 * Method to check test email on Icegram servers.
-		 * 
+		 * Method to check if test email is received on Icegram servers.
+		 *
 		 * @since 4.6.0
 		 */
 		public function check_test_email_on_server() {
@@ -1026,48 +1023,17 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				'status' => 'error',
 			);
 
-			// Check test email only if user has valid trial or is a premium user.
-			if ( ES()->is_trial_valid() || ES()->is_premium() ) {
-				$onboarding_tasks_failed           = get_option( self::$onboarding_tasks_failed_option, array() );
-				$email_delivery_check_tasks_failed = ! empty( $onboarding_tasks_failed['email_delivery_check_tasks'] ) ? $onboarding_tasks_failed['email_delivery_check_tasks']: array();
-				
-				// Peform test email checking if dispatch_emails_from_server task hasn't failed.
-				if ( ! in_array( 'dispatch_emails_from_server', $email_delivery_check_tasks_failed, true ) ) {
-					$service = new ES_Email_Delivery_Check();
-					return $service->test_email_delivery();
-				} else {
-					$response['status'] = 'skipped';
-				}
-			}
+			$onboarding_tasks_failed           = get_option( self::$onboarding_tasks_failed_option, array() );
+			$email_delivery_check_tasks_failed = ! empty( $onboarding_tasks_failed['email_delivery_check_tasks'] ) ? $onboarding_tasks_failed['email_delivery_check_tasks'] : array();
 
-			return $response;
-		}
+			$task_failed = in_array( 'dispatch_emails_from_server', $email_delivery_check_tasks_failed, true );
 
-		/**
-		 * Method to check spam score of test email recieved on Icegram servers.
-		 * 
-		 * @since 4.6.0
-		 */
-		public function checking_spam_score_delivery_metrics() {
-
-			$response = array(
-				'status' => 'error',
-			);
-
-			// Check spam score only if user has valid trial or is a premium user.
-			if ( ES()->is_trial_valid() || ES()->is_premium() ) {
-				$onboarding_tasks_failed           = get_option( self::$onboarding_tasks_failed_option, array() );
-				$email_delivery_check_tasks_failed = ! empty( $onboarding_tasks_failed['email_delivery_check_tasks'] ) ? $onboarding_tasks_failed['email_delivery_check_tasks']: array();
-
-				$onboarding_tasks_skipped           = get_option( self::$onboarding_tasks_skipped_option, array() );
-				$email_delivery_check_tasks_skipped = ! empty( $onboarding_tasks_skipped['email_delivery_check_tasks'] ) ? $onboarding_tasks_skipped['email_delivery_check_tasks']: array();
-
-				// Peform test email spam score only if check_test_email_on_server task hasn't failed or skipped.
-				if ( ! in_array( 'check_test_email_on_server', $email_delivery_check_tasks_failed, true ) && ! in_array( 'check_test_email_on_server', $email_delivery_check_tasks_skipped, true ) ) {
-					$response['status'] = 'success';
-				} else {
-					$response['status'] = 'skipped';
-				}
+			// Peform test email checking if dispatch_emails_from_server task hasn't failed.
+			if ( ! $task_failed ) {
+				$service  = new ES_Email_Delivery_Check();
+				$response = $service->test_email_delivery();
+			} else {
+				$response['status'] = 'failed';
 			}
 
 			return $response;
@@ -1075,7 +1041,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to check test email on Icegram servers.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function evaluate_email_delivery() {
@@ -1083,25 +1049,27 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$response = array(
 				'status' => 'error',
 			);
+			
+			$onboarding_tasks_failed           = get_option( self::$onboarding_tasks_failed_option, array() );
+			$email_delivery_check_tasks_failed = ! empty( $onboarding_tasks_failed['email_delivery_check_tasks'] ) ? $onboarding_tasks_failed['email_delivery_check_tasks'] : array();
 
-			// Evaluate email delivery only if user has valid trial or is a premium user.
-			if ( ES()->is_trial_valid() || ES()->is_premium() ) {
-				$onboarding_tasks_failed           = get_option( self::$onboarding_tasks_failed_option, array() );
-				$email_delivery_check_tasks_failed = ! empty( $onboarding_tasks_failed['email_delivery_check_tasks'] ) ? $onboarding_tasks_failed['email_delivery_check_tasks']: array();
+			$onboarding_tasks_skipped           = get_option( self::$onboarding_tasks_skipped_option, array() );
+			$email_delivery_check_tasks_skipped = ! empty( $onboarding_tasks_skipped['email_delivery_check_tasks'] ) ? $onboarding_tasks_skipped['email_delivery_check_tasks'] : array();
 
-				$onboarding_tasks_skipped           = get_option( self::$onboarding_tasks_skipped_option, array() );
-				$email_delivery_check_tasks_skipped = ! empty( $onboarding_tasks_skipped['email_delivery_check_tasks'] ) ? $onboarding_tasks_skipped['email_delivery_check_tasks']: array();
+			$task_failed  = in_array( 'check_test_email_on_server', $email_delivery_check_tasks_failed, true );
+			$task_skipped = in_array( 'check_test_email_on_server', $email_delivery_check_tasks_skipped, true );
 
-				// Peform email delivery evaulation only if check_test_email_on_server task hasn't failed or skipped.
-				if ( ! in_array( 'check_test_email_on_server', $email_delivery_check_tasks_failed, true ) && ! in_array( 'check_test_email_on_server', $email_delivery_check_tasks_skipped, true ) ) {
-					$response['status'] = 'success';
-				} else {
-					$response['status'] = 'skipped';
-				}
+			if ( $task_failed ) {
+				$response['status'] = 'failed';
+			} elseif ( $task_skipped ) {
+				$response['status'] = 'skipped';
+			} else {
+				$response['status'] = 'success';
 			}
+				
 			return $response;
 		}
-	
+
 		/**
 		 * Create default Post notification while on boarding
 		 *
@@ -1110,8 +1078,8 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 		 * @since 4.6.0
 		 */
 		public function create_default_post_notification() {
-			
-			$response = array(
+
+			$response                 = array(
 				'status' => 'error',
 			);
 			$create_post_notification = ig_es_get_request_data( 'create_post_notification', '' );
@@ -1133,81 +1101,97 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$content .= 'You received this email because in the past you have provided us your email address : {{EMAIL}} to receive notifications when new updates are posted.';
 
 			$title = esc_html__( 'New Post Published - {{POSTTITLE}}', 'email-subscribers' );
-			// Create Post Notification object
-			$post = array(
-				'post_title'   => $title,
-				'post_content' => $content,
-				'post_status'  => 'publish',
-				'post_type'    => 'es_template',
-				'meta_input'   => array(
-					'es_template_type' => 'post_notification'
-				)
-			);
-			// Insert the post into the database
-			$post_id = wp_insert_post( $post );
 
 			$default_list = ES()->lists_db->get_list_by_name( IG_DEFAULT_LIST );
 
-			if ( ! empty( $post_id ) ) {
-				$list_id = $default_list['id'];
+			$list_id = $default_list['id'];
 
-				$categories_objects = get_terms( array(
+			$categories_objects = get_terms(
+				array(
 					'taxonomy'   => 'category',
 					'hide_empty' => false,
-				) );
+				)
+			);
 
-				$categories = array();
-				if ( count( $categories_objects ) > 0 ) {
-					foreach ( $categories_objects as $category ) {
-						if ( $category instanceof WP_Term ) {
-							$categories[] = $category->term_id;
-						}
+			$categories = array();
+			if ( count( $categories_objects ) > 0 ) {
+				foreach ( $categories_objects as $category ) {
+					if ( $category instanceof WP_Term ) {
+						$categories[] = $category->term_id;
 					}
 				}
+			}
 
-				$categories_str = ES_Common::convert_categories_array_to_string( $categories );
+			$meta = array(
+				'list_conditions' => array(
+					array(
+						array(
+							'field'    => '_lists__in',
+							'operator' => 'is',
+							'value'    => $list_id,
+						)
+					),
+				),
+			);
 
-				$data['slug']             = sanitize_title( $title );
-				$data['name']             = $title;
-				$data['type']             = 'post_notification';
-				$data['from_email']       = $from_name;
-				$data['reply_to_email']   = $from_name;
-				$data['from_name']        = $from_email;
-				$data['reply_to_name']    = $from_email;
-				$data['categories']       = $categories_str;
-				$data['list_ids']         = $list_id;
-				$data['base_template_id'] = $post_id;
-				$data['status']           = 0;
+			$categories_str = ES_Common::convert_categories_array_to_string( $categories );
 
-				$post_notification_id = ES()->campaigns_db->save_campaign( $data );
-				if ( $post_notification_id ) {
-					$response['status'] = 'success';
-					$response['tasks_data'] = array(
-						'post_notification_id' => $post_notification_id
-					);
-				}
+			$data['slug']             = sanitize_title( $title );
+			$data['name']             = $title;
+			$data['subject']          = $title;
+			$data['body']             = $content;
+			$data['type']             = IG_CAMPAIGN_TYPE_POST_NOTIFICATION;
+			$data['from_email']       = $from_name;
+			$data['reply_to_email']   = $from_name;
+			$data['from_name']        = $from_email;
+			$data['reply_to_name']    = $from_email;
+			$data['categories']       = $categories_str;
+			$data['list_ids']         = $list_id;
+			$data['status']           = 0;
+			$data['meta']             = maybe_serialize( $meta );
+
+			$post_notification_id = ES()->campaigns_db->save_campaign( $data );
+			if ( $post_notification_id ) {
+				$response['status']     = 'success';
+				$response['tasks_data'] = array(
+					'post_notification_id' => $post_notification_id,
+				);
 			}
 
 			return $response;
 		}
 
 		/**
-		 * Method to subscribe to klawoo in the onboarding process.
-		 * 
+		 * Method to subscribe to ES list installed on the IG site
+		 *
 		 * @since 4.6.0
-		 */ 
-		public function subscribe_to_klawoo() {
+		 */
+		public function subscribe_to_es() {
 
-			$response = Email_Subscribers_Admin::klawoo_subscribe( true );
+			$response = array(
+				'status' => 'error',
+			);
+
+			$name  = ig_es_get_request_data( 'name', '' );
+			$email = ig_es_get_request_data( 'email', '' );
+			$list  = ig_es_get_request_data( 'list', '' );
+
+			$sign_up_data = array(
+				'name'  => $name,
+				'email' => $email,
+				'list'  => $list,
+			);
+
+			$response = ES()->trial->send_ig_sign_up_request( $sign_up_data );
 
 			return $response;
 		}
 
 		/**
 		 * Method to subscribe to klawoo in the onboarding process.
-		 * 
+		 *
 		 * @since 4.6.0
-		 */ 
+		 */
 		public function save_final_configuration() {
 
 			$response = array();
@@ -1216,13 +1200,13 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 			if ( ! empty( $is_trial ) ) {
 				// Add trial preferences.
-				ES()->add_trial_data( $is_trial, time() );
+				ES()->trial->add_trial_data( $is_trial, time() );
 			}
 
 			// Set flag for onboarding completion.
 			update_option( 'ig_es_onboarding_complete', 'yes' );
 
-			$response['status']       = 'success';
+			$response['status'] = 'success';
 
 			return $response;
 		}
@@ -1237,7 +1221,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			);
 
 			$onboarding_options = $this->get_onboarding_data_options();
-			
+
 			foreach ( $onboarding_options as $option ) {
 				$deleted = delete_option( $option );
 			}
@@ -1249,7 +1233,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to get the onboarding data options used in onboarding process.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function get_onboarding_data_options() {
@@ -1268,18 +1252,18 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to get saved onboarding data.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function get_onboarding_data() {
-			
+
 			$onboarding_data = array();
 
 			$onboarding_options = $this->get_onboarding_data_options();
-			
+
 			foreach ( $onboarding_options as $option ) {
-				$option_data              = get_option( $option );
-				$onboarding_data[$option] = $option_data;
+				$option_data                = get_option( $option );
+				$onboarding_data[ $option ] = $option_data;
 			}
 
 			return $onboarding_data;
@@ -1287,9 +1271,9 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to get the current onboarding step
-		 * 
+		 *
 		 * @return int $onboarding_step Current onboarding step.
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public static function get_onboarding_step() {
@@ -1299,9 +1283,9 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to updatee the onboarding step
-		 * 
-		 * @return bool 
-		 * 
+		 *
+		 * @return bool
+		 *
 		 * @since 4.6.0
 		 */
 		public static function update_onboarding_step( $step = 1 ) {
@@ -1309,19 +1293,19 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				update_option( self::$onboarding_step_option, $step );
 				return true;
 			}
-			
+
 			return false;
 		}
 
 		/**
 		 * Method to check if onboarding is completed
-		 * 
+		 *
 		 * @return string
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public static function is_onboarding_completed() {
-			
+
 			$onboarding_complete = get_option( 'ig_es_onboarding_complete', 'no' );
 
 			if ( 'yes' === $onboarding_complete ) {
@@ -1329,13 +1313,14 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			}
 
 			return false;
+
 		}
 
 		/**
 		 * Method to get next task for onboarding.
-		 * 
+		 *
 		 * @return string
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function get_next_onboarding_task() {
@@ -1354,7 +1339,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			if ( ! empty( $current_task ) ) {
 				$current_task_index = array_search( $current_task, $onboarding_tasks, true );
 				if ( ! empty( $current_task_index ) ) {
-					
+
 					$next_task_index = $current_task_index + 1;
 					$next_task       = ! empty( $onboarding_tasks[ $next_task_index ] ) ? $onboarding_tasks[ $next_task_index ] : '';
 
@@ -1370,11 +1355,11 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 		/**
 		 * Method to check if all required task has been completed.
-		 * 
+		 *
 		 * @param string $task_name Task name.
-		 * 
+		 *
 		 * @return bool
-		 * 
+		 *
 		 * @since 4.6.0
 		 */
 		public function is_required_tasks_completed( $task_name = '' ) {
@@ -1384,14 +1369,14 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			}
 
 			$required_tasks = $this->get_required_tasks( $task_name );
-			
+
 			// If there are not any required tasks which means this task can run without any dependency.
 			if ( empty( $required_tasks ) ) {
 				return true;
 			}
-			
+
 			$done_tasks = get_option( self::$onboarding_tasks_done_option, array() );
-			
+
 			// Variable to hold list of all done tasks without any grouping.
 			$all_done_tasks         = array();
 			$is_required_tasks_done = false;
@@ -1409,13 +1394,13 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			if ( empty( $remaining_required_tasks ) ) {
 				$is_required_tasks_done = true;
 			}
-			
+
 			return $is_required_tasks_done;
 		}
 
 		/**
 		 * Method to get lists of required tasks for this task.
-		 * 
+		 *
 		 * @return array $required_tasks List of required tasks.
 		 */
 		public function get_required_tasks( $task_name = '' ) {
@@ -1428,8 +1413,8 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				'check_test_email_on_server' => array(
 					'dispatch_emails_from_server',
 				),
-				'evaluate_email_delivery' => array(
-					'check_test_email_on_server'
+				'evaluate_email_delivery'    => array(
+					'check_test_email_on_server',
 				),
 			);
 
@@ -1438,6 +1423,6 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			return $required_tasks;
 		}
 	}
-	
+
 	IG_ES_Onboarding::instance();
 }

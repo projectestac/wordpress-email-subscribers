@@ -30,9 +30,6 @@ class ES_Newsletters {
 
 		add_action( 'admin_init', array( $this, 'process_broadcast_submission' ) );
 
-		// Add tracking fields data
-		add_filter( 'ig_es_broadcast_data', array( $this, 'add_tracking_fields_data' ) );
-
 		if ( ! ES()->is_pro() ) {
 			// Add scheduler data
 			add_filter( 'ig_es_broadcast_data', array( &$this, 'es_add_broadcast_scheduler_data' ), 10, 2 );
@@ -40,6 +37,8 @@ class ES_Newsletters {
 
 		// Check campaign wise open tracking is enabled.
 		add_filter( 'ig_es_track_open', array( $this, 'is_open_tracking_enabled' ), 10, 4 );
+
+		add_action( 'ig_es_show_' . IG_CAMPAIGN_TYPE_NEWSLETTER . '_campaign_summary_action_buttons', array( $this, 'show_summary_actions_buttons' ) );
 	}
 
 	public static function set_screen( $status, $option, $value ) {
@@ -54,10 +53,10 @@ class ES_Newsletters {
 	public function process_broadcast_submission() {
 
 		global $wpdb;
-		
+
 		$submitted      = ig_es_get_request_data( 'ig_es_broadcast_submitted' );
 		$broadcast_data = ig_es_get_request_data( 'broadcast_data', array(), false );
-		
+
 		if ( 'submitted' === $submitted ) {
 			$broadcast_nonce = ig_es_get_request_data( 'ig_es_broadcast_nonce' );
 			// Verify nonce.
@@ -110,8 +109,6 @@ class ES_Newsletters {
 
 			// If form is submitted then broadcast id is sent in $broadcast_data array.
 			$broadcast_id = ! empty( $broadcast_data['id'] ) ? $broadcast_data['id'] : '';
-			$list_id      = ! empty( $broadcast_data['list_ids'] ) ? $broadcast_data['list_ids'] : '';
-			$template_id  = ! empty( $broadcast_data['template_id'] ) ? $broadcast_data['template_id'] : '';
 			$subject      = ! empty( $broadcast_data['subject'] ) ? $broadcast_data['subject'] : '';
 
 			if ( empty( $broadcast_data['subject'] ) ) {
@@ -142,17 +139,17 @@ class ES_Newsletters {
 
 			$broadcast      = array_shift( $broadcasts );
 			$broadcast_data = array(
-				'id'          	 => $broadcast['id'],
-				'name'        	 => $broadcast['name'],
-				'subject'     	 => $broadcast['subject'],
-				'from_name' 	 => $broadcast['from_name'],
-				'from_email' 	 => $broadcast['from_email'],
+				'id'             => $broadcast['id'],
+				'name'           => $broadcast['name'],
+				'subject'        => $broadcast['subject'],
+				'from_name'      => $broadcast['from_name'],
+				'from_email'     => $broadcast['from_email'],
 				'reply_to_email' => $broadcast['reply_to_email'],
-				'body'        	 => $broadcast['body'],
-				'list_ids'   	 => $broadcast['list_ids'],
-				'template_id'	 => $broadcast['base_template_id'],
-				'status'     	 => $broadcast['status'],
-				'meta'       	 => maybe_unserialize( $broadcast['meta'] ),
+				'body'           => $broadcast['body'],
+				'list_ids'       => $broadcast['list_ids'],
+				'template_id'    => $broadcast['base_template_id'],
+				'status'         => $broadcast['status'],
+				'meta'           => maybe_unserialize( $broadcast['meta'] ),
 			);
 		}
 
@@ -167,23 +164,20 @@ class ES_Newsletters {
 	 * @since  4.4.2 Added $broadcast_data param
 	 */
 	public function prepare_newsletter_settings_form( $broadcast_data = array(), $message_data = array() ) {
-		$newsletter_data = array();
 
 		$template_id = ! empty( $broadcast_data['template_id'] ) ? $broadcast_data['template_id'] : '';
 		$list_ids    = ! empty( $broadcast_data['list_ids'] ) ? $broadcast_data['list_ids'] : '';
 		$templates   = ES_Common::prepare_templates_dropdown_options( 'newsletter', $template_id );
-		$lists       = ES_Common::prepare_list_dropdown_options( $list_ids );
 		$from_email  = ES_Common::get_ig_option( 'from_email' );
 
-		$broadcast_id         = ! empty( $broadcast_data['id'] ) ? $broadcast_data['id'] : 0;
-		$broadcast_from_name  = ! empty( $broadcast_data['from_name'] ) ? $broadcast_data['from_name'] : get_option( 'ig_es_from_name' );
-		$broadcast_email      = ! empty( $broadcast_data['from_email'] ) ? $broadcast_data['from_email'] : $from_email;
-		$broadcast_reply_to   = ! empty( $broadcast_data['reply_to_email'] ) ? $broadcast_data['reply_to_email'] : $from_email;
-		$broadcast_subject    = ! empty( $broadcast_data['subject'] ) ? $broadcast_data['subject'] : '';
-		$broadcast_pre_header = ! empty( $broadcast_data['pre_header'] ) ? $broadcast_data['pre_header'] : '';
-		$broadcast_status     = ! empty( $broadcast_data['status'] ) ? (int) $broadcast_data['status'] : 0;
+		$broadcast_id        = ! empty( $broadcast_data['id'] ) ? $broadcast_data['id'] : 0;
+		$broadcast_from_name = ! empty( $broadcast_data['from_name'] ) ? $broadcast_data['from_name'] : get_option( 'ig_es_from_name' );
+		$broadcast_email     = ! empty( $broadcast_data['from_email'] ) ? $broadcast_data['from_email'] : $from_email;
+		$broadcast_reply_to  = ! empty( $broadcast_data['reply_to_email'] ) ? $broadcast_data['reply_to_email'] : $from_email;
+		$broadcast_subject   = ! empty( $broadcast_data['subject'] ) ? $broadcast_data['subject'] : '';
+		$broadcast_status    = ! empty( $broadcast_data['status'] ) ? (int) $broadcast_data['status'] : 0;
 
-		// Flag to check if broadcast is not being send or already sent.
+		// Flag to check if broadcast is being send or already sent.
 		$is_broadcast_processing = false;
 
 		if ( ! empty( $broadcast_status ) ) {
@@ -213,12 +207,7 @@ class ES_Newsletters {
 			}
 		}
 
-		// Allow multiselect for lists field in the pro version by changing list field's class,name and adding multiple attribute.
-		$select_list_attr  	= ES()->is_pro() ? 'multiple="multiple"' : '';
-		$select_list_name  	= ES()->is_pro() ? 'broadcast_data[list_ids][]' : 'broadcast_data[list_ids]';
-		$select_list_class 	= ES()->is_pro() ? 'ig-es-form-multiselect' : 'form-select';
-
-		$allowedtags 		= ig_es_allowed_html_tags_in_esc();
+		$allowedtags = ig_es_allowed_html_tags_in_esc();
 		?>
 
 		<div class="font-sans pt-1.5 wrap">
@@ -271,7 +260,7 @@ class ES_Newsletters {
 										</ul>
 									</div>
 								</div>
-								<div class="flex md:mt-0 md:ml-2 xl:ml-4">
+								<div class="flex md:mt-0 xl:ml-4">
 
 									<div id="broadcast_button" class="inline-block text-left ">
 										<button type="button"
@@ -285,7 +274,7 @@ class ES_Newsletters {
 										</button>
 									</div>
 
-									<div id="broadcast_button1" class="flex hidden mt-4 md:mt-0 md:ml-2 xl:ml-4">
+									<div id="broadcast_button1" class="flex hidden mt-4 md:mt-0">
 								<span>
 									<div class="relative inline-block text-left">
 										<span>
@@ -296,30 +285,38 @@ class ES_Newsletters {
 									</span>
 								</div>
 							</span>
-									</div>
+							</div>
 
-									<span class="md:ml-2 xl:ml-3">
-							<button type="button" class="inline-flex items-center w-full py-1.5 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md ig_es_draft_broadcast md:px-2 lg:px-3 xl:px-4 hover:bg-gray-50 focus:outline-none focus:shadow-outline focus:border-blue-300">
-								<?php echo esc_html__( 'Save Draft', 'email-subscribers' ); ?>
+							<span class="md:ml-2 xl:ml-3">
+							<?php
+							$save_button_class = 'ig_es_draft_broadcast';
+							$save_button_text  = __( 'Save Draft', 'email-subscribers' );
+							if ( in_array( $broadcast_status, array( IG_ES_CAMPAIGN_STATUS_QUEUED, IG_ES_CAMPAIGN_STATUS_PAUSED ), true ) ) {
+								$save_button_class = 'ig_es_save_broadcast';
+								$save_button_text  = __( 'Save', 'email-subscribers' );
+							}
+							?>
+							<button type="button" class="<?php echo esc_attr( $save_button_class ); ?> inline-flex items-center w-full py-1.5 text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md  md:px-2 lg:px-3 xl:px-4 hover:bg-gray-50 focus:outline-none focus:shadow-outline focus:border-blue-300">
+								<?php echo esc_html( $save_button_text ); ?>
 							</button>
-						</span>
+							</span>
 
 									<span id="broadcast_button2" class="hidden md:ml-2 xl:ml-3">
 							<div class="relative inline-block text-left">
 								<span>
 									<?php
-									// If broadcast is sent or being sent then don't allow scheduling to conflicts.
+									// If broadcast is sent or being sent then don't allow scheduling to avoid conflicts.
 									if ( ! $is_broadcast_processing ) {
 										?>
 										<button type="submit" id="ig_es_broadcast_submitted" name="ig_es_broadcast_submitted" class="w-24 inline-flex justify-center py-1.5 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-indigo-600 border border-transparent rounded-md md:px-2 lg:px-3 xl:px-4 hover:bg-indigo-500 hover:text-white"
 												value="submitted">
-										<?php 
-										if ( ES()->is_pro() ) { 
+										<?php
+										if ( ES()->is_pro() ) {
 											?>
 											<span class="ig_es_broadcast_send_option_text">
 												<?php echo esc_html__( 'Schedule', 'email-subscribers' ); ?>
 											</span>
-											<?php 	
+											<?php
 										} else {
 											echo esc_html__( 'Send', 'email-subscribers' );
 										}
@@ -330,6 +327,14 @@ class ES_Newsletters {
 							</span>
 						</div>
 					</span>
+					<div class="ml-1 xl:ml-2 mt-2">
+								<a class="px-1.5 py-2 es-documentation" href="https://www.icegram.com/documentation/es-how-to-create-and-send-newsletter-emails/?utm_source=in_app&utm_medium=broadcast&utm_campaign=es_doc" target="_blank">
+									<svg class="w-6 h-6 -mt-1 inline text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+										<title><?php esc_html_e( 'Documentation ', 'email-subscribers' ); ?></title>
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+									</svg>
+								</a>
+							</div>
 								</div>
 							</div>
 						</header>
@@ -337,7 +342,7 @@ class ES_Newsletters {
 					<div class="mx-auto max-w-7xl">
 						<hr class="wp-header-end">
 					</div>
-					<div class="mx-auto mt-7 es_broadcast_first max-w-7xl">
+					<div class="mx-auto mt-6 es_broadcast_first max-w-7xl">
 						<div>
 							<div class=" bg-white rounded-lg shadow-md md:flex">
 								<div class="broadcast_main_content py-4 pl-2">
@@ -370,7 +375,9 @@ class ES_Newsletters {
 											'quicktags'    => true,
 											'editor_class' => 'wp-editor-boradcast',
 										);
-										wp_editor( $body, 'edit-es-boradcast-body', $editor_args );
+										add_filter( 'tiny_mce_before_init', array( 'ES_Common', 'override_tinymce_formatting_options' ), 10, 2 );
+										add_filter( 'mce_external_plugins', array( 'ES_Common', 'add_mce_external_plugins' ) );
+										wp_editor( $body, 'edit-es-broadcast-body', $editor_args );
 										?>
 									</div>
 									<?php do_action( 'ig_es_after_broadcast_left_pan_settings', $broadcast_data ); ?>
@@ -379,8 +386,8 @@ class ES_Newsletters {
 									<div class="block pt-6 mx-4 pb-3">
 										<label for="template" class="text-sm font-medium leading-5 text-gray-700"><?php echo esc_html__( 'Design template', 'email-subscribers' ); ?></label>
 										<select class="block w-full h-8 mt-1 text-sm rounded-md cursor-pointer h-9 form-select" name="broadcast_data[template_id]" id="base_template_id">
-											<?php 
-											echo wp_kses( $templates, $allowedtags ); 
+											<?php
+											echo wp_kses( $templates, $allowedtags );
 											?>
 										</select>
 									</div>
@@ -461,21 +468,9 @@ class ES_Newsletters {
 										</div>
 										<div class="block mt-3">
 											<span class="text-sm font-bold text-gray-800 broadcast_preview_contact_name"><?php echo ! empty( $inline_preview_data['contact_name'] ) ? esc_html( $inline_preview_data['contact_name'] ) : ''; ?></span>
-											<span class="pl-1 text-sm font-medium text-gray-700 broadcast_preview_contact_email"><?php echo ! empty( $inline_preview_data['contact_email'] ) ? esc_html('&lt;' . $inline_preview_data['contact_email'] . '&gt;' ) : ''; ?></span>
+											<span class="pl-1 text-sm font-medium text-gray-700 broadcast_preview_contact_email"><?php echo ! empty( $inline_preview_data['contact_email'] ) ? esc_html( '&lt;' . $inline_preview_data['contact_email'] . '&gt;' ) : ''; ?></span>
 										</div>
-										<div class="block mt-3 broadcast_preview_content">
-											<?php
-											if ( ! empty( $broadcast_data['body'] ) ) {
-												$template_data['content']     = ! empty( $broadcast_data['body'] ) ? $broadcast_data['body'] : '';
-												$template_data['template_id'] = ! empty( $broadcast_data['template_id'] ) ? $broadcast_data['template_id'] : '';
-												$tempate_html                 = '';
-												ob_start();
-												$this->es_broadcast_preview_callback( $template_data );
-												$tempate_html = ob_get_clean();
-												echo wp_kses( $tempate_html, $allowedtags);
-											}
-											?>
-										</div>
+										<div class="block mt-3 broadcast_preview_content"></div>
 									</div>
 
 								</div>
@@ -526,8 +521,6 @@ class ES_Newsletters {
 
 		$list_id = ! empty( $data['list_ids'] ) ? $data['list_ids'] : '';
 
-		$title = get_the_title( $data['base_template_id'] );
-
 		$data['type'] = 'newsletter';
 		$data['name'] = $data['subject'];
 		$data['slug'] = sanitize_title( sanitize_text_field( $data['name'] ) );
@@ -552,18 +545,20 @@ class ES_Newsletters {
 				$notification = ES_DB_Mailing_Queue::get_notification_by_campaign_id( $campaign_id );
 				$data['body'] = ES_Common::es_process_template_body( $data['body'], $data['base_template_id'], $campaign_id );
 
-				$guid        = ES_Common::generate_guid( 6 );
-				$data        = array(
+				$guid = ES_Common::generate_guid( 6 );
+				$campaign_meta = maybe_unserialize( $data['meta'] );
+				$meta = apply_filters( 'ig_es_before_save_campaign_notification_meta', array( 'type' => 'newsletter' ), $campaign_meta );
+				$data = array(
 					'hash'        => $guid,
 					'campaign_id' => $campaign_id,
 					'subject'     => $data['subject'],
 					'body'        => $data['body'],
-					'status'      => 'In Queue',
+					'status'      => '',
 					'start_at'    => ! empty( $data['start_at'] ) ? $data['start_at'] : '',
 					'finish_at'   => '',
 					'created_at'  => ig_get_current_date_time(),
 					'updated_at'  => ig_get_current_date_time(),
-					'meta'        => maybe_serialize( array( 'type' => 'newsletter' ) ),
+					'meta'        => maybe_serialize( $meta ),
 				);
 
 				$should_queue_emails = false;
@@ -585,21 +580,21 @@ class ES_Newsletters {
 						$data['hash']        = $notification['hash'];
 						$data['campaign_id'] = $notification['campaign_id'];
 						$data['created_at']  = $notification['created_at'];
-						
+
 						// Check if list has been updated, if yes then we need to delete emails from existing lists and requeue the emails from the updated lists.
 						if ( $selected_list_ids !== $existing_list_ids ) {
 							$should_queue_emails = true;
 							$data['count']       = 0;
 						} else {
-							$data['count']       = $notification['count'];
+							$data['count'] = $notification['count'];
 						}
 
-						$notification        = ES_DB_Mailing_Queue::update_notification( $mailing_queue_id, $data );
+						$notification = ES_DB_Mailing_Queue::update_notification( $mailing_queue_id, $data );
 					}
 				}
 
 				if ( ! empty( $mailing_queue_id ) ) {
-					
+
 					if ( $should_queue_emails ) {
 
 						// Delete existing sending queue if any already present.
@@ -607,14 +602,14 @@ class ES_Newsletters {
 
 						ES_DB_Sending_Queue::do_insert_from_contacts_table( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
 					}
-					
-					$mailing_queue = ES_DB_Mailing_Queue::get_email_by_id( $mailing_queue_id );
+
+					$mailing_queue = ES_DB_Mailing_Queue::get_mailing_queue_by_id( $mailing_queue_id );
 					if ( ! empty( $mailing_queue ) ) {
-		
+
 						$queue_start_at    = $mailing_queue['start_at'];
 						$current_timestamp = time();
 						$sending_timestamp = strtotime( $queue_start_at );
-			
+
 						// Check if campaign sending time has come.
 						if ( ! empty( $sending_timestamp ) && $sending_timestamp <= $current_timestamp ) {
 							$request_args = array(
@@ -624,14 +619,10 @@ class ES_Newsletters {
 							// Send an asynchronous request to trigger sending of campaign emails.
 							IG_ES_Background_Process_Helper::send_async_ajax_request( $request_args, true );
 						}
-					
 					}
 				}
 			}
 		}
-
-		return;
-
 	}
 
 	public static function refresh_newsletter_content( $content, $args ) {
@@ -679,45 +670,28 @@ class ES_Newsletters {
 					$last_name = $contact_details[1];
 				}
 			}
-			// $first_name   =
 
 			$es_template_body = $template_data['content'];
 
 			$es_template_body = ES_Common::es_process_template_body( $es_template_body, $template_id, $campaign_id );
-			$es_template_body = str_replace( '{{NAME}}', $username, $es_template_body );
-			$es_template_body = str_replace( '{{EMAIL}}', $useremail, $es_template_body );
-			$es_template_body = str_replace( '{{FIRSTNAME}}', $first_name, $es_template_body );
-			$es_template_body = str_replace( '{{LASTNAME}}', $last_name, $es_template_body );
-			$allowedtags 	  = ig_es_allowed_html_tags_in_esc();
-			add_filter( 'safe_style_css', 'ig_es_allowed_css_style' );
+			$es_template_body = ES_Common::replace_keywords_with_fallback( $es_template_body, array(
+				'FIRSTNAME' => $first_name,
+				'NAME'      => $username,
+				'LASTNAME'  => $last_name,
+				'EMAIL'     => $useremail
+			) );
 
-			if ( has_post_thumbnail( $template_id ) ) {
-				$image_array = wp_get_attachment_image_src( get_post_thumbnail_id( $template_id ), 'full' );
-				$image       = '<img src="' . $image_array[0] . '" class="img-responsive" alt="Image for Post ' . $template_id . '" />';
-			} else {
-				$image = '';
+			// If there are blocks in this content, we shouldn't run wpautop() on it.
+			$priority = has_filter( 'the_content', 'wpautop' );
+
+			if ( false !== $priority ) {
+				// Remove wpautop to avoid p tags.
+				remove_filter( 'the_content', 'wpautop', $priority );
 			}
 
-			$html  = '';
-			$html .= '<style type="text/css">
-			.es-main-preview-block{
-				display:flex;
-			}
-			.es-clear-preview{
-				clear: both;
-			}
-			
-		</style>
-		<div class="wrap">
-		<div class="tool-box">
-		<div class="es-main-preview-block">
-		<div class="es-preview broadcast-preview w-full">' . $es_template_body . '</div>
-		<div class="es-clear-preview"></div>
-		</div>
-		<div class="es-clear-preview"></div>
-		</div>
-		</div>';
-			echo wp_kses( apply_filters( 'the_content', $html ), $allowedtags);
+			$template_html = apply_filters( 'the_content', $es_template_body );
+
+			return $template_html;
 		}
 
 	}
@@ -737,19 +711,18 @@ class ES_Newsletters {
 
 		$broadcast_data = ig_es_get_request_data( 'broadcast_data', array(), false );
 
-		/** 
-		 * To allow insert of new broadcast data, 
+		/**
+		 * To allow insert of new broadcast data,
 		 * we are specifically setting $broadcast_id to null when id is empty in $broadcast_data
-		 **/
+		 */
 		$broadcast_id = ! empty( $broadcast_data['id'] ) ? $broadcast_data['id'] : null;
 		$is_updating  = ! empty( $broadcast_id ) ? true : false;
 		$list_id      = ! empty( $broadcast_data['list_ids'] ) ? $broadcast_data['list_ids'] : '';
 		$template_id  = ! empty( $broadcast_data['template_id'] ) ? $broadcast_data['template_id'] : '';
-		$subject      = ! empty( $broadcast_data['subject'] ) ? $broadcast_data['subject'] : '';
 
 		$broadcast_data['base_template_id'] = $template_id;
 		$broadcast_data['list_ids']         = $list_id;
-		$broadcast_data['status']           = ! empty( $broadcast_data['status'] ) ? 1 : 0;
+		$broadcast_data['status']           = ! empty( $broadcast_data['status'] ) ? $broadcast_data['status'] : 0;
 		$meta                               = ! empty( $broadcast_data['meta'] ) ? $broadcast_data['meta'] : array();
 		$meta['pre_header']                 = ! empty( $broadcast_data['pre_header'] ) ? $broadcast_data['pre_header'] : '';
 
@@ -802,10 +775,7 @@ class ES_Newsletters {
 		$template_data['template_id'] = ! empty( $broadcast_data['template_id'] ) ? $broadcast_data['template_id'] : '';
 		$template_data['campaign_id'] = ! empty( $broadcast_data['id'] ) ? $broadcast_data['id'] : 0;
 
-		$tempate_html = '';
-		ob_start();
-		$this->es_broadcast_preview_callback( $template_data );
-		$tempate_html              = ob_get_clean();
+		$tempate_html              = $this->es_broadcast_preview_callback( $template_data );
 		$response['template_html'] = $tempate_html;
 
 		if ( 'inline' === $preview_type ) {
@@ -866,28 +836,6 @@ class ES_Newsletters {
 	}
 
 	/**
-	 * Function to add values of checkbox fields incase they are not checked.
-	 *
-	 * @param array $broadcast_data
-	 *
-	 * @return array $broadcast_data
-	 *
-	 * @since 4.4.7
-	 */
-	public function add_tracking_fields_data( $broadcast_data = array() ) {
-
-		$broadcast_meta = ! empty( $broadcast_data['meta'] ) ? maybe_unserialize( $broadcast_data['meta'] ) : array();
-
-		if ( empty( $broadcast_meta['enable_open_tracking'] ) ) {
-			$broadcast_meta['enable_open_tracking'] = 'no';
-		}
-
-		$broadcast_data['meta'] = maybe_serialize( $broadcast_meta );
-
-		return $broadcast_data;
-	}
-
-	/**
 	 * Add required broadcast schedule date/time data
 	 *
 	 * @param array $data
@@ -904,7 +852,7 @@ class ES_Newsletters {
 
 		if ( 'schedule_now' === $scheduling_option ) {
 			// Get time without GMT offset, as we are adding later on.
-			$schedule_str = current_time( 'timestamp', false );
+			$schedule_str = time();
 		}
 
 		if ( ! empty( $schedule_str ) ) {
@@ -941,7 +889,7 @@ class ES_Newsletters {
 				$campaign = ES()->campaigns_db->get( $campaign_id );
 				if ( ! empty( $campaign ) ) {
 					$campaign_type = $campaign['type'];
-					if ( 'newsletter' === $campaign_type ) {
+					if ( in_array( $campaign_type, array( 'newsletter', 'workflow_email' ), true ) ) {
 						$campaign_meta        = maybe_unserialize( $campaign['meta'] );
 						$is_track_email_opens = ! empty( $campaign_meta['enable_open_tracking'] ) ? $campaign_meta['enable_open_tracking'] : $is_track_email_opens;
 					}
@@ -950,5 +898,48 @@ class ES_Newsletters {
 		}
 
 		return $is_track_email_opens;
+	}
+
+	public function show_summary_actions_buttons( $campaign_data ) {
+
+		$campaign_status = ! empty( $campaign_data['status'] ) ? (int) $campaign_data['status'] : IG_ES_CAMPAIGN_STATUS_IN_ACTIVE;
+
+		// Flag to check if broadcast is being send or already sent.
+		$is_broadcast_processing = false;
+
+		if ( ! empty( $campaign_status ) ) {
+
+			$processing_status = array(
+				IG_ES_CAMPAIGN_STATUS_QUEUED,
+				IG_ES_CAMPAIGN_STATUS_FINISHED,
+			);
+
+			$has_processing_status = in_array( $campaign_status, $processing_status, true );
+
+			if ( $has_processing_status ) {
+				$is_broadcast_processing = true;
+			}
+		}
+		
+		// If broadcast is sent or being sent then don't allow scheduling to avoid conflicts.
+		if ( ! $is_broadcast_processing ) {
+			?>
+			<button type="submit" id="ig_es_schedule_campaign_btn" name="ig_es_campaign_action" class="w-24 inline-flex justify-center py-1.5 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-indigo-600 border border-transparent rounded-md md:px-2 lg:px-3 xl:px-4 md:ml-2 hover:bg-indigo-500 hover:text-white"
+					value="schedule">
+			<?php
+			if ( ES()->is_pro() ) {
+				?>
+				<span class="ig_es_broadcast_send_option_text">
+					<?php echo esc_html__( 'Schedule', 'email-subscribers' ); ?>
+				</span>
+				<?php
+			} else {
+				echo esc_html__( 'Send', 'email-subscribers' );
+			}
+			?>
+
+			</button>
+			<?php
+		}
 	}
 }

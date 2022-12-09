@@ -5,30 +5,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-	$es_page_request = ig_es_get_request_data('es');
-	$main_message    = '';
+$es_page_request = ig_es_get_request_data('es');
+$main_message    = '';
+
 if ( 'optin' === $es_page_request ) {
 	$main_message = __('Subscription confirmed !', 'email-subscribers');
 } elseif ( 'unsubscribe' === $es_page_request ) {
-	$main_message = __('Unsubscription confirmed !', 'email-subscribers');  
+	$main_message = __('Unsubscription confirmed !', 'email-subscribers');
 }
-	$site_name 			= get_option( 'blogname' );
-	$noerror   			= true;
-	$home_url  			= home_url( '/' );
+
+$site_name = get_option( 'blogname' );
+$noerror   = true;
+$home_url  = home_url( '/' );
 ?>
-	<html>
+<!DOCTYPE html>
+	<html <?php language_attributes(); ?>>
 	  <head>
-			<title><?php echo esc_html( $site_name ); ?></title>
-			<meta http-equiv="refresh" content="10; url=<?php echo esc_url( $home_url ); ?>" charset="<?php echo esc_attr( get_option( 'blog_charset' ) ); ?>"/>
-			<?php do_action( 'es_message_head' ); ?>
-			<?php
-				wp_register_style( 'tailwind', ES_PLUGIN_URL . 'lite/admin/dist/main.css', array(), $this->version, 'all' );
-				$es_wp_styles = wp_styles();
-				$es_wp_styles->do_item( 'tailwind' );
-			?>
+		<meta charset="<?php bloginfo( 'charset' ); ?>">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title><?php echo esc_html( $site_name ); ?></title>
+		<meta http-equiv="refresh" content="10; url=<?php echo esc_url( $home_url ); ?>" charset="<?php echo esc_attr( get_option( 'blog_charset' ) ); ?>"/>
+		<?php do_action( 'es_message_head' ); ?>
+		<?php
+			wp_register_style( 'tailwind', ES_PLUGIN_URL . 'lite/admin/dist/main.css', array(), $this->version, 'all' );
+			$es_wp_styles = wp_styles();
+			$es_wp_styles->do_item( 'tailwind' );
+		?>
 	  </head>
 	  <body class="min-h-screen mt-16 px-4 pt-10 pb-12 mx-auto max-w-7xl bg-gray-200 sm:px-6 lg:px-8">
-			<section class="bg-indigo-600 py-12 px-12 text-white shadow-md sm:rounded-lg mx-auto sm:w-2/3 xl:w-7/12">
+			<section class="bg-indigo-600 py-12 px-12 text-white shadow-md sm:rounded-lg mx-auto sm:w-2/3 xl:w-7/12" id="ig-es-unsubscribe-message">
 			  <div class="leading-6 tracking-wide">
 				<h3 class="font-medium text-base">
 				  <?php echo esc_html($main_message); ?>
@@ -36,7 +41,7 @@ if ( 'optin' === $es_page_request ) {
 				<p class="pt-4 font-thin text-lg">
 				  <?php echo wp_kses_post( $message ); ?>
 				</p>
-			  </div> 
+			  </div>
 			</section>
 
 			<!-- Start-IG-Code -->
@@ -59,14 +64,14 @@ if ( 'optin' === $es_page_request ) {
 					<p class="text-sm text-gray-700">
 					   <?php echo esc_html__('The most loved WordPress plugins for lead capture, call to action and email marketing.', 'email-subscribers'); ?>
 					   <a class="text-sm font-medium text-indigo-600 hover:text-indigo-500" href="https://www.icegram.com/">
-						   <?php echo esc_html__(' Take a look here', 'email-subscribers'); ?> 
+						   <?php echo esc_html__(' Take a look here', 'email-subscribers'); ?>
 							<svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="w-3 h-3 inline-block align-middle font-medium">
 								<path d="M9 5l7 7-7 7"></path>
-							</svg> 
+							</svg>
 					  </a>
 					</p>
 				</div>
-			  </div> 
+			  </div>
 			</section>
 			<?php } ?>
 			<!-- End-IG-Code -->

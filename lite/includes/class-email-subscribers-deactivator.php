@@ -40,7 +40,7 @@ class Email_Subscribers_Deactivator {
 		 *
 		 * @since 4.3.2
 		 */
-		do_action('ig_es_plugin_deactivate');
+		do_action( 'ig_es_plugin_deactivate' );
 	}
 
 }

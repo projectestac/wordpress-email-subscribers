@@ -18,8 +18,11 @@ class ES_Templates_Table {
 		add_action( 'admin_footer', array( $this, 'add_custom_button' ) );
 		add_action( 'edit_form_after_title', array( $this, 'add_template_type' ) );
 		// duplicate template
-		add_filter( 'post_row_actions', array( &$this, 'add_message_action' ), 10, 2 );
-		add_action( 'admin_init', array( &$this, 'duplicate_message' ), 10, 1 );
+		add_filter( 'post_row_actions', array( &$this, 'add_template_action' ), 10, 2 );
+		add_action( 'admin_init', array( &$this, 'duplicate_template' ), 10, 1 );
+		add_action( 'admin_footer', array( $this, 'es_template_preview_callback' ), 10 );
+
+		add_action( 'parse_query', array( $this, 'exclude_dnd_templates' ) );
 	}
 
 	public function add_template_type() {
@@ -29,7 +32,7 @@ class ES_Templates_Table {
 		}
 		$values = get_post_custom( $post->ID );
 
-		$selected      = isset( $values['es_template_type'] ) ? esc_attr( $values['es_template_type'][0] ) : '';
+		$selected = isset( $values['es_template_type'] ) ? esc_attr( $values['es_template_type'][0] ) : '';
 
 		$template_type = ES_Common::get_campaign_types( array( 'sequence' ) );
 		?>
@@ -50,7 +53,7 @@ class ES_Templates_Table {
 	}
 
 	public function es_template_meta_box_add() {
-		add_meta_box( 'es_template_meta_box', 'Available Keywords', array( $this, 'es_template_type_meta_box' ), 'es_template', 'normal', 'high' );
+		add_meta_box( 'es_template_meta_box', __( 'Available Keywords', 'email-subscribers' ), array( $this, 'es_template_type_meta_box' ), 'es_template', 'normal', 'high' );
 	}
 
 	public function es_template_type_meta_box( $post ) {
@@ -61,19 +64,19 @@ class ES_Templates_Table {
 		?>
 		<!-- Start-IG-Code -->
 		<p id="post_notification">
-			<a href="https://www.icegram.com/documentation/es-what-are-the-available-keywords-in-the-post-notifications/?utm_source=es&amp;utm_medium=in_app&amp;utm_campaign=view_docs_help_page" target="_blank"><?php esc_html_e( 'Available Keywords', 'email-subscribers' ); ?></a> <?php esc_html_e( 'for Post Notification: ', 'email-subsribers' ); ?> {{FIRSTNAME}},
-			{{LASTNAME}}, {{NAME}}, {{EMAIL}},
-			{{DATE}}, {{POSTTITLE}}, {{POSTIMAGE}}, {{POSTEXCERPT}}, {{POSTDESC}},
-		{{POSTAUTHOR}}, {{POSTLINK}}, {{POSTLINK-WITHTITLE}}, {{POSTLINK-ONLY}}, {{POSTFULL}} </p>
+			<a href="https://www.icegram.com/documentation/what-keywords-can-be-used-while-designing-the-campaign/?utm_source=es&amp;utm_medium=in_app&amp;utm_campaign=view_docs_help_page" target="_blank"><?php esc_html_e( 'Available Keywords', 'email-subscribers' ); ?></a> <?php esc_html_e( 'for Post Notification: ', 'email-subsribers' ); ?> {{subscriber.first_name | fallback:'there'}},
+			{{subscriber.last_name}}, {{subscriber.name}}, {{subscriber.email}},
+			{{post.date}}, {{post.title}}, {{post.image}}, {{post.excerpt}}, {{post.description}},
+			{{post.author}}, {{post.author_avatar}}, {{post.author_avatar_url}}, {{post.link}}, {{post.link_with_title}}, {{post.link_only}}, {{post.full}} </p>
 		<!-- End-IG-Code -->
 		<p id="newsletter">
-			<a href="https://www.icegram.com/documentation/es-what-are-the-available-keywords-in-the-newsletters/?utm_source=es&amp;utm_medium=in_app&amp;utm_campaign=view_docs_help_page" target="_blank"><?php esc_html_e( 'Available Keywords', 'email-subscribers' ); ?></a> <?php esc_html_e( 'for Broadcast:', 'email-subscribers' ); ?> {{FIRSTNAME}}, {{LASTNAME}}, {{NAME}},
-		{{EMAIL}} </p>
+			<a href="https://www.icegram.com/documentation/what-keywords-can-be-used-while-designing-the-campaign/?utm_source=es&amp;utm_medium=in_app&amp;utm_campaign=view_docs_help_page" target="_blank"><?php esc_html_e( 'Available Keywords', 'email-subscribers' ); ?></a> <?php esc_html_e( 'for Broadcast:', 'email-subscribers' ); ?> {{subscriber.first_name | fallback:'there'}}, {{subscriber.last_name}}, {{subscriber.name}},
+			{{subscriber.email}} </p>
 		<!-- Start-IG-Code -->
 		<div id="post_digest">
 			<span style="font-size: 0.8em; margin-left: 0.3em; padding: 2px; background: #e66060; color: #fff; border-radius: 2px; ">Pro</span>&nbsp;
 			<a href="https://www.icegram.com/send-post-digest-using-email-subscribers-plugin/?utm_source=es&amp;utm_medium=in_app&amp;utm_campaign=view_post_digest_post" target="_blank"><?php esc_html_e( 'Available Keywords', 'email-subscribers' ); ?></a> <?php esc_html_e( 'for Post Digest:', 'email-subscribers' ); ?>
-			{{FIRSTNAME}}, {{LASTNAME}}, {{NAME}}<div class="post_digest_block"> {{POSTDIGEST}} <br/><?php esc_html_e( 'Any keywords related Post Notification', 'email-subscribers' ); ?> <br/>{{/POSTDIGEST}} </div>
+			{{subscriber.first_name | fallback:'there'}}, {{subscriber.last_name}}, {{subscriber.name}}<div class="post_digest_block"> {{post.digest}} <br/><?php esc_html_e( 'Any keywords related Post Notification', 'email-subscribers' ); ?> <br/>{{/post.digest}} </div>
 		</div>
 		<!-- End-IG-Code -->
 		<?php
@@ -102,7 +105,7 @@ class ES_Templates_Table {
 		if ( ! empty( $_POST['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'update-post_' . $post_id ) ) {
 
 			$es_template_type = ig_es_get_data( $_POST, 'es_template_type', '', true );
-	
+
 			if ( ! empty( $es_template_type ) ) {
 				update_post_meta( $post_id, 'es_template_type', $es_template_type );
 			}
@@ -118,7 +121,7 @@ class ES_Templates_Table {
 
 			<div class="misc-pub-section">
 				<div id="" class="es_preview_button" style="display: block;">
-					<a style="padding-top: 3px; margin-bottom: 0.2rem;" href="<?php echo esc_url( admin_url() ); ?>admin.php?page=es_template_preview&post=<?php echo esc_attr( $post_id ); ?>&preview=true&preview_id=<?php echo esc_attr( $post_id ); ?>" target="_blank" class="button button-primary es_preview"><?php esc_html_e( 'Preview template', 'email-subscribers' ); ?></a>
+					<a style="padding-top: 3px; margin-bottom: 0.2rem;" href="#" data-post-id="<?php echo esc_attr( $post_id ); ?>" class="button button-primary es_template_preview"><?php esc_html_e( 'Preview template', 'email-subscribers' ); ?></a><img class="es-template-preview-loader inline-flex align-middle pl-2 h-5 w-7" src="<?php echo esc_url( ES_PLUGIN_URL ); ?>lite/admin/images/spinner-2x.gif" style="display:none;"/>
 					<div class="clear"></div>
 				</div>
 			</div>
@@ -139,119 +142,21 @@ class ES_Templates_Table {
 	}
 
 	public function es_template_preview_callback() {
-
-		$template_id = ig_es_get_request_data( 'post' );
-
-		$template = get_post( $template_id, ARRAY_A );
-
-		if ( $template ) {
-			$current_user = wp_get_current_user();
-			$username     = $current_user->user_login;
-			$useremail    = $current_user->user_email;
-			$display_name = $current_user->display_name;
-
-			$contact_id = ES()->contacts_db->get_contact_id_by_email( $useremail );
-			$first_name = '';
-			$last_name  = '';
-
-			// Use details from contacts data if present else fetch it from wp profile.
-			if ( ! empty( $contact_id ) ) {
-				$contact_data = ES()->contacts_db->get_by_id( $contact_id );
-				$first_name   = $contact_data['first_name'];
-				$last_name    = $contact_data['last_name'];
-			} elseif ( ! empty( $display_name ) ) {
-				$contact_details = explode( ' ', $display_name );
-				$first_name      = $contact_details[0];
-				// Check if last name is set.
-				if ( ! empty( $contact_details[1] ) ) {
-					$last_name = $contact_details[1];
-				}
-			}
-
-			$es_template_body = $template['post_content'];
-
-			$es_template_type = get_post_meta( $template_id, 'es_template_type', true );
-
-			if ( 'post_notification' === $es_template_type ) {
-				$args         = array(
-					'numberposts' => '1',
-					'order'       => 'DESC',
-					'post_status' => 'publish',
-				);
-				$recent_posts = wp_get_recent_posts( $args );
-
-				if ( count( $recent_posts ) > 0 ) {
-					$recent_post = array_shift( $recent_posts );
-
-					$post_id          = $recent_post['ID'];
-					$es_template_body = ES_Handle_Post_Notification::prepare_body( $es_template_body, $post_id, $template_id );
-				}
-			} else {
-				$es_template_body = ES_Common::es_process_template_body( $es_template_body, $template_id );
-			}
-
-			$es_template_body = str_replace( '{{NAME}}', $username, $es_template_body );
-			$es_template_body = str_replace( '{{EMAIL}}', $useremail, $es_template_body );
-			$es_template_body = str_replace( '{{FIRSTNAME}}', $first_name, $es_template_body );
-			$es_template_body = str_replace( '{{LASTNAME}}', $last_name, $es_template_body );
-			$allowedtags 	  = ig_es_allowed_html_tags_in_esc();
-			add_filter( 'safe_style_css', 'ig_es_allowed_css_style' );
-
-			if ( has_post_thumbnail( $template_id ) ) {
-				$image_array = wp_get_attachment_image_src( get_post_thumbnail_id( $template_id ), 'full' );
-				$image       = '<img src="' . $image_array[0] . '" class="img-responsive" alt="Image for Post ' . $template_id . '" />';
-			} else {
-				$image = '';
-			}
-			$html  = '';
-			$html .= '<style type="text/css">
-			.es-sidebar {
-				width: 23%;
-				background-color: rgb(230, 230, 230);
-				padding:15px;
-				border-right: 1px solid #bdbdbd;
-			}
-			.es-preview {
-				float: left;
-				padding:15px;
-				width: 70%;
-				background-color:#FFF;
-				font-size:16px;
-			}
-			.es-main-preview-block{
-				display:flex;
-			}
-			.es-clear-preview{
-				clear: both;
-			}
-			.es-preview-margin{
-				margin-bottom: 1em;
-			}
-			</style>
-			<div class="wrap">
-			<div class="tool-box">
-			<div class="es-main-preview-block">
-			<div class="es-sidebar">
-			<h2 class="es-preview-margin">
-			Template Preview <a class="add-new-h2" href="' . admin_url() . 'admin.php?page=es-general-information">Help</a>
-			</h2>
-			<p>
-			<a class="button-primary"  href="' . admin_url() . 'post.php?post=' . $template_id . '&action=edit">Edit</a>
-			</p>
-			<p>
-			This is how your email may look.<br><br>Note: Different email services (like gmail, yahoo etc) display email content differently. So there could be a slight variation on how your customer will view the email content.				</p>
+		?>
+			<div class="hidden" id="es_preview_template">
+			<div class="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full" style="background-color: rgba(0,0,0,.5);">
+				<div style="height:485px" class="absolute h-auto p-4 ml-16 mr-4 text-left bg-white rounded shadow-xl z-80 md:max-w-5xl md:p-6 lg:p-8 ">
+					<h3 class="text-2xl text-center"><?php echo esc_html__( 'Template Preview', 'email-subscribers' ); ?></h3>
+					<p class="m-4 text-center"><?php echo esc_html__( 'There could be a slight variation on how your customer will view the email content.', 'email-subscribers' ); ?></p>
+					<div class="m-4 list-decimal template_preview_container">
+					</div>
+					<div class="flex justify-center mt-8">
+						<button id="es_close_template_preview" class="px-4 py-2 text-sm font-medium tracking-wide text-gray-700 border rounded select-none no-outline focus:outline-none focus:shadow-outline-red hover:border-red-400 active:shadow-lg "><?php echo esc_html__( 'Close', 'email-subscribers' ); ?></button>
+					</div>
+				</div>
 			</div>
-			<div class="es-preview">' . $es_template_body . '</div>
-			<div class="es-clear-preview"></div>
-			</div>
-			<div class="es-clear-preview"></div>
-			</div>
-			</div>';
-			echo wp_kses( apply_filters( 'the_content', $html ), $allowedtags);
-		} else {
-			echo esc_html__( 'Please publish it or save it as a draft.', 'email-subscribers' );
-		}
-
+		</div>
+		<?php
 	}
 
 	public function add_new_columns( $existing_columns ) {
@@ -278,7 +183,7 @@ class ES_Templates_Table {
 		switch ( $column ) {
 			case 'es_template_type':
 				$type = get_post_meta( $post->ID, 'es_template_type', true );
-				$type = sanitize_text_field(strtolower( $type ));
+				$type = sanitize_text_field( strtolower( $type ) );
 				$type = ( 'newsletter' === $type ) ? __( 'Broadcast', 'email-subscribers' ) : $type;
 				$type = ucwords( str_replace( '_', ' ', $type ) );
 				echo esc_html( $type );
@@ -293,19 +198,27 @@ class ES_Templates_Table {
 		return $column;
 	}
 
-	public function add_message_action( $actions, $post ) {
-		if ( 'es_template' != $post->post_type ) {
+	public function add_template_action( $actions, $post ) {
+		
+		if ( 'es_template' !== $post->post_type ) {
 			return $actions;
 		}
-		$actions['duplicate_template'] = '<a class="es-duplicate-template"  href="post.php?template_id=' . $post->ID . '&action=duplicate-template" >' . __( 'Duplicate', 'email-subscribers' ) . '</a>';
+
+		$nonce = wp_create_nonce( 'ig_es_duplicate_template_nonce' );
+
+		$actions['duplicate_template'] = '<a class="es-duplicate-template"  href="post.php?template_id=' . $post->ID . '&action=duplicate-template&_wpnonce=' . $nonce . '" >' . __( 'Duplicate', 'email-subscribers' ) . '</a>';
 
 		return $actions;
 	}
 
-	public function duplicate_message() {
+	public function duplicate_template() {
 		$action      = ig_es_get_request_data( 'action' );
 		$template_id = ig_es_get_request_data( 'template_id' );
 		if ( ! empty( $template_id ) && 'duplicate-template' === $action ) {
+
+			
+			check_admin_referer( 'ig_es_duplicate_template_nonce' );
+
 			// duplicate tempalte
 			$this->duplicate_in_db( $template_id );
 			// $location = admin_url( 'post.php?post='.$duplicate_template_id.'&action=edit');
@@ -357,6 +270,33 @@ class ES_Templates_Table {
 		}
 
 		return $duplicate_id;
+	}
+
+	/**
+	 * Exclude DND Templates from template list
+	 * 
+	 * @since 4.5.3
+	 */
+	public static function exclude_dnd_templates( $wp_query ) {
+
+		global $pagenow;
+
+		if ( 'edit.php' !== $pagenow || empty( $wp_query->query_vars['post_type'] ) ||'es_template' !== $wp_query->query_vars['post_type'] ) {
+			return;
+		}
+		
+		$wp_query->query_vars['meta_query'] = array(
+			'relation' => 'OR',
+			array(
+				'key'     => 'es_editor_type',
+				'value'   => IG_ES_CLASSIC_EDITOR,
+				'compare' => '=',
+			),
+			array(
+				'key'     => 'es_editor_type',
+				'compare' => 'NOT EXISTS', // if key doesn't exists, then template is created using Classic editor
+			),
+		);
 	}
 
 	public static function get_instance() {

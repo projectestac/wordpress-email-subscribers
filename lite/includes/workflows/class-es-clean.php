@@ -134,7 +134,7 @@ class ES_Clean {
 	 * @param string $content
 	 *
 	 * @return string $content
-	 * 
+	 *
 	 * @since 4.5.3
 	 */
 	public static function editor_content( $content ) {

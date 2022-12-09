@@ -53,8 +53,11 @@ class ES_Workflow_Query {
 	 */
 	public function __construct() {
 		$this->args = array(
-			'status'   => 1,
-			'type'     => 0, // Fetch only user defined workflows.
+			'status'   => IG_ES_WORKFLOW_STATUS_ACTIVE,  // Fetch only active workflows.
+			'type'     => array( 
+				IG_ES_WORKFLOW_TYPE_USER, // Fetch  user defined workflows.
+				IG_ES_WORKFLOW_TYPE_SYSTEM, // Fetch system defined workflows.
+			),
 			'order'    => 'ASC',
 			'order_by' => 'priority',
 		);
@@ -89,7 +92,7 @@ class ES_Workflow_Query {
 						$this->triggers[] = $trigger;
 					}
 				}
-			} else if ( is_string( $triggers ) ) {
+			} elseif ( is_string( $triggers ) ) {
 				$this->triggers[] = $triggers;
 			}
 		}

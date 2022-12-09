@@ -6,9 +6,9 @@
  * @since 4.4.1
  */
 function ig_es_wp_js_editor_load_scripts() {
-	
+
 	if ( ! class_exists( '_WP_Editors' ) ) {
-		require( ABSPATH . WPINC . '/class-wp-editor.php' );
+		require ABSPATH . WPINC . '/class-wp-editor.php';
 	}
 
 	$editor_args = array(
@@ -28,7 +28,7 @@ function ig_es_wp_js_editor_load_scripts() {
 
 /**
  * Load html/js in admin area.
- * 
+ *
  * @since 4.4.1
  */
 function ig_es_wp_js_editor_admin_scripts() {
@@ -39,7 +39,7 @@ function ig_es_wp_js_editor_admin_scripts() {
 
 /**
  * Load html/js in frontend area.
- * 
+ *
  * @since 4.4.1
  */
 function ig_es_wp_js_editor_frontend_scripts() {

@@ -27,3 +27,14 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+include_once 'lite/includes/class-email-subscribers-uninstall.php';
+
+$delete_setting = get_option( 'ig_es_delete_plugin_data', 'no' );
+
+if ( 'yes' === $delete_setting ) {
+	
+	// Delete data
+	Email_Subscribers_Uninstall::delete_plugin_data_on_uninstall();
+}
+

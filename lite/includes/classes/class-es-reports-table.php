@@ -20,7 +20,6 @@ class ES_Reports_Table extends ES_List_Table {
 			)
 		);
 
-
 		add_action( 'admin_footer', array( $this, 'display_preview_email' ), 10 );
 	}
 
@@ -28,14 +27,14 @@ class ES_Reports_Table extends ES_List_Table {
 
 		$campaign_id   = ig_es_get_request_data( 'campaign_id' );
 		$campaign_type = '';
-		//Since, currently we are not passing campaign_id with broadcast $campaign_type will remain empty for broadcast
-		if ( ! empty ( $campaign_id ) ) {
+		// Since, currently we are not passing campaign_id with broadcast $campaign_type will remain empty for broadcast
+		if ( ! empty( $campaign_id ) ) {
 			$campaign_type = ES()->campaigns_db->get_campaign_type_by_id( $campaign_id );
 		}
 
-		$campaign_types = array( 'sequence', 'sequence_message' );
-		//Only if it is sequence then control will transfer to Sequence Reports class.
-		if ( ! empty ( $campaign_type ) && in_array( $campaign_type, $campaign_types ) ) {
+		$campaign_types = array( 'sequence', 'sequence_message', 'workflow', 'workflow_email' );
+		// Only if it is sequence then control will transfer to Sequence Reports class.
+		if ( ! empty( $campaign_type ) && in_array( $campaign_type, $campaign_types, true ) ) {
 			if ( ES()->is_pro() ) {
 				$reports = ES_Pro_Sequence_Reports::get_instance();
 				$reports->es_sequence_reports_callback();
@@ -61,10 +60,10 @@ class ES_Reports_Table extends ES_List_Table {
 							if ( $emails_to_be_sent > 0 ) {
 								$cron_url = ES()->cron->url( true );
 								/* translators: %s: Cron url */
-								$content = sprintf( __( "<a href='%s' class='px-3 py-2 ig-es-imp-button'>Send Queued Emails Now</a>", 'email-subscribers' ), $cron_url );
+								$content = '<a href="' . esc_url( $cron_url ) . '" class="px-3 py-2 ig-es-imp-button">' . esc_html__( 'Send Queued Emails Now', 'email-subscribers' ) . '</a>';
 							} else {
-								$content = sprintf( __( "<span class='ig-es-send-queue-emails px-3 button-disabled'>Send Queued Emails Now</span>", 'email-subscribers' ) );
-								$content .= sprintf( __( "<br /><span class='es-helper pl-6'>No emails found in queue</span>", 'email-subscribers' ) );
+								$content  = '<span class="ig-es-send-queue-emails px-3 button-disabled">' . esc_html__( 'Send Queued Emails Now', 'email-subscribers' ) . '</span>';
+								$content .= '<br /><span class="es-helper pl-6">' . esc_html__( 'No emails found in queue', 'email-subscribers' ) . '</span>';
 							}
 							?>
 							<div class="flex flex-row">
@@ -74,6 +73,42 @@ class ES_Reports_Table extends ES_List_Table {
 							</div>
 						</div>
 					</header>
+					<?php
+					$show_campaign_notice = $emails_to_be_sent > 0 && ES()->is_starter();
+					if ( $show_campaign_notice ) {
+						?>
+						<style>
+							#ig-es-edit-campaign-notice p {
+								margin: 0.2em 0;
+							}
+						</style>
+						<div id="ig-es-edit-campaign-notice" class="px-5 py-2 notice notice-info">
+							<p>
+								<?php
+									/* translators: 1. Pause icon HTML 2. Resume icon HTML */
+									echo sprintf( esc_html__( 'While the campaign is still sending, you can pause %1$s it anytime and update the campaign. Once you are done, resume %2$s the campaign.', 'email-subscribers' ), '<svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" class="h-6 w-6 text-gray-500 ml-1 inline">
+									<path d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+								</svg>',
+									'<svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" class="h-6 w-6 text-blue-500 inline">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+								</svg>' );
+								?>
+							</p>
+							<p>
+								<strong>
+									<?php
+										echo esc_html__( 'Note: ', 'email-subscribers' );
+									?>
+								</strong>
+								<?php
+									echo esc_html__( 'Changes will reflect from the next sending batch.', 'email-subscribers' );
+								?>
+							</p>
+						</div>
+						<?php
+					}
+					?>
 					<div>
 						<hr class="wp-header-end">
 					</div>
@@ -104,7 +139,6 @@ class ES_Reports_Table extends ES_List_Table {
 			}
 		}
 
-		
 	}
 
 	public function screen_option() {
@@ -118,7 +152,7 @@ class ES_Reports_Table extends ES_List_Table {
 
 		add_screen_option( $option, $args );
 
-	}	
+	}
 
 	/** Text displayed when no list data is available */
 	public function no_items() {
@@ -126,9 +160,23 @@ class ES_Reports_Table extends ES_List_Table {
 	}
 
 	/**
+	 * Generates content for a single row of the table.
+	 * Overrides WP_List_Table class single_row function.
+	 *
+	 * @since 4.7.8
+	 *
+	 * @param object|array $item The current item
+	 */
+	public function single_row( $item ) {
+		echo '<tr data-status="' . esc_attr( strtolower( $item['status'] ) ) . '">';
+		$this->single_row_columns( $item );
+		echo '</tr>';
+	}
+
+	/**
 	 * Render a column when no column specific method exist.
 	 *
-	 * @param array $item
+	 * @param array  $item
 	 * @param string $column_name
 	 *
 	 * @return mixed
@@ -157,6 +205,9 @@ class ES_Reports_Table extends ES_List_Table {
 				// return ucwords($item[ $column_name ]);
 			case 'count':
 				return $item[ $column_name ];
+			case 'total_sent':
+				$total_emails_sent = ES()->actions_db->get_count_based_on_id_type( $item['campaign_id'], $item['id'], IG_MESSAGE_SENT );
+				return number_format_i18n( $total_emails_sent );
 			default:
 				$column_data = isset( $item[ $column_name ] ) ? $item[ $column_name ] : '-';
 
@@ -165,16 +216,60 @@ class ES_Reports_Table extends ES_List_Table {
 	}
 
 	public function column_status( $item ) {
-		if ( 'Sent' == $item['status'] ) {
-			return __( 'Completed', 'email-subscribers' );
-		} else {
-
-			$actions = array(
-				'send_now' => $this->prepare_send_now_url( $item ),
+		$report_status = $item['status'];
+		$status_html   = '';
+		if ( IG_ES_MAILING_QUEUE_STATUS_SENT === $report_status ) {
+			$status_html = sprintf(
+				'<svg class="flex-shrink-0 h-6 w-6 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+			<title>%s</title>
+			<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+		</svg>',
+				__( 'Sent', 'email-subscribers' )
 			);
+		} else {
+			if ( IG_ES_MAILING_QUEUE_STATUS_SENDING === $report_status ) {
+				$status_html = sprintf(
+					'<svg class="flex-shrink-0 h-6 w-6 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20">
+				<title>%s</title>
+				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/>
+			</svg>',
+					__( 'Sending', 'email-subscribers' )
+				);
+			} elseif ( IG_ES_MAILING_QUEUE_STATUS_PAUSED === $report_status ) {
+				$status_html = sprintf(
+					'<svg xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 h-6 w-6 inline text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+				<title>%s</title>
+				<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+			</svg>',
+					__( 'Paused', 'email-subscribers' )
+				);
+			} elseif ( IG_ES_MAILING_QUEUE_STATUS_QUEUED === $report_status ) {
+				$status_html = sprintf(
+					'<svg class="flex-shrink-0 h-6 w-6 inline text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+				<title>%s</title>
+				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+			</svg>',
+					__( 'Scheduled', 'email-subscribers' )
+				);
+			} elseif ( IG_ES_MAILING_QUEUE_STATUS_FAILED === $report_status ) {
+				$status_html = sprintf(
+					'<svg class="flex-shrink-0 h-6 w-6 inline text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					<title>%s</title>
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
+					__( 'Failed', 'email-subscribers' )
+				);
+			}
 
-			return $item['status'] . $this->row_actions( $actions, true );
+			$actions = array();
+			if ( in_array( $report_status, array( IG_ES_MAILING_QUEUE_STATUS_QUEUED, IG_ES_MAILING_QUEUE_STATUS_SENDING, IG_ES_MAILING_QUEUE_STATUS_FAILED ), true ) ) {
+				$actions['send_now'] = $this->prepare_send_now_url( $item );
+			}
+
+			$actions = apply_filters( 'ig_es_report_row_actions', $actions, $item );
+
+			$status_html = $status_html . $this->row_actions( $actions, true );
 		}
+		return $status_html;
 	}
 
 	/**
@@ -224,13 +319,14 @@ class ES_Reports_Table extends ES_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'        => '<input type="checkbox" />',
-			'subject'   => __( 'Subject', 'email-subscribers' ),
-			'type'      => __( 'Type', 'email-subscribers' ),
-			'status'    => __( 'Status', 'email-subscribers' ),
-			'start_at'  => __( 'Start Date', 'email-subscribers' ),
-			'finish_at' => __( 'End Date', 'email-subscribers' ),
-			'count'     => __( 'Total contacts', 'email-subscribers' ),
+			'cb'         => '<input type="checkbox" />',
+			'subject'    => __( 'Subject', 'email-subscribers' ),
+			'type'       => __( 'Type', 'email-subscribers' ),
+			'status'     => __( 'Status', 'email-subscribers' ),
+			'start_at'   => __( 'Start Date', 'email-subscribers' ),
+			'finish_at'  => __( 'End Date', 'email-subscribers' ),
+			'count'      => __( 'Total contacts', 'email-subscribers' ),
+			'total_sent' => __( 'Total sent', 'email-subscribers' ),
 		);
 
 		return $columns;
@@ -248,7 +344,7 @@ class ES_Reports_Table extends ES_List_Table {
 
 		// $content = $total_emails_sent . "/" . $total_emails_to_be_sent;
 
-		return $total_emails_to_be_sent;
+		return number_format_i18n( $total_emails_to_be_sent );
 
 	}
 
@@ -263,7 +359,15 @@ class ES_Reports_Table extends ES_List_Table {
 		$content = '';
 		if ( ! empty( $cron_url ) ) {
 			/* translators: %s: Cron url */
-			$content = __( sprintf( "<a href='%s' target='_blank'>Send</a>", $cron_url ), 'email-subscribers' );
+			$content = sprintf(
+				'<a href="%s" target="_blank">
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			<title>%s</title>
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+		  </svg></a>',
+				$cron_url,
+				__( 'Send now', 'email-subscribers' )
+			);
 		}
 
 		return $content;
@@ -338,6 +442,7 @@ class ES_Reports_Table extends ES_List_Table {
 		$search                            = ig_es_get_request_data( 's' );
 		$filter_reports_by_campaign_status = ig_es_get_request_data( 'filter_reports_by_status' );
 		$filter_reports_by_campaign_type   = ig_es_get_request_data( 'filter_reports_by_campaign_type' );
+		$filter_reports_by_month_year	   = ig_es_get_request_data( 'filter_reports_by_date' );
 
 		$ig_mailing_queue_table = IG_MAILING_QUEUE_TABLE;
 
@@ -356,6 +461,24 @@ class ES_Reports_Table extends ES_List_Table {
 			$where_args[]    = $campaign_id;
 		}
 
+		if ( ! empty( $filter_reports_by_month_year ) ) {
+
+			if ( preg_match('/^[0-9]{6}$/', $filter_reports_by_month_year) ) {
+
+				$year_val 	= substr($filter_reports_by_month_year, 0, 4);
+				$month_val 	= substr($filter_reports_by_month_year, 4 );
+
+				$date_string = $year_val . '-' . $month_val;
+				$date = new DateTime($date_string);
+
+				$start_date = $date->format('Y-m-01 H:i:s') ;
+				$end_date = $date->format('Y-m-t H:i:s');
+
+				array_push( $where_columns, 'start_at >= %s', 'start_at <= %s' );
+				array_push($where_args, $start_date, $end_date);
+			}
+		}
+		
 		$where_query = '';
 		if ( ! empty( $where_columns ) ) {
 			$where_query = implode( ' AND ', $where_columns );
@@ -363,7 +486,7 @@ class ES_Reports_Table extends ES_List_Table {
 		}
 
 		if ( ! empty( $where_query ) ) {
-			$sql              .= ' WHERE ' . $where_query;
+			$sql             .= ' WHERE ' . $where_query;
 			$add_where_clause = false;
 		}
 
@@ -371,7 +494,7 @@ class ES_Reports_Table extends ES_List_Table {
 			if ( ! $add_where_clause ) {
 				$sql .= $wpdb->prepare( ' AND status = %s', $filter_reports_by_campaign_status );
 			} else {
-				$sql              .= $wpdb->prepare( ' WHERE status = %s', $filter_reports_by_campaign_status );
+				$sql             .= $wpdb->prepare( ' WHERE status = %s', $filter_reports_by_campaign_status );
 				$add_where_clause = false;
 			}
 		}
@@ -405,9 +528,9 @@ class ES_Reports_Table extends ES_List_Table {
 				$order_by_clause = " ORDER BY {$order_by} {$order}, {$default_order_by} DESC";
 			}
 
-			$sql    .= $order_by_clause;
-			$sql    .= " LIMIT $per_page";
-			$sql    .= ' OFFSET ' . ( $page_number - 1 ) * $per_page;
+			$sql   .= $order_by_clause;
+			$sql   .= " LIMIT $per_page";
+			$sql   .= ' OFFSET ' . ( $page_number - 1 ) * $per_page;
 			$result = $wpbd->get_results( $sql, 'ARRAY_A' );
 
 		} else {
@@ -505,7 +628,7 @@ class ES_Reports_Table extends ES_List_Table {
 				<?php
 				$allowedtags = ig_es_allowed_html_tags_in_esc();
 				add_filter( 'safe_style_css', 'ig_es_allowed_css_style' );
-				$statuses = array(
+				$statuses               = array(
 					'Sent'     => __( 'Completed', 'email-subscribers' ),
 					'In Queue' => __( 'In Queue', 'email-subscribers' ),
 					'Sending'  => __( 'Sending', 'email-subscribers' ),
@@ -523,6 +646,15 @@ class ES_Reports_Table extends ES_List_Table {
 				echo wp_kses( $campaign_report_type, $allowedtags );
 				?>
 			</select>
+		</p>
+		<p class="search-box search-group-box box-ma10">
+			<?php $filter_by_date = ig_es_get_request_data( 'filter_reports_by_date' ); ?>
+			<select name = "filter_reports_by_date" id="ig_es_filter_report_by_date">
+				<?php 
+				$filter_by_monthyear = ES_COMMON::prepare_datefilter_dropdown_options( $filter_by_date , __('All Dates', 'email-subscribers'));
+				echo wp_kses( $filter_by_monthyear, $allowedtags);
+				?>
+			</select>	
 		</p>
 		<?php
 	}

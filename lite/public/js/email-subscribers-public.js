@@ -29,150 +29,120 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
-	function prepareFormData(form, formData) {
-		var list_ids = [];
-		var is_multiple_lists = false;
-		jQuery.each((form.serializeArray() || {}), function (i, field) {
-			// Collect all list ids
-			if(field.name === 'lists[]') {
-				list_ids.push(field.value);
-				is_multiple_lists = true;
-			} else {
-				formData['esfpx_' + field.name] = field.value;
-			}
-		});
+    $(document).ready(function () {
 
-		if(is_multiple_lists) {
-			formData['esfpx_lists[]'] = list_ids;
-		}
+        /**
+         * Extend jQuery to convert form into JSON object
+         * @returns {{}}
+         */
+        $.fn.serializeObject = function () {
+            var output = {};
+            var formData = this.serializeArray();
+            $.each(formData, function () {
+                var fieldName = this.name;
+                var fieldValue = this.value || '';
+                var isArrayField = fieldName.slice(-2) === '[]';
+                if (isArrayField) {
+                    if (output[fieldName]) {
+                        output[fieldName].push(fieldValue);
+                    } else {
+                        output[fieldName] = [fieldValue];
+                    }
+                } else {
+                    output[fieldName] = fieldValue;
+                }
+            });
+            return output;
+        };
 
+        /**
+         * Handle subscription form submission
+         */
+        $('.es_ajax_subscription_form').on('submit', function (e) {
+            var form = $(this);
+            e.preventDefault();
+            handleBindFunction(form);
+        });
 
-		return formData;
-	}
+    });
 
-	function handleResponse(response, form) {
+    function handleResponse(response, form) {
 
-		var status = response.status;
+        var status = response.status;
 
-		var message_class = 'success';
-		if(status === 'ERROR') {
-			message_class = 'error';
-		}
+        var message_class = 'success';
+        if (status === 'ERROR') {
+            message_class = 'error';
+        }
 
-		var responseText = response['message_text'];
-		var messageContainer = $(form).next('.es_subscription_message');
-		messageContainer.attr('class', 'es_subscription_message ' + message_class);
-		messageContainer.html(responseText);
-		var esSuccessEvent = { 
-								detail: { 
-											es_response : message_class, 
-											msg: responseText
-										}, 
-								bubbles: true, 
-								cancelable: true 
-							} ;
+        var responseText = response['message_text'];
+        var messageContainer = $(form).next('.es_subscription_message');
+        messageContainer.attr('class', 'es_subscription_message ' + message_class);
+        messageContainer.html(responseText);
+        var esSuccessEvent = {
+            detail: {
+                es_response: message_class,
+                msg: responseText
+            },
+            bubbles: true,
+            cancelable: true
+        };
 
-		jQuery(form).trigger('es_response', [ esSuccessEvent ]);
-	}
+        $(form).trigger('es_response', [esSuccessEvent]);
+    }
 
-	function handleBindFunction(form, is_ig){
-		var is_ig = is_ig || false;
-		var formData = {};
-		formData = prepareFormData(form, formData);
-		formData['es'] = 'subscribe';
-		formData['action'] = 'es_add_subscriber';
-		var actionUrl = es_data.es_ajax_url;
-		jQuery(form).find('#spinner-image').show();
-		$.ajax({
-			type: 'POST',
-			url: actionUrl,
-			data: formData,
-			dataType: 'json',
-			success: function (response) {
-				if(!is_ig){
-					if( response && typeof response.status !== 'undefined' && response.status === "SUCCESS" ) {
-						jQuery(form).slideUp('slow');
-						jQuery(form).hide();
-					} else {
-						jQuery(form).find('#spinner-image').hide();
-					}
-				}
-				jQuery(window).trigger('es.send_response', [jQuery(form) , response]);
-				handleResponse(response, form);
-			},
-			error: function (err) {
-				jQuery(form).find('#spinner-image').hide();
-				console.log(err, 'error');
-			},
-		});
+    function handleBindFunction(form, is_ig = false) {
+        form = $(form);
+        var formData = form.serializeObject();
+        formData['es'] = 'subscribe';
+        formData['action'] = 'es_add_subscriber';
+        $.ajax({
+            type: 'POST',
+            url: es_data.es_ajax_url,
+            data: formData,
+            dataType: 'json',
+            beforeSend: function () {
+                form.find('#spinner-image').show();
+                form.find('.es_submit_button').attr('disabled', true);
+            },
+            success: function (response) {
+                if (!is_ig) {
+                    if (response && typeof response.status !== 'undefined' && response.status === "SUCCESS") {
+                        form.slideUp('slow');
+                        form.hide();
+                    } else {
+                        form.find('#spinner-image').hide();
+                    }
+                }
+                form.find('.es_submit_button').attr('disabled', false);
+                jQuery(window).trigger('es.send_response', [form, response]);
+                handleResponse(response, form);
+            },
+            error: function (err) {
+                form.find('#spinner-image').hide();
+                form.find('.es_submit_button').attr('disabled', false);
+                console.log(err, 'error');
+            },
+        });
 
 
 		return false;
 	}
 
-	$(document).ready(function () {
-		// var submitButton = $('.es_subscription_form_submit');
-
-		$(document).on('submit', '.es_subscription_form', function (e) {
-			e.preventDefault();
-			var form = $(this);
-			handleBindFunction(form);
-		});
-
-		let subscription_forms = $('.es_subscription_form');
-		// Check if page contains ES subscription form.
-		if ( subscription_forms.length > 0 ) {
-			let list_ids = [];
-			jQuery(subscription_forms).find('input[name="lists[]"]').each(function(){
-				let list_id = $(this).val();
-				if ( ! isNaN( list_id ) ) {
-					list_ids.push(list_id);
-				}
-			});
-			// Send an ajax request to get updated nonce value.
-			jQuery.ajax({
-				type: 'POST',
-				url: es_data.es_ajax_url,
-				data: {
-					action: 'ig_es_get_updated_subscription_data',
-					list_ids: list_ids,
-				},
-				dataType: 'json',
-				success: function(response) {
-					if( true === response.success ) {
-						let data          = response.data;
-						let updated_nonce = data.updated_nonce;
-						// Update nonce field in each subscription form.
-						jQuery(subscription_forms).find('input[name="es-subscribe"]').each(function(){
-							$(this).val(updated_nonce);
-						});
-						let list_hashes = data.list_hashes;
-						// Update list ids with list hash
-						jQuery(subscription_forms).find('input[name="lists[]"]').each(function(){
-							let list_id = $(this).val();
-							if ( list_hashes.hasOwnProperty( list_id ) ) {
-								let list_hash = list_hashes[ list_id ];
-								$(this).val(list_hash);
-							}
-						});
-					}
-				}
-			});
-		}
-	});
 	// Compatibility of ES with IG
 	jQuery( window ).on( "init.icegram", function(e, ig) {
 		if(typeof ig !== 'undefined' && typeof ig.messages !== 'undefined' ) {
 			jQuery('.icegram .es_shortcode_form, .icegram form[data-source="ig-es"]').each(function(i, v){
 				jQuery(v).bind('submit', function (e) {
 					e.preventDefault();
+					e.stopImmediatePropagation();
 					var form = $(this);
 					handleBindFunction(form, true);
 				});
 			});
 		}
 	});
-	
+
 })(jQuery);
 
 

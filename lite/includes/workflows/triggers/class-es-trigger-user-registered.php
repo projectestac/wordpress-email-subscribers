@@ -21,7 +21,7 @@ class ES_Trigger_User_Registered extends ES_Workflow_Trigger {
 	 *
 	 * @var array
 	 */
-	public $supplied_data_items = array( 'user' );
+	public $supplied_data_items = array( 'user', 'coupon' );
 
 	/**
 	 * Load trigger admin props.

@@ -22,7 +22,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 
 					if ( is_object( $handler ) && is_array( $implements ) && in_array( 'IG_Log_Handler_Interface', $implements, true ) ) {
 						$register_handlers[] = $handler;
-					} 
+					}
 				}
 			}
 
@@ -85,7 +85,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 		 *     'info': Informational messages.
 		 *     'debug': Debug-level messages.
 		 * @param string $message Log message.
-		 * @param array $context Optional. Additional information for log handlers.
+		 * @param array  $context Optional. Additional information for log handlers.
 		 */
 		public function log( $level, $message, $context = array() ) {
 
@@ -107,7 +107,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 		 * @see IG_Logger::log
 		 *
 		 * @param string $message Message to log.
-		 * @param array $context Log context.
+		 * @param array  $context Log context.
 		 */
 		public function emergency( $message, $context = array() ) {
 			$this->log( IG_Log_Levels::EMERGENCY, $message, $context );
@@ -122,7 +122,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 		 * @see IG_Logger::log
 		 *
 		 * @param string $message Message to log.
-		 * @param array $context Log context.
+		 * @param array  $context Log context.
 		 */
 		public function alert( $message, $context = array() ) {
 			$this->log( IG_Log_Levels::ALERT, $message, $context );
@@ -137,7 +137,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 		 * @see IG_Logger::log
 		 *
 		 * @param string $message Message to log.
-		 * @param array $context Log context.
+		 * @param array  $context Log context.
 		 */
 		public function critical( $message, $context = array() ) {
 			$this->log( IG_Log_Levels::CRITICAL, $message, $context );
@@ -152,7 +152,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 		 * @see IG_Logger::log
 		 *
 		 * @param string $message Message to log.
-		 * @param array $context Log context.
+		 * @param array  $context Log context.
 		 */
 		public function error( $message, $context = array() ) {
 			$this->log( IG_Log_Levels::ERROR, $message, $context );
@@ -169,7 +169,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 		 * @see IG_Logger::log
 		 *
 		 * @param string $message Message to log.
-		 * @param array $context Log context.
+		 * @param array  $context Log context.
 		 */
 		public function warning( $message, $context = array() ) {
 			$this->log( IG_Log_Levels::WARNING, $message, $context );
@@ -183,7 +183,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 		 * @see IG_Logger::log
 		 *
 		 * @param string $message Message to log.
-		 * @param array $context Log context.
+		 * @param array  $context Log context.
 		 */
 		public function notice( $message, $context = array() ) {
 			$this->log( IG_Log_Levels::NOTICE, $message, $context );
@@ -198,7 +198,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 		 * @see IG_Logger::log
 		 *
 		 * @param string $message Message to log.
-		 * @param array $context Log context.
+		 * @param array  $context Log context.
 		 */
 		public function info( $message, $context = array() ) {
 			$this->log( IG_Log_Levels::INFO, $message, $context );
@@ -242,7 +242,7 @@ if ( ! class_exists( 'IG_Logger' ) ) {
 		 * @see IG_Logger::log
 		 *
 		 * @param string $message Message to log.
-		 * @param array $context Log context.
+		 * @param array  $context Log context.
 		 */
 		public function debug( $message, $context = array() ) {
 			$this->log( IG_Log_Levels::DEBUG, $message, $context );

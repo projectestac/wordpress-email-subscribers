@@ -26,6 +26,15 @@ abstract class ES_Field {
 	protected $title;
 
 	/**
+	 * Field id
+	 *
+	 * @since 5.0.8
+	 *
+	 * @var string
+	 */
+	protected $id;
+
+	/**
 	 * Field name
 	 *
 	 * @since 4.4.1
@@ -80,6 +89,15 @@ abstract class ES_Field {
 	protected $classes = array();
 
 	/**
+	 * Container element classes
+	 *
+	 * @since 5.3.9
+	 *
+	 * @var array
+	 */
+	protected $container_classes = array();
+
+	/**
 	 * Extra attributes that will appended to the HTML field element.
 	 *
 	 * @since 4.4.1
@@ -114,6 +132,20 @@ abstract class ES_Field {
 	public function __construct() {
 		$this->classes[] = 'ig-es-field';
 		$this->classes[] = 'ig-es-field--type-' . $this->type;
+	}
+
+	/**
+	 * Set field id
+	 *
+	 * @since 5.0.8
+	 *
+	 * @param string $name Field name.
+	 *
+	 * @return $this
+	 */
+	public function set_id( $id ) {
+		$this->id = $id;
+		return $this;
 	}
 
 	/**
@@ -156,6 +188,18 @@ abstract class ES_Field {
 	 */
 	public function get_title() {
 		return $this->title ? $this->title : '';
+	}
+
+	/**
+	 *
+	 * Get field id
+	 *
+	 * @since 5.0.8
+	 *
+	 * @return string
+	 */
+	public function get_id() {
+		return $this->id ? $this->id : '';
 	}
 
 	/**
@@ -268,6 +312,37 @@ abstract class ES_Field {
 		return $this->classes;
 	}
 
+	/**
+	 *
+	 * Add container field classes
+	 *
+	 * @since 5.3.9
+	 *
+	 * @param string $container_classes container field classes.
+	 *
+	 * @return $this
+	 */
+	public function add_container_classes( $container_classes ) {
+		$this->container_classes = array_merge( $this->container_classes, explode( ' ', $container_classes ) );
+		return $this;
+	}
+
+
+	/**
+	 * Get container field classes
+	 *
+	 * @since 5.3.9
+	 *
+	 * @param bool $implode Should implode.
+	 *
+	 * @return array|string
+	 */
+	public function get_container_classes( $implode = true ) {
+		if ( $implode ) {
+			return implode( ' ', $this->container_classes );
+		}
+		return $this->container_classes;
+	}
 
 	/**
 	 * Get extra attributes for field.

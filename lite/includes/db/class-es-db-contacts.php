@@ -8,28 +8,25 @@ class ES_DB_Contacts extends ES_DB {
 
 	/**
 	 * Table name
-	 * 
+	 *
 	 * @since 4.2.4
 	 * @var $table_name
-	 *
 	 */
 	public $table_name;
 
 	/**
 	 * Table DB version
-	 * 
+	 *
 	 * @since 4.2.4
 	 * @var $version
-	 *
 	 */
 	public $version;
 
 	/**
 	 * Table primary key column name
-	 * 
+	 *
 	 * @since 4.2.4
 	 * @var $primary_key
-	 *
 	 */
 	public $primary_key;
 
@@ -58,29 +55,47 @@ class ES_DB_Contacts extends ES_DB {
 	 * @since 4.0.0
 	 */
 	public function get_columns() {
-		return array(
-			'id'             => '%d',
-			'wp_user_id'     => '%d',
-			'first_name'     => '%s',
-			'last_name'      => '%s',
-			'email'          => '%s',
-			'source'         => '%s',
-			'ip_address'	 => '%s',
-			'country_code'	 => '%s',
-			'form_id'        => '%d',
-			'status'         => '%s',
-			'unsubscribed'   => '%d',
-			'hash'           => '%s',
-			'created_at'     => '%s',
-			'updated_at'     => '%s',
-			'is_verified'    => '%d',
-			'is_disposable'  => '%d',
-			'is_rolebased'   => '%d',
-			'is_webmail'     => '%d',
-			'is_deliverable' => '%d',
-			'is_sendsafely'  => '%d',
-			'meta'           => '%s',
+		$columns = array(
+			'id'               => '%d',
+			'wp_user_id'       => '%d',
+			'first_name'       => '%s',
+			'last_name'        => '%s',
+			'email'            => '%s',
+			'source'           => '%s',
+			'ip_address'       => '%s',
+			'country_code'     => '%s',
+			'form_id'          => '%d',
+			'status'           => '%s',
+			'reference_site'   => '%s',
+			'unsubscribed'     => '%d',
+			'hash'             => '%s',
+			'engagement_score' => '%f',
+			'created_at'       => '%s',
+			'updated_at'       => '%s',
+			'is_verified'      => '%d',
+			'is_disposable'    => '%d',
+			'is_rolebased'     => '%d',
+			'is_webmail'       => '%d',
+			'is_deliverable'   => '%d',
+			'is_sendsafely'    => '%d',
+			'timezone'         => '%s',
+			'meta'             => '%s',
 		);
+
+		$custom_field_data = ES()->custom_fields_db->get_custom_fields();
+		$custom_field_cols = array();
+		if ( count( $custom_field_data ) > 0 ) {
+			foreach ($custom_field_data as $key => $data) {
+				$type = '%s';
+				if ( isset( $data[ 'type' ] ) && 'number' === $data[ 'type' ] ) {
+					$type = '%d';
+				}
+				$custom_field_cols[$data['slug']] = $type;
+			}
+		}
+
+		$columns = array_merge( $columns, $custom_field_cols);
+		return $columns;
 	}
 
 	/**
@@ -89,28 +104,42 @@ class ES_DB_Contacts extends ES_DB {
 	 * @since   4.0.0
 	 */
 	public function get_column_defaults() {
-		return array(
-			'wp_user_id'     => 0,
-			'first_name'     => '',
-			'last_name'      => '',
-			'email'          => '',
-			'source'         => '',
-			'ip_address'	 => '',
-			'country_code'	 => '',
-			'form_id'        => 0,
-			'status'         => 'verified',
-			'unsubscribed'   => 0,
-			'hash'           => '',
-			'created_at'     => ig_get_current_date_time(),
-			'updated_at'     => '',
-			'is_verified'    => 1,
-			'is_disposable'  => 0,
-			'is_rolebased'   => 0,
-			'is_webmail'     => 0,
-			'is_deliverable' => 1,
-			'is_sendsafely'  => 1,
-			'meta'           => '',
+		$default_col_values = array(
+			'wp_user_id'     	=> 0,
+			'first_name'     	=> '',
+			'last_name'      	=> '',
+			'email'          	=> '',
+			'source'         	=> '',
+			'ip_address'	 	=> '',
+			'country_code'	 	=> '',
+			'form_id'        	=> 0,
+			'status'         	=> 'verified',
+			'reference_site'    => '',
+			'unsubscribed'   	=> 0,
+			'hash'           	=> '',
+			'engagement_score' 	=> 4,
+			'created_at'     	=> ig_get_current_date_time(),
+			'updated_at'     	=> '',
+			'is_verified'    	=> 1,
+			'is_disposable'  	=> 0,
+			'is_rolebased'   	=> 0,
+			'is_webmail'     	=> 0,
+			'is_deliverable' 	=> 1,
+			'is_sendsafely'  	=> 1,
+			'timezone'			=> '',
+			'meta'           	=> '',
 		);
+
+		$custom_field_data = ES()->custom_fields_db->get_custom_fields();
+		$custom_field_cols = array();
+		if ( count( $custom_field_data ) > 0 ) {
+			foreach ($custom_field_data as $key => $data) {
+				$custom_field_cols[$data['slug']] = null;
+			}
+		}
+
+		$columns = array_merge( $default_col_values, $custom_field_cols);
+		return $columns;
 	}
 
 	/**
@@ -142,7 +171,7 @@ class ES_DB_Contacts extends ES_DB {
 		$subscriber_email_name_map = array();
 		if ( count( $emails ) > 0 ) {
 
-			$emails_str  = "'" . implode( "','", $emails ) . "'";
+			$emails_str = "'" . implode( "','", $emails ) . "'";
 
 			$subscribers = $wpbd->get_results(
 				"SELECT email, first_name, last_name FROM {$wpbd->prefix}ig_contacts WHERE email IN({$emails_str})",
@@ -156,7 +185,7 @@ class ES_DB_Contacts extends ES_DB {
 					$subscriber_email_name_map[ $subscriber['email'] ] = array(
 						'name'       => $name,
 						'first_name' => $subscriber['first_name'],
-						'last_name'  => $subscriber['last_name']
+						'last_name'  => $subscriber['last_name'],
 					);
 				}
 			}
@@ -188,8 +217,15 @@ class ES_DB_Contacts extends ES_DB {
 					'first_name' => $first_name,
 					'last_name'  => $last_name,
 					'email'      => $email,
-					'updated_at' => ig_get_current_date_time()
+					'updated_at' => ig_get_current_date_time(),
 				);
+
+				foreach ( $data as $key => $value ) {
+					if ( strpos( $key, 'cf_') !== false ) {
+						$data_to_update[$key] = sanitize_text_field( $value );
+					}
+				}
+
 
 				$this->update( $contact_id, $data_to_update );
 			}
@@ -252,7 +288,6 @@ class ES_DB_Contacts extends ES_DB {
 	 * @return array|object|null
 	 *
 	 * @since 4.2.4
-	 *
 	 */
 	public function get_active_contacts_by_list_id( $list_id ) {
 
@@ -261,7 +296,7 @@ class ES_DB_Contacts extends ES_DB {
 		}
 
 		global $wpdb;
-		
+
 		// Check if we have got array of list ids.
 		if ( is_array( $list_id ) ) {
 			$list_ids_str = implode( ',', $list_id );
@@ -284,7 +319,6 @@ class ES_DB_Contacts extends ES_DB {
 	 * @return array|object|null
 	 *
 	 * @since 4.6.3
-	 *
 	 */
 	public function get_active_contacts_by_list_and_mailing_queue_id( $list_id, $mailing_queue_id = 0 ) {
 
@@ -293,14 +327,14 @@ class ES_DB_Contacts extends ES_DB {
 		}
 
 		global $wpbd;
-		
+
 		// Check if we have got array of list ids.
 		if ( is_array( $list_id ) ) {
 			$ids_count        = count( $list_id );
 			$ids_placeholders = array_fill( 0, $ids_count, '%d' );
 			$query_args       = $list_id;
 			$query_args[]     = $mailing_queue_id;
-			$where        = $wpbd->prepare( 
+			$where            = $wpbd->prepare(
 				"id IN (SELECT contact_id FROM {$wpbd->prefix}ig_lists_contacts WHERE list_id IN( " . implode( ',', $ids_placeholders ) . " ) AND status IN ('subscribed', 'confirmed')) AND id NOT IN(SELECT contact_id FROM {$wpbd->prefix}ig_sending_queue WHERE mailing_queue_id = %d )",
 				$query_args
 			);
@@ -310,7 +344,7 @@ class ES_DB_Contacts extends ES_DB {
 
 		return $this->get_by_conditions( $where );
 	}
-	
+
 
 	/**
 	 * Get contacts by ids
@@ -370,6 +404,17 @@ class ES_DB_Contacts extends ES_DB {
 
 	}
 
+
+
+		// Get all contact ids
+	public function get_all_contact_ids() {
+		global $wpbd;
+
+		$query = "SELECT id FROM $this->table_name";
+		return $wpbd->get_results( $query );
+	}
+
+
 	/**
 	 * Get Total Contacts
 	 *
@@ -424,11 +469,11 @@ class ES_DB_Contacts extends ES_DB {
 
 		$ids_str = implode( ',', $ids );
 
-		return $wpbd->query( 
+		return $wpbd->query(
 			$wpbd->prepare(
 				"UPDATE {$wpbd->prefix}ig_contacts SET unsubscribed = %d WHERE id IN({$ids_str})",
 				$unsubscribed
-			)	
+			)
 		);
 	}
 
@@ -446,6 +491,9 @@ class ES_DB_Contacts extends ES_DB {
 	public function is_contact_exist_in_list( $email, $list_id ) {
 		global $wpbd;
 
+		// Flush cache to ensure we have latest results.
+		ES_Cache::flush();
+
 		$contact_id = $this->get_column_by( 'id', 'email', $email );
 
 		$data = array();
@@ -459,7 +507,7 @@ class ES_DB_Contacts extends ES_DB {
 			$list_ids_str = implode( ',', $list_id );
 
 			$list_contact_count = $wpbd->get_var(
-				$wpbd->prepare( 
+				$wpbd->prepare(
 					"SELECT count(*) as count FROM {$wpbd->prefix}ig_lists_contacts WHERE list_id IN ($list_ids_str) AND contact_id = %d",
 					$contact_id
 				)
@@ -485,7 +533,7 @@ class ES_DB_Contacts extends ES_DB {
 	public function get_email_details_map() {
 		global $wpdb;
 
-		$contacts = $wpdb->get_results( 
+		$contacts = $wpdb->get_results(
 			"SELECT id, email, hash FROM {$wpdb->prefix}ig_contacts",
 			ARRAY_A
 		);
@@ -536,21 +584,31 @@ class ES_DB_Contacts extends ES_DB {
 	 * @since 4.0.0
 	 * @since 4.3.4 Used prepare_for_in_query instead of array_to_str
 	 */
-	public function get_contact_ids_by_emails( $emails = array() ) {
+	public function get_contact_ids_created_at_date_by_emails( $emails = array() ) {
 		global $wpbd;
 
 		if ( count( $emails ) > 0 ) {
 			$ids_count        = count( $emails );
 			$ids_placeholders = array_fill( 0, $ids_count, '%s' );
-			$ids = $wpbd->get_col( $wpbd->prepare(
-				"SELECT id FROM {$wpbd->prefix}ig_contacts WHERE email IN( " . implode( ',', $ids_placeholders ) . ' )',
-				$emails
-			) );
+			$results          = $wpbd->get_results(
+				$wpbd->prepare(
+					"SELECT id, created_at FROM {$wpbd->prefix}ig_contacts WHERE email IN( " . implode( ',', $ids_placeholders ) . ' )',
+					$emails
+				),
+				ARRAY_A
+			);
 		} else {
-			$ids = $wpbd->get_col( "SELECT id FROM {$wpbd->prefix}ig_contacts" );	
+			$results = $wpbd->get_results( "SELECT id , created_at FROM {$wpbd->prefix}ig_contacts" );
 		}
 
-		return $ids;
+		$map = array();
+		if ( count( $results ) > 0 ) {
+			foreach ( $results as $result ) {
+				$map[ $result['id'] ] = $result['created_at'];
+			}
+		}
+
+		return $map;
 	}
 
 	/**
@@ -569,7 +627,7 @@ class ES_DB_Contacts extends ES_DB {
 		if ( count( $emails ) > 0 ) {
 			$email_count  = count( $emails );
 			$placeholders = array_fill( 0, $email_count, '%s' );
-			$results      = $wpbd->get_results( 
+			$results      = $wpbd->get_results(
 				$wpbd->prepare(
 					"SELECT id, email FROM {$wpbd->prefix}ig_contacts WHERE email IN( " . implode( ',', $placeholders ) . ' )',
 					$emails
@@ -614,8 +672,8 @@ class ES_DB_Contacts extends ES_DB {
 	 */
 	public function migrate_subscribers_from_older_version() {
 		global $wpdb;
-		
-		//Get Total count of subscribers
+
+		// Get Total count of subscribers
 		$total = $wpdb->get_var( "SELECT count(*) as total FROM {$wpdb->prefix}es_emaillist" );
 
 		// If we have subscribers?
@@ -631,11 +689,11 @@ class ES_DB_Contacts extends ES_DB {
 			$batch_size     = IG_DEFAULT_BATCH_SIZE;
 			$total_batches  = ( $total > IG_DEFAULT_BATCH_SIZE ) ? ceil( $total / $batch_size ) : 1;
 			$lists_contacts = array();
-			//$exclude_status = array( 'Unsubscribed', 'Unconfirmed' );
+			// $exclude_status = array( 'Unsubscribed', 'Unconfirmed' );
 			$j = 0;
 			for ( $i = 0; $i < $total_batches; $i ++ ) {
 				$batch_start = $i * $batch_size;
-				$results     = $wpdb->get_results( 
+				$results     = $wpdb->get_results(
 					$wpdb->prepare(
 						"SELECT * FROM {$wpdb->prefix}es_emaillist LIMIT %d, %d ",
 						$batch_start,
@@ -653,7 +711,7 @@ class ES_DB_Contacts extends ES_DB {
 
 							$names = array(
 								'first_name' => '',
-								'last_name'  => ''
+								'last_name'  => '',
 							);
 
 							if ( ! empty( $result['es_email_name'] ) ) {
@@ -677,19 +735,18 @@ class ES_DB_Contacts extends ES_DB {
 							$emails[] = $email;
 						}
 
-						//Collect all contacts based on Lists
-						//if ( ! in_array( $result['es_email_status'], $exclude_status ) ) {
+						// Collect all contacts based on Lists
+						// if ( ! in_array( $result['es_email_status'], $exclude_status ) ) {
 						$lists_contacts[ $result['es_email_group'] ][ $j ]['email']         = $email;
 						$lists_contacts[ $result['es_email_group'] ][ $j ]['status']        = $result['es_email_status'];
 						$lists_contacts[ $result['es_email_group'] ][ $j ]['subscribed_at'] = $result['es_email_created'];
 						$lists_contacts[ $result['es_email_group'] ][ $j ]['subscribed_ip'] = null;
 						$j ++;
-						//}
+						// }
 					}
 
 					$this->bulk_insert( $contacts );
 				}
-
 			}
 
 			// Do import Lists Contacts
@@ -746,7 +803,7 @@ class ES_DB_Contacts extends ES_DB {
 			);
 		} elseif ( 'unconfirmed' === $status ) {
 			$query_result = $wpbd->query(
-				$wpbd->prepare( 
+				$wpbd->prepare(
 					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, optin_type = %d, subscribed_at = NULL, unsubscribed_at = NULL WHERE contact_id IN( {$contact_ids} ) AND list_id IN( {$list_ids} )",
 					array(
 						$status,
@@ -763,7 +820,7 @@ class ES_DB_Contacts extends ES_DB {
 	 * Get total contacts by date
 	 *
 	 * @param string $status
-	 * @param int $days
+	 * @param int    $days
 	 *
 	 * @return array
 	 *
@@ -800,7 +857,7 @@ class ES_DB_Contacts extends ES_DB {
 	 * Get total subscribed contacts by date
 	 *
 	 * @param string $status
-	 * @param int $days
+	 * @param int    $days
 	 *
 	 * @return array
 	 *
@@ -870,6 +927,39 @@ class ES_DB_Contacts extends ES_DB {
 
 
 	/**
+	 * Get total subscribed contacts between $days
+	 *
+	 * @param int $days
+	 *
+	 * @return array
+	 *
+	 * @since 4.4.2
+	 */
+	public function get_total_subscribed_contacts_between_days( $days = 60 ) {
+		global $wpbd;
+
+		$columns = array( 'count(DISTINCT(id)) as total' );
+		$where   = 'unsubscribed = %d';
+		$args[]  = 0;
+
+		if ( 0 != $days ) {
+			$days   = esc_sql( $days );
+			$where .= ' AND created_at > DATE_SUB(NOW(), INTERVAL %d DAY) AND created_at < DATE_SUB(NOW(), INTERVAL %d DAY) ';
+			$args[] = $days * 2;
+			$args[] = $days;
+		}
+
+		$where = $wpbd->prepare( $where, $args );
+
+		$results = $this->get_columns_by_condition( $columns, $where );
+
+		$results = array_shift( $results );
+
+		return $results['total'];
+	}
+
+
+	/**
 	 * Count contacts by Form id
 	 *
 	 * @param string $form_id
@@ -881,13 +971,13 @@ class ES_DB_Contacts extends ES_DB {
 	public function get_total_contacts_by_form_id( $form_id = '', $status = 0 ) {
 
 		global $wpdb;
-		
+
 		$total_subscribers = '';
 
 		if ( ! empty( $form_id ) ) {
 			$total_subscribers = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT count(distinct(id)) as total_active_subscribers FROM {$wpdb->prefix}ig_contacts where form_id = %d AND unsubscribed = %d" ,
+					"SELECT count(distinct(id)) as total_active_subscribers FROM {$wpdb->prefix}ig_contacts where form_id = %d AND unsubscribed = %d",
 					$form_id,
 					$status
 				)
@@ -905,25 +995,83 @@ class ES_DB_Contacts extends ES_DB {
 	 */
 	public function migrate_ip_from_list_contacts_to_contacts_table() {
 		global $wpdb;
-		
-		//Get Total count of subscribers
+
+		// Get Total count of subscribers
 		$total = $wpdb->get_var( "SELECT count(*) as total FROM {$wpdb->prefix}ig_contacts" );
 
 		// If we have subscribers?
 		if ( $total > 0 ) {
-			
+
 			$wpdb->query(
-				"UPDATE {$wpdb->prefix}ig_contacts AS contact_data 
-				LEFT JOIN {$wpdb->prefix}ig_lists_contacts AS list_data 
-				ON contact_data.id = list_data.contact_id 
-				SET contact_data.ip_address = list_data.subscribed_ip 
-				WHERE contact_data.id = list_data.contact_id 
-				AND list_data.subscribed_ip IS NOT NULL 
+				"UPDATE {$wpdb->prefix}ig_contacts AS contact_data
+				LEFT JOIN {$wpdb->prefix}ig_lists_contacts AS list_data
+				ON contact_data.id = list_data.contact_id
+				SET contact_data.ip_address = list_data.subscribed_ip
+				WHERE contact_data.id = list_data.contact_id
+				AND list_data.subscribed_ip IS NOT NULL
 				AND list_data.subscribed_ip <> ''"
 			);
 		}
 	}
 
+	/**
+	 * Add custom fields column
+	 *
+	 * @param $col_name
+	 * @param string $type
+	 *
+	 * @return array
+	 *
+	 * @since 4.8.4
+	 */
+	public function add_custom_field_col_in_contacts_table( $slug_name, $custom_field_type = 'text' ) {
+		global $wpbd;
+
+		$col_added = 0;
+		if ( ! empty( $slug_name ) ) {
+			// To check if column exists or not
+			$custom_field_col = $wpbd->get_results( $wpbd->prepare( "SHOW COLUMNS FROM {$wpbd->prefix}ig_contacts LIKE %s", $slug_name ) , 'ARRAY_A' );
+			$custom_field_num_rows    = $wpbd->num_rows;
+
+			// If column doesn't exists, then insert it
+			if ( '1' != $custom_field_num_rows ) {
+
+				$col_data_type = ES_Common::get_custom_field_col_datatype( $custom_field_type );
+				// Template table
+				$col_added = $wpbd->query( "ALTER TABLE {$wpbd->prefix}ig_contacts
+									ADD COLUMN {$slug_name} {$col_data_type} DEFAULT NULL" );
+			}
+		}
+		return $col_added;
+	}
+
+	/**
+	 * Delete Custom fields columns
+	 *
+	 * @param $ids
+	 *
+	 * @since 4.8.4
+	 */
+	public function delete_col_by_custom_field_id( $cf_ids ) {
+
+		global $wpbd;
+		if ( ! is_array( $cf_ids ) ) {
+			$ids = array( $cf_ids );
+		}
+
+		$col_deleted = 0;
+		$slug_name_list = ES()->custom_fields_db->get_custom_field_slug_list_by_ids( $cf_ids );
+
+		if ( is_array( $slug_name_list ) && count( $slug_name_list ) > 0 ) {
+
+			foreach ( $slug_name_list as $col_name ) {
+				$col_deleted = $wpbd->query( "ALTER TABLE {$wpbd->prefix}ig_contacts
+									DROP COLUMN {$col_name}" );
+			}
+		}
+		return $col_deleted;
+
+	}
 
 	/**
 	 * Insert IP along with subscriber data
@@ -931,22 +1079,34 @@ class ES_DB_Contacts extends ES_DB {
 	 * @param $data
 	 * @param string $type
 	 *
-	 * @return array
+	 * @return int
 	 *
 	 * @since 4.6.3
 	 */
 	public function insert( $data, $type = '' ) {
-		$source = array( 'admin','import' );
+		$source = array( 'admin', 'import' );
 
 		if ( ! ES()->is_pro() ) {
 			$data['ip_address']   = '';
 			$data['country_code'] = '';
 		} else {
-			if ( empty( $data['ip_address'] ) && ! in_array( $data['source'], $source ) ) {
-					$data = apply_filters( 'ig_es_get_subscriber_ip', $data, 'ip_address' ); 
-					$data = apply_filters( 'ig_es_get_country_based_on_ip', $data );	
+
+			if ( empty( $data['ip_address'] ) && ! in_array( $data['source'], $source, true ) ) {
+					$data = apply_filters( 'ig_es_get_subscriber_ip', $data, 'ip_address' );
+			}
+
+			if ( ! empty( $data['ip_address'] ) ) {
+				$data = apply_filters( 'ig_es_get_country_based_on_ip', $data );
 			}
 		}
-		return parent::insert( $data, $type );
+		$contact_id = parent::insert( $data, $type );
+		do_action( 'ig_es_new_contact_inserted', $contact_id );
+		return $contact_id;
+	}
+
+	public function get_last_contact_id() {
+		global $wpdb;
+		$last_contact_id = $wpdb->get_var( "SELECT id FROM {$wpdb->prefix}ig_contacts ORDER BY id DESC LIMIT 0, 1" );
+		return $last_contact_id;
 	}
 }

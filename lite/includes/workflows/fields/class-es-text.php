@@ -1,6 +1,6 @@
 <?php
 /**
- * Email Subscribers' text field
+ * Icegram Express' text field
  *
  * @since       4.4.1
  * @version     1.0

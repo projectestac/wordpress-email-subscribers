@@ -12,28 +12,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 class ES_DB_Queue extends ES_DB {
 	/**
 	 * Table name
-	 * 
+	 *
 	 * @since 4.2.1
 	 * @var $table_name
-	 *
 	 */
 	public $table_name;
 
 	/**
 	 * Table DB version
-	 * 
+	 *
 	 * @since 4.2.1
 	 * @var $version
-	 *
 	 */
 	public $version;
 
 	/**
 	 * Table primary key column name
-	 * 
+	 *
 	 * @since 4.2.1
 	 * @var $primary_key
-	 *
 	 */
 	public $primary_key;
 
@@ -62,7 +59,7 @@ class ES_DB_Queue extends ES_DB {
 	 *
 	 * @since 4.2.1
 	 */
-	public function delete_from_queue( $campaign_id, $contact_id) {
+	public function delete_from_queue( $campaign_id, $contact_id ) {
 		global $wpdb;
 
 		return $wpdb->query(

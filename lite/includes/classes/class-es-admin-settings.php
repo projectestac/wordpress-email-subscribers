@@ -19,8 +19,14 @@ class ES_Admin_Settings {
 
 	public $subscribers_obj;
 
+
 	public function __construct() {
 		add_filter( 'ig_es_registered_email_sending_settings', array( $this, 'show_cron_info' ) );
+
+		// Start-IG-Code.
+		// Add setting for plugin usage tracking
+		add_filter( 'ig_es_registered_settings', array( $this, 'show_usage_tracking_optin_setting' ), 30 );
+		// End-IG-Code.
 	}
 
 	public function es_settings_callback() {
@@ -40,15 +46,24 @@ class ES_Admin_Settings {
 
 				$options = apply_filters( 'ig_es_before_save_settings', $options );
 
-				$options['ig_es_disable_wp_cron']         = isset( $options['ig_es_disable_wp_cron'] ) ? $options['ig_es_disable_wp_cron'] : 'no';
-				$options['ig_es_track_email_opens']       = isset( $options['ig_es_track_email_opens'] ) ? $options['ig_es_track_email_opens'] : 'no';
-				$options['ig_es_enable_welcome_email']    = isset( $options['ig_es_enable_welcome_email'] ) ? $options['ig_es_enable_welcome_email'] : 'no';
-				$options['ig_es_notify_admin']            = isset( $options['ig_es_notify_admin'] ) ? $options['ig_es_notify_admin'] : 'no';
-				$options['ig_es_enable_cron_admin_email'] = isset( $options['ig_es_enable_cron_admin_email'] ) ? $options['ig_es_enable_cron_admin_email'] : 'no';
+				$options['ig_es_disable_wp_cron']             = isset( $options['ig_es_disable_wp_cron'] ) ? $options['ig_es_disable_wp_cron'] : 'no';
+				$options['ig_es_track_email_opens']           = isset( $options['ig_es_track_email_opens'] ) ? $options['ig_es_track_email_opens'] : 'no';
+				$options['ig_es_enable_ajax_form_submission'] = isset( $options['ig_es_enable_ajax_form_submission'] ) ? $options['ig_es_enable_ajax_form_submission'] : 'no';
+				$options['ig_es_enable_welcome_email']        = isset( $options['ig_es_enable_welcome_email'] ) ? $options['ig_es_enable_welcome_email'] : 'no';
+				$options['ig_es_notify_admin']                = isset( $options['ig_es_notify_admin'] ) ? $options['ig_es_notify_admin'] : 'no';
+				$options['ig_es_enable_cron_admin_email']     = isset( $options['ig_es_enable_cron_admin_email'] ) ? $options['ig_es_enable_cron_admin_email'] : 'no';
+				$options['ig_es_delete_plugin_data']          = isset( $options['ig_es_delete_plugin_data'] ) ? $options['ig_es_delete_plugin_data'] : 'no';
+				$options['ig_es_run_cron_on']                 = isset( $options['ig_es_run_cron_on'] ) ? $options['ig_es_run_cron_on'] : 'monday';
+				$options['ig_es_run_cron_time']               = isset( $options['ig_es_run_cron_time'] ) ? $options['ig_es_run_cron_time'] : '4pm';
+				$options['ig_es_allow_api']                   = isset( $options['ig_es_allow_api'] ) ? $options['ig_es_allow_api'] : 'no';
 				// Start-IG-Code.
-				$options['ig_es_powered_by']			  = isset( $options['ig_es_powered_by'] ) ? $options['ig_es_powered_by'] : 'no';
+				// Show option to enable/disable tracking if user isn't a premium user and trial is not valid i.e. has expired.
+				if ( ! ES()->is_premium() && ! ES()->trial->is_trial_valid() ) {
+					$options['ig_es_allow_tracking'] = isset( $options['ig_es_allow_tracking'] ) ? $options['ig_es_allow_tracking'] : 'no';
+				}
+				$options['ig_es_powered_by'] = isset( $options['ig_es_powered_by'] ) ? $options['ig_es_powered_by'] : 'no';
 				// End-IG-Code.
-				
+
 				$text_fields_to_sanitize = array(
 					'ig_es_from_name',
 					'ig_es_admin_emails',
@@ -56,6 +71,7 @@ class ES_Admin_Settings {
 					'ig_es_optin_type',
 					'ig_es_post_image_size',
 					'ig_es_track_email_opens',
+					'ig_es_enable_ajax_form_submission',
 					'ig_es_enable_welcome_email',
 					'ig_es_welcome_email_subject',
 					'ig_es_confirmation_mail_subject',
@@ -66,6 +82,7 @@ class ES_Admin_Settings {
 					'ig_es_cronurl',
 					'ig_es_hourly_email_send_limit',
 					'ig_es_disable_wp_cron',
+					'ig_es_allow_api',
 				);
 
 				$textarea_fields_to_sanitize = array(
@@ -110,7 +127,7 @@ class ES_Admin_Settings {
 				ES_Common::show_message( $message, $status );
 			}
 		}
-		$allowedtags 			= ig_es_allowed_html_tags_in_esc();
+		$allowedtags = ig_es_allowed_html_tags_in_esc();
 
 		?>
 
@@ -143,6 +160,14 @@ class ES_Admin_Settings {
 						'name' => __( 'Security', 'email-subscribers' ),
 					),
 				);
+				if ( ES_Common::is_rest_api_supported() ) {
+					$es_settings_tabs['rest_api_settings'] = array(
+						'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 inline -mt-1.5" style="stroke-width:2">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" />
+					  </svg>',
+						'name' => __( 'REST API', 'email-subscribers' ),
+					);
+				}
 				$es_settings_tabs = apply_filters( 'ig_es_settings_tabs', $es_settings_tabs );
 				?>
 				<div id="es-settings-menu" class="w-1/5 pt-4 leading-normal text-gray-800 border-r border-gray-100">
@@ -177,8 +202,25 @@ class ES_Admin_Settings {
 		<?php
 	}
 
+	public static function get_from_email_notice( $from_email ) {
+		$from_email_notice 		 = '';
+		$from_email              = get_option( 'ig_es_from_email' );
+		$is_popular_domain	     = ES_Common::is_popular_domain( $from_email );
+		$from_email_notice_class = $is_popular_domain ? '' : 'hidden';
+		$from_email_notice       = '<span id="ig-es-from-email-notice" class="text-red-600 ' . $from_email_notice_class . '">' . __( 'Your emails might land in spam if you use above email address..', 'email-subscribers' );
+		$site_url				 = site_url();
+		$site_domain             = ES_Common::get_domain_from_url( $site_url );
+		/* translators: %s: Site domain */
+		$from_email_notice      .= '<br/>' . sprintf( __( 'Consider using email address matching your site domain like %s', 'email-subscribers' ), 'info@' . $site_domain ) . '</span>';
+		return $from_email_notice;
+	}
+
 	public static function get_registered_settings() {
 
+		$from_email_description  = __( 'The "from" email address for all emails.', 'email-subscribers' );
+
+		$from_email              = get_option( 'ig_es_from_email' );
+		$from_email_description .= '<br/>' . self::get_from_email_notice( $from_email );
 		$general_settings = array(
 
 			'sender_information'                    => array(
@@ -188,7 +230,7 @@ class ES_Admin_Settings {
 					'from_name'  => array(
 						'id'          => 'ig_es_from_name',
 						'name'        => __( 'Name', 'email-subscribers' ),
-						'desc'        => __( 'Choose a FROM name for all the emails to be sent from this plugin.', 'email-subscribers' ),
+						'desc'        => __( 'The "from" name people will see when they receive emails.', 'email-subscribers' ),
 						'type'        => 'text',
 						'placeholder' => __( 'Name', 'email-subscribers' ),
 						'default'     => '',
@@ -197,7 +239,7 @@ class ES_Admin_Settings {
 					'from_email' => array(
 						'id'          => 'ig_es_from_email',
 						'name'        => __( 'Email', 'email-subscribers' ),
-						'desc'        => __( 'Choose a FROM email address for all the emails to be sent from this plugin', 'email-subscribers' ),
+						'desc'        => $from_email_description,
 						'type'        => 'text',
 						'placeholder' => __( 'Email Address', 'email-subscribers' ),
 						'default'     => '',
@@ -207,16 +249,18 @@ class ES_Admin_Settings {
 
 			'admin_email'                           => array(
 				'id'      => 'ig_es_admin_emails',
-				'name'    => __( 'Email addresses', 'email-subscribers' ),
+				'name'    => __( 'Admin emails', 'email-subscribers' ),
+				'info'    => __( 'Who should be notified about system events like "someone subscribed", "campaign sent" etc?', 'email-subscribers' ),
 				'type'    => 'text',
-				'desc'    => __( 'Enter the admin email addresses that should receive notifications (separated by comma).', 'email-subscribers' ),
+				'desc'    => __( 'You can enter multiple email addresses - separate them with comma', 'email-subscribers' ),
 				'default' => '',
 			),
 
 			'ig_es_optin_type'                      => array(
 				'id'      => 'ig_es_optin_type',
 				'name'    => __( 'Opt-in type', 'email-subscribers' ),
-				'desc'    => '',
+				'info'    => '',
+				'desc'    => __( 'Single = confirm subscribers as they subscribe.<br> Double = send a confirmation email and require clicking on a link to confirm subscription.', 'email-subscribers' ),
 				'type'    => 'select',
 				'options' => ES_Common::get_optin_types(),
 				'default' => '',
@@ -226,16 +270,27 @@ class ES_Admin_Settings {
 			'ig_es_post_image_size'                 => array(
 				'id'      => 'ig_es_post_image_size',
 				'name'    => __( 'Image size', 'email-subscribers' ),
+				'info'    => __( 'Image to use in Post Notification emails' ),
 				'type'    => 'select',
 				'options' => ES_Common::get_image_sizes(),
-				'desc'    => __( 'Select image size for {{POSTIMAGE}} to be shown in the Post Notification emails.', 'email-subscribers' ),
+				/* translators: %s: Keyword */
+				'desc'    => sprintf( __( '%s keyword will use this image size. Use full size only if your template design needs it. Thumbnail should work well otherwise.', 'email-subscribers' ), '{{POSTIMAGE}}' ),
 				'default' => 'full',
 			),
 			// End-IG-Code.
 
+			'ig_es_enable_ajax_form_submission'     => array(
+				'id'      => 'ig_es_enable_ajax_form_submission',
+				'name'    => __( 'Enable AJAX subscription form submission', 'email-subscribers' ),
+				'info'    => __( 'Enabling this will let users to submit their subscription form without page reload using AJAX call.', 'email-subscribers' ),
+				'type'    => 'checkbox',
+				'default' => 'no',
+			),
+
 			'ig_es_track_email_opens'               => array(
 				'id'      => 'ig_es_track_email_opens',
 				'name'    => __( 'Track opens', 'email-subscribers' ),
+				'info'    => __( 'Do you want to track when people view your emails? (We recommend keeping it enabled)', 'email-subscribers' ),
 				'type'    => 'checkbox',
 				'default' => 'yes',
 			),
@@ -247,9 +302,11 @@ class ES_Admin_Settings {
 				'supplemental' => '',
 				'default'      => '',
 				'id'           => 'ig_es_form_submission_success_message',
-				'name'         => __( 'Message to display after form submission', 'email-subscribers' ),
+				'name'         => __( 'Subscription success message', 'email-subscribers' ),
+				'info'         => __( 'This message will show when a visitor successfully subscribes using the form.', 'email-subscribers' ),
 				'desc'         => '',
 			),
+
 			'ig_es_unsubscribe_link_content'        => array(
 				'type'         => 'textarea',
 				'options'      => false,
@@ -257,13 +314,16 @@ class ES_Admin_Settings {
 				'supplemental' => '',
 				'default'      => '',
 				'id'           => 'ig_es_unsubscribe_link_content',
-				'name'         => __( 'Show unsubscribe message in email footer', 'email-subscribers' ),
-				'desc'         => __( 'Add text which you want your contact to see in footer to unsubscribe. Use {{UNSUBSCRIBE-LINK}} keyword to add unsubscribe link.', 'email-subscribers' ),
+				'name'         => __( 'Unsubscribe text in email footer:', 'email-subscribers' ),
+				'info'         => __( 'All emails will include this text in the footer so people can unsubscribe if they want.', 'email-subscribers' ),
+				/* translators: %s: List of Keywords */
+				'desc'         => sprintf( __( 'Use %s keyword to add unsubscribe link.', 'email-subscribers' ), '{{UNSUBSCRIBE-LINK}}' ),
 			),
 
 			'subscription_messages'                 => array(
 				'id'         => 'subscription_messages',
-				'name'       => __( 'Subscription success/ error messages', 'email-subscribers' ),
+				'name'       => __( 'Double opt-in subscription messages:', 'email-subscribers' ),
+				'info'       => __( 'Page and messages to show when people click on the link in a subscription confirmation email.', 'email-subscribers' ),
 				'sub_fields' => array(
 					'ig_es_subscription_success_message' => array(
 						'type'         => 'textarea',
@@ -272,7 +332,7 @@ class ES_Admin_Settings {
 						'supplemental' => '',
 						'default'      => __( 'You have been subscribed successfully!', 'email-subscribers' ),
 						'id'           => 'ig_es_subscription_success_message',
-						'name'         => __( 'Success Message', 'email-subscribers' ),
+						'name'         => __( 'Message on successful subscription', 'email-subscribers' ),
 						'desc'         => __( 'Show this message if contact is successfully subscribed from double opt-in (confirmation) email', 'email-subscribers' ),
 					),
 
@@ -283,7 +343,7 @@ class ES_Admin_Settings {
 						'supplemental' => '',
 						'default'      => __( 'Oops.. Your request couldn\'t be completed. This email address seems to be already subscribed / blocked.', 'email-subscribers' ),
 						'id'           => 'ig_es_subscription_error_messsage',
-						'name'         => __( 'Error Message', 'email-subscribers' ),
+						'name'         => __( 'Message when subscription fails', 'email-subscribers' ),
 						'desc'         => __( 'Show this message if any error occured after clicking confirmation link from double opt-in (confirmation) email.', 'email-subscribers' ),
 					),
 
@@ -292,7 +352,8 @@ class ES_Admin_Settings {
 
 			'unsubscription_messages'               => array(
 				'id'         => 'unsubscription_messages',
-				'name'       => __( 'Unsubscribe success/ error messages', 'email-subscribers' ),
+				'name'       => __( 'Unsubscribe messages', 'email-subscribers' ),
+				'info'       => __( 'Page and messages to show when people click on the unsubscribe link in an email\'s footer.', 'email-subscribers' ),
 				'sub_fields' => array(
 
 					'ig_es_unsubscribe_success_message' => array(
@@ -302,7 +363,7 @@ class ES_Admin_Settings {
 						'supplemental' => '',
 						'default'      => __( 'Thank You, You have been successfully unsubscribed. You will no longer hear from us.', 'email-subscribers' ),
 						'id'           => 'ig_es_unsubscribe_success_message',
-						'name'         => __( 'Success Message', 'email-subscribers' ),
+						'name'         => __( 'Message on unsubscribe success', 'email-subscribers' ),
 						'desc'         => __( 'Once contact clicks on unsubscribe link, he/she will be redirected to a page where this message will be shown.', 'email-subscribers' ),
 					),
 
@@ -311,179 +372,74 @@ class ES_Admin_Settings {
 						'options'      => false,
 						'placeholder'  => '',
 						'supplemental' => '',
-						'default'      => 'Oops.. There was some technical error. Please try again later or contact us.',
+						'default'      => __( 'Oops.. There was some technical error. Please try again later or contact us.', 'email-subscribers' ),
 						'id'           => 'ig_es_unsubscribe_error_message',
-						'name'         => __( 'Error Message', 'email-subscribers' ),
+						'name'         => __( 'Message when unsubscribe fails', 'email-subscribers' ),
 						'desc'         => __( 'Show this message if any error occured after clicking on unsubscribe link.', 'email-subscribers' ),
 					),
 				),
 			),
 
 			// Start-IG-Code.
-			'ig_es_powered_by'               => array(
+			'ig_es_powered_by'                      => array(
 				'id'      => 'ig_es_powered_by',
 				'name'    => __( 'Share Icegram', 'email-subscribers' ),
-				'info'	  => __('Show "Powered By" link'),
+				'info'    => __( 'Show "Powered By" link in the unsubscription form' ),
 				'type'    => 'checkbox',
-				'default' => 'yes',
+				'default' => 'no',
 			),
 			// End-IG-Code.
 
+			'ig_es_delete_plugin_data'              => array(
+				'id'      => 'ig_es_delete_plugin_data',
+				'name'    => __( 'Delete plugin data on uninstall', 'email-subscribers' ),
+				'info'    => __( 'Be careful with this! When enabled, it will remove all lists, campaigns and other data if you uninstall the plugin.', 'email-subscribers' ),
+				'type'    => 'checkbox',
+				'default' => 'no',
+			),
+			
 		);
 
 		$general_settings = apply_filters( 'ig_es_registered_general_settings', $general_settings );
 
 		$signup_confirmation_settings = array(
 
-			'welcome_emails'             => array(
-				'id'         => 'welcome_emails',
-				'name'       => __( 'Welcome email', 'email-subscribers' ),
-				'info'       => __( 'Send welcome email to new contact after signup.', 'email-subscribers' ),
-				'sub_fields' => array(
-
-					'ig_es_enable_welcome_email'  => array(
-						'id'      => 'ig_es_enable_welcome_email',
-						'name'    => __( 'Enable?', 'email-subscribers' ),
-						'type'    => 'checkbox',
-						'default' => 'yes',
-					),
-
-					'ig_es_welcome_email_subject' => array(
-						'type'         => 'text',
-						'options'      => false,
-						'placeholder'  => '',
-						'supplemental' => '',
-						'default'      => '',
-						'id'           => 'ig_es_welcome_email_subject',
-						'name'         => __( 'Subject', 'email-subscribers' ),
-						'desc'         => '',
-					),
-					'ig_es_welcome_email_content' => array(
-						'type'         => 'textarea',
-						'options'      => false,
-						'placeholder'  => '',
-						'supplemental' => '',
-						'default'      => '',
-						'id'           => 'ig_es_welcome_email_content',
-						'name'         => __( 'Content', 'email-subscribers' ),
-						'desc'         => __( 'Available keywords. {{FIRSTNAME}}, {{LASTNAME}}, {{NAME}}, {{EMAIL}}, {{LIST}}, {{UNSUBSCRIBE-LINK}}', 'email-subscribers' ),
-					),
-				),
-			),
-
-			'confirmation_notifications' => array(
-				'id'         => 'confirmation_notifications',
-				'name'       => __( 'Confirmation email', 'email-subscribers' ),
-				'sub_fields' => array(
-
-					'ig_es_confirmation_mail_subject' => array(
-						'type'         => 'text',
-						'options'      => false,
-						'placeholder'  => '',
-						'supplemental' => '',
-						'default'      => '',
-						'id'           => 'ig_es_confirmation_mail_subject',
-						'name'         => __( 'Subject', 'email-subscribers' ),
-						'desc'         => '',
-					),
-
-					'ig_es_confirmation_mail_content' => array(
-						'type'         => 'textarea',
-						'options'      => false,
-						'placeholder'  => '',
-						'supplemental' => '',
-						'default'      => '',
-						'id'           => 'ig_es_confirmation_mail_content',
-						'name'         => __( 'Content', 'email-subscribers' ),
-						'desc'         => __( 'If double opt-in is set, contact will receive confirmation email with above content. You can use {{FIRSTNAME}}, {{LASTNAME}}, {{NAME}}, {{EMAIL}}, {{SUBSCRIBE-LINK}} keywords', 'email-subscribers' ),
-					),
-				),
-			),
-
-			'admin_notifications'        => array(
-
-				'id'         => 'admin_notifications',
-				'name'       => __( 'Admin notification on new subscription', 'email-subscribers' ),
-				'info'       => __( 'Notify admin(s) everytime a new contact signups.', 'email-subscribers' ),
-				'sub_fields' => array(
-
-					'notify_admin'              => array(
-						'id'      => 'ig_es_notify_admin',
-						'name'    => __( 'Notify?', 'email-subscribers' ),
-						'type'    => 'checkbox',
-						'default' => 'yes',
-					),
-
-					'new_contact_email_subject' => array(
-						'id'      => 'ig_es_admin_new_contact_email_subject',
-						'name'    => __( 'Subject', 'email-subscribers' ),
-						'type'    => 'text',
-						'desc'    => __( 'Subject for the admin email whenever a new contact signs up and is confirmed', 'email-subscribers' ),
-						'default' => __( 'New email subscription', 'email-subscribers' ),
-					),
-
-					'new_contact_email_content' => array(
-						'id'      => 'ig_es_admin_new_contact_email_content',
-						'name'    => __( 'Content', 'email-subscribers' ),
-						'type'    => 'textarea',
-						'desc'    => __( 'Content for the admin email whenever a new subscriber signs up and is confirmed. Available keywords: {{NAME}}, {{EMAIL}}, {{LIST}}', 'email-subscribers' ),
-						'default' => '',
-					),
-				),
-			),
-
-			'ig_es_cron_report'          => array(
-				'id'         => 'ig_es_cron_report',
-				'name'       => __( 'Admin notification on every campaign sent', 'email-subscribers' ),
-				'info'       => __( 'Notify admin(s) everytime a campaign is sent.', 'email-subscribers' ),
-				'sub_fields' => array(
-
-					'ig_es_enable_cron_admin_email'  => array(
-						'id'      => 'ig_es_enable_cron_admin_email',
-						'name'    => __( 'Notify?', 'email-subscribers' ),
-						'type'    => 'checkbox',
-
-						'default' => 'yes',
-					),
-
-					'ig_es_cron_admin_email_subject' => array(
-						'type'         => 'text',
-						'options'      => false,
-						'placeholder'  => '',
-						'supplemental' => '',
-						'default'      => __( 'Campaign Sent!', 'email-subscribers' ),
-						'id'           => 'ig_es_cron_admin_email_subject',
-						'name'         => __( 'Subject', 'email-subscribers' ),
-						'desc'         => '',
-					),
-
-					'ig_es_cron_admin_email'         => array(
-						'type'         => 'textarea',
-						'options'      => false,
-						'placeholder'  => '',
-						'supplemental' => '',
-						'default'      => '',
-						'id'           => 'ig_es_cron_admin_email',
-						'name'         => __( 'Content', 'email-subscribers' ),
-						'desc'         => __( 'Send report to admin(s) whenever campaign is successfully sent to all contacts. Available keywords: {{DATE}}, {{SUBJECT}}, {{COUNT}}', 'email-subscribers' ),
-					),
-
-				),
+			'worflow_migration_notice' => array(
+				'id'   => 'worflow_migration_notice',
+				'type' => 'html',
+				'html' => self::get_workflow_migration_notice_html(),
 			),
 		);
 
 		$signup_confirmation_settings = apply_filters( 'ig_es_registered_signup_confirmation_settings', $signup_confirmation_settings );
 
+		if ( ES()->trial->is_trial_valid() || ES()->is_premium() ) {
+			$gmt_offset  = ig_es_get_gmt_offset( true );
+			$icegram_cron_last_hit_timestamp = get_option( 'ig_es_cron_last_hit' );
+			$icegram_cron_last_hit_message = '';
+			if ( !empty( $icegram_cron_last_hit_timestamp['icegram_timestamp'] ) ) {
+				$icegram_timestamp_with_gmt_offset = $icegram_cron_last_hit_timestamp['icegram_timestamp'] + $gmt_offset;
+				$icegram_cron_last_hit_date_and_time = ES_Common::convert_timestamp_to_date( $icegram_timestamp_with_gmt_offset );
+				$icegram_cron_last_hit_message = __( '<br><span class="ml-6">Cron last hit time : <b>' . $icegram_cron_last_hit_date_and_time . '</b></span>', 'email-subscribers' );
+			}
+		}
+
 		$cron_url_setting_desc = '';
-		
-		if ( ES()->is_trial_valid() ) {
-			$cron_url_setting_desc = sprintf( __( '<span class="es-send-success es-icon"></span> We will take care of it. You don\'t need to visit this URL manually.', 'email-subscribers' ) );
+
+		if ( ES()->trial->is_trial_valid() || ES()->is_premium() ) {
+			$cron_url_setting_desc = __( '<span class="es-send-success es-icon"></span> We will take care of it. You don\'t need to visit this URL manually.' . $icegram_cron_last_hit_message, 'email-subscribers' );
 		} else {
 			/* translators: %s: Link to Icegram documentation */
 			$cron_url_setting_desc = sprintf( __( "You need to visit this URL to send email notifications. Know <a href='%s' target='_blank'>how to run this in background</a>", 'email-subscribers' ), 'https://www.icegram.com/documentation/es-how-to-schedule-cron-emails-in-cpanel/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page' );
 		}
 
+		$cron_url_setting_desc .= '<div class="mt-2.5 ml-1"><a class="hover:underline text-sm font-medium" href=" ' . esc_url( 'https://www.icegram.com/documentation/how-to-configure-email-sending-in-email-subscribers?utm_source=in_app&utm_medium=setup_email_sending&utm_campaign=es_doc' ) . '" target="_blank">' . esc_html__( 'How to configure Email Sending', 'email-subscribers' ) . '→</a></div>';
+
 		$pepipost_api_key_defined = ES()->is_const_defined( 'pepipost', 'api_key' );
+
+		$test_email = ES_Common::get_admin_email();
+
+		$total_emails_sent = ES_Common::count_sent_emails();
 
 		$email_sending_settings = array(
 			'ig_es_cronurl'                 => array(
@@ -503,7 +459,7 @@ class ES_Admin_Settings {
 				'default'      => 'no',
 				'id'           => 'ig_es_disable_wp_cron',
 				'name'         => __( 'Disable Wordpress Cron', 'email-subscribers' ),
-				'info'         => __( 'Check this if you do not want Email Subscribers to use WP Cron to send emails.', 'email-subscribers' ),
+				'info'         => __( 'Enable this option if you do not want Icegram Express (formerly known as Email Subscribers & Newsletters) to use WP Cron to send emails.', 'email-subscribers' ),
 			),
 
 			'ig_es_cron_interval'           => array(
@@ -522,7 +478,7 @@ class ES_Admin_Settings {
 				'default'      => 50,
 				'id'           => 'ig_es_hourly_email_send_limit',
 				'name'         => __( 'Maximum emails to send in an hour', 'email-subscribers' ),
-				'desc'         => __( 'Total emails your host can send in an hour.', 'email-subscribers' ),
+				'desc'         => __( 'Total emails your host can send in an hour.<br>Total emails sent in current hour: <b>' . $total_emails_sent . '</b>' , 'email-subscribers' ),
 			),
 
 			'ig_es_max_email_send_at_once'  => array(
@@ -538,7 +494,7 @@ class ES_Admin_Settings {
 			'ig_es_test_send_email'         => array(
 				'type'         => 'html',
 				/* translators: %s: Spinner image path */
-				'html'         => sprintf( __( '<input id="es-test-email" class="mt-3 mb-1 border-gray-400 form-input h-9"/><input type="submit" name="submit" id="es-send-test" class="ig-es-primary-button" value="Send Email"><span class="es_spinner_image_admin" id="spinner-image" style="display:none"><img src="%s" alt="Loading..."/></span>'), ES_PLUGIN_URL . 'lite/public/images/spinner.gif' ),
+				'html'         => sprintf( '<input id="es-test-email" type="email" value=%s class="mt-3 mb-1 border-gray-400 form-input h-9"/><input type="submit" name="submit" id="es-send-test" class="ig-es-primary-button" value="Send Email"><span class="es_spinner_image_admin" id="spinner-image" style="display:none"><img src="%s" alt="Loading..."/></span>', $test_email, ES_PLUGIN_URL . 'lite/public/images/spinner.gif' ),
 				'placeholder'  => '',
 				'supplemental' => '',
 				'default'      => '',
@@ -597,7 +553,6 @@ class ES_Admin_Settings {
 				'default' => '',
 				'rows'    => 3,
 			),
-
 		);
 
 		$security_settings = apply_filters( 'ig_es_registered_security_settings', $security_settings );
@@ -608,6 +563,30 @@ class ES_Admin_Settings {
 			'email_sending'       => $email_sending_settings,
 			'security_settings'   => $security_settings,
 		);
+
+		if ( ES_Common::is_rest_api_supported() ) {
+
+			$rest_api_endpoint = get_rest_url( null, 'email-subscribers/v1/subscribers' );
+			$rest_api_settings = array(
+				'allow_api' => array(
+					'id'	=> 'ig_es_allow_api',
+					'name'  => __( 'Enable REST API', 'email-subscribers' ),
+					'info'    => __( 'Enable REST API to add/edit/delete subscribers through third-party sites or apps.', 'email-subscribers' ),
+					'type'    => 'checkbox',
+					'default' => 'yes',
+					/* translators: REST API endpoint */
+					'desc' => sprintf( __( 'REST endpoint: %s', 'email-subscribers'), '<code class="es-code">' . $rest_api_endpoint . '</code>' )
+				),
+				'api_key_access_section' => array(
+					'id'   => 'ig_es_api_keys_section',
+					'name' => __( 'REST API Keys', 'email-subscribers' ),
+					'type' => 'html',
+					'html' => self::render_rest_api_keys_section(),
+				),
+			);
+	
+			$es_settings['rest_api_settings'] = $rest_api_settings;
+		}
 
 		return apply_filters( 'ig_es_registered_settings', $es_settings );
 	}
@@ -687,7 +666,7 @@ class ES_Admin_Settings {
 
 				$field_html .= $placeholder . '</input>
 			<span class="es-mail-toggle-line"></span>
-			<span class="es-mail-toggle-dot"></span>	
+			<span class="es-mail-toggle-dot"></span>
 			</span>
 			</label>';
 				break;
@@ -712,7 +691,6 @@ class ES_Admin_Settings {
 				$field_html = $html;
 				break;
 		}
-
 
 		// If there is help text
 		if ( ! empty( $arguments['desc'] ) ) {
@@ -775,7 +753,7 @@ class ES_Admin_Settings {
 					$html .= '<div class="es_sub_headline ' . $class . ' pt-4" ><strong>' . $sub_field['name'] . '</strong>';
 					if ( ! empty( $sub_field['tooltip_text'] ) ) {
 						$tooltip_html = ES_Common::get_tooltip_html( $sub_field['tooltip_text'] );
-						$html 		 .= $tooltip_html;
+						$html        .= $tooltip_html;
 					}
 					$html .= '</div>';
 					$html .= $this->field_callback( $sub_field, $field_key );
@@ -785,15 +763,15 @@ class ES_Admin_Settings {
 			}
 
 			if ( ! empty( $field['upgrade_desc'] ) ) {
-				$upsell_info = array( 
-					'upgrade_title'  => $field[ 'upgrade_title' ],
-					'pricing_url'	 => $field[ 'link' ],
-					'upsell_message' => $field[ 'upgrade_desc' ],
-					'cta_html'		 => false,
+				$upsell_info = array(
+					'upgrade_title'  => $field['upgrade_title'],
+					'pricing_url'    => $field['link'],
+					'upsell_message' => $field['upgrade_desc'],
+					'cta_html'       => false,
 				);
-				$html .= '</div> <div class="w-3/5">';
-				$html .= ES_Common::upsell_description_message_box( $upsell_info, false );
-				$html .= '</div>';
+				$html       .= '</div> <div class="w-3/5">';
+				$html       .= ES_Common::upsell_description_message_box( $upsell_info, false );
+				$html       .= '</div>';
 			}
 
 			$html .= '</td></tr>';
@@ -810,10 +788,10 @@ class ES_Admin_Settings {
 		$html       .= '</td></tr>';
 		$html       .= '</tbody>';
 		$html       .= '</table>';
-		
-		$allowedtags 			= ig_es_allowed_html_tags_in_esc();
+
+		$allowedtags = ig_es_allowed_html_tags_in_esc();
 		add_filter( 'safe_style_css', 'ig_es_allowed_css_style' );
-		echo wp_kses( $html , $allowedtags ); 
+		echo wp_kses( $html, $allowedtags );
 	}
 
 	/**
@@ -882,8 +860,8 @@ class ES_Admin_Settings {
 			if ( ! empty( $mailer['is_premium'] ) ) {
 				$html .= '<span class="premium-icon"></span>';
 			}
-			
-			$html .= '</div>'; 
+
+			$html .= '</div>';
 
 			if ( ! empty( $mailer['is_premium'] ) ) {
 				$html .= '</a>';
@@ -898,24 +876,26 @@ class ES_Admin_Settings {
 	public static function pepipost_doc_block() {
 		$html = '';
 
-		$url = ES_Common::get_utm_tracking_url( array(
-				'url' => 'https://www.icegram.com/email-subscribers-integrates-with-pepipost',
-				'utm_medium' => 'pepipost_doc'
+		$url = ES_Common::get_utm_tracking_url(
+			array(
+				'url'        => 'https://www.icegram.com/email-subscribers-integrates-with-pepipost',
+				'utm_medium' => 'pepipost_doc',
 			)
 		);
 
 		ob_start();
+		do_action('ig_es_before_get_pepipost_doc_block');
 		?>
 		<div class="es_sub_headline ig_es_docblock ig_es_pepipost_div_wrapper pepipost">
 			<ul>
 				<li><a class="" href="https://app.pepipost.com/index.php/signup/icegram?fpr=icegram" target="_blank"><?php esc_html_e( 'Signup for Pepipost', 'email-subscribers' ); ?></a></li>
 				<li><?php esc_html_e( 'How to find', 'email-subscribers' ); ?> <a href="https://developers.pepipost.com/api/getstarted/overview?utm_source=icegram&utm_medium=es_inapp&utm_campaign=pepipost" target="_blank"> <?php esc_html_e( 'Pepipost API key', 'email-subscribers' ); ?></a></li>
-				<li><a href="<?php echo esc_url($url); ?>" target="_blank"><?php esc_html_e( 'Why to choose Pepipost', 'email-subscribers' ); ?></a></li>
+				<li><a href="<?php echo esc_url( $url ); ?>" target="_blank"><?php esc_html_e( 'Why to choose Pepipost', 'email-subscribers' ); ?></a></li>
 			</ul>
 		</div>
 
 		<?php
-
+		do_action('ig_es_after_get_pepipost_doc_block');
 		$html = ob_get_clean();
 
 		return $html;
@@ -966,6 +946,7 @@ class ES_Admin_Settings {
 			'ig_es_cron',
 			'ig_es_cron_worker',
 			'ig_es_cron_auto_responder',
+			'ig_es_summary_automation',
 		);
 
 		$cron_schedules = wp_get_schedules();
@@ -1066,4 +1047,161 @@ class ES_Admin_Settings {
 		return $html;
 	}
 
+	/**
+	 * Add setting for plugin usage tracking
+	 *
+	 * @param array $es_settings
+	 *
+	 * @return array $es_settings
+	 *
+	 * @since 4.7.7
+	 */
+	public function show_usage_tracking_optin_setting( $es_settings ) {
+
+		// Show option to enable/disable tracking if user isn't a premium user and trial is not valid i.e. has expired.
+		if ( ! ES()->is_premium() && ! ES()->trial->is_trial_valid() ) {
+
+			$allow_tracking = array(
+				'ig_es_allow_tracking' => array(
+					'id'      => 'ig_es_allow_tracking',
+					'name'    => __( 'Plugin usage tracking', 'email-subscribers' ),
+					'type'    => 'checkbox',
+					'default' => 'no',
+					'info'    => __( 'Help us to improve Icegram Express (formerly known as Email Subscribers & Newsletters) by opting in to share non-sensitive plugin usage data.', 'email-subscribers' ),
+				),
+			);
+
+			$general_fields = $es_settings['general'];
+
+			$general_fields = ig_es_array_insert_after( $general_fields, 'ig_es_intermediate_unsubscribe_page', $allow_tracking );
+
+			$es_settings['general'] = $general_fields;
+		}
+
+		return $es_settings;
+	}
+
+	/**
+	 * Get HTML for workflow migration
+	 *
+	 * @return string
+	 */
+	public static function get_workflow_migration_notice_html() {
+		ob_start();
+		$workflow_url = admin_url( 'admin.php?page=es_workflows' );
+		?>
+		<style>
+			#tabs-signup_confirmation .es-settings-submit-btn {
+				display: none;
+			}
+		</style>
+		<p class="pb-2 text-sm font-normal text-gray-500">
+			<?php echo esc_html__( 'Now you can control all your notifications through workflows.', 'email-subscribers' ); ?>
+			<?php
+				/* translators: 1. Anchor start tag 2. Anchor end tag */
+				echo sprintf( esc_html__( 'Click %1$shere%2$s to go to workflows.', 'email-subscribers' ), '<a href="' . esc_url( $workflow_url ) . '" class="text-indigo-600" target="_blank">', '</a>' );
+			?>
+		</p>
+		<?php
+		$html = ob_get_clean();
+		return $html;
+	}
+
+	public static function render_rest_api_keys_section() {
+		ob_start();
+		$rest_api_keys = get_option( 'ig_es_rest_api_keys', array() );
+
+		$rest_api_users_ids = get_users( array(
+			'meta_key' => 'ig_es_rest_api_keys',
+			'fields'   => 'ID'
+		) );
+		?>
+		<div id="ig-es-rest-api-section">
+			<table class="min-w-full rounded-lg">
+				<thead>
+				<tr class="bg-blue-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+					<th class="px-5 py-4"><?php echo esc_html__( 'Key', 'email-subscribers' ); ?></th>
+					<th class="px-2 py-4 text-center"><?php echo esc_html__( 'Username', 'email-subscribers' ); ?></th>
+					<th class="px-2 py-4 text-center"><?php echo esc_html__( 'Actions', 'email-subscribers' ); ?></th>
+				</tr>
+				</thead>
+				<tbody class="bg-blue-50">
+					<?php
+					if ( ! empty( $rest_api_users_ids ) ) {
+						foreach ( $rest_api_users_ids as $user_id ) {
+							$user = get_userdata( $user_id );
+							if ( ! $user ) {
+								continue;
+							}
+							$rest_api_keys = get_user_meta( $user_id, 'ig_es_rest_api_keys', true );
+							if ( ! empty( $rest_api_keys ) ) {
+								foreach ( $rest_api_keys as $index => $rest_api_key ) {
+									$key_start = substr( $rest_api_key, 0, 4 );
+									$key_end   = substr( $rest_api_key, strlen( $rest_api_key ) - 4, 4 );
+									?>
+								<tr class="ig-es-rest-api-row border-b border-gray-200 text-xs leading-4 font-medium" data-user-id="<?php echo esc_attr( $user_id ); ?>" data-api-index="<?php echo esc_attr( $index ); ?>">
+									<td class="px-5 py-4 text-center"><?php echo esc_html( $key_start ); ?>***********<?php echo esc_html( $key_end ); ?></td>
+									<td class="px-2 py-4 text-center"><?php echo esc_html( $user->data->user_login ); ?></td>
+									<td class="px-2 py-4 text-center">
+											<a class="ig-es-delete-rest-api-key inline-block" href="#">
+												<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+													<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+												</svg>
+											</a>
+									</td>
+								</tr>
+								<?php
+								}
+							}
+							?>
+							<?php
+						}
+					}
+					?>
+					<tr id="ig-es-no-api-keys-message" class="border-b border-gray-200 text-xs leading-4 font-medium">
+						<td colspan="3" class="px-5 py-4 text-center">
+							<?php echo esc_html__( 'No API keys found.', 'email-subscribers' ); ?>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div id="ig-es-create-new-rest-api-container" class="mt-2">
+				<?php
+					$admin_users = get_users(
+						array(
+							'role' => 'administrator'
+						)
+					);
+				?>
+				<select id="ig-es-rest-api-user-id">
+					<option value=""><?php echo esc_html__( 'Please select a user', 'email-subscribers' ); ?></option>
+					<?php
+					foreach ( $admin_users as $user ) {
+						?>
+						<option value="<?php echo esc_attr( $user->ID ); ?>"><?php echo esc_html( $user->data->user_email ); ?></option>
+						<?php
+					}
+					?>
+				</select>
+				<button type="button" id="ig-es-generate-rest-api-key" class="ig-es-title-button ml-2 align-middle ig-es-inline-loader">
+					<span>
+						<?php echo esc_html__( 'Generate new key', 'email-subscribers' ); ?>
+					</span>
+					<svg class="es-btn-loader animate-spin h-4 w-4 text-indigo"
+									xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+								stroke-width="4"></circle>
+						<path class="opacity-75" fill="currentColor"
+								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					</svg>
+				</button>
+				<div id="response-messages" class="p-2 mt-2 hidden">
+					<div class="message"></div>
+				</div>
+			</div>
+		</div>
+		<?php
+		$html = ob_get_clean();
+		return $html;
+	}
 }

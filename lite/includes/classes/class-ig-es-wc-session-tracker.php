@@ -7,18 +7,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Tracks logged out customers via cookies.
  *
  * @class IG_ES_WC_Session_Tracker
- *
  */
 class IG_ES_WC_Session_Tracker {
 
-	/** 
+	/**
 	 * Tracking cookie expiry
-	 * 
-	 * @var int (days) 
+	 *
+	 * @var int (days)
 	 **/
 	private static $tracking_cookie_expiry;
 
-	/** 
+	/**
 	 * Tracking cookie name
 	 *
 	 * @var string - cookie name
@@ -27,11 +26,11 @@ class IG_ES_WC_Session_Tracker {
 
 	/**
 	 * Tracking key
-	 *  
-	 * @var string - This key WILL BE saved 
+	 *
+	 * @var string - This key WILL BE saved
 	 **/
 	private static $tracking_key_to_set = '';
-	
+
 
 	/**
 	 * Returns true if a session tracking cookie has been set.
@@ -94,7 +93,7 @@ class IG_ES_WC_Session_Tracker {
 
 	/**
 	 * Get current session key
-	 * 
+	 *
 	 * @return string|false
 	 */
 	public static function get_current_tracking_key() {
@@ -117,7 +116,7 @@ class IG_ES_WC_Session_Tracker {
 	 * @return int
 	 */
 	public static function get_detected_user_id() {
-		
+
 		if ( is_user_logged_in() ) {
 			return get_current_user_id();
 		}
@@ -141,7 +140,7 @@ class IG_ES_WC_Session_Tracker {
 
 		global $woocommerce;
 
-		//Can't look up the guest in this situation.
+		// Can't look up the guest in this situation.
 		if ( ! isset( $woocommerce->session ) ) {
 			return false;
 		}
@@ -164,15 +163,15 @@ class IG_ES_WC_Session_Tracker {
 	 *
 	 * - Registered user is logged in or remembered via cookie = bail
 	 * - Email matches existing customer
-	 * 		- Cookie customer exists
+	 *      - Cookie customer exists
 	 *          - Cookie and matched customer are the same = do nothing
-	 *			- Cookie and matched customer are different = cookie must be changed, clear cart from previous key to avoid duplicates
-	 * 		- No cookie customer = Set new cookie to matched customer key
+	 *          - Cookie and matched customer are different = cookie must be changed, clear cart from previous key to avoid duplicates
+	 *      - No cookie customer = Set new cookie to matched customer key
 	 * - Email is new
-	 * 		- Cookie customer exists
-	 * 			- Customer data is locked = create new customer, change cookie, clear cart from previous key to avoid duplicates
-	 * 			- Customer data is not locked = update customer email
-	 * 		- No cookie customer = Set new cookie to matched customer key
+	 *      - Cookie customer exists
+	 *          - Customer data is locked = create new customer, change cookie, clear cart from previous key to avoid duplicates
+	 *          - Customer data is not locked = update customer email
+	 *      - No cookie customer = Set new cookie to matched customer key
 	 *
 	 * @param string $new_email
 	 * @param string $language
@@ -180,7 +179,7 @@ class IG_ES_WC_Session_Tracker {
 	 * @return IG_ES_Customer|false
 	 */
 	public static function set_session_by_captured_email( $new_email, $language = '' ) {
-		
+
 		if ( ! is_email( $new_email ) || headers_sent() || ! self::session_tracking_enabled() ) {
 			// must have a valid email, be able to set cookies, have session tracking enabled
 			return false;
@@ -241,7 +240,7 @@ class IG_ES_WC_Session_Tracker {
 
 		// init the new customer tracking, also saves/updates the language
 		// if ( $new_customer ) {
-		// 	self::set_session_customer( $new_customer, $language );
+		// self::set_session_customer( $new_customer, $language );
 		// }
 
 		// update the stored cart
@@ -258,7 +257,7 @@ class IG_ES_WC_Session_Tracker {
 	 * @return Customer|false
 	 */
 	public static function get_session_customer() {
-		
+
 		global $woocommerce;
 
 		if ( is_user_logged_in() ) {
@@ -269,7 +268,7 @@ class IG_ES_WC_Session_Tracker {
 			return false;
 		}
 
-		//Can't look up the customer in this situation.
+		// Can't look up the customer in this situation.
 		if ( ! isset( $woocommerce->session ) ) {
 			return '';
 		}

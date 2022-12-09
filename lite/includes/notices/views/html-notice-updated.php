@@ -11,5 +11,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div id="message" class="updated es-message es-connect es-message--success">
 	<a class="es-message-close notice-dismiss" href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'wc-hide-notice', 'update', remove_query_arg( 'do_update_ig_es' ) ), 'ig_es_hide_notices_nonce', '_ig_es_notice_nonce' ) ); ?>"><?php esc_html_e( 'Dismiss', 'email-subscribers' ); ?></a>
 
-	<p><?php esc_html_e( 'Email Subscribers data update complete. Thank you for updating to the latest version!', 'email-subscribers' ); ?></p>
+	<p><?php esc_html_e( 'Icegram Express data update complete. Thank you for updating to the latest version!', 'email-subscribers' ); ?></p>
 </div>

@@ -25,6 +25,7 @@ defined( 'ABSPATH' ) || exit;
 
 	<div class="ig-es-action__header">
 		<div class="row-options">
+			<button class="js-preview-action text-indigo-600 hidden" title="<?php esc_attr_e( 'Preview', 'email-subscribers' ); ?>"><span class="dashicons dashicons-welcome-view-site"></span></button>
 			<a class="js-edit-action text-indigo-600" href="#" title="<?php esc_attr_e( 'Edit', 'email-subscribers' ); ?>"><span class="dashicons dashicons-edit"></span></a>
 			<a class="js-delete-action text-indigo-600" href="#" title="<?php esc_attr_e( 'Delete', 'email-subscribers' ); ?>"><span class="dashicons dashicons-trash"></span></a>
 		</div>

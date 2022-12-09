@@ -195,9 +195,9 @@ class ES_Html2Text {
 		// 'table' (if a table of link URLs should be listed after the text.
 		// 'bbcode' (show links as bbcode)
 
-		'width' => 70, //  Maximum width of the formatted text, in columns.
-		//  Set this value to 0 (or less) to ignore word wrapping
-		//  and not constrain text to a fixed-width column.
+		'width'    => 70, // Maximum width of the formatted text, in columns.
+		// Set this value to 0 (or less) to ignore word wrapping
+		// and not constrain text to a fixed-width column.
 	);
 
 	/**
@@ -216,8 +216,8 @@ class ES_Html2Text {
 	/**
 	 * Class constructor
 	 *
-	 * @param string  $html    (optional) Source HTML
-	 * @param array   $options (optional) Set configuration options
+	 * @param string $html    (optional) Source HTML
+	 * @param array  $options (optional) Set configuration options
 	 * @return unknown
 	 */
 	public function __construct( $html = '', $options = array() ) {
@@ -227,14 +227,14 @@ class ES_Html2Text {
 		 * By taking the copy early this is avoided. This behavior changed in PHP7: [https://www.php.net/manual/en/function.func-get-args.php#refsect1-function.func-get-args-notes]
 		 */
 		$func_args = func_get_args();
-		
+
 		// for backwards compatibility
 		if ( ! is_array( $options ) ) {
 			return call_user_func_array( array( $this, 'legacyConstruct' ), $func_args );
 		}
 
-		$this->html = $html;
-		$this->options = array_merge( $this->options, $options );
+		$this->html          = $html;
+		$this->options       = array_merge( $this->options, $options );
 		$this->htmlFuncFlags = ( PHP_VERSION_ID < 50400 )
 			? ENT_COMPAT
 			: ENT_COMPAT | ENT_HTML5;
@@ -254,10 +254,10 @@ class ES_Html2Text {
 	/**
 	 * Set the source HTML
 	 *
-	 * @param string  $html HTML source content
+	 * @param string $html HTML source content
 	 */
 	public function setHtml( $html ) {
-		$this->html = $html;
+		$this->html      = $html;
 		$this->converted = false;
 	}
 
@@ -285,7 +285,7 @@ class ES_Html2Text {
 	 * @return string
 	 */
 	public function getText() {
-		if ( !$this->converted ) {
+		if ( ! $this->converted ) {
 			$this->convert();
 		}
 
@@ -328,7 +328,7 @@ class ES_Html2Text {
 	/**
 	 * Sets a base URL to handle relative links.
 	 *
-	 * @param string  $baseurl
+	 * @param string $baseurl
 	 */
 	public function setBaseUrl( $baseurl ) {
 		$this->baseurl = $baseurl;
@@ -423,9 +423,9 @@ class ES_Html2Text {
 	 * appeared. Also makes an effort at identifying and handling absolute
 	 * and relative links.
 	 *
-	 * @param string  $link         URL of the link
-	 * @param string  $display      Part of the text to associate number with
-	 * @param null    $linkOverride
+	 * @param string $link         URL of the link
+	 * @param string $display      Part of the text to associate number with
+	 * @param null   $linkOverride
 	 * @return string
 	 */
 	protected function buildlinkList( $link, $display, $linkOverride = null ) {
@@ -452,7 +452,7 @@ class ES_Html2Text {
 		if ( 'table' == $linkMethod ) {
 			$index = array_search( $url, $this->linkList );
 			if ( false === $index ) {
-				$index = count( $this->linkList );
+				$index            = count( $this->linkList );
 				$this->linkList[] = $url;
 			}
 
@@ -509,15 +509,15 @@ class ES_Html2Text {
 	/**
 	 * Helper function for BLOCKQUOTE body conversion.
 	 *
-	 * @param string  $text (reference) HTML content
+	 * @param string $text (reference) HTML content
 	 */
 	protected function convertBlockquotes( &$text ) {
 		if ( preg_match_all( '/<\/*blockquote[^>]*>/i', $text, $matches, PREG_OFFSET_CAPTURE ) ) {
 			$originalText = $text;
-			$start = 0;
-			$taglen = 0;
-			$level = 0;
-			$diff = 0;
+			$start        = 0;
+			$taglen       = 0;
+			$level        = 0;
+			$diff         = 0;
 			foreach ( $matches[0] as $m ) {
 				$m[1] = strlen( substr( $originalText, 0, $m[1] ) );
 				if ( '<' == $m[0][0] && '/' == $m[0][1] ) {
@@ -554,7 +554,7 @@ class ES_Html2Text {
 					}
 				} else {
 					if ( 0 == $level ) {
-						$start = $m[1];
+						$start  = $m[1];
 						$taglen = strlen( $m[0] );
 					}
 					$level++;
@@ -567,7 +567,7 @@ class ES_Html2Text {
 	/**
 	 * Callback function for preg_replace_callback use.
 	 *
-	 * @param array   $matches PREG matches
+	 * @param array $matches PREG matches
 	 * @return string
 	 */
 	protected function pregCallback( $matches ) {
@@ -609,7 +609,7 @@ class ES_Html2Text {
 	/**
 	 * Callback function for preg_replace_callback use in PRE content handler.
 	 *
-	 * @param array   $matches PREG matches
+	 * @param array $matches PREG matches
 	 * @return string
 	 */
 	protected function pregPreCallback( $matches ) {
@@ -620,7 +620,7 @@ class ES_Html2Text {
 	/**
 	 * Strtoupper function with HTML tags and entities handling.
 	 *
-	 * @param string  $str Text to convert
+	 * @param string $str Text to convert
 	 * @return string Converted text
 	 */
 	protected function toupper( $str ) {
@@ -629,8 +629,8 @@ class ES_Html2Text {
 
 		// convert toupper only the text between HTML tags
 		foreach ( $chunks as $i => $chunk ) {
-			if ( '<' != $chunk[0]  ) {
-				$chunks[$i] = $this->strtoupper( $chunk );
+			if ( '<' != $chunk[0] ) {
+				$chunks[ $i ] = $this->strtoupper( $chunk );
 			}
 		}
 
@@ -641,7 +641,7 @@ class ES_Html2Text {
 	/**
 	 * Strtoupper multibyte wrapper function with HTML entities handling.
 	 *
-	 * @param string  $str Text to convert
+	 * @param string $str Text to convert
 	 * @return string Converted text
 	 */
 	protected function strtoupper( $str ) {

@@ -10,7 +10,6 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 	 *
 	 * @since 4.6.8
 	 * @var $table_name
-	 *
 	 */
 	public $table_name;
 
@@ -19,7 +18,6 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 	 *
 	 * @since 4.6.8
 	 * @var $version
-	 *
 	 */
 	public $version;
 
@@ -28,7 +26,6 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 	 *
 	 * @since 4.6.8
 	 * @var $primary_key
-	 *
 	 */
 	public $primary_key;
 
@@ -76,7 +73,7 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 	 * Get default column values
 	 *
 	 * @return array Default column values
-	 * 
+	 *
 	 * @since  4.6.8
 	 */
 	public function get_column_defaults() {
@@ -89,7 +86,7 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 			'feedback_text'    => '',
 			'created_at'       => ig_get_current_date_time(),
 			'updated_at'       => ig_get_current_date_time(),
-			'meta'     	       => '',
+			'meta'             => '',
 		);
 	}
 
@@ -116,7 +113,6 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 	 * @param array $feedback_data Feedback data.
 	 *
 	 * @return bool|void
-	 *
 	 */
 	public function update_feedback( $feedback_id = 0, $feedback_data = array() ) {
 
@@ -129,10 +125,10 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 
 	/**
 	 * Get existing feedback for given contact and list id
-	 * 
+	 *
 	 * @param int $contact_id Contact id
 	 * @param int $list_id List id
-	 * 
+	 *
 	 * @return int $existing_feedback_id Existing feedback ID
 	 */
 	public function get_existing_feedback_id( $contact_id = 0, $list_id = 0 ) {
@@ -143,7 +139,7 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 		if ( empty( $contact_id ) || empty( $list_id ) ) {
 			return $existing_feedback_id;
 		}
-		
+
 		$existing_feedback_id = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT id FROM {$wpdb->prefix}ig_unsubscribe_feedback WHERE `contact_id`= %d AND `list_id` = %d ORDER BY updated_at DESC LIMIT 1",
@@ -153,5 +149,26 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 		);
 
 		return $existing_feedback_id;
+	}
+
+
+	/**
+	 * Get feedback count for given number of days
+	 *
+	 * @param int $number_of_days
+	 *
+	 * @return int $feedback_counts
+	 */
+	public static function get_feedback_counts( $number_of_days ) {
+		global $wpdb;
+		$feedback_counts = $wpdb->get_results(
+			$wpdb->prepare(
+			"SELECT feedback_slug, COUNT(feedback_slug) AS feedback_count FROM `{$wpdb->prefix}ig_unsubscribe_feedback` WHERE `updated_at` >= DATE_SUB(NOW(), INTERVAL %d DAY) GROUP BY `feedback_slug` ORDER BY feedback_count DESC"
+			, $number_of_days
+			),
+			ARRAY_A
+		);
+
+		return $feedback_counts;
 	}
 }

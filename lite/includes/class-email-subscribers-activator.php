@@ -36,6 +36,12 @@ class Email_Subscribers_Activator {
 	public static function activate() {
 		require_once dirname( __FILE__ ) . '/class-es-install.php';
 		ES_Install::install();
+		/**
+		 * Do all plugin related stuff in plugin activation
+		 *
+		 * @since 4.8.0
+		 */
+		do_action( 'ig_es_plugin_activate' );
 	}
 
 	public static function register_email_templates() {
@@ -52,9 +58,9 @@ class Email_Subscribers_Activator {
 			'not_found'          => __( 'No Templates found', 'email-subscribers' ),
 			'not_found_in_trash' => __( 'No Templates found in Trash', 'email-subscribers' ),
 			'parent_item_colon'  => '',
-			'menu_name'          => __( 'Email Subscribers', 'email-subscribers' ),
+			'menu_name'          => __( 'Icegram Express', 'email-subscribers' ),
 			'featured_image'     => __( 'Thumbnail (For Visual Representation only)', 'email-subscribers' ),
-			'set_featured_image' => __( 'Set thumbnail', 'email-subscribers' )
+			'set_featured_image' => __( 'Set thumbnail', 'email-subscribers' ),
 		);
 
 		$args = array(
@@ -70,7 +76,7 @@ class Email_Subscribers_Activator {
 			'has_archive'         => false,
 			'hierarchical'        => false,
 			'menu_position'       => null,
-			'supports'            => array( 'title', 'editor', 'thumbnail' )
+			'supports'            => array( 'title', 'editor', 'thumbnail' ),
 		);
 
 		register_post_type( 'es_template', $args );

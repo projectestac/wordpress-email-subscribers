@@ -7,20 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$referer = wp_get_referer();
+$referer   = wp_get_referer();
 $optin_url = wp_nonce_url(
 	add_query_arg( 'ig_es_trial_consent', 'yes', $referer ),
 	'ig_es_trial_consent'
 );
 
 $optout_url = wp_nonce_url(
-	add_query_arg( 
-		array(
-			'es_dismiss_admin_notice' => 1,
-			'option_name'             => 'trial_consent',
-		), 
-		$referer
-	),
+	add_query_arg( 'ig_es_trial_consent', 'no', $referer ),
 	'ig_es_trial_consent'
 );
 ?>
@@ -28,7 +22,7 @@ $optout_url = wp_nonce_url(
 	<p>
 	<?php
 		/* translators: %s: Trial period in days */
-		echo esc_html__( sprintf( 'Start your %s days free trial of Email Subscribers’ premium services like email delivery check, spam protection, cron handling & lot more..', ES()->trial->get_trial_period( 'in_days' ) ), 'email-subscribers' );
+		echo esc_html__( sprintf( 'Start your %s days free trial of Icegram Express (formerly known as Email Subscribers & Newsletters)’ premium services like email delivery check, spam protection, cron handling & lot more..', ES()->trial->get_trial_period( 'in_days' ) ), 'email-subscribers' );
 	?>
 	<br/>
 	<a href="<?php echo esc_url( $optin_url ); ?>" class="ig-es-primary-button px-3 py-1 mt-2 align-middle">

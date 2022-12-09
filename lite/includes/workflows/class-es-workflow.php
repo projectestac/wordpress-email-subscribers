@@ -140,9 +140,26 @@ class ES_Workflow {
 	);
 
 	/**
+	 * Used to store some extra data at run-time
+	 *
+	 * @since 5.3.4
+	 * @var array
+	 */
+	public static $extra;
+
+	/**
+	 * Is the workflow in preview mode
+	 *
+	 * @var bool
+	 *
+	 * @since 5.3.6
+	 */
+	public $preview_mode = false;
+
+	/**
 	 * Class constructor
-	 * 
-	 * @param $post mixed (object or post ID)
+	 *
+	 * @param mixed $workflow
 	 */
 	public function __construct( $workflow = null ) {
 
@@ -166,6 +183,96 @@ class ES_Workflow {
 			$this->created_at      = $workflow->created_at;
 			$this->updated_at      = $workflow->updated_at;
 		}
+	}
+
+	/**
+	 * Validate rules against user input
+	 *
+	 * @return bool
+	 */
+	public function validate_rules() {
+		$rules = self::get_rule_data();
+
+		// no rules found
+		if ( empty( $rules ) ) {
+			return true;
+		}
+
+		foreach ( $rules as $rule_group ) {
+			$is_group_valid = true;
+			foreach ( $rule_group as $rule ) {
+				// rules have AND relationship so all must return true
+				if ( ! $this->validate_rule( $rule ) ) {
+					$is_group_valid = false;
+					break;
+				}
+			}
+
+			// groups have an OR relationship so if one is valid we can break the loop and return true
+			if ( $is_group_valid ) {
+				return true;
+			}
+		}
+
+		// no groups were valid
+		return false;
+	}
+
+	/**
+	 * Returns true if rule is missing data so that the rule is skipped
+	 *
+	 * @param array $rule
+	 * @return bool
+	 */
+	public function validate_rule( $rule ) {
+		if ( ! is_array( $rule ) ) {
+			return true;
+		}
+
+		$rule_name = isset( $rule['name'] ) ? $rule['name'] : false;
+		$rule_compare = isset( $rule['compare'] ) ? $rule['compare'] : false;
+		$rule_value = isset( $rule['value'] ) ? $rule['value'] : false;
+
+		// it's ok for compare to be false for boolean type rules
+		if ( ! $rule_name ) {
+			return true;
+		}
+
+		$rule_object = ES_Workflow_Rules::get( $rule_name );
+
+		// rule doesn't exists
+		if ( ! $rule_object ) {
+			return false;
+		}
+
+		// get the data required to validate the rule
+		$data_item = $this->get_data_item( $rule_object->data_item );
+
+		if ( ! $data_item ) {
+			return false;
+		}
+
+		// some rules need the full workflow object
+		$rule_object->set_workflow( $this );
+
+		// Check the expected rule value is valid.
+		try {
+			$rule_object->validate_value( $rule_value );
+		} catch ( \Exception $e ) {
+			// Always return false if the rule value is invalid
+			return false;
+		}
+
+		return $rule_object->validate( $data_item, $rule_compare, $rule_value );
+	}
+
+	/**
+	 * Get rule data
+	 *
+	 * @return array
+	 */
+	public function get_rule_data() {
+		return is_array( $this->rules ) ? $this->rules : [];
 	}
 
 	/**
@@ -314,7 +421,7 @@ class ES_Workflow {
 	 * Returns the saved actions with their data
 	 *
 	 * @param $number
-	 * @return Action|false
+	 * @return ES_Workflow_Action|false
 	 */
 	public function get_action( $number ) {
 
@@ -407,6 +514,10 @@ class ES_Workflow {
 		if ( ! $trigger->validate_workflow( $this ) ) {
 			return false;
 		}
+
+		if ( ! $this->validate_rules() ) {
+			return false;
+		}
 		
 		// Allow third party developers to hook their validation logic.
 		if ( ! apply_filters( 'ig_es_custom_validate_workflow', true, $this ) ) {
@@ -424,13 +535,14 @@ class ES_Workflow {
 	/**
 	 * Execute workflow actions.
 	 * 
-	 * @param  int <parameter_name> { parameter_description }
 	 * @return bool
 	 */
 	public function run() {
 
 		do_action( 'ig_es_before_workflow_run', $this );
 
+		$this->update_last_ran_at();
+		
 		$actions = $this->get_actions();
 
 		foreach ( $actions as $action_index => $action ) {
@@ -1014,5 +1126,114 @@ class ES_Workflow {
 		}
 
 		return $action;
+	}
+
+	/**
+	 * Check if workflow has given action or not.
+	 * 
+	 * @param string $action_name Action name.
+	 * 
+	 * @return bool $has_action Whether workflow has given action or not.
+	 */
+	public function has_action( $action_name = '' ) {
+		$has_action = false;
+		$actions    = $this->get_actions();
+
+		if ( ! empty( $actions ) ) {
+			foreach ( $actions as $action ) {
+				$current_action_name = $action->get_name();
+				if ( $current_action_name === $action_name ) {
+					$has_action = true;
+					break;
+				}
+			}
+		}
+
+		return $has_action;
+	}
+
+	/**
+	 * Check if workflow is runnable or not.
+	 *
+	 * @since 4.7.6
+	 *
+	 * @param  integer $workflow_id Workflow ID.
+	 * 
+	 * @return bool  $is_runnable Workflow is runnable or not.
+	 */
+	public function is_runnable() {
+
+		$is_runnable = false;
+		$trigger     = $this->get_trigger();
+		
+		if ( $trigger instanceof ES_Workflow_Trigger ) {
+			$supplied_data_items = $trigger->get_supplied_data_items();
+	
+			// Workflow having order related trigger and add to list action are runnable.
+			if ( in_array( 'wc_order', $supplied_data_items, true ) && $this->has_action( 'ig_es_add_to_list' ) ) {
+				$is_runnable = true;
+			}
+		}
+
+		return $is_runnable;
+	}
+
+	/**
+	 * Method to get edit url of a workflow
+	 *
+	 * @since 4.7.6
+	 *
+	 * @return string  $edit_url Workflow edit URL
+	 */
+	public function get_edit_url() {
+
+		$id       = $this->get_id();
+		$edit_url = admin_url( 'admin.php?page=es_workflows' );
+
+		$edit_url = add_query_arg(
+			array(
+				'id'     => $id,
+				'action' => 'edit',
+			),
+			$edit_url
+		);
+
+		return $edit_url;
+	}
+
+	/**
+	 * Method to update workflow last run at with current date time
+	 *
+	 * @since 4.7.6
+	 *
+	 * @return string Last ran date time
+	 */
+	public function get_last_ran_at() {
+		
+		return ES_Clean::string( $this->get_option( 'last_ran_at' ) );
+	}
+
+	/**
+	 * Method to update workflow last run at with current date time
+	 *
+	 * @since 4.7.6
+	 *
+	 * @return bool
+	 */
+	public function update_last_ran_at() {
+		
+		$workflow_id               = $this->get_id();
+		$last_ran_at 			   = ig_get_current_date_time();
+		$this->meta['last_ran_at'] = $last_ran_at;
+		
+		$workflow_data = array(
+			'meta' => maybe_serialize( $this->meta ),
+		);
+
+		$updated = ES()->workflows_db->update( $workflow_id, $workflow_data );
+		if ( $updated ) {
+			return $last_ran_at;
+		}
+		return '';
 	}
 }

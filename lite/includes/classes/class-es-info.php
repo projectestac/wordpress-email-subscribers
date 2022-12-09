@@ -19,7 +19,7 @@ class ES_Info {
 		$help_title = __( 'Help & Info', 'email-subscribers' );
 		add_submenu_page( 'es_dashboard', $help_title, $help_title, 'edit_posts', 'es_general_information', array( $this, 'es_information_callback' ) );
 
-		$pro_title = __( '<span class="es-fire-sale"> 🔥 </span> Go Pro', 'email-subscribers' );
+		$pro_title = '<span class="es-fire-sale"> 🔥 </span>' . esc_html__( ' Go Max', 'email-subscribers' );
 		if ( ! ES()->is_pro() ) {
 			add_submenu_page( 'es_dashboard', $pro_title, $pro_title, 'edit_posts', 'es_pricing', array( $this, 'es_pricing_callback' ) );
 		}
@@ -42,9 +42,9 @@ class ES_Info {
 	}
 
 	public static function es_pricing_callback() {
-		// remove because of warning
-		// $url = 'https://www.icegram.com/email-subscribers-pricing/';
-		// header('Location: ' . $url );
+
+		Email_Subscribers_Pricing::sm_show_pricing();
+
 	}
 
 	public static function get_instance() {

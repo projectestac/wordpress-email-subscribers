@@ -24,8 +24,8 @@ class ES_Workflow_Queue extends ES_DB_Workflows_Queue {
 
 	// error messages
 	const F_WORKFLOW_INACTIVE = 100;
-	const F_MISSING_DATA = 101;
-	const F_FATAL_ERROR = 102;
+	const F_MISSING_DATA      = 101;
+	const F_FATAL_ERROR       = 102;
 
 	/**
 	 * Workflow queue id
@@ -215,36 +215,47 @@ class ES_Workflow_Queue extends ES_DB_Workflows_Queue {
 
 		$this->uncompressed_data_layer = $data_layer->get_raw_data();
 
+		$items_data = array();
 		foreach ( $this->uncompressed_data_layer as $data_type_id => $data_item ) {
-			$this->store_data_item( $data_type_id, $data_item );
+			$item_data = $this->get_item_data( $data_type_id, $data_item );
+			if ( ! empty( $item_data ) ) {
+				$items_data = array_merge( $items_data, $item_data );
+			}
+		}
+
+		if ( ! empty( $items_data ) ) {
+			$queue_id = $this->get_id();
+			$this->update_meta( $queue_id, $items_data );
 		}
 	}
 
 
 	/**
-	 * Store workflow data item in the queue
+	 * Get workflow data item's data
 	 * 
 	 * @param $data_type_id
 	 * @param $data_item
+	 * 
+	 * @return $item_data
 	 */
-	private function store_data_item( $data_type_id, $data_item ) {
+	private function get_item_data( $data_type_id, $data_item ) {
 
 		$data_type = ES_Workflow_Data_Types::get( $data_type_id );
 
 		if ( ! $data_type || ! $data_type->validate( $data_item ) ) {
-			return;
+			return array();
 		}
 
 		$storage_key   = $data_type_id;
 		$storage_value = $data_type->compress( $data_item );
-
+		$item_data     = array();
 		if ( $storage_key ) {
-			$queue_id = $this->get_id();
-			$meta_data = array(
+			$item_data = array(
 				$storage_key => $storage_value
 			);
-			$this->update_meta( $queue_id, $meta_data );
 		}
+		
+		return $item_data;
 	}
 
 

@@ -87,7 +87,6 @@ class ES_DB_Workflows_Queue extends ES_DB {
 	 */
 	public function get_column_defaults() {
 		return array(
-			'id'           => 0,
 			'workflow_id'  => 0,
 			'scheduled_at' => '',
 			'created_at'   => '',

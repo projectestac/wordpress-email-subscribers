@@ -39,6 +39,13 @@ class IG_ES_Replace_Helper {
 	 * @var callable */
 	public $callback;
 
+	/**
+	 * The keywords that can be processable
+	 *
+	 * @var array
+	 */
+	public $parsable_keywords;
+
 
 	/**
 	 * Constructor
@@ -46,11 +53,13 @@ class IG_ES_Replace_Helper {
 	 * @param $string
 	 * @param callable $callback
 	 * @param string $pattern_name
+	 * @param string $parsable_keywords
 	 */
-	public function __construct( $string, $callback, $pattern_name = '' ) {
+	public function __construct( $string, $callback, $pattern_name = '', $parsable_keywords = array() ) {
 
 		$this->string = $string;
 		$this->callback = $callback;
+		$this->parsable_keywords = $parsable_keywords;
 
 		if ( $pattern_name && isset( $this->patterns[$pattern_name] ) ) {
 			$this->selected_pattern = $this->patterns[$pattern_name];
@@ -83,6 +92,10 @@ class IG_ES_Replace_Helper {
 		if ( is_array( $match ) ) {
 			$match = $match[ $this->selected_pattern['match'] ];
 		}
+		if ( ! empty( $this->parsable_keywords ) ) {
+			return call_user_func( $this->callback, $match, $this->parsable_keywords );
+		}
+
 		return call_user_func( $this->callback, $match );
 	}
 

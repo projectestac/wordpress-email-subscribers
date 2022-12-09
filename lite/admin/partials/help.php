@@ -66,13 +66,41 @@ $topics = ES_Common::get_useful_articles();
 $topics_indexes = array_rand( $topics, 5 );
 
 $articles = array(
-	array( 'title' => 'Create and Send Newsletter Emails', 'link' => 'https://www.icegram.com/documentation/es-how-to-create-and-send-newsletter-emails/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page', 'class' => 'font-medium text-blue-500 hover:text-blue-700' ),
-	array( 'title' => 'Schedule Cron Emails in cPanel', 'link' => 'https://www.icegram.com/documentation/es-how-to-schedule-cron-emails/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page', 'class' => 'font-medium text-blue-500 hover:text-blue-700' ),
-	array( 'title' => 'How to enable consent checkbox in the subscribe form?', 'link' => 'https://www.icegram.com/documentation/es-gdpr-how-to-enable-consent-checkbox-in-the-subscription-form/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page', 'class' => 'font-medium text-blue-500 hover:text-blue-700' ),
-	array( 'title' => 'What data Email Subscribers stores on your end?', 'link' => 'https://www.icegram.com/documentation/es-gdpr-what-data-email-subscribers-stores-on-your-end/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page', 'class' => 'font-medium text-blue-500 hover:text-blue-700' ),
-	array( 'title' => 'Create and Send Post Notification Emails when new posts are published', 'link' => 'https://www.icegram.com/documentation/es-how-to-create-and-send-post-notification-emails-when-new-posts-are-published/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page', 'class' => 'font-medium text-blue-500 hover:text-blue-700' ),
-	array( 'title' => 'Keywords in the Broadcast', 'link' => 'https://www.icegram.com/documentation/es-what-are-the-available-keywords-in-the-newsletters/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page', 'class' => 'font-medium text-blue-500 hover:text-blue-700' ),
-	array( 'title' => 'Keywords in the Post Notifications', 'link' => 'https://www.icegram.com/documentation/es-what-are-the-available-keywords-in-the-post-notifications/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page', 'class' => 'font-medium text-blue-500 hover:text-blue-700' ),
+	array(
+		'title' => 'Create and Send Newsletter Emails',
+		'link'  => 'https://www.icegram.com/documentation/es-how-to-create-and-send-newsletter-emails/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page',
+		'class' => 'font-medium text-blue-500 hover:text-blue-700',
+	),
+	array(
+		'title' => 'Schedule Cron Emails in cPanel',
+		'link'  => 'https://www.icegram.com/documentation/es-how-to-schedule-cron-emails/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page',
+		'class' => 'font-medium text-blue-500 hover:text-blue-700',
+	),
+	array(
+		'title' => 'How to enable consent checkbox in the subscribe form?',
+		'link'  => 'https://www.icegram.com/documentation/es-gdpr-how-to-enable-consent-checkbox-in-the-subscription-form/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page',
+		'class' => 'font-medium text-blue-500 hover:text-blue-700',
+	),
+	array(
+		'title' => 'What data Icegram Express (formerly known as Email Subscribers & Newsletters) stores on your end?',
+		'link'  => 'https://www.icegram.com/documentation/es-gdpr-what-data-email-subscribers-stores-on-your-end/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page',
+		'class' => 'font-medium text-blue-500 hover:text-blue-700',
+	),
+	array(
+		'title' => 'Create and Send Post Notification Emails when new posts are published',
+		'link'  => 'https://www.icegram.com/documentation/es-how-to-create-and-send-post-notification-emails-when-new-posts-are-published/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page',
+		'class' => 'font-medium text-blue-500 hover:text-blue-700',
+	),
+	array(
+		'title' => 'Keywords in the Broadcast',
+		'link'  => 'https://www.icegram.com/documentation/what-keywords-can-be-used-while-designing-the-campaign/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page',
+		'class' => 'font-medium text-blue-500 hover:text-blue-700',
+	),
+	array(
+		'title' => 'Keywords in the Post Notifications',
+		'link'  => 'https://www.icegram.com/documentation/what-keywords-can-be-used-while-designing-the-campaign/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page',
+		'class' => 'font-medium text-blue-500 hover:text-blue-700',
+	),
 );
 
 ?>
@@ -105,7 +133,7 @@ $articles = array(
 					<p class="px-2 py-2">
 					<?php
 						/* translators: 1. Starting strong tag 2. Closing strong tag */
-						echo sprintf( esc_html__( 'If you found duplicate campaigns, lists, forms, reports after upgrading from Email Subscribers 3.5.x to 4.x and want to run the database migration again to fix this, please click the below %1$sRun the updater%2$s button.', 'email-subscribers' ), '<strong>', '</strong>' );
+						echo sprintf( esc_html__( 'If you found duplicate campaigns, lists, forms, reports after upgrading from Icegram Express (formerly known as Email Subscribers & Newsletters) 3.5.x to 4.x and want to run the database migration again to fix this, please click the below %1$sRun the updater%2$s button.', 'email-subscribers' ), '<strong>', '</strong>' );
 					?>
 					</p>
 
@@ -120,8 +148,8 @@ $articles = array(
 						 <span class="rounded-md shadow-sm">
 							 <a href="<?php echo esc_url( $update_url ); ?>">
 								 <button type="button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue">
-								<?php 
-								echo esc_html__( 'Run the updater', 'email-subscribers' ); 
+								<?php
+								echo esc_html__( 'Run the updater', 'email-subscribers' );
 								?>
 								</button>
 							</a>
@@ -138,8 +166,8 @@ $articles = array(
 				<div class="flex w-2/3 py-2 justify-center <?php echo esc_attr( $contact_us_btn_class ); ?>">
 				 <span class="rounded-md shadow-sm">
 					<button type="button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue">
-					<?php 
-						echo esc_html__( 'Contact US', 'email-subscribers' ); 
+					<?php
+						echo esc_html__( 'Contact US', 'email-subscribers' );
 					?>
 					</button>
 				 </span>
@@ -155,9 +183,9 @@ $articles = array(
 
 							<div class="flex items-center px-2 py-2 md:justify-between sm:px-2">
 								<div class="text-sm leading-5 text-gray-900">
-									<?php 
+									<?php
 									echo wp_kses_post( $topics[ $index ]['title'] );
-									if ( ! empty( $topics[ $index ]['label'] ) ) { 
+									if ( ! empty( $topics[ $index ]['label'] ) ) {
 										?>
 										<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php echo esc_attr( $topics[ $index ]['label_class'] ); ?>"><?php echo esc_html( $topics[ $index ]['label'] ); ?></span>
 									<?php } ?>
@@ -219,17 +247,17 @@ $articles = array(
 		  <span class="rounded-md shadow-sm">
 				<?php if ( ! in_array( $ig_plugin['name'], $active_plugins ) ) { ?>
 			  <a href="<?php echo esc_url( $ig_plugin['install_url'] ); ?>">
-					<?php 
+					<?php
 				}
 
-				if ( ! in_array( $ig_plugin['name'], $all_plugins ) ) { 
+				if ( ! in_array( $ig_plugin['name'], $all_plugins ) ) {
 					?>
 				  <button type="button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-white bg-green-600 border border-transparent rounded-md hover:bg-green-500 focus:outline-none focus:shadow-outline-blue">
 						<?php echo esc_html__( 'Install', 'email-subscribers' ); ?> </button>
 				<?php } elseif ( in_array( $ig_plugin['name'], $inactive_plugins ) ) { ?>
 				  <button type="button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue">
 					<?php echo esc_html__( 'Activate', 'email-subscribers' ); ?> </button>
-			  <?php } ?>
+				<?php } ?>
 			  </a>
 			</span>
 						</div>

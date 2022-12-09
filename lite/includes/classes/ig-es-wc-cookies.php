@@ -30,7 +30,7 @@ class IG_ES_WC_Cookies {
 
 	/**
 	 * Gets a cookie
-	 * 
+	 *
 	 * @param $name
 	 * @return mixed
 	 */

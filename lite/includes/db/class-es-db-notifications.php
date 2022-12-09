@@ -26,7 +26,7 @@ class ES_DB_Notifications {
 	 */
 	public static function migrate_post_notification_es_template_type() {
 		global $wpdb;
-		
+
 		$update = $wpdb->query(
 			$wpdb->prepare(
 				"UPDATE {$wpdb->prefix}postmeta SET meta_value = %s WHERE meta_key = %s AND meta_value = %s",
@@ -48,7 +48,7 @@ class ES_DB_Notifications {
 		global $wpdb;
 
 		$update = $wpdb->query(
-			$wpdb->prepare( 
+			$wpdb->prepare(
 				"UPDATE {$wpdb->prefix}postmeta SET meta_value = %s WHERE meta_key = %s AND meta_value = %s",
 				array( 'newsletter', 'es_template_type', 'Newsletter' )
 			)

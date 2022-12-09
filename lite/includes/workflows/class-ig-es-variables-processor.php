@@ -123,7 +123,7 @@ class IG_ES_Variables_Processor {
 
 		$value = '';
 
-		if ( method_exists( $variable, 'get_value' ) ) {
+		if ( $variable instanceof IG_ES_Workflow_Variable && method_exists( $variable, 'get_value' ) ) {
 
 			if ( in_array( $data_type, ES_Workflow_Data_Types::get_non_stored_data_types(), true ) ) {
 				$value = $variable->get_value( $parameters, $this->workflow );
@@ -162,7 +162,6 @@ class IG_ES_Variables_Processor {
 
 	/**
 	 * Certain variables can be excluded from processing.
-	 * Currently only {{ unsubscribe_url }}
 	 *
 	 * @param string $variable
 	 * @return bool
@@ -182,6 +181,9 @@ class IG_ES_Variables_Processor {
 		   'LIST',
 		   'SITENAME',
 		   'SITEURL',
+		   'SUBJECT',
+		   'COUNT',
+		   'DATE',
 		));
 
 		return in_array( $variable, $excluded );

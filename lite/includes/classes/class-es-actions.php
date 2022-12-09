@@ -46,7 +46,6 @@ if ( ! class_exists( 'ES_Actions' ) ) {
 		 * Init Actions
 		 *
 		 * @since 4.2.0
-		 *
 		 */
 		public function init() {
 			add_action( 'ig_es_contact_subscribe', array( &$this, 'subscribe' ), 10, 2 );
@@ -196,8 +195,6 @@ if ( ! class_exists( 'ES_Actions' ) ) {
 			// Track only if campaign sent.
 			if ( $this->is_campaign_sent( $contact_id, $message_id, $campaign_id ) ) {
 
-				$this->update_viewed_status( $contact_id, $campaign_id, $message_id );
-
 				$action_data = array(
 					'contact_id'  => $contact_id,
 					'message_id'  => $message_id,
@@ -311,7 +308,7 @@ if ( ! class_exists( 'ES_Actions' ) ) {
 		}
 
 		/**
-		 * Method to update campaign viewed/opened_at status 
+		 * Method to update campaign viewed/opened_at status
 		 *
 		 * @param int $conact_id
 		 * @param int $campaign_id
@@ -329,10 +326,10 @@ if ( ! class_exists( 'ES_Actions' ) ) {
 			}
 
 			$current_date = ig_get_current_date_time();
-			$sql = $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}ig_sending_queue SET opened_at = %s, opened = %d WHERE contact_id = %d AND campaign_id = %d AND mailing_queue_id = %d", $current_date, 1, $conact_id, $campaign_id, $message_id ) );
+			$sql          = $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}ig_sending_queue SET opened_at = %s, opened = %d WHERE contact_id = %d AND campaign_id = %d AND mailing_queue_id = %d", $current_date, 1, $conact_id, $campaign_id, $message_id ) );
 
 			return $sql;
-			
+
 		}
 
 		/**

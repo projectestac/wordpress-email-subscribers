@@ -15,14 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * IG_ES_DB_WC_Cart class
  *
- *@since 4.6.5
+ * @since 4.6.5
  */
 class IG_ES_DB_WC_Cart extends ES_DB {
 
 	/**
 	 * Workflow queue table name
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 * @var $table_name
 	 */
 	public $table_name;
@@ -30,7 +30,7 @@ class IG_ES_DB_WC_Cart extends ES_DB {
 	/**
 	 * Workflow queue table version
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 * @var $version
 	 */
 	public $version;
@@ -38,7 +38,7 @@ class IG_ES_DB_WC_Cart extends ES_DB {
 	/**
 	 * Workflow queue table primary key
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 * @var $primary_key
 	 */
 	public $primary_key;
@@ -46,7 +46,7 @@ class IG_ES_DB_WC_Cart extends ES_DB {
 	/**
 	 * IG_ES_DB_WC_Cart constructor.
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 */
 	public function __construct() {
 		global $wpdb;
@@ -62,7 +62,7 @@ class IG_ES_DB_WC_Cart extends ES_DB {
 	/**
 	 * Returns workflow queue table's columns
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 *
 	 * @return array workflow queue table columns
 	 */
@@ -88,7 +88,7 @@ class IG_ES_DB_WC_Cart extends ES_DB {
 	/**
 	 * Returns default values for workflow columns
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 *
 	 * @return array default values for workflow columns
 	 */
@@ -120,7 +120,7 @@ class IG_ES_DB_WC_Cart extends ES_DB {
 	 *
 	 * @return mixed $result Query result
 	 *
-	 *@since 4.6.5
+	 * @since 4.6.5
 	 */
 	public function get_carts( $query_args = array(), $output = ARRAY_A, $do_count_only = false ) {
 

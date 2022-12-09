@@ -41,14 +41,14 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 			// add_action( 'ig_es_email_sending_error', array( &$this, 'set_status_in_queue' ), 10, 4 );
 			add_action( 'ig_es_message_sent', array( &$this, 'set_sent_status' ), 10, 3 );
 			add_action( 'ig_es_message_sent', array( &$this, 'update_email_sent_count' ), 10, 3 );
-			
-			// Action scheduler action to add subscribers to sending_queue table in background. Called through Action Scheduler library.
-			add_action( 'ig_es_add_subscribers_to_sending_queue', array( &$this, 'add_subscribers_to_sending_queue' ) );
-			
+			add_action( 'ig_es_message_failed', array( &$this, 'set_failed_status' ), 10, 3 );
+			add_action( 'ig_es_contact_unsubscribe', array( &$this, 'delete_contact_queued_emails' ), 10, 4 );
+			add_action( 'ig_es_admin_contact_unsubscribe', array( &$this, 'delete_contact_queued_emails' ), 10, 4 );
+
 			// Ajax handler for running action scheduler task.
 			add_action( 'wp_ajax_ig_es_run_action_scheduler_task', array( 'IG_ES_Background_Process_Helper', 'run_action_scheduler_task' ) );
 			add_action( 'wp_ajax_nopriv_ig_es_run_action_scheduler_task', array( 'IG_ES_Background_Process_Helper', 'run_action_scheduler_task' ) );
-		
+
 			// Ajax handler for triggering email queue sending.
 			add_action( 'wp_ajax_ig_es_trigger_mailing_queue_sending', array( $this, 'trigger_mailing_queue_sending' ) );
 			add_action( 'wp_ajax_nopriv_ig_es_trigger_mailing_queue_sending', array( $this, 'trigger_mailing_queue_sending' ) );
@@ -65,6 +65,8 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 			add_action( 'ig_es_cron_worker', array( &$this, 'process_campaigns' ), 10 );
 			add_action( 'ig_es_cron_worker', array( &$this, 'process_queue' ), 30 );
+			// Background request to process ig_queue.
+			add_action( 'wp_ajax_ig_es_process_queue', array( &$this, 'process_queue' ) );
 		}
 
 		/**
@@ -152,25 +154,24 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 								// Proceed only if we have posts for digest.
 								if ( ! empty( $post_ids ) ) {
 									$list_id = $campaign['list_ids'];
-									$list_id = explode( ',', $list_id );
+									if ( ! empty( $list_id ) ) {
+										$list_id = explode( ',', $list_id );
+									}
 
 									// Do we have active subscribers?
 									$contacts       = ES()->contacts_db->get_active_contacts_by_list_id( $list_id );
 									$total_contacts = count( $contacts );
 
-									if ( $total_contacts > 0 ) {
+									// Create a new mailing queue using this campaign
+									$result = $this->add_campaign_to_queue( $campaign, $total_contacts );
 
-										// Create a new mailing queue using this campaign
-										$result = $this->add_campaign_to_queue( $campaign, $total_contacts );
+									if ( ! empty( $result['id'] ) ) {
 
-										if ( is_array( $result ) ) {
+										$mailing_queue_id = $result['id'];
 
-											$mailing_queue_id = $result['id'];
-											
-											if ( ! empty( $mailing_queue_id ) ) {
-												$mailing_queue_hash = $result['hash'];
-												ES_DB_Sending_Queue::do_insert_from_contacts_table( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
-											}
+										if ( ! empty( $mailing_queue_id ) ) {
+											$mailing_queue_hash = $result['hash'];
+											ES_DB_Sending_Queue::do_insert_from_contacts_table( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
 										}
 									}
 								}
@@ -219,7 +220,6 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 		 * @since 4.2.1
 		 */
 		public function queue_sequences( $campaign_id = 0, $force = false ) {
-			global $wpbd;
 			/**
 			 * Steps
 			 *  1. Fetch all active Sequence Message
@@ -244,7 +244,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 			}
 
 			$now = time();
-
+		
 			foreach ( $campaigns as $campaign ) {
 
 				if ( in_array( $campaign['id'], $campaigns_to_process ) && ! $force ) {
@@ -259,8 +259,6 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 				$rules = ! empty( $meta['rules'] ) ? $meta['rules'] : array();
 
-				// ES()->logger->info( 'Rules: ' . print_r( $rules, true ) );
-
 				if ( ! empty( $rules ) ) {
 
 					$action = ! empty( $rules['action'] ) ? $rules['action'] : '';
@@ -268,17 +266,28 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 					if ( 'ig_es_contact_insert' != $action ) {
 						continue;
 					}
+					
+					$delay_unit   = $rules['unit'];
+					$delay_amount = $rules['amount'];
 
-					// We are considering contacts for sequences which are last added in a week.
-					$grace_period  = 1 * DAY_IN_SECONDS;
-					$queue_upfront = 3600;
-
-					$offset = (int) $rules['amount'] . ' ' . strtoupper( $rules['unit'] );
+					if ( 'immediately' === $delay_unit ) {
+						$offset       = '0 HOUR';
+						$grace_period = 15 * MINUTE_IN_SECONDS;
+					} else {
+						$offset = (int) $delay_amount . ' ' . strtoupper( $delay_unit );
+						if ( 'hour' === $delay_unit ) {
+							$grace_period = 15 * MINUTE_IN_SECONDS;
+						} elseif ( 'day' === $delay_unit ) {
+							$grace_period = 1 * HOUR_IN_SECONDS;
+						} elseif ( 'week' === $delay_unit ) {
+							$grace_period = 1 * HOUR_IN_SECONDS;
+						}
+					}
 
 					$list_ids = $campaign['list_ids'];
 
 					$campaign = ES()->campaigns_db->get( $campaign_id );
-					
+
 					$conditions = array();
 					if ( ! empty( $campaign ) && ! empty( $campaign['meta'] ) ) {
 						$campaign_meta = maybe_unserialize( $campaign['meta'] );
@@ -288,35 +297,31 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 					}
 
 					$conditions = ! empty( $meta['list_conditions'] ) ? $meta['list_conditions'] : array();
-
-					
+					$end_time   = gmdate( 'Y-m-d H:i:s', $now );
 					$query_args = array(
-						'select'         => array(
+						'select'        => array(
 							'lists_subscribers.contact_id AS contact_id',
-							"UNIX_TIMESTAMP ( lists_subscribers.subscribed_at + INTERVAL $offset ) AS timestamp",
+							// Since UNIX_TIMESTAMP expect date to be in session time zone and subscribed_at is already in UTC, we are first converting subscribed_at date from UTC time to session time and then passing it to .
+							"UNIX_TIMESTAMP ( CONVERT_TZ( lists_subscribers.subscribed_at + INTERVAL $offset, '+0:00', @@session.time_zone ) ) AS timestamp",
 						),
 						'sent__not_in'  => array( $campaign_id ),
 						'queue__not_in' => array( $campaign_id ),
-						'lists'          => $list_ids,
-						'conditions'     => $conditions,
-						'having'         => array( 'timestamp <= ' . ( $now + $queue_upfront ) ),
-						'orderby'        => array( 'timestamp' ),
-						'groupby'		 => 'lists_subscribers.contact_id',
+						'lists'         => $list_ids,
+						'conditions'    => $conditions,
+						'having'        => array( "timestamp <= UNIX_TIMESTAMP ( CONVERT_TZ( '$end_time', '+0:00', @@session.time_zone ) )" ),
+						'orderby'       => array( 'timestamp' ),
+						'groupby'       => 'lists_subscribers.contact_id',
+						'status'		=> 'subscribed',
+						'subscriber_status'		=> array( 'verified' ),
 					);
 
 					if ( $grace_period ) {
-						$query_args['having'][] = 'timestamp >= ' . ( $now - $grace_period );
+						$start_time             = gmdate( 'Y-m-d H:i:s', $now - $grace_period );
+						$query_args['having'][] = "timestamp >= UNIX_TIMESTAMP ( CONVERT_TZ( '$start_time', '+0:00', @@session.time_zone ) )";
 					}
 
-					$query     = new IG_ES_Subscribers_Query();
+					$query   = new IG_ES_Subscribers_Query();
 					$results = $query->run( $query_args );
-
-					// ES()->logger->info( '----------------------------Query Args (ig_es_contact_insert) ----------------------------' );
-					// ES()->logger->info( $query );
-					// ES()->logger->info( '----------------------------Query Args Complete (ig_es_contact_insert) ----------------------------' );
-
-
-					// ES()->logger->info( 'Results: ' . print_r( $results, true ) );
 
 					if ( ! empty( $results ) ) {
 
@@ -355,44 +360,37 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 		 *
 		 * @since 4.2.0
 		 */
-		public function add_campaign_to_queue( $campaign, $total_contacts ) {
+		public function add_campaign_to_queue( $campaign ) {
 
 			$campaign_id = $campaign['id'];
 			$template_id = $campaign['base_template_id'];
 			$template    = get_post( $template_id );
-			$queue_id    = 0;
-			if ( $template instanceof WP_Post && $total_contacts > 0 ) {
+			$subject     = $campaign['subject'];
+			$content     = $campaign['body'];
+			$content     = ES_Common::es_process_template_body( $content, $template_id );
 
-				$subject = ! empty( $template->post_title ) ? $template->post_title : '';
-				$content = ! empty( $template->post_content ) ? $template->post_content : '';
-				$content = ES_Common::es_process_template_body( $content, $template_id );
+			$guid = ES_Common::generate_guid( 6 );
 
-				$guid = ES_Common::generate_guid( 6 );
+			$data = array(
+				'hash'        => $guid,
+				'campaign_id' => $campaign_id,
+				'subject'     => $subject,
+				'body'        => $content,
+				'count'       => 0,
+				'status'      => '',
+				'start_at'    => ! empty( $campaign['start_at'] ) ? $campaign['start_at'] : '',
+				'finish_at'   => '',
+				'created_at'  => ig_get_current_date_time(),
+				'updated_at'  => ig_get_current_date_time(),
+				'meta'        => maybe_serialize( array( 'type' => $campaign['type'] ) ),
+			);
 
-				$data = array(
-					'hash'        => $guid,
-					'campaign_id' => $campaign_id,
-					'subject'     => $subject,
-					'body'        => $content,
-					'count'       => 0,
-					'status'      => 'In Queue',
-					'start_at'    => ! empty( $campaign['start_at'] ) ? $campaign['start_at'] : '',
-					'finish_at'   => '',
-					'created_at'  => ig_get_current_date_time(),
-					'updated_at'  => ig_get_current_date_time(),
-					'meta'        => maybe_serialize( array( 'type' => $campaign['type'] ) ),
-				);
+			$queue_id = ES_DB_Mailing_Queue::add_notification( $data );
 
-				$queue_id = ES_DB_Mailing_Queue::add_notification( $data );
-
-				return array(
-					'hash' => $guid,
-					'id'   => $queue_id,
-				);
-
-			}
-
-			return $queue_id;
+			return array(
+				'hash' => $guid,
+				'id'   => $queue_id,
+			);
 		}
 
 		/**
@@ -458,13 +456,6 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 			$campaign_id = (int) $campaign_id;
 			$subscribers = array_filter( $subscribers, 'is_numeric' );
 
-			if ( $tags ) {
-				$tags = maybe_serialize( $tags );
-			}
-			if ( $options ) {
-				$options = maybe_serialize( $options );
-			}
-
 			if ( empty( $subscribers ) ) {
 				return true;
 			}
@@ -472,7 +463,18 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 			$inserts = array();
 
 			foreach ( $subscribers as $i => $subscriber_id ) {
-				$inserts[] = "($subscriber_id,$campaign_id,$now," . $timestamps[ $i ] . ",$priority,1,'$ignore_status','$options','$tags')";
+				if ( isset( $tags[ $subscriber_id ] ) ) {
+					$subscriber_tags = maybe_serialize( $tags[ $subscriber_id ] );
+				} else {
+					$subscriber_tags = '';
+				}
+
+				if ( isset( $options[ $subscriber_id ] ) ) {
+					$subscriber_options = maybe_serialize( $options[ $subscriber_id ] );
+				} else {
+					$subscriber_options = '';
+				}
+				$inserts[] = "($subscriber_id,$campaign_id,$now," . $timestamps[ $i ] . ",$priority,1,'$ignore_status','$subscriber_options','$subscriber_tags')";
 			}
 
 			$chunks = array_chunk( $inserts, 1000 );
@@ -485,15 +487,9 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 				$sql .= ' ' . implode( ',', $insert );
 
-				$sql .= ' ON DUPLICATE KEY UPDATE timestamp = values(timestamp), ignore_status = values(ignore_status)';
+				$sql .= ' ON DUPLICATE KEY UPDATE timestamp = values(timestamp), ignore_status = values(ignore_status), options = values(options), tags = values(tags)';
 				if ( $reset ) {
-					$sql .= ', sent = 0';
-				}
-				if ( $options ) {
-					$sql .= sprintf( ", options = '%s'", $options );
-				}
-				if ( $tags ) {
-					$sql .= sprintf( ", tags = '%s'", $tags );
+					$sql .= ', sent_at = 0';
 				}
 
 				// ES()->logger->info( 'Adding Bulk SQL: ' . $sql );
@@ -542,6 +538,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 		 * @since 4.2.1
 		 */
 		public function process_queue() {
+
 			global $wpdb;
 
 			if ( ES()->cron->should_unlock() ) {
@@ -549,91 +546,107 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 			}
 
 			ES()->cron->set_last_hit();
-			
+
 			$email_sending_limit = ES()->mailer->get_total_emails_send_now();
 
 			if ( $email_sending_limit > 0 ) {
 
 				$micro_time = microtime( true );
-	
+
 				// ES()->logger->info( 'Process Queue:' );
 				// ES()->logger->info( 'SQL: ' . $sql );
-	
-				$notifications = $wpdb->get_results( 
+
+				$notifications = $wpdb->get_results(
 					$wpdb->prepare(
 						"SELECT queue.campaign_id, queue.contact_id, queue.count AS _count, queue.requeued AS _requeued, queue.options AS _options, queue.tags AS _tags, queue.priority AS _priority
 						 FROM {$wpdb->prefix}ig_queue AS queue
 						 LEFT JOIN {$wpdb->prefix}ig_campaigns AS campaigns ON campaigns.id = queue.campaign_id
 						 WHERE queue.timestamp <= %d AND queue.sent_at = 0
-						 AND (campaigns.status = 1)
+						 AND (campaigns.status = 1 OR queue.ignore_status = 1)
 						 ORDER BY queue.priority DESC",
-						 (int) $micro_time
+						(int) $micro_time
 					),
 					ARRAY_A
 				);
-	
+
 				$batch_start_time = time();
-				
+
 				if ( is_array( $notifications ) && count( $notifications ) > 0 ) {
-					$campaigns_notifications = array(); 
-					$contact_ids 			 = array();
+					$campaigns_notifications = array();
+					$contact_ids             = array();
 					foreach ( $notifications as $notification ) {
 						$campaigns_notifications[ $notification['campaign_id'] ][] = $notification;
-	
+
 						$contact_ids[] = $notification['contact_id'];
 					}
-	
+
 					// We need unique ids
 					$contact_ids = array_unique( $contact_ids );
-	
+
 					$contacts = ES()->contacts_db->get_details_by_ids( $contact_ids );
-	
+
 					foreach ( $campaigns_notifications as $campaign_id => $notifications ) {
-	
-						$campaign = ES()->campaigns_db->get( $campaign_id );
-	
-						if ( ! empty( $campaign ) ) {
-	
-							$content = $campaign['body'];
-							$subject = $campaign['subject'];
-	
-							foreach ( $notifications as $notification ) {
-	
-								$contact_id = $notification['contact_id'];
-	
-								if ( ! empty( $contacts[ $contact_id ] ) ) {
-	
-									$first_name = $contacts[ $contact_id ]['first_name'];
-									$last_name  = $contacts[ $contact_id ]['last_name'];
-									$hash       = $contacts[ $contact_id ]['hash'];
-									$email      = $contacts[ $contact_id ]['email'];
-									$name       = ES_Common::prepare_name_from_first_name_last_name( $first_name, $last_name );
-	
-									$merge_tags = array(
-										'name'        => $name,
-										'first_name'  => $first_name,
-										'last_name'   => $last_name,
-										'email'       => $email,
-										'guid'        => $hash,
-										'dbid'        => $contact_id,
-										'message_id'  => 0,
-										'campaign_id' => $campaign_id,
-									);
-	
-									$result = ES()->mailer->send( $subject, $content, $email, $merge_tags );
-	
-									do_action( 'ig_es_message_sent', $contact_id, $campaign_id, 0 );
 
-									$email_sending_limit--;
-									
-									// Email Sent now delete from queue now.
-									$this->db->delete_from_queue( $campaign_id, $contact_id );
+						if ( ! empty( $campaign_id ) ) {
+							$campaign = ES()->campaigns_db->get( $campaign_id );
+
+							if ( ! empty( $campaign ) ) {
+
+								$content = $campaign['body'];
+
+								$subject = $campaign['subject'];
+							}
+						}
+
+						foreach ( $notifications as $notification ) {
+
+							$contact_id = $notification['contact_id'];
+
+							if ( ! empty( $contacts[ $contact_id ] ) ) {
+
+								$first_name = $contacts[ $contact_id ]['first_name'];
+								$last_name  = $contacts[ $contact_id ]['last_name'];
+								$hash       = $contacts[ $contact_id ]['hash'];
+								$email      = $contacts[ $contact_id ]['email'];
+								$name       = ES_Common::prepare_name_from_first_name_last_name( $first_name, $last_name );
+
+								$merge_tags = array(
+									'name'        => $name,
+									'first_name'  => $first_name,
+									'last_name'   => $last_name,
+									'email'       => $email,
+									'guid'        => $hash,
+									'dbid'        => $contact_id,
+									'message_id'  => 0,
+									'campaign_id' => $campaign_id,
+								);
+
+								$notification_options = maybe_unserialize( $notification['_options'] );
+								$notification_type    = ! empty( $notification_options['type'] ) ? $notification_options['type'] : '';
+								if ( 'optin_confirmation' === $notification_type ) {
+									$merge_tags['contact_id'] = $contact_id;
+									ES()->mailer->send_double_optin_email( $email, $merge_tags );
+								} elseif ( 'optin_welcome_email' === $notification_type ) {
+									$merge_tags['contact_id'] = $contact_id;
+									ES()->mailer->send_welcome_email( $email, $merge_tags );
+								} else {
+									// Enable unsubscribe link and tracking pixel
+									ES()->mailer->add_unsubscribe_link = true;
+									ES()->mailer->add_tracking_pixel   = true;
+									ES()->mailer->send( $subject, $content, $email, $merge_tags );
 								}
 
-								// Check if email sending limit or time limit or memory limit has been reached.
-								if ( $email_sending_limit <= 0 || IG_ES_Background_Process_Helper::time_exceeded( $batch_start_time, 0.8 ) || IG_ES_Background_Process_Helper::memory_exceeded() ) {
-									break 2;
-								}
+								do_action( 'ig_es_message_sent', $contact_id, $campaign_id, 0 );
+
+								$email_sending_limit--;
+
+								// Email Sent now delete from queue now.
+								$this->db->delete_from_queue( $campaign_id, $contact_id );
+							}
+
+							// Check if email sending limit or time limit or memory limit has been reached.
+							if ( $email_sending_limit <= 0 || IG_ES_Background_Process_Helper::time_exceeded( $batch_start_time, 0.8 ) || IG_ES_Background_Process_Helper::memory_exceeded() ) {
+								break 2; // Break inner and outer loop
 							}
 						}
 					}
@@ -699,53 +712,53 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 						// Try to lock cron job.
 						$locking_status = $this->lock_cron_job( $cron_job, $cron_job_data );
 						if ( 'locked' === $locking_status ) {
-							
+
 							register_shutdown_function( array( $this, 'unlock_cron_job' ), $cron_job );
-							
+
 							$campaign_type = '';
 							if ( ! empty( $campaign_id ) ) {
 								$campaign_type = ES()->campaigns_db->get_campaign_type_by_id( $campaign_id );
 							}
-		
+
 							if ( 'newsletter' === $campaign_type ) {
 								ES()->campaigns_db->update_status( $campaign_id, IG_ES_CAMPAIGN_STATUS_QUEUED );
 							}
 
-							
-		
-							ES_DB_Mailing_Queue::update_sent_status( $notification_guid, 'Sending' );
-		
+							// Set status to Sending only if it in the queued status currently.
+							if ( 'In Queue' === $notification['status'] ) {
+								ES_DB_Mailing_Queue::update_sent_status( $notification_guid, 'Sending' );
+							}
+
+							// Sync mailing queue content with the related campaign.
+							$notification = ES_DB_Mailing_Queue::sync_content( $notification );
+
 							// Get subscribers from the sending_queue table based on fetched guid
 							$emails_data  = ES_DB_Sending_Queue::get_emails_to_be_sent_by_hash( $notification_guid, $es_c_croncount );
 							$total_emails = count( $emails_data );
 							// Found Subscribers to send notification?
 							if ( $total_emails > 0 ) {
-								$ids 	= array();
-								$emails = array();
-								foreach ( $emails_data as $email ) {
-									$ids[]    = $email['id'];
-									$emails[] = $email['email'];
-								}
-		
+								$emails = array_column( $emails_data, 'email' );
+
 								$merge_tags = array(
 									'guid'        => $notification_guid,
 									'message_id'  => $message_id,
 									'campaign_id' => $campaign_id,
 								);
-		
+
 								$subject = $notification['subject'];
 								$content = $notification['body'];
-		
+
+								// $content = utf8_encode( $content );
 								ES()->mailer->send( $subject, $content, $emails, $merge_tags );
-		
+
 								$total_remaining_emails      = ES_DB_Sending_Queue::get_total_emails_to_be_sent_by_hash( $notification_guid );
 								$remaining_emails_to_be_sent = ES_DB_Sending_Queue::get_total_emails_to_be_sent();
-		
+
 								// No emails left for the $notification_guid??? Send admin notification for the
 								// Completion of a job
 								if ( 0 == $total_remaining_emails ) {
 									ES_DB_Mailing_Queue::update_sent_status( $notification_guid, 'Sent' );
-		
+
 									if ( 'newsletter' === $campaign_type ) {
 										ES()->campaigns_db->update_status( $campaign_id, IG_ES_CAMPAIGN_STATUS_FINISHED );
 									} elseif ( 'post_digest' === $campaign_type ) {
@@ -756,37 +769,69 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 											ES()->campaigns_db->update_campaign_meta( $campaign_id, $campaign_meta );
 										}
 									}
-		
-									// Send Cron Email to admins
-									ES()->mailer->send_cron_admin_email( $notification_guid );
+
+									do_action( 'ig_es_campaign_sent', $notification_guid );
 								}
-		
+
+								
+								$campaign_failed = did_action( 'ig_es_message_failed' );
+								if ( $campaign_failed ) {
+									$pending_statuses = array( 
+										IG_ES_SENDING_QUEUE_STATUS_QUEUED,
+										IG_ES_SENDING_QUEUE_STATUS_SENDING 
+									);
+									$pending_emails = ES_DB_Sending_Queue::get_total_emails_to_be_sent_by_hash( $notification_guid, $pending_statuses );	
+									if ( empty( $pending_emails ) ) {
+										$notification_meta = maybe_unserialize( $notification['meta'] );
+										$failed_count      = isset( $notification_meta['failed_count'] ) ? $notification_meta['failed_count'] : 0;
+										$failed_count++;
+										$notification_meta['failed_count'] = $failed_count;
+										$notification_data = array(
+											'meta'    => maybe_serialize( $notification_meta ),
+										);
+										if ( $failed_count >= 3 ) {
+											$notification_data['status'] = IG_ES_MAILING_QUEUE_STATUS_FAILED;
+											do_action( 'ig_es_campaign_failed', $notification_guid );
+										}
+										ES_DB_Mailing_Queue::update_mailing_queue( $message_id, $notification_data );
+									}									
+								} elseif ( $triggered_by_admin ) {
+									$notification_status = $notification['status'];
+									if ( IG_ES_MAILING_QUEUE_STATUS_FAILED === $notification_status ) {
+										$notification_meta = maybe_unserialize( $notification['meta'] );
+										unset( $notification_meta['failed_count'] );
+										$notification_data = array(
+											'meta'    => maybe_serialize( $notification_meta ),
+										);
+										$notification_data['status'] = IG_ES_MAILING_QUEUE_STATUS_SENDING;
+										ES_DB_Mailing_Queue::update_mailing_queue( $message_id, $notification_data );
+									}
+								}
+
 								// TODO: Implement better solution
 								set_transient( 'ig_es_total_emails_sent', $total_emails, MINUTE_IN_SECONDS );
 								set_transient( 'ig_es_remaining_email_count', $remaining_emails_to_be_sent, MINUTE_IN_SECONDS );
-		
+
 								$response['total_emails_sent']        = $total_emails;
 								$response['es_remaining_email_count'] = $remaining_emails_to_be_sent;
 								$response['message']                  = 'EMAILS_SENT';
 								$response['status']                   = 'SUCCESS';
 								// update last cron run time
 								update_option( 'ig_es_last_cron_run', time() );
-		
+
 							} else {
 								$response['es_remaining_email_count'] = 0;
 								$response['message']                  = 'EMAILS_NOT_FOUND';
 								$response['status']                   = 'SUCCESS';
 								ES_DB_Mailing_Queue::update_sent_status( $notification_guid, 'Sent' );
 							}
-							
+
 							$this->unlock_cron_job( $cron_job );
 						}
-	
 					} else {
 						$response['status']  = 'ERROR';
 						$response['message'] = 'CRON_LOCK_ENABLED';
 					}
-					
 				} else {
 					$response['es_remaining_email_count'] = 0;
 					$response['message']                  = 'NOTIFICATION_NOT_FOUND';
@@ -797,6 +842,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 				$response['status']  = 'ERROR';
 				$response['message'] = 'EMAIL_SENDING_LIMIT_EXCEEDED';
 			}
+
 		}
 
 		/**
@@ -809,7 +855,83 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 		 * @since 4.3.2
 		 */
 		public function update_email_sent_count( $contact_id = 0, $campaign_id = 0, $message_id = 0 ) {
-			ES_Common::update_total_email_sent_count();
+			$sent_count = 0;
+			if ( is_array( $contact_id ) ) {
+				$sent_count = count( $contact_id );
+			} else {
+				$sent_count = 1;
+			}
+			if ( ! empty( $sent_count ) ) {
+				ES_Common::update_total_email_sent_count( $sent_count );
+			}
+		}
+
+		/**
+		 * Delete contact queued emails
+		 *
+		 * @param int   $contact_id
+		 * @param int   $message_id
+		 * @param int   $campaign_id
+		 * @param array $list_ids
+		 *
+		 * @since 4.7.6
+		 */
+		public function delete_contact_queued_emails( $contact_ids, $message_id = 0, $campaign_id = 0, $list_ids = array() ) {
+			global $wpdb;
+
+			// Convert to array of contact ids if not already.
+			if ( ! is_array( $contact_ids ) ) {
+				$contact_ids = array( $contact_ids );
+			}
+
+			if ( ! empty( $contact_ids ) ) {
+				foreach ( $contact_ids as $contact_id ) {
+
+					// Queued emails from sending_queue table.
+					$sending_queue_emails = ES_DB_Sending_Queue::get_queued_emails( $contact_id );
+
+					// Queued emails from queue table.
+					$where         = $wpdb->prepare( 'contact_id = %d AND campaign_id <> 0', $contact_id );
+					$queued_emails = ES()->queue_db->get_by_conditions( $where );
+
+					// Merge sending queue table emails and queue table emails.
+					$queued_emails = array_merge( $sending_queue_emails, $queued_emails );
+
+					if ( ! empty( $queued_emails ) ) {
+						foreach ( $queued_emails as $queued_email ) {
+							$should_delete      = false;
+							$campaign_id        = $queued_email['campaign_id'];
+							$campaign_list_ids  = ES()->campaigns_db->get_list_ids( $campaign_id );
+							$remaining_list_ids = array_diff( $campaign_list_ids, $list_ids );
+
+							// True when the contact has unsubscribed from all the lists in the campaign.
+							if ( empty( $remaining_list_ids ) ) {
+								$should_delete = true;
+							} else {
+								$subscribed_lists = ES()->lists_contacts_db->get_list_ids_by_contact( $contact_id, 'subscribed' );
+								$common_lists     = array_intersect( $remaining_list_ids, $subscribed_lists );
+								// True when contact isn't subscribed to the remaining campaign lists.
+								if ( empty( $common_lists ) ) {
+									$should_delete = true;
+								}
+							}
+
+							if ( $should_delete ) {
+								// If mailing_queue_id exists then email is from the sending queue table.
+								if ( ! empty( $queued_email['mailing_queue_id'] ) ) {
+									$mailing_queue_id = $queued_email['mailing_queue_id'];
+									// Delete the contact from the sending queue and update the subscribers count in the mailing queue.
+									ES_DB_Sending_Queue::delete_contacts( array( $contact_id ), $mailing_queue_id );
+									ES_DB_Mailing_Queue::decrease_subscribers_count( $mailing_queue_id, 1 );
+								} else {
+									ES()->queue_db->delete_from_queue( $campaign_id, $contact_id );
+								}
+							}
+						}
+					}
+				}
+			}
+
 		}
 
 		/**
@@ -837,7 +959,8 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 		public function set_sending_status( $contact_id = 0, $campaign_id = 0, $message_id = 0 ) {
 
 			if ( 0 != $contact_id && 0 != $message_id ) {
-				$this->update_email_sent_status( $contact_id, $campaign_id, $message_id, 'Sending' );
+				$sending_status = IG_ES_SENDING_QUEUE_STATUS_SENDING;
+				$this->update_email_sent_status( $contact_id, $campaign_id, $message_id, $sending_status );
 			}
 		}
 
@@ -853,7 +976,25 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 		public function set_sent_status( $contact_id = 0, $campaign_id = 0, $message_id = 0 ) {
 
 			if ( 0 != $contact_id && 0 != $message_id ) {
-				$this->update_email_sent_status( $contact_id, $campaign_id, $message_id, 'Sent' );
+				$sent_status = IG_ES_SENDING_QUEUE_STATUS_SENT;
+				$this->update_email_sent_status( $contact_id, $campaign_id, $message_id, $sent_status );
+			}
+		}
+
+		/**
+		 * Set "Sent" status
+		 *
+		 * @param int $contact_id
+		 * @param int $campaign_id
+		 * @param int $message_id
+		 *
+		 * @since 4.3.2
+		 */
+		public function set_failed_status( $contact_id = 0, $campaign_id = 0, $message_id = 0 ) {
+
+			if ( 0 != $contact_id && 0 != $message_id ) {
+				$failed_status = IG_ES_SENDING_QUEUE_STATUS_FAILED;
+				$this->update_email_sent_status( $contact_id, $campaign_id, $message_id, $failed_status );
 			}
 		}
 
@@ -870,123 +1011,8 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 		public function set_status_in_queue( $contact_id = 0, $campaign_id = 0, $message_id = 0, $response = array() ) {
 
 			if ( 0 != $contact_id && 0 != $message_id ) {
-				$this->update_email_sent_status( $contact_id, $campaign_id, $message_id, 'In Queue' );
-			}
-		}
-		
-		/**
-		 * Method to add subscribers to the sending queue in background. Gets called through the Action Scheduler library.
-		 *
-		 * @param array $args action arguements.
-		 * 
-		 * @since 4.6.3
-		 */
-		public function add_subscribers_to_sending_queue( $args = array() ) {
-
-			if ( empty( $args['mailing_queue_id'] ) || ! is_numeric( $args['mailing_queue_id'] ) || empty( $args['list_ids'] ) ) {
-				return false;
-			}
-
-			$batch_start_time = time();
-
-			/** 
-			 * By subtracting the waiting time from $batch_start_time now, 
-			 * We are allowing timeout to happen in the background process loop 3 seconds earlier.
-			 * This earlier timeout will ensure we get engough time to make another asynchrounous request 
-			 * since we need to wait for sometime before making the asynchronous request.
-			 **/ 
-			$batch_start_time = $batch_start_time - IG_ES_Background_Process_Helper::get_wait_seconds();
-
-			$mailing_queue_id = $args['mailing_queue_id'];
-			$list_ids         = $args['list_ids'];
-
-			$mailing_queue      = ES_DB_Mailing_Queue::get_email_by_id( $mailing_queue_id );
-
-			// Check if mailing queue exists. May have been deleted manually.
-			if ( empty( $mailing_queue ) ) {
-				return false;
-			}
-			
-			$mailing_queue_hash = $mailing_queue['hash'];
-			$campaign_id        = $mailing_queue['campaign_id'];
-			
-			$active_subscribers = ES()->contacts_db->get_active_contacts_by_list_and_mailing_queue_id( $list_ids, $mailing_queue_id );
-			
-			if ( ! empty( $active_subscribers ) ) {
-				$subscribers_batch_size = 5000; 
-				
-				// Create batches of subscribers each containing maximum subscribers equal to $subscribers_batch_size.
-				$subscribers_batches = array_chunk( $active_subscribers, $subscribers_batch_size );
-				
-				foreach ( $subscribers_batches as $key => $subscribers ) {
-					
-					$delivery_data                     = array();
-					$delivery_data['hash']             = $mailing_queue_hash;
-					$delivery_data['subscribers']      = $subscribers;
-					$delivery_data['campaign_id']      = $campaign_id;
-					$delivery_data['mailing_queue_id'] = $mailing_queue_id;
-					
-					ES_DB_Sending_Queue::do_batch_insert( $delivery_data );
-					
-					// Remove the processed batch.
-					unset( $subscribers_batches[ $key ] );
-	
-					// Check if time limit or memory limit has been reached.
-					if ( IG_ES_Background_Process_Helper::time_exceeded( $batch_start_time ) || IG_ES_Background_Process_Helper::memory_exceeded() ) {
-						break;
-					}
-				}
-				
-				$total_contacts_added =  ES_DB_Sending_Queue::get_total_email_count_by_hash( $mailing_queue_hash );
-				ES_DB_Mailing_Queue::update_subscribers_count( $mailing_queue_hash, $total_contacts_added );
-				
-				// Check if there are no batches to process.
-				if ( empty( $subscribers_batches ) ) {
-	
-					$mailing_queue_status = 'In Queue';
-					// Update status to 'In Queue' so that cron(ES Cron/WP Cron) can pick it up.
-					ES_DB_Mailing_Queue::update_sent_status( $mailing_queue_hash, $mailing_queue_status );
-
-					$campaign_type = '';
-					if ( ! empty( $campaign_id ) ) {
-						$campaign_type = ES()->campaigns_db->get_campaign_type_by_id( $campaign_id );
-					}
-
-					// If campaign_type is newsletter i.e. broadcast, then trigger email sending if its email sending time has come.
-					if ( 'newsletter' === $campaign_type ) {
-						$queue_start_at = $mailing_queue['start_at'];
-			
-						$current_timestamp = time();
-						$sending_timestamp = strtotime( $queue_start_at );
-			
-						// Check if campaign sending time has come.
-						if ( $sending_timestamp <= $current_timestamp ) {
-							$request_args = array(
-								'action'        => 'ig_es_trigger_mailing_queue_sending',
-								'campaign_hash' => $mailing_queue_hash,
-							);
-							// Send an asynchronous request to trigger sending of campaign emails.
-							IG_ES_Background_Process_Helper::send_async_ajax_request( $request_args, true );
-						}
-					}
-
-				} else {
-					/**
-					 * If all subscribers batches are not processed(i.e. there are still emails to be added in the sending_queue table)
-					 * Create another action scheduler task to process remaining batches.
-					 **/
-					$action_args = array(
-						'mailing_queue_id' => $mailing_queue_id,
-						'list_ids'         => $list_ids,
-					);
-					IG_ES_Background_Process_Helper::add_action_scheduler_task( 'ig_es_add_subscribers_to_sending_queue', $action_args, true, true );
-				}
-			} else {
-				$total_contacts_added =  ES_DB_Sending_Queue::get_total_email_count_by_hash( $mailing_queue_hash );
-				// Check if there are not any queued email for this mailing queue id. If yes, then delete the mailing queue also since there is no meaning in processing an empty mailing queue.
-				if ( empty( $total_contacts_added ) ) {
-					ES_DB_Mailing_Queue::delete_notifications( array( $mailing_queue_id ) );
-				}
+				$in_queue_status = IG_ES_SENDING_QUEUE_STATUS_QUEUED;
+				$this->update_email_sent_status( $contact_id, $campaign_id, $message_id, $in_queue_status );
 			}
 		}
 
@@ -1007,10 +1033,10 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 		/**
 		 * Method to set locking options for current cron job
-		 * 
+		 *
 		 * @param string $cron_job Job name
-		 * @param array $cron_job_data Cron job data
-		 * 
+		 * @param array  $cron_job_data Cron job data
+		 *
 		 * @since 4.6.4
 		 */
 		public function lock_cron_job( $cron_job = '', $cron_job_data = array() ) {
@@ -1019,7 +1045,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 			$locking_status = '';
 
-			if ( in_array( $cron_job, $es_cron_jobs, true  ) ) {
+			if ( in_array( $cron_job, $es_cron_jobs, true ) ) {
 
 				$locked_cron_job_data = get_option( $cron_job . '_locked_data', false );
 				if ( ! empty( $locked_cron_job_data ) ) {
@@ -1027,16 +1053,15 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 				} else {
 					$locked_cron_job_data = array(
 						'locked_at' => time(),
-						'data'      => $cron_job_data
+						'data'      => $cron_job_data,
 					);
-					$job_locked = update_option( $cron_job . '_locked_data', $locked_cron_job_data , false );
+					$job_locked           = update_option( $cron_job . '_locked_data', $locked_cron_job_data, false );
 					if ( $job_locked ) {
 						$locking_status = 'locked';
 					} else {
 						$locking_status = 'failed';
 					}
 				}
-
 			}
 
 			return $locking_status;
@@ -1044,11 +1069,11 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 		/**
 		 * Method to set locking options for current cron job
-		 * 
+		 *
 		 * @param string $cron_job Cron Job name.
-		 * 
+		 *
 		 * @return bool $cron_job_locked Is cron job locked.
-		 * 
+		 *
 		 * @since 4.6.4
 		 */
 		public function is_cron_job_locked( $cron_job = '' ) {
@@ -1057,7 +1082,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 			$cron_job_locked = false;
 
-			if ( in_array( $cron_job, $es_cron_jobs, true  ) ) {
+			if ( in_array( $cron_job, $es_cron_jobs, true ) ) {
 
 				$locked_cron_job_data = get_option( $cron_job . '_locked_data', false );
 				if ( ! empty( $locked_cron_job_data ) ) {
@@ -1070,11 +1095,11 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 		/**
 		 * Method to delete locking options for current cron job
-		 * 
+		 *
 		 * @param string $cron_job Job name
-		 
+
 		 * @return string $unlocking_status Cron job unlocking status
-		 * 
+		 *
 		 * @since 4.6.4
 		 */
 		public function unlock_cron_job( $cron_job = '' ) {
@@ -1083,7 +1108,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 			$unlocking_status = '';
 
-			if ( in_array( $cron_job, $es_cron_jobs, true  ) ) {
+			if ( in_array( $cron_job, $es_cron_jobs, true ) ) {
 				$job_unlocked = delete_option( $cron_job . '_locked_data' );
 				if ( $job_unlocked ) {
 					$unlocking_status = 'unlocked';
@@ -1099,7 +1124,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 		 * Should Unlock Cron?
 		 *
 		 * @param string $cron_job Cron job name
-		 * @param bool $force Should unlock the cron job forcefully.
+		 * @param bool   $force Should unlock the cron job forcefully.
 		 *
 		 * @return bool $should_unlock Should unlock the cron.
 		 *
@@ -1111,7 +1136,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 			$es_cron_jobs = ES()->cron->get_cron_jobs_list();
 
-			if ( in_array( $cron_job, $es_cron_jobs, true  ) ) {
+			if ( in_array( $cron_job, $es_cron_jobs, true ) ) {
 
 				if ( $force ) {
 					$should_unlock = true;
@@ -1119,9 +1144,9 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 					$locked_cron_job_data = get_option( $cron_job . '_locked_data', false );
 					if ( ! empty( $locked_cron_job_data ) ) {
 						$locked_at = $locked_cron_job_data['locked_at'];
-			
+
 						$time_lapsed = time() - $locked_at;
-			
+
 						// Since maximum allowed cron execution duration is always equal to the set cron interval, check if time lapsed is more than the cron interval.
 						$should_unlock = $time_lapsed > ES()->cron->get_cron_interval();
 					}
@@ -1132,6 +1157,3 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 		}
 	}
 }
-
-
-

@@ -1,6 +1,6 @@
 <?php
 /**
- * Email Subscribers' select field
+ * Icegram Express' select field
  *
  * @since       4.4.1
  * @version     1.0
@@ -225,7 +225,7 @@ class ES_Select extends ES_Field {
 
 			<?php foreach ( $this->get_options() as $opt_name => $opt_value ) : ?>
 				<option value="<?php echo esc_attr( $opt_name ); ?>"
-					<?php echo in_array( $opt_name, $values, true ) ? 'selected="selected"' : ''; ?>
+					<?php echo in_array( (string) $opt_name, $values, true ) ? 'selected="selected"' : ''; ?>
 					><?php echo esc_html( $opt_value ); ?></option>
 			<?php endforeach; ?>
 

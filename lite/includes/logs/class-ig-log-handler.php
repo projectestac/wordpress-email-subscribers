@@ -29,10 +29,10 @@ if ( ! class_exists( 'IG_Log_Handler' ) ) {
 		/**
 		 * Builds a log entry text from level, timestamp and message.
 		 *
-		 * @param int $timestamp Log timestamp.
+		 * @param int    $timestamp Log timestamp.
 		 * @param string $level emergency|alert|critical|error|warning|notice|info|debug.
 		 * @param string $message Log message.
-		 * @param array $context Additional information for log handlers.
+		 * @param array  $context Additional information for log handlers.
 		 *
 		 * @return string Formatted log entry.
 		 */
@@ -41,12 +41,16 @@ if ( ! class_exists( 'IG_Log_Handler' ) ) {
 			$level_string = strtoupper( $level );
 			$entry        = "{$time_string} {$level_string} {$message}";
 
-			return apply_filters( 'ig_format_log_entry', $entry, array(
-				'timestamp' => $timestamp,
-				'level'     => $level,
-				'message'   => $message,
-				'context'   => $context,
-			) );
+			return apply_filters(
+				'ig_format_log_entry',
+				$entry,
+				array(
+					'timestamp' => $timestamp,
+					'level'     => $level,
+					'message'   => $message,
+					'context'   => $context,
+				)
+			);
 		}
 	}
 }

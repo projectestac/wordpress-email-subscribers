@@ -49,7 +49,7 @@ foreach ( $fields as $field ) :
 	}
 	?>
 
-	<tr class="ig-es-table__row"
+	<tr class="ig-es-table__row <?php echo esc_attr( $field->get_container_classes() ); ?>"
 		data-name="<?php echo esc_attr( $field->get_name() ); ?>"
 		data-type="<?php echo esc_attr( $field->get_type() ); ?>"
 		data-required="<?php echo (int) $field->get_required(); ?> ">

@@ -49,6 +49,22 @@
 			endif;
 		?>
 		<div id="publishing-action">
+			<?php
+			$is_runnable = false;
+			if ( $workflow ) :
+				$is_runnable = $workflow->is_runnable();
+			endif;
+
+			$tooltip_html = ES_Common::get_tooltip_html( __( 'Performs add to list action on existing orders that match trigger conditions.', 'email-subscribers' ) );
+			$allowed_tags = ig_es_allowed_html_tags_in_esc();
+			?>
+			<label id="run-workflow-checkbox-wrapper" class="<?php echo esc_attr( ! $is_runnable ? 'hidden' : '' ); ?>">
+				<input type="checkbox" class="form-checkbox " name="run_workflow" value="yes">
+				<span class="pr-3 text-gray-500 text-sm font-normal text-left">
+					<?php echo esc_html__( 'Run now', 'email-subscribers' ); ?>
+					<?php echo wp_kses( $tooltip_html, $allowed_tags ); ?>
+				</span>
+			</label>
 			<button type="submit" id="publish" name="save_workflow" value="save" class="inline-flex justify-center rounded-md border border-transparent px-4 py-1 bg-white text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue transition ease-in-out duration-150"><?php echo esc_html__( 'Save', 'email-subscribers' ); ?></button>
 		</div>
 		<div class="clear"></div>

@@ -41,12 +41,15 @@ class ES_Workflow_Triggers extends ES_Workflow_Registry {
 	 */
 	public static function load_includes() {
 
-		global $ig_es_tracker;
-
 		$includes = array(
-			'ig_es_user_registered' => 'ES_Trigger_User_Registered',
-			'ig_es_user_deleted'    => 'ES_Trigger_User_Deleted',
-			'ig_es_user_updated'    => 'ES_Trigger_User_Updated',
+			'ig_es_user_registered'   => 'ES_Trigger_User_Registered',
+			'ig_es_user_deleted'      => 'ES_Trigger_User_Deleted',
+			'ig_es_user_updated'      => 'ES_Trigger_User_Updated',
+			'ig_es_user_subscribed'   => 'ES_Trigger_User_Subscribed',
+			'ig_es_user_unconfirmed'  => 'ES_Trigger_User_Unconfirmed',
+			'ig_es_user_unsubscribed' => 'ES_Trigger_User_Unsubscribed',
+			'ig_es_campaign_sent'     => 'ES_Trigger_Campaign_Sent',
+			'ig_es_campaign_failed'   => 'ES_Trigger_Campaign_Failed',
 		);
 
 		return apply_filters( 'ig_es_workflow_triggers', $includes );

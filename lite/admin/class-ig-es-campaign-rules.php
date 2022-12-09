@@ -16,13 +16,11 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Campaign rules
-		 * 
 		 */
 		private $campaign_rules = array();
-		
+
 		/**
 		 * Subscriber related fields
-		 * 
 		 */
 		private $fields = array();
 
@@ -30,27 +28,27 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 		 * Campaign related fields
 		 */
 		private $campaign_related = array();
-		
+
 		/**
 		 * Aggregate campaigns fields
 		 */
 		private $aggregate_campaigns = array();
-		
+
 		/**
 		 * Rule operators
 		 */
 		private $operators = array();
-		
+
 		/**
 		 * Simple operators
 		 */
 		private $simple_operators = array();
-		
+
 		/**
 		 * String operators
 		 */
 		private $string_operators = array();
-		
+
 		/**
 		 * Boolean operators
 		 */
@@ -62,10 +60,10 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 		public function __construct() {
 			add_action( 'init', array( $this, 'init' ) );
 		}
-		
+
 		/**
 		 * Initialize campaign rules
-		 * 
+		 *
 		 * @since 4.6.12
 		 */
 		public function init() {
@@ -77,7 +75,7 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 			$this->string_operators    = $this->get_string_operators();
 			$this->bool_operators      = $this->get_bool_operators();
 			$this->campaign_rules      = self::get_campaign_rules();
-	
+
 			add_action( 'ig_es_show_campaign_rules', array( $this, 'show_campaign_rules' ), 10, 2 );
 			add_action( 'ig_es_campaign_show_conditions', array( $this, 'show_conditions' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
@@ -90,8 +88,8 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 			$current_page = ig_es_get_request_data( 'page' );
 
-			if ( in_array( $current_page, array( 'es_newsletters', 'es_sequence' ), true ) ) {
-				wp_register_script( 'alpine', plugins_url( '/js/alpine.js', __FILE__ ), array(), '2.8.0', false );
+			if ( in_array( $current_page, array( 'es_notifications', 'es_newsletters', 'es_sequence' ), true ) ) {
+				wp_register_script( 'alpine', plugins_url( '/js/alpine.js', __FILE__ ), array(), '2.8.2', false );
 				wp_enqueue_script( 'alpine' );
 			}
 		}
@@ -104,37 +102,51 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 		 * @since 4.6.11
 		 */
 		public function show_campaign_rules( $campaign_id = 0, $campaign_data = array() ) {
-			
+
 			$current_page = ig_es_get_request_data( 'page' );
 
 			$campaign_type = '';
 			if ( 'es_newsletters' === $current_page ) {
 				$campaign_type = 'newsletter';
+			} elseif ( 'es_notifications' === $current_page ) {
+				$campaign_type = 'post_notification';
 			} else {
 				$campaign_type = 'sequence_message';
 			}
-			
+
 			$conditions = array();
 			if ( ! empty( $campaign_data['meta'] ) ) {
 				$campaign_meta = maybe_unserialize( $campaign_data['meta'] );
-				$conditions = ! empty( $campaign_meta['list_conditions'] ) ? $campaign_meta['list_conditions'] : array();
+				$conditions    = ! empty( $campaign_meta['list_conditions'] ) ? $campaign_meta['list_conditions'] : array();
 			}
 
 			$args = array();
-			if ( 'newsletter' === $campaign_type ) {
+			if ( IG_CAMPAIGN_TYPE_NEWSLETTER === $campaign_type ) {
 				$args = array(
 					'include_types' => array(
-						'newsletter'
+						IG_CAMPAIGN_TYPE_NEWSLETTER,
 					),
-					'status' => array(
+					'status'        => array(
 						IG_ES_CAMPAIGN_STATUS_QUEUED,
-						IG_ES_CAMPAIGN_STATUS_FINISHED
+						IG_ES_CAMPAIGN_STATUS_FINISHED,
+					),
+				);
+			} elseif ( IG_CAMPAIGN_TYPE_POST_NOTIFICATION === $campaign_type ) {
+				$args = array(
+					'include_types' => array(
+						IG_CAMPAIGN_TYPE_POST_NOTIFICATION,
+					),
+				);
+			} elseif ( IG_CAMPAIGN_TYPE_POST_DIGEST === $campaign_type ) {
+				$args = array(
+					'include_types' => array(
+						IG_CAMPAIGN_TYPE_POST_DIGEST,
 					),
 				);
 			} else {
 				$args = array(
 					'include_types' => array(
-						'sequence_message'
+						'sequence_message',
 					),
 				);
 			}
@@ -143,19 +155,21 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 				$args['campaigns_not_in'] = array( $campaign_id );
 			}
 			$all_campaigns = ES()->campaigns_db->get_all_campaigns( $args );
-			
+
 			$lists = ES()->lists_db->get_list_id_name_map();
-			if ( ! empty( $all_campaigns ) ) {
-				$all_campaigns_stati = array_column( $all_campaigns, 'status' );
-			}
 
 			$countries_data = ES_Geolocation::get_countries();
-			
-			$input_name = 'es_newsletters' === $current_page ? 'broadcast_data[meta][list_conditions]' : 'seq_data[' . $campaign_id . '][list_conditions]';
 
-			$select_list_attr  	= ES()->is_pro() ? 'multiple="multiple"' : '';
-			$select_list_name  	= ES()->is_pro() ? 'broadcast_data[list_ids][]' : 'broadcast_data[list_ids]';
-			$select_list_class 	= ES()->is_pro() ? 'ig-es-campaign-rule-form-multiselect' : 'form-select';
+			if ( 'es_newsletters' === $current_page ) {
+				$input_name = 'campaign_data[meta][list_conditions]';
+			} elseif ( 'es_notifications' === $current_page ) {
+				$input_name = 'campaign_data[meta][list_conditions]';
+			} else {
+				$input_name = 'seq_data[' . $campaign_id . '][list_conditions]';
+			}
+
+			$select_list_attr  = ES()->is_pro() ? 'multiple="multiple"' : '';
+			$select_list_class = ES()->is_pro() ? 'ig-es-campaign-rule-form-multiselect' : 'form-select';
 
 			$sidebar_id = 'sidebar_' . $campaign_id;
 			?>
@@ -168,7 +182,7 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 			}
 			</style>
 			<div class="ig-es-campaign-rules my-2" data-campaign-id="<?php echo esc_attr( $campaign_id ); ?>" data-campaign-type="<?php echo esc_attr( $campaign_type ); ?>" x-data="{ <?php echo esc_attr( $sidebar_id ); ?>: false }">
-					<label for="es-campaign-condition" class="text-sm font-medium leading-5 text-gray-700"><?php esc_html_e( 'Recipients', 'email-subscribers' ); ?>:</label>
+					<label for="es-campaign-condition" class="text-sm font-medium leading-5 text-gray-700 recipient-text"><?php esc_html_e( 'Recipients', 'email-subscribers' ); ?>:</label>
 					<div class="ig-es-conditions-render-wrapper">
 						<?php
 						if ( ! empty( $conditions ) ) {
@@ -207,8 +221,8 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 										</span>
 									</div>
 									<div class="w-3/12 text-right">
-										<span class="es_spinner_image_admin inline-block align-middle -mt-1 mr-1" id="spinner-image" style="display:none"><img src="<?php echo esc_url( ES_PLUGIN_URL . 'lite/public/images/spinner.gif' ); ?>" alt="<?php echo esc_attr( 'Loading...', 'email-subscribers' ); ?>"/></span>
-										<a class="inline-flex items-center text-sm font-medium leading-5 text-gray-700 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:shadow-outline focus:border-blue-300 -mt-1 mr-2 px-3 py-1 cursor-pointer close-conditions" x-on:click=" <?php echo esc_attr( $sidebar_id ); ?> = false"><?php esc_html_e( 'Save Rules', 'email-subscribers' ); ?></a>
+										<span class="es_spinner_image_admin inline-block align-middle -mt-1 mr-1" id="spinner-image" style="display:none"><img src="<?php echo esc_url( ES_PLUGIN_URL . 'lite/public/images/spinner.gif' ); ?>" alt="<?php echo esc_attr__( 'Loading...', 'email-subscribers' ); ?>"/></span>
+										<a class="-mt-1 mr-2 px-3 py-0.5 ig-es-primary-button cursor-pointer close-conditions" x-on:click=" <?php echo esc_attr( $sidebar_id ); ?> = false"><?php esc_html_e( 'Save Rules', 'email-subscribers' ); ?></a>
 										<a x-on:click=" <?php echo esc_attr( $sidebar_id ); ?> = false" class="-mt-1 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-white cursor-pointer">
 											<span class="sr-only"><?php echo esc_html__( 'Close panel', 'email-subscribers' ); ?></span>
 											<!-- Heroicon name: outline/x -->
@@ -229,8 +243,8 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 											<div class="ig-es-conditions px-6 h-full">
 												<div class="ig-es-condition-container"></div>
 												<div class="ig-es-conditions-wrap mt-1 mb-3 overflow-auto">
-													<?php 
-													
+													<?php
+
 													array_unshift(
 														$conditions,
 														array(
@@ -242,8 +256,7 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 														)
 													);
 
-													
-													foreach ( $conditions as $i => $condition_group ) : 
+													foreach ( $conditions as $i => $condition_group ) :
 														?>
 														<div class="ig-es-condition-group bg-white border border-gray-200 rounded-md my-2 pb-12 relative block px-4 rounded-lg pt-2 mt-2 mb-12" data-id="<?php echo esc_attr( $i ); ?>" data-operator="<?php esc_attr_e( 'and', 'email-subscribers' ); ?>"<?php echo ( ! $i ) ? ' style="display:none"' : ''; ?>>
 															
@@ -286,24 +299,69 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 																				?>
 																			</select>
 																		</div>
-																		<div class="ig-es-conditions-operator-field" data-fields=",lang,client,referer,firstname,lastname,email,">
-																			<select name="<?php echo esc_attr( $input_name ); ?>[<?php echo esc_attr( $i ); ?>][<?php echo esc_attr( $j ); ?>][operator]" class="condition-operator form-select" disabled>
-																				<?php
-																				foreach ( $this->string_operators as $key => $name ) :
-																					echo '<option value="' . esc_attr( $key ) . '"' . selected( $field_operator, $key, false ) . '>' . esc_html( $name ) . '</option>';
-																				endforeach;
-																				?>
-																			</select>
-																		</div>
-																		<div class="ig-es-conditions-operator-field" data-fields=",country_code,">
-																			<select name="<?php echo esc_attr( $input_name ); ?>[<?php echo esc_attr( $i ); ?>][<?php echo esc_attr( $j ); ?>][operator]" class="condition-operator form-select" disabled>
-																				<?php
-																				foreach ( $this->bool_operators as $key => $name ) :
-																					echo '<option value="' . esc_attr( $key ) . '"' . selected( $field_operator, $key, false ) . '>' . esc_html( $name ) . '</option>';
-																				endforeach;
-																				?>
-																			</select>
-																		</div>
+																		<?php
+																		$campaign_rules_data_fields = array(
+																			'string_fields' => array( 'email' ),
+																		);
+																		$campaign_rules_data_fields = apply_filters( 'ig_es_campaign_rules_data_fields', $campaign_rules_data_fields );
+																		if ( ! empty( $campaign_rules_data_fields['string_fields'] ) ) {
+																			?>
+																			<div class="ig-es-conditions-operator-field" data-fields=",<?php echo esc_attr( implode( ',', $campaign_rules_data_fields['string_fields'] ) ); ?>,">
+																				<select name="<?php echo esc_attr( $input_name ); ?>[<?php echo esc_attr( $i ); ?>][<?php echo esc_attr( $j ); ?>][operator]" class="condition-operator form-select" disabled>
+																					<?php
+																					foreach ( $this->string_operators as $key => $name ) :
+																						echo '<option value="' . esc_attr( $key ) . '"' . selected( $field_operator, $key, false ) . '>' . esc_html( $name ) . '</option>';
+																					endforeach;
+																					?>
+																				</select>
+																			</div>
+																			<?php
+																		}
+																		?>
+																		<?php
+																		if ( ! empty( $campaign_rules_data_fields['simple_fields'] ) ) {
+																			?>
+																			<div class="ig-es-conditions-operator-field" data-fields=",<?php echo esc_attr( implode( ',', $campaign_rules_data_fields['simple_fields'] ) ); ?>,">
+																				<select name="<?php echo esc_attr( $input_name ); ?>[<?php echo esc_attr( $i ); ?>][<?php echo esc_attr( $j ); ?>][operator]" class="condition-operator form-select" disabled>
+																					<?php
+																					foreach ( $this->simple_operators as $key => $name ) :
+																						echo '<option value="' . esc_attr( $key ) . '"' . selected( $field_operator, $key, false ) . '>' . esc_html( $name ) . '</option>';
+																					endforeach;
+																					?>
+																				</select>
+																			</div>
+																			<?php
+																		}
+																		?>
+																		<?php
+																		if ( ! empty( $campaign_rules_data_fields['date_fields'] ) ) {
+																			?>
+																			<div class="ig-es-conditions-operator-field" data-fields=",<?php echo esc_attr( implode( ',', $campaign_rules_data_fields['date_fields'] ) ); ?>,">
+																				<select name="<?php echo esc_attr( $input_name ); ?>[<?php echo esc_attr( $i ); ?>][<?php echo esc_attr( $j ); ?>][operator]" class="condition-operator form-select" disabled>
+																					<?php
+																					foreach ( $this->simple_operators as $key => $name ) :
+																						echo '<option value="' . esc_attr( $key ) . '"' . selected( $field_operator, $key, false ) . '>' . esc_html( $name ) . '</option>';
+																					endforeach;
+																					?>
+																				</select>
+																			</div>
+																			<?php
+																		}
+
+																		if ( ! empty( $campaign_rules_data_fields['boolean_fields'] ) ) {
+																			?>
+																			<div class="ig-es-conditions-operator-field" data-fields=",<?php echo esc_attr( implode( ',', $campaign_rules_data_fields['boolean_fields'] ) ); ?>,">
+																				<select name="<?php echo esc_attr( $input_name ); ?>[<?php echo esc_attr( $i ); ?>][<?php echo esc_attr( $j ); ?>][operator]" class="condition-operator form-select" disabled>
+																					<?php
+																					foreach ( $this->bool_operators as $key => $name ) :
+																						echo '<option value="' . esc_attr( $key ) . '"' . selected( $field_operator, $key, false ) . '>' . esc_html( $name ) . '</option>';
+																					endforeach;
+																					?>
+																				</select>
+																			</div>
+																			<?php
+																		}
+																		?>
 																		<div class="ig-es-conditions-operator-field" data-fields=",_sent,_sent__not_in,_open,_open__not_in,_click,_click__not_in,_lists__not_in,_lists__in,">
 																			<input type="hidden" name="<?php echo esc_attr( $input_name ); ?>[<?php echo esc_attr( $i ); ?>][<?php echo esc_attr( $j ); ?>][operator]" class="condition-operator" disabled value="is">
 																		</div>
@@ -342,7 +400,7 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 																							<option value="0"><?php echo esc_html__( 'Any campaign', 'email-subscribers' ); ?></option>
 																							<?php if ( $all_campaigns ) : ?>
 																								<?php foreach ( $value_arr as $k => $v ) : ?>
-																								<?php
+																									<?php
 																									foreach ( $all_campaigns as $campaign ) :
 																										?>
 																								<option value="<?php echo esc_attr( $campaign['id'] ); ?>" <?php selected( $v, $campaign['id'] ); ?>><?php echo $campaign['name'] ? esc_html( $campaign['name'] ) : '[' . esc_html__( 'no title', 'email-subscribers' ) . '] (# ' . esc_attr( $campaign['id'] ) . ')'; ?></option>
@@ -355,11 +413,11 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 																		<div class="ig-es-conditions-value-field" data-fields=",_lists__not_in,_lists__in,">
 																		<?php if ( $lists ) : ?>
 																			<select name="<?php echo esc_attr( $input_name ); ?>[<?php echo esc_attr( $i ); ?>][<?php echo esc_attr( $j ); ?>][value][]" class="condition-value <?php echo esc_attr( $select_list_class ); ?>" <?php echo esc_attr( $select_list_attr ); ?>>
-																				<?php 
+																				<?php
 																				if ( ES()->is_pro() ) :
 																					?>
 																				<option value="0"><?php echo esc_html__( 'Any list', 'email-subscribers' ); ?></option>
-																				<?php
+																					<?php
 																				endif;
 																				foreach ( $lists as $list_id => $list_name ) :
 																					?>
@@ -370,6 +428,9 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 																			<p><?php esc_html_e( 'No campaigns available', 'email-subscribers' ); ?><input type="hidden" class="condition-value" disabled value="0" name="<?php echo esc_attr( $input_name ); ?>[<?php echo esc_attr( $i ); ?>][<?php echo esc_attr( $j ); ?>][value]"></p>
 																		<?php endif; ?>
 																		</div>
+																		<?php
+																		do_action( 'ig_es_campaigns_extra_filters', $input_name, $value_arr, $value, $i, $j, $select_list_class, $select_list_attr );
+																		?>
 																	</div>
 																	<div class="clear"></div>
 																	</div><?php endforeach; ?>
@@ -388,8 +449,9 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 														</div>
 														<!-- /End replace -->
 													</div>
+
 												</div>
-												<?php do_action( 'ig_es_upsell_campaign_rules'); ?>
+												<?php do_action( 'ig_es_upsell_campaign_rules' ); ?>
 											</div>
 										</section>
 									</div>
@@ -412,30 +474,37 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 					foreach ( $conditions as $i => $condition_group ) :
 						if ( ! empty( $condition_group ) ) :
 							?>
-						<div class="ig-es-condition-render-group clear">
+						<div class="ig-es-condition-render-group">
 							<?php
 							if ( $i ) {
-								echo '<span class="clear float-left pr-1 ig-es-condition-operators text-xs font-medium text-gray-400 tracking-wide uppercase mt-1 mr-1">' . esc_html__( 'and', 'email-subscribers' ) . '</span>';
+								echo '<span class="clear float-left pr-1 ig-es-condition-operators text-xs font-medium text-gray-400 tracking-wide uppercase mt-1 mr-1">' . esc_html__( 'and', 'email-subscribers' );
+								if ( count( $condition_group ) > 1 ) {
+									echo esc_html( ' ( ' );
+								}
+								echo wp_kses( '</span>', $allowedtags );
+
 							}
 							foreach ( $condition_group as $j => $condition ) :
-								$field    = isset( $condition['field'] ) ? $condition['field'] : ( isset( $condition[0] ) ? $condition[0] : '' );
-								$operator = isset( $condition['operator'] ) ? $condition['operator'] : ( isset( $condition[1] ) ? $condition[1] : '' );
-								$value    = isset( $condition['value'] ) ? $condition['value'] : ( isset( $condition[2] ) ? $condition[2] : '' );
-								$nice     = $this->get_condition_html( $condition );
+								$condition_html = $this->get_condition_html( $condition );
 								?>
-									<div class="ig-es-condition-render ig-es-condition-render-<?php echo esc_attr( $condition['field'] ); ?>" title="<?php echo esc_attr( strip_tags( sprintf( '%s %s %s', $nice['field'], $nice['operator'], $nice['value'] ) ) ); ?>">
+									<div class="ig-es-condition-render ig-es-condition-render-<?php echo esc_attr( $condition['field'] ); ?>" title="<?php echo esc_attr( strip_tags( sprintf( '%s %s %s', $condition_html['field'], $condition_html['operator'], $condition_html['value'] ) ) ); ?>">
 									<?php
 									if ( $j ) {
-										echo '<span class="clear ig-es-condition-type ig-es-condition-operators text-xs font-medium text-gray-400 tracking-wide uppercase mt-1 mr-1">' . esc_html__( 'or', 'email-subscribers' ) . '</span>';
+										echo '<span class="ig-es-condition-type ig-es-condition-operators text-xs font-medium text-gray-400 tracking-wide uppercase mt-1 mr-1">' . esc_html__( ' or', 'email-subscribers' ) . '</span>';
 									}
 									?>
-										<span class="ig-es-condition-type ig-es-condition-field mt-1"><?php echo wp_kses( $nice['field'], $allowedtags ); ?></span>
-										<span class="ig-es-condition-type ig-es-condition-operator mt-1"><?php echo wp_kses( $nice['operator'], $allowedtags ); ?></span>
-										<span class="ig-es-condition-type ig-es-condition-value mt-1 pl-2"><?php echo wp_kses( $nice['value'], $allowedtags ); ?></span>
+										<span class="ig-es-condition-type ig-es-condition-field mt-1"><?php echo wp_kses( $condition_html['field'], $allowedtags ); ?></span>
+										<span class="ig-es-condition-type ig-es-condition-operator mt-1"><?php echo wp_kses( $condition_html['operator'], $allowedtags ); ?></span>
+										<span class="ig-es-condition-type ig-es-condition-value mt-1 pl-2"><?php echo wp_kses( $condition_html['value'], $allowedtags ); ?></span>
 									</div>
-							<?php endforeach; ?>
+								<?php
+							endforeach;
+							if ( $i && count( $condition_group ) > 1 ) {
+								echo '<span class="float-left pr-1 text-xs font-medium text-gray-400 tracking-wide uppercase mt-1">' . esc_html__( ') ', 'email-subscribers' ) . '</span>';
+							}
+							?>
 						</div>
-					<?php
+							<?php
 						endif;
 					endforeach;
 					?>
@@ -448,10 +517,10 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get field operator
-		 * 
+		 *
 		 * @return string $operator Field operator
 		 */
-		private function get_field_operator( $operator ) {
+		public function get_field_operator( $operator ) {
 			$operator = esc_sql( stripslashes( $operator ) );
 
 			switch ( $operator ) {
@@ -487,7 +556,7 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get condition HTML
-		 * 
+		 *
 		 * @return string Get condition HTML
 		 */
 		private function get_condition_html( $condition, $formated = true ) {
@@ -508,8 +577,6 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 				if ( ! is_array( $value ) ) {
 					$value = array( $value );
 				}
-				$urls      = array();
-				$campagins = array();
 				$return['value'] = '<span class="font-medium text-gray-500 tracking-wide mr-1">' . $opening_quote . implode( $closing_quote . ' </span><span class="uppercase text-gray-400 pr-1 text-xs font-medium tracking-wide mt-1 mr-1">' . esc_html__( 'or', 'email-subscribers' ) . ' </span><span class="font-medium text-gray-500 tracking-wide mr-1"> ' . $opening_quote, array_map( array( $this, 'get_campaign_name' ), $value ) ) . $closing_quote . '</span>';
 			} elseif ( isset( $this->campaign_rules['List'][ $field ] ) ) {
 				if ( ! is_array( $value ) ) {
@@ -522,6 +589,18 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 				}
 				$return['operator'] = '<em>' . $this->nice_name( $operator, 'operator', $field ) . '</em>';
 				$return['value']    = $opening_quote . implode( $closing_quote . ' ' . esc_html__( 'or', 'email-subscribers' ) . ' ' . $opening_quote, array_map( array( $this, 'get_country_name' ), $value ) ) . $closing_quote;
+			} elseif ( 'bounce_status' === $field ) {
+				if ( ! is_array( $value ) ) {
+					$value = array( $value );
+				}
+				$return['operator'] = '<em>' . $this->nice_name( $operator, 'operator', $field ) . '</em>';
+				$return['value']    = $opening_quote . implode( $closing_quote . ' ' . esc_html__( 'or', 'email-subscribers' ) . ' ' . $opening_quote, array_map( array( $this, 'get_bounce_status_name' ), $value ) ) . $closing_quote;
+			} elseif ( false !== strpos( $field, 'cf_' ) ) {
+				if ( ! is_array( $value ) ) {
+					$value = array( $value );
+				}
+				$return['operator'] = '<em>' . $this->nice_name( $operator, 'operator', $field ) . '</em>';
+				$return['value']    = $opening_quote . implode( $closing_quote . ' ' . esc_html__( 'or', 'email-subscribers' ) . ' ' . $opening_quote, $value ) . $closing_quote;
 			} else {
 				$return['operator'] = '<em>' . $this->nice_name( $operator, 'operator', $field ) . '</em>';
 				$return['value']    = $opening_quote . '<span class="font-medium text-gray-500 tracking-wide mr-1">' . $this->nice_name( $value, 'value', $field ) . '</span>' . $closing_quote;
@@ -532,7 +611,7 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get names for field, operator and value
-		 * 
+		 *
 		 * @return string Formatted string
 		 */
 		private function nice_name( $string, $type = null, $field = null ) {
@@ -565,17 +644,17 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get list of campaign rules
-		 * 
+		 *
 		 * @return array List of campaign rules
 		 */
 		public static function get_campaign_rules() {
 
 			$campaign_rules = array(
 				'List' => array(
-					'_lists__in'     => array(
+					'_lists__in' => array(
 						'name' => esc_html__( 'is in List', 'email-subscribers' ),
 					),
-				)
+				),
 			);
 
 			$campaign_rules = apply_filters( 'ig_es_campaign_rules', $campaign_rules );
@@ -585,7 +664,7 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get list of subscribers data based rules
-		 * 
+		 *
 		 * @return array List of subscribers data based rules
 		 */
 		private function get_fields() {
@@ -599,24 +678,24 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get list of campaign related rules
-		 * 
+		 *
 		 * @return array List of aggregate campaigns related rules
 		 */
 		private function get_campaign_related() {
 			return array(
-				'_sent'               => esc_html__( 'has received', 'email-subscribers' ),
-				'_sent__not_in'       => esc_html__( 'has not received', 'email-subscribers' ),
-				'_open'               => esc_html__( 'has received and opened', 'email-subscribers' ),
-				'_open__not_in'       => esc_html__( 'has received but not opened', 'email-subscribers' ),
-				'_click'              => esc_html__( 'has received and clicked', 'email-subscribers' ),
-				'_click__not_in'      => esc_html__( 'has received and not clicked', 'email-subscribers' ),
+				'_sent'          => esc_html__( 'has received', 'email-subscribers' ),
+				'_sent__not_in'  => esc_html__( 'has not received', 'email-subscribers' ),
+				'_open'          => esc_html__( 'has received and opened', 'email-subscribers' ),
+				'_open__not_in'  => esc_html__( 'has received but not opened', 'email-subscribers' ),
+				'_click'         => esc_html__( 'has received and clicked', 'email-subscribers' ),
+				'_click__not_in' => esc_html__( 'has received and not clicked', 'email-subscribers' ),
 			);
 
 		}
 
 		/**
 		 * Get list of aggregate campaigns related rules
-		 * 
+		 *
 		 * @return array List of aggregate campaigns related rules
 		 */
 		private function get_aggregate_campaigns() {
@@ -633,10 +712,10 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get list of comparison operators
-		 * 
+		 *
 		 * @return array List of comparison operators
 		 */
-		private function get_operators() {
+		public function get_operators() {
 			return array(
 				'is'               => esc_html__( 'is', 'email-subscribers' ),
 				'is_not'           => esc_html__( 'is not', 'email-subscribers' ),
@@ -656,10 +735,10 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get list of simple operators
-		 * 
+		 *
 		 * @return array Simple operators
 		 */
-		private function get_simple_operators() {
+		public function get_simple_operators() {
 			return array(
 				'is'               => esc_html__( 'is', 'email-subscribers' ),
 				'is_not'           => esc_html__( 'is not', 'email-subscribers' ),
@@ -673,10 +752,10 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get list of string operators
-		 * 
+		 *
 		 * @return array String operators
 		 */
-		private function get_string_operators() {
+		public function get_string_operators() {
 			return array(
 				'is'           => esc_html__( 'is', 'email-subscribers' ),
 				'is_not'       => esc_html__( 'is not', 'email-subscribers' ),
@@ -692,10 +771,10 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get list of boolean operators
-		 * 
+		 *
 		 * @return array Boolean operator
 		 */
-		private function get_bool_operators() {
+		public function get_bool_operators() {
 			return array(
 				'is'     => esc_html__( 'is', 'email-subscribers' ),
 				'is_not' => esc_html__( 'is not', 'email-subscribers' ),
@@ -705,9 +784,9 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get campaign name
-		 * 
+		 *
 		 * @param int $campaign_id Campaign ID
-		 * 
+		 *
 		 * @return string $name Campaign name
 		 */
 		public function get_campaign_name( $campaign_id ) {
@@ -731,9 +810,9 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 
 		/**
 		 * Get list name
-		 * 
+		 *
 		 * @param int $list_id list ID
-		 * 
+		 *
 		 * @return string $list_name list name
 		 */
 		public function get_list_name( $list_id ) {
@@ -746,25 +825,45 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 			$list_name = isset( $lists[ $list_id ] ) ? $lists[ $list_id ] : $list_id;
 			return $list_name;
 		}
-	
+
+		/**
+		 * Get bounce status
+		 *
+		 * @param string $bounce_status bounce status code
+		 *
+		 * @return string bounce status
+		 */
+		public function get_bounce_status_name( $bounce_status ) {
+			switch ( $bounce_status ) {
+				case '2':
+					return esc_html__( 'Hard bounced', 'email-subscribers' );
+				case '1':
+					return esc_html__( 'Soft bounced', 'email-subscribers' );
+				case '0':
+					return esc_html__( 'Un-bounced', 'email-subscribers' );
+				default:
+					return esc_html__( 'Any status', 'email-subscribers' );
+			}
+		}
+
 		/**
 		 * Get country name
-		 * 
+		 *
 		 * @param string $code country code
-		 * 
+		 *
 		 * @return string $country_name country name
 		 */
 		public function get_country_name( $code ) {
-	
+
 			$country_name = ES_Geolocation::get_countries_iso_code_name_map( $code );
 			return $country_name;
 		}
 
 		/**
 		 * Remove empty conditions from campaign data
-		 * 
+		 *
 		 * @param array $conditions_data
-		 * 
+		 *
 		 * @return array $conditions_data
 		 */
 		public static function remove_empty_conditions( $conditions_data = array() ) {
@@ -783,8 +882,7 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 				// Remove any empty value array.
 				$conditions_data = array_values( array_filter( $list_conditions ) );
 			}
-			
-			
+
 			return $conditions_data;
 		}
 	}

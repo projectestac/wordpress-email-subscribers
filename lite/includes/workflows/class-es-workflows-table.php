@@ -57,6 +57,112 @@ class ES_Workflows_Table extends ES_List_Table {
 		);
 
 		$this->db = new ES_DB_Workflows();
+		$this->init();
+	}
+
+	public function init() {
+		$this->register_hooks();
+	}
+
+	public function register_hooks() {
+		add_action( 'ig_es_show_workflows', array( $this, 'show_workflows' ) );
+		add_action( 'ig_es_show_workflow_gallery', array( $this, 'show_workflow_gallery' ) );
+	}
+
+	/**
+	 * Show existing workflows
+	 * 
+	 * @since 5.3.8
+	 */
+	public function show_workflows() {
+		?>
+		<div id="poststuff" class="es-items-lists">
+			<div id="post-body" class="metabox-holder column-1">
+				<div id="post-body-content">
+					<div class="meta-box-sortables ui-sortable">
+						<form method="get">
+							<input type="hidden" name="page" value="es_workflows" />
+							<?php
+							// Display search field and other available filter fields.
+							$this->prepare_items();
+							?>
+						</form>
+						<form method="post">
+							<?php
+							// Display bulk action fields, pagination and list items.
+							$this->display();
+							?>
+						</form>
+					</div>
+				</div>
+			</div>
+			<br class="clear">
+		</div>
+		<?php
+	}
+
+	/**
+	 * Show workflow gallery tab
+	 * 
+	 * @since 5.3.8
+	 */
+	public function show_workflow_gallery() {
+		$workflow_gallery_items = ES_Workflow_Gallery::get_workflow_gallery_items();
+		?>
+		<div class="ig-es-workflow-gallery-tab-description">
+			<p class="pb-2 text-sm font-normal text-gray-500">
+				<?php
+					/* translators: 1. Opening strong tag(<strong>) 2: Closing strong tag(</strong>) */
+					echo sprintf( esc_html__( 'Here\'s a collection of some useful workflows for you. Simply click on %1$sCreate workflow%2$s button to begin.', 'email-subscribers' ), '<strong>', '</strong>' );
+				?>
+			</p>
+		</div>
+		<div class="ig-es-workflow-gallery-tab-content bg-white rounded-lg shadow-md">
+			<div class="w-full overflow-auto py-4 px-6 mt-2">
+			<?php
+			if ( ! empty( $workflow_gallery_items ) ) {
+				?>
+				<div class="ig-es-workflow-gallery-list">
+				<?php
+				foreach ( $workflow_gallery_items as $item_name => $item ) {
+					?>
+					<div class="ig-es-workflow-gallery-item flex mt-3 mb-2 pb-3 border-b border-gray">
+						<div class="ig-es-workflow-gallery-item-detail">
+							<h2 class="ig-es-workflow-gallery-item-title font-medium text-gray-600 tracking-wide text-lg">
+								<?php echo esc_html( $item['title'] ); ?>
+							</h2>
+							<p class="ig-es-workflow-gallery-item-description text-gray-600 text-sm pt-1">
+								<?php echo esc_html( $item['description'] ); ?>
+							</p>
+						</div>
+						<div class="ig-es-workflow-gallery-item-actions">
+							<button data-item-name=<?php echo esc_attr( $item_name ); ?> type="button" class="ig-es-create-workflow-from-gallery-item ig-es-inline-loader inline-flex justify-center w-full py-1.5 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-indigo-600 border border-indigo-500 rounded-md cursor-pointer select-none focus:outline-none focus:shadow-outline-indigo focus:shadow-lg hover:bg-indigo-500 hover:text-white  hover:shadow-md md:px-2 lg:px-3 xl:px-4">
+								<span>
+									<?php echo esc_html__( 'Use workflow', 'email-subscribers' ); ?>
+								</span>
+								<svg class="es-btn-loader animate-spin h-4 w-4 text-indigo" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+									<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+									<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+								</svg>
+							</button>
+						</div>
+					</div>
+					<?php
+				}
+				?>
+				</div>
+				<?php
+			} else {
+				?>
+				<h2 class="text-base font-medium text-gray-600 tracking-wide text-lg text-xl">
+					<?php echo esc_html__( 'No items found in workflow gallery.', 'email-subscribers' ); ?>
+				</h2>
+				<?php
+			}
+			?>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -98,27 +204,40 @@ class ES_Workflows_Table extends ES_List_Table {
 
 		if ( ! empty( $action_status ) ) {
 			if ( ! empty( $workflow_id ) ) {
-				$workflow_edit_url = ES_Workflow_Admin_Edit::get_edit_url( $workflow_id );
-				if ( ! empty( $workflow_edit_url ) ) {
-					$workflow_edit_url = esc_url( $workflow_edit_url );
-				}
-				if ( 'added' === $action_status ) {
-					/* translators: %s: Workflow edit URL */
-					$message = sprintf( __( 'Workflow added. <a href="%s" class="text-indigo-600">Edit workflow</a>', 'email-subscribers' ), $workflow_edit_url );
-					$status  = 'success';
-				} elseif ( 'updated' === $action_status ) {
-					/* translators: %s: Workflow edit URL */
-					$message = sprintf( __( 'Workflow updated. <a href="%s" class="text-indigo-600">Edit workflow</a>', 'email-subscribers' ), $workflow_edit_url );
-					$status  = 'success';
-				} elseif ( 'not_saved' === $action_status ) {
-					$message = __( 'Unable to save workflow. Please try again later.', 'email-subscribers' );
-					$status  = 'error';
-				} elseif ( 'not_allowed' === $action_status ) {
-					$message = __( 'You are not allowed to add/edit workflows.', 'email-subscribers' );
-					$status  = 'error';
-				} else {
-					$message = __( 'An error has occured. Please try again later', 'email-subscribers' );
-					$status  = 'error';
+				$workflow = new ES_Workflow( $workflow_id );
+				if ( $workflow->exists ) {
+					$run_workflow = get_transient( 'ig_es_run_workflow' );
+					if ( $workflow->is_runnable() && 'yes' === $run_workflow ) {
+						?>
+						<script>
+							jQuery(document).ready(function(){
+								let workflow_id = <?php echo esc_js( $workflow_id ); ?>;
+								ig_es_run_workflow( workflow_id );
+							});
+						</script>
+						<?php
+					} else {
+						// Show workflow added/updated notice only if there is not workflow to run to avoid notice cluster on the page.
+						$workflow_edit_url = $workflow->get_edit_url();
+						if ( 'added' === $action_status ) {
+							/* translators: 1. Workflow edit URL anchor tag 2: Anchor close tag */
+							$message = sprintf( __( 'Workflow added. %1$sEdit workflow%2$s.', 'email-subscribers' ), '<a href="' . esc_url( $workflow_edit_url ) . '" class="text-indigo-600">', '</a>' );
+							$status  = 'success';
+						} elseif ( 'updated' === $action_status ) {
+							/* translators: 1. Workflow edit URL anchor tag 2: Anchor close tag */
+							$message = sprintf( __( 'Workflow updated. %1$sEdit workflow%2$s', 'email-subscribers' ), '<a href="' . esc_url( $workflow_edit_url ) . '" class="text-indigo-600">', '</a>' );
+							$status  = 'success';
+						} elseif ( 'not_saved' === $action_status ) {
+							$message = __( 'Unable to save workflow. Please try again later.', 'email-subscribers' );
+							$status  = 'error';
+						} elseif ( 'not_allowed' === $action_status ) {
+							$message = __( 'You are not allowed to add/edit workflows.', 'email-subscribers' );
+							$status  = 'error';
+						} else {
+							$message = __( 'An error has occured. Please try again later', 'email-subscribers' );
+							$status  = 'error';
+						}
+					}
 				}
 			}
 		}
@@ -149,6 +268,7 @@ class ES_Workflows_Table extends ES_List_Table {
 	 * @modified 4.4.4 Added wp-heading-inline class to heading tag.
 	 */
 	public function load_workflow_list() {
+		$tab = ig_es_get_request_data( 'tab' );
 		?>
 		<div class="flex">
 			<div>
@@ -163,29 +283,30 @@ class ES_Workflows_Table extends ES_List_Table {
 			</div>
 		</div>
 		<div><hr class="wp-header-end"></div>
-		<div id="poststuff" class="es-items-lists">
-			<div id="post-body" class="metabox-holder column-1">
-				<div id="post-body-content">
-					<div class="meta-box-sortables ui-sortable">
-						<form method="get">
-							<input type="hidden" name="page" value="es_workflows" />
-							<?php
-							// Display search field and other available filter fields.
-							$this->prepare_items();
-							?>
-						</form>
-						<form method="post">
-							<?php
-							// Display bulk action fields, pagination and list items.
-							$this->display();
-							?>
-						</form>
-					</div>
-				</div>
-			</div>
-			<br class="clear">
+		<div class="mt-2">
+			<ul class="ig-es-tabs overflow-hidden">
+				<li class="ig-es-tab-heading relative float-left px-1 pb-2 text-center list-none cursor-pointer <?php echo '' === $tab ? esc_attr( 'active' ) : ''; ?>">
+					<a href="admin.php?page=es_workflows">
+						<span class="mt-1 text-base font-medium tracking-wide text-gray-400">
+							<?php echo esc_html__( 'Workflows', 'email-subscribers' ); ?>
+						</span>
+					</a>
+				</li>
+				<li class="ig-es-tab-heading relative float-left px-1 pb-2 ml-5 text-center list-none cursor-pointer hover:border-2 <?php echo 'gallery' === $tab ? esc_attr( 'active' ) : ''; ?>">
+					<a href="admin.php?page=es_workflows&tab=gallery">
+						<span class="mt-1 text-base font-medium tracking-wide text-gray-400">
+							<?php echo esc_html__( 'Workflow gallery', 'email-subscribers' ); ?>
+						</span>
+					</a>
+				</li>
+			</ul>
 		</div>
 		<?php
+		if ( 'gallery' === $tab ) {
+			do_action( 'ig_es_show_workflow_gallery' );
+		} else {
+			do_action( 'ig_es_show_workflows' );
+		}
 	}
 
 	/**
@@ -202,6 +323,7 @@ class ES_Workflows_Table extends ES_List_Table {
 		$order_by = sanitize_sql_orderby( ig_es_get_request_data( 'orderby' ) );
 		$order    = ig_es_get_request_data( 'order' );
 		$search   = ig_es_get_request_data( 's' );
+		$type     = ig_es_get_request_data( 'type' );
 
 		$args = array(
 			's'           => $search,
@@ -209,8 +331,18 @@ class ES_Workflows_Table extends ES_List_Table {
 			'order_by'    => $order_by,
 			'per_page'    => $per_page,
 			'page_number' => $page_number,
-			'type' 		  => 0, // Fetch only user defined workflows.
+			'type'        => $type,
 		);
+
+		if ( '' !== $type ) {
+			if ( 'system' === $type ) {
+				$type = IG_ES_WORKFLOW_TYPE_SYSTEM;
+			} elseif ( 'user' === $type ) {
+				$type = IG_ES_WORKFLOW_TYPE_USER;
+			}
+
+			$args['type'] = $type;
+		}
 
 		$result = ES()->workflows_db->get_workflows( $args, ARRAY_A, $do_count_only );
 
@@ -239,8 +371,21 @@ class ES_Workflows_Table extends ES_List_Table {
 
 		switch ( $column_name ) {
 
-			case 'created_at':
-				$output = ig_es_format_date_time( $item[ $column_name ] );
+			case 'last_ran_at':
+				$workflow_id  = $item['id'];
+				$item['meta'] = maybe_unserialize( $item['meta'] );
+				$output      .= '<span class="last_ran_at_date_time" data-workflow-id="' . $workflow_id . '">';
+				if ( isset( $item['meta']['last_ran_at'] ) ) {
+					$output .= ig_es_format_date_time( $item['meta']['last_ran_at'] );
+				} else {
+					$output .= '-';
+				}
+				$output  .= '</span>';
+				$workflow = new ES_Workflow( $workflow_id );
+				if ( $workflow->exists && $workflow->is_runnable() ) {
+					/* translators: 1. Run workflow button start tag 2: Button close tag */
+					$output .= sprintf( __( ' %1$sRun%2$s', 'email-subscribers' ), '<button type="button" class="inline-flex justify-center rounded-md border border-transparent px-2 py-0.5 bg-white text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue transition ease-in-out duration-150 ig-es-run-workflow-btn" data-workflow-id="' . $workflow_id . '">', '</button>' );
+				}
 				break;
 			default:
 				$output = $item[ $column_name ];
@@ -277,7 +422,11 @@ class ES_Workflows_Table extends ES_List_Table {
 		$title = $item['title'];
 
 		$actions ['edit']  = sprintf( '<a href="?page=%s&action=%s&id=%s" class="text-indigo-600">%s</a>', $this->screen->id, 'edit', absint( $item['id'] ), __( 'Edit', 'email-subscribers' ) );
-		$actions['delete'] = sprintf( '<a href="?page=%s&action=%s&id=%s&_wpnonce=%s" onclick="return checkDelete()">%s</a>', esc_attr( 'es_workflows' ), 'delete', absint( $item['id'] ), $nonce, __( 'Delete', 'email-subscribers' ) );
+		
+		$is_system_workflow = ( IG_ES_WORKFLOW_TYPE_SYSTEM === (int) $item['type'] ) ? true : false;
+		if ( ! $is_system_workflow ) {
+			$actions['delete'] = sprintf( '<a href="?page=%s&action=%s&id=%s&_wpnonce=%s" onclick="return checkDelete()">%s</a>', esc_attr( 'es_workflows' ), 'delete', absint( $item['id'] ), $nonce, __( 'Delete', 'email-subscribers' ) );
+		}
 
 		$title .= $this->row_actions( $actions );
 
@@ -304,11 +453,12 @@ class ES_Workflows_Table extends ES_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
+
 		$columns = array(
-			'cb'         => '<input type="checkbox" />',
-			'title'      => __( 'Title', 'email-subscribers' ),
-			'created_at' => __( 'Created', 'email-subscribers' ),
-			'status'     => __( 'Status', 'email-subscribers' ),
+			'cb'          => '<input type = "checkbox" />',
+			'title'       => __( 'Title', 'email-subscribers' ),
+			'last_ran_at' => __( 'Last ran at', 'email-subscribers' ),
+			'status'      => __( 'Status', 'email-subscribers' ),
 		);
 
 		return $columns;
@@ -322,8 +472,7 @@ class ES_Workflows_Table extends ES_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$sortable_columns = array(
-			'title'      => array( 'title', true ),
-			'created_at' => array( 'created_at', true ),
+			'title'       => array( 'title', true ),
 		);
 
 		return $sortable_columns;
@@ -410,6 +559,7 @@ class ES_Workflows_Table extends ES_List_Table {
 				$workflow_id = ig_es_get_request_data( 'id' );
 
 				$this->db->delete_workflows( $workflow_id );
+				$this->db->delete_workflows_campaign( $workflow_id );
 				$message = __( 'Workflow deleted successfully!', 'email-subscribers' );
 				$status  = 'success';
 			}
@@ -426,7 +576,7 @@ class ES_Workflows_Table extends ES_List_Table {
 			if ( is_array( $ids ) && count( $ids ) > 0 ) {
 				// Delete multiple Workflows.
 				$this->db->delete_workflows( $ids );
-
+				$this->db->delete_workflows_campaign( $ids );
 				$message = __( 'Workflow(s) deleted successfully!', 'email-subscribers' );
 				ES_Common::show_message( $message );
 			} else {

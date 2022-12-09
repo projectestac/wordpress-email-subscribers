@@ -10,31 +10,28 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0
  */
 abstract class ES_DB {
-	
+
 	/**
 	 * Table name
-	 * 
+	 *
 	 * @since 4.0.0
 	 * @var $table_name
-	 *
 	 */
 	public $table_name;
 
 	/**
 	 * Table DB version
-	 * 
+	 *
 	 * @since 4.0.0
 	 * @var $version
-	 *
 	 */
 	public $version;
 
 	/**
 	 * Table primary key column name
-	 * 
+	 *
 	 * @since 4.0.0
 	 * @var $primary_key
-	 *
 	 */
 	public $primary_key;
 
@@ -59,7 +56,7 @@ abstract class ES_DB {
 
 	/**
 	 * Get columns default values
-	 * 
+	 *
 	 * @return array
 	 *
 	 * @since 4.0.0
@@ -71,16 +68,38 @@ abstract class ES_DB {
 	/**
 	 * Retrieve a row by the primary key
 	 *
-	 * @param $row_id
+	 * @param int    $row_id
+	 * @param string $output
+	 * @param false  $use_cache
 	 *
-	 * @return array|object|void|null
+	 * @return false|mixed
 	 *
 	 * @since 4.0.0
+	 *
+	 * @modified 4.7.3 Added support to retrieve data from cache
 	 */
-	public function get( $row_id, $output = ARRAY_A ) {
+	public function get( $row_id = 0, $output = ARRAY_A, $use_cache = false ) {
+
 		global $wpbd;
 
-		return $wpbd->get_row( $wpbd->prepare( "SELECT * FROM $this->table_name WHERE $this->primary_key = %s LIMIT 1;", $row_id ), $output );
+		$query = $wpbd->prepare( "SELECT * FROM $this->table_name WHERE $this->primary_key = %s LIMIT 1;", $row_id );
+
+		if ( true === $use_cache ) {
+			// Considering $output also while considering key generation
+			$cache_key = $this->generate_cache_key( $query . $output );
+
+			$found = false;
+
+			$result = $this->get_cache( $cache_key, $found );
+			if ( ! $found ) {
+				$result = $wpbd->get_row( $query, $output );
+				$this->set_cache( $cache_key, $result );
+			}
+		} else {
+			$result = $wpbd->get_row( $query, $output );
+		}
+
+		return $result;
 	}
 
 	/**
@@ -88,26 +107,55 @@ abstract class ES_DB {
 	 *
 	 * @param $column
 	 * @param $row_id
+	 * @param string $output
+	 * @param false  $use_cache
 	 *
-	 * @return array|object|void|null
+	 * @return false|mixed
 	 *
 	 * @since 4.0.0
+	 *
+	 * @modified 4.7.3 Added support to retrieve data from cache
 	 */
-	public function get_by( $column, $row_id, $output = ARRAY_A ) {
+	public function get_by( $column, $row_id, $output = ARRAY_A, $use_cache = false ) {
 		global $wpbd;
 		$column = esc_sql( $column );
 
-		return $wpbd->get_row( $wpbd->prepare( "SELECT * FROM $this->table_name WHERE $column = %s LIMIT 1;", $row_id ), $output );
+		$query = $wpbd->prepare( "SELECT * FROM $this->table_name WHERE $column = %s LIMIT 1;", $row_id );
+
+		if ( true === $use_cache ) {
+
+			// Consider $output also while generating cache key
+			$cache_key = $this->generate_cache_key( $query . $output );
+
+			$found = false;
+
+			$result = $this->get_cache( $cache_key, $found );
+
+			if ( ! $found ) {
+				$result = $wpbd->get_row( $query, $output );
+				$this->set_cache( $cache_key, $result );
+			}
+		} else {
+			$result = $wpbd->get_row( $query, $output );
+		}
+
+		return $result;
 	}
 
 	/**
 	 * Get rows by conditions
 	 *
 	 * @param string $where
+	 * @param string $output
+	 * @param false  $use_cache
 	 *
-	 * @since 4.2.1
+	 * @return false|mixed
+	 *
+	 * @since 4.2.4
+	 *
+	 * @modfiy 4.7.3 Added support to retrieve data from cache
 	 */
-	public function get_by_conditions( $where = '', $output = ARRAY_A ) {
+	public function get_by_conditions( $where = '', $output = ARRAY_A, $use_cache = false ) {
 		global $wpbd;
 
 		$query = "SELECT * FROM $this->table_name";
@@ -116,7 +164,25 @@ abstract class ES_DB {
 			$query .= " WHERE $where";
 		}
 
-		return $wpbd->get_results( $query, $output );
+		if ( true === $use_cache ) {
+
+			// Consider $output also while generating cache key
+			$cache_key = $this->generate_cache_key( $query . $output );
+
+			$found = false;
+
+			$result = $this->get_cache( $cache_key, $found );
+
+			if ( ! $found ) {
+				$result = $wpbd->get_results( $query, $output );
+
+				$this->set_cache( $cache_key, $result );
+			}
+		} else {
+			$result = $wpbd->get_results( $query, $output );
+		}
+
+		return $result;
 	}
 
 	/**
@@ -133,84 +199,174 @@ abstract class ES_DB {
 	/**
 	 * Retrieve a specific column's value by the primary key
 	 *
-	 * @param $column
-	 * @param $row_id
+	 * @param string $column
+	 * @param int    $row_id
+	 * @param bool   $use_cache
 	 *
 	 * @return null|string|array
 	 *
 	 * @since 4.0.0
+	 *
+	 * @since 4.7.3
 	 */
-	public function get_column( $column, $row_id = 0 ) {
+	public function get_column( $column = '', $row_id = 0, $use_cache = false ) {
 		global $wpbd;
 
 		$column = esc_sql( $column );
 
 		if ( $row_id ) {
-			return $wpbd->get_var( $wpbd->prepare( "SELECT $column FROM $this->table_name WHERE $this->primary_key = %s LIMIT 1;", $row_id ) );
+			$query = $wpbd->prepare( "SELECT $column FROM $this->table_name WHERE $this->primary_key = %s LIMIT 1;", $row_id );
 		} else {
-			return $wpbd->get_col( "SELECT $column FROM $this->table_name" );
+			$query = "SELECT $column FROM $this->table_name";
 		}
+
+		if ( true === $use_cache ) {
+
+			$cache_key = $this->generate_cache_key( $query );
+
+			$found = false;
+
+			$result = $this->get_cache( $cache_key, $found );
+
+			if ( ! $found ) {
+				if ( $row_id ) {
+					$result = $wpbd->get_var( $query );
+				} else {
+					$result = $wpbd->get_col( $query );
+				}
+
+				$this->set_cache( $cache_key, $result );
+			}
+		} else {
+
+			if ( $row_id ) {
+				$result = $wpbd->get_var( $query );
+			} else {
+				$result = $wpbd->get_col( $query );
+			}
+		}
+
+		return $result;
 	}
 
 	/**
 	 * Retrieve a specific column's value by the the specified column / value
 	 *
-	 * @param $column
-	 * @param $column_where
-	 * @param $column_value
-	 * @param bool $only_one
+	 * @param string $column
+	 * @param string $column_where
+	 * @param string $column_value
+	 * @param bool   $only_one
+	 * @param bool   $use_cache
 	 *
 	 * @return array|string|null
 	 *
 	 * @since 4.0.0
-	 * @since 4.3.4 Added support to retrieve whole column
+	 *
+	 * @modified  4.3.4 Added support to retrieve whole column
+	 *
+	 * @modified  4.7.3 Added support to retrieve data from cache
 	 */
-	public function get_column_by( $column, $column_where, $column_value, $only_one = true ) {
+	public function get_column_by( $column = '', $column_where = '', $column_value = '', $only_one = true, $use_cache = false ) {
 		global $wpbd;
 
 		$column_where = esc_sql( $column_where );
-		$column       = esc_sql( $column );
+
+		$column = esc_sql( $column );
 
 		if ( $only_one ) {
-			return $wpbd->get_var( $wpbd->prepare( "SELECT $column FROM $this->table_name WHERE $column_where = %s LIMIT 1;", $column_value ) );
+			$query = $wpbd->prepare( "SELECT $column FROM $this->table_name WHERE $column_where = %s LIMIT 1;", $column_value );
 		} else {
-			return $wpbd->get_col( $wpbd->prepare( "SELECT $column FROM $this->table_name WHERE $column_where = %s;", $column_value ) );
+			$query = $wpbd->prepare( "SELECT $column FROM $this->table_name WHERE $column_where = %s;", $column_value );
 		}
+
+		if ( true === $use_cache ) {
+
+			$cache_key = $this->generate_cache_key( $query );
+
+			$found = false;
+
+			$result = $this->get_cache( $cache_key, $found );
+
+			if ( ! $found ) {
+
+				if ( $only_one ) {
+					$result = $wpbd->get_var( $query );
+				} else {
+					$result = $wpbd->get_col( $query );
+				}
+
+				$this->set_cache( $cache_key, $result );
+			}
+		} else {
+
+			if ( $only_one ) {
+				$result = $wpbd->get_var( $query );
+			} else {
+				$result = $wpbd->get_col( $query );
+			}
+		}
+
+		return $result;
 	}
 
 	/**
 	 * Get column based on where condition
 	 *
-	 * @param $column
+	 * @param string $column
 	 * @param string $where
+	 * @param bool   $use_cache
 	 *
 	 * @return array
 	 *
 	 * @since 4.3.5
+	 *
+	 * @modified 4.7.3 Added support to retrieve data from cache
 	 */
-	public function get_column_by_condition( $column, $where = '' ) {
+	public function get_column_by_condition( $column = '', $where = '', $use_cache = false ) {
 		global $wpbd;
 
 		$column = esc_sql( $column );
 
+		$query = "SELECT $column FROM $this->table_name";
 		if ( ! empty( $where ) ) {
-			return $wpbd->get_col( "SELECT $column FROM $this->table_name WHERE $where" );
-		} else {
-			return $wpbd->get_col( "SELECT $column FROM $this->table_name" );
+			$query .= " WHERE $where";
 		}
+
+		if ( true === $use_cache ) {
+
+			$cache_key = $this->generate_cache_key( $query );
+
+			$found = false;
+
+			$result = $this->get_cache( $cache_key, $found );
+
+			if ( ! $found ) {
+				$result = $wpbd->get_col( $query );
+
+				$this->set_cache( $cache_key, $result );
+			}
+		} else {
+			$result = $wpbd->get_col( $query );
+		}
+
+		return $result;
 	}
 
 	/**
 	 * Select few columns based on condition
 	 *
-	 * @param array $columns
+	 * @param array  $columns
 	 * @param string $where
+	 * @param string $output
+	 * @param bool   $use_cache
 	 *
 	 * @return array|object|null
 	 *
 	 * @since 4.3.5
+	 *
+	 * @modified 4.7.3 Added support to retrieve data from cache
 	 */
-	public function get_columns_by_condition( $columns = array(), $where = '', $output = ARRAY_A ) {
+	public function get_columns_by_condition( $columns = array(), $where = '', $output = ARRAY_A, $use_cache = false ) {
 		global $wpbd;
 
 		if ( ! is_array( $columns ) ) {
@@ -221,11 +377,29 @@ abstract class ES_DB {
 
 		$columns = implode( ', ', $columns );
 
+		$query = "SELECT $columns FROM $this->table_name";
 		if ( ! empty( $where ) ) {
-			return $wpbd->get_results( "SELECT $columns FROM $this->table_name WHERE $where", $output );
-		} else {
-			return $wpbd->get_results( "SELECT $columns FROM $this->table_name", $output );
+			$query .= " WHERE $where";
 		}
+
+		if ( true === $use_cache ) {
+			// Consider $output also while generating cache key
+			$cache_key = $this->generate_cache_key( $query . $output );
+
+			$found = false;
+
+			$result = $this->get_cache( $cache_key, $found );
+
+			if ( ! $found ) {
+				$result = $wpbd->get_results( $query, $output );
+
+				$this->set_cache( $cache_key, $result );
+			}
+		} else {
+			$result = $wpbd->get_results( $query, $output );
+		}
+
+		return $result;
 	}
 
 	/**
@@ -271,7 +445,7 @@ abstract class ES_DB {
 	 * Update a specific row
 	 *
 	 * @param $row_id
-	 * @param array $data
+	 * @param array  $data
 	 * @param string $where
 	 *
 	 * @return bool
@@ -385,6 +559,7 @@ abstract class ES_DB {
 			return false;
 		}
 
+		$query = "DELETE FROM $this->table_name WHERE $where";
 		if ( false === $wpbd->query( "DELETE FROM $this->table_name WHERE $where" ) ) {
 			return false;
 		}
@@ -422,11 +597,16 @@ abstract class ES_DB {
 	/**
 	 * Get total count
 	 *
+	 * @param string $where
+	 * @param bool   $use_cache
+	 *
 	 * @return string|null
 	 *
 	 * @since 4.2.1
+	 *
+	 * @modified 4.7.3 Added support to retrieve data from cache
 	 */
-	public function count( $where = '' ) {
+	public function count( $where = '', $use_cache = false ) {
 		global $wpbd;
 
 		$query = "SELECT count(*) FROM $this->table_name";
@@ -434,21 +614,39 @@ abstract class ES_DB {
 		if ( ! empty( $where ) ) {
 			$query .= " WHERE $where";
 		}
-		
-		return $wpbd->get_var( $query );
+
+		if ( true === $use_cache ) {
+
+			$cache_key = $this->generate_cache_key( $query );
+
+			$found = false;
+
+			$result = $this->get_cache( $cache_key, $found );
+
+			if ( ! $found ) {
+				$result = $wpbd->get_var( $query );
+
+				$this->set_cache( $cache_key, $result );
+			}
+		} else {
+			$result = $wpbd->get_var( $query );
+		}
+
+		return $result;
 	}
 
 	/**
 	 * Insert data into bulk
 	 *
-	 * @param $values
-	 * @param int $length
-	 * @param string $type
+	 * @param array $values
+	 * @param int   $length
+	 * @param bool  $return_insert_ids
 	 *
 	 * @since 4.2.1
+	 *
 	 * @since 4.3.5 Fixed issues and started using it.
 	 */
-	public function bulk_insert( $values, $length = 100 ) {
+	public function bulk_insert( $values = array(), $length = 100, $return_insert_ids = false ) {
 		global $wpbd;
 
 		if ( ! is_array( $values ) ) {
@@ -487,10 +685,14 @@ abstract class ES_DB {
 
 		$error_flag = false;
 
+		// Holds first and last row ids of each batch insert
+		$bulk_rows_start_end_ids = [];
+
 		foreach ( $batches as $key => $batch ) {
 
 			$place_holders = array();
 			$final_values  = array();
+			$fields_str    = '';
 
 			foreach ( $batch as $value ) {
 
@@ -510,7 +712,16 @@ abstract class ES_DB {
 
 			if ( ! $wpbd->query( $sql ) ) {
 				$error_flag = true;
+			} else {
+				$start_id = $wpbd->insert_id;
+				$end_id   = ( $start_id - 1 ) + count( $batch );
+				array_push( $bulk_rows_start_end_ids, $start_id );
+				array_push( $bulk_rows_start_end_ids, $end_id );
 			}
+		}
+
+		if ( $return_insert_ids && count( $bulk_rows_start_end_ids ) > 0 ) {
+			return array( min( $bulk_rows_start_end_ids ), max( $bulk_rows_start_end_ids ) );
 		}
 
 		// Check if error occured during executing the query.
@@ -523,14 +734,13 @@ abstract class ES_DB {
 
 	/**
 	 * Bulk insert data into given table
-	 * 
+	 *
 	 * @param $table_name
 	 * @param $fields
 	 * @param $place_holders
 	 * @param $values
 	 *
 	 * @return bool
-	 *
 	 */
 	public static function do_insert( $table_name, $fields, $place_holders, $values ) {
 		global $wpbd;
@@ -613,7 +823,7 @@ abstract class ES_DB {
 
 		return array(
 			'data'           => $data,
-			'column_formats' => $column_formats
+			'column_formats' => $column_formats,
 		);
 
 	}
@@ -636,6 +846,60 @@ abstract class ES_DB {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Generate Cache key
+	 *
+	 * @param string $str
+	 *
+	 * @return bool|string
+	 *
+	 * @since 4.7.2
+	 */
+	public function generate_cache_key( $str = '' ) {
+		return ES_Cache::generate_key( $str );
+	}
+
+	/**
+	 * Get data from cache
+	 *
+	 * @param $key
+	 * @param null $found
+	 *
+	 * @return false|mixed
+	 *
+	 * @since 4.7.2
+	 */
+	public function get_cache( $key, &$found = null ) {
+		return ES_Cache::get( $key, 'query', false, $found );
+	}
+
+	/**
+	 * Set data into cache
+	 *
+	 * @param string $key
+	 * @param string $value
+	 *
+	 * @since 4.7.2
+	 */
+	public function set_cache( $key = '', $value = '' ) {
+		if ( ! empty( $key ) ) {
+			ES_Cache::set( $key, $value, 'query' );
+		}
+	}
+
+	/**
+	 * Check if cache exists?
+	 *
+	 * @param string $key
+	 *
+	 * @return bool
+	 *
+	 * @since 4.7.2
+	 */
+	public function cache_exists( $key = '' ) {
+		return ES_Cache::is_exists( $key, 'query' );
 	}
 
 }

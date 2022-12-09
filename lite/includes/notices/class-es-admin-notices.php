@@ -21,7 +21,6 @@ class ES_Admin_Notices {
 	 */
 	private static $core_notices = array(
 		'update' => 'update_notice',
-		'trial_consent' => 'show_trial_consent_notice',
 	);
 
 	/**
@@ -156,7 +155,7 @@ class ES_Admin_Notices {
 					$ig_current_date = strtotime( date_i18n( $timezone_format ) );
 
 					if ( ! empty( $notice_args['include'] ) && file_exists( $notice_args['include'] ) ) {
-						include_once  $notice_args['include'] ;
+						include_once $notice_args['include'];
 					}
 
 					if ( ! empty( $notice_args['html'] ) ) {
@@ -164,7 +163,7 @@ class ES_Admin_Notices {
 					}
 
 					// if ( $notice_html ) {
-					// 	include dirname( __FILE__ ) . '/views/html-notice-custom.php';
+					// include dirname( __FILE__ ) . '/views/html-notice-custom.php';
 					// }
 				}
 			}
@@ -175,33 +174,18 @@ class ES_Admin_Notices {
 	 * If we need to update, include a message with the update button.
 	 */
 	public static function update_notice() {
-		
+
 		$latest_version_to_update = ES_Install::get_latest_db_version_to_update();
-		
+
 		if ( version_compare( get_ig_es_db_version(), $latest_version_to_update, '<' ) ) {
 			// Database is updating now.
 			include dirname( __FILE__ ) . '/views/html-notice-updating.php';
-			
+
 			// Show button to to "Run the updater"
-			//include dirname( __FILE__ ) . '/views/html-notice-update.php';
-			
+			// include dirname( __FILE__ ) . '/views/html-notice-update.php';
+
 		} else {
 			include dirname( __FILE__ ) . '/views/html-notice-updated.php';
-		}
-	}
-
-	/**
-	 * Show trial optin notice.
-	 * 
-	 * @since 4.6.1
-	 * 
-	 * @modified 4.6.2 Added not is_premium condition to disable notice when the user activates premium plugin after using the lite version.
-	 */
-	public static function show_trial_consent_notice() {
-
-		// Show notice only when onboarding is complete and plan is not premium.
-		if ( IG_ES_Onboarding::is_onboarding_completed() && ! ES()->is_premium() ) {
-			include dirname( __FILE__ ) . '/views/trial-consent.php';
 		}
 	}
 
@@ -212,48 +196,57 @@ class ES_Admin_Notices {
 
 		$es_dismiss_admin_notice = ig_es_get_request_data( 'es_dismiss_admin_notice' );
 		$option_name             = ig_es_get_request_data( 'option_name' );
-		if ( '1' == $es_dismiss_admin_notice && ! empty( $option_name ) ) {
-			update_option( 'ig_es_' . $option_name, 'yes', false );
-			if ( in_array( $option_name, array( 'redirect_upsale_notice', 'dismiss_upsale_notice', 'dismiss_star_notice', 'star_notice_done', 'trial_to_premium_notice' ) ) ) {
-				update_option( 'ig_es_' . $option_name . '_date', ig_get_current_date_time(), false );
-			}
+		
+		if ( '1' === $es_dismiss_admin_notice && ! empty( $option_name ) ) {
 
-			if ( 'star_notice_done' === $option_name ) {
-				header( 'Location: https://wordpress.org/support/plugin/email-subscribers/reviews/' );
-				exit();
-			}
-			if ( 'redirect_upsale_notice' === $option_name ) {
-				header( 'Location: https://www.icegram.com/email-subscribers-starter-plan-pricing/?utm_source=es&utm_medium=es_upsale_banner&utm_campaign=es_upsell' );
-				exit();
-			}
+			if ( current_user_can( 'manage_options' ) && check_admin_referer( 'es_dismiss_admin_notice' ) ) {
 
-			if ( 'trial_to_premium_notice' === $option_name ) {
-				self::remove_notice( 'trial_to_premium' );
-				$action = ig_es_get_request_data( 'action' );
-				if ( 'ig_es_trial_to_premium_redirect' === $action ) {
-					header( 'Location: https://www.icegram.com/email-subscribers-starter-plan-pricing/?utm_source=in_app&utm_medium=es_trial_to_premium_notice&utm_campaign=es_trial_to_premium_notice' );
+				update_option( 'ig_es_' . $option_name, 'yes', false );
+				if ( in_array( $option_name, array( 'redirect_upsale_notice', 'dismiss_upsale_notice', 'dismiss_star_notice', 'star_notice_done', 'trial_to_premium_notice' ), true ) ) {
+					update_option( 'ig_es_' . $option_name . '_date', ig_get_current_date_time(), false );
+				}
+
+				if ( 'star_notice_done' === $option_name ) {
+					header( 'Location: https://wordpress.org/support/plugin/email-subscribers/reviews/' );
 					exit();
 				}
-			}
-
-			// BFCM 2020 offer
-			if ( 'offer_bfcm_2020' === $option_name ) {
-				$url = 'https://www.icegram.com/email-subscribers-pricing/?utm_source=in_app&utm_medium=es_banner&utm_campaign=' . $option_name;
-				header( "Location: {$url}" );
-				exit();
-			} else {
-				
-				// Remove wp cron notice if user have acknowledged it.
-				if ( 'wp_cron_notice' === $option_name ) {
-					self::remove_notice( 'show_wp_cron' );
-				} else if ( 'trial_consent' === $option_name ) {
-					self::remove_notice( $option_name );
+				if ( 'redirect_upsale_notice' === $option_name ) {
+					header( 'Location: https://www.icegram.com/email-subscribers-starter-plan-pricing/?utm_source=es&utm_medium=es_upsale_banner&utm_campaign=es_upsell' );
+					exit();
 				}
-				
-				$referer = wp_get_referer();
-				wp_safe_redirect( $referer );
+
+				if ( 'trial_to_premium_notice' === $option_name ) {
+					self::remove_notice( 'trial_to_premium' );
+					$action = ig_es_get_request_data( 'action' );
+					if ( 'ig_es_trial_to_premium_redirect' === $action ) {
+						header( 'Location: https://www.icegram.com/email-subscribers-starter-plan-pricing/?utm_source=in_app&utm_medium=es_trial_to_premium_notice&utm_campaign=es_trial_to_premium_notice' );
+						exit();
+					}
+				}
+
+				// Halloween 2022 offer
+				if ( 'offer_bfcm_2022' === $option_name ) {
+					$redirect_url = 'https://www.icegram.com/email-subscribers-pricing/?utm_source=in_app&utm_medium=es_banner&utm_campaign=offer_bfcm_2022';
+					if ( ES()->is_pro() ) {
+						$redirect_url = 'https://www.icegram.com/?utm_source=in_app&utm_medium=es_banner&utm_campaign=offer_bfcm_2022';
+					}
+
+					header( "Location: {$redirect_url}" );
+					exit();
+				} else {
+
+					// Remove wp cron notice if user have acknowledged it.
+					if ( 'wp_cron_notice' === $option_name ) {
+						self::remove_notice( 'show_wp_cron' );
+					} elseif ( 'trial_consent' === $option_name ) {
+						self::remove_notice( $option_name );
+					}
+
+					$referer = wp_get_referer();
+					wp_safe_redirect( $referer );
+				}
+				exit();
 			}
-			exit();
 		}
 
 	}

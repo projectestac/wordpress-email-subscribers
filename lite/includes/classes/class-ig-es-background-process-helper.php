@@ -35,7 +35,7 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 
 		/**
 		 * Contructor
-		 * 
+		 *
 		 * @since 4.6.3
 		 */
 		private function __construct() {
@@ -47,7 +47,7 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 		 * Get single instance of IG_ES_Background_Process_Helper
 		 *
 		 * @return IG_ES_Background_Process_Helper Singleton object of IG_ES_Background_Process_Helper
-		 * 
+		 *
 		 * @since 4.6.3
 		 */
 		public static function get_instance() {
@@ -66,7 +66,7 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 		 * of the maximum WordPress memory.
 		 *
 		 * @return bool
-		 * 
+		 *
 		 * @since 4.6.3
 		 */
 		public static function memory_exceeded() {
@@ -84,7 +84,7 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 		 * Get memory limit.
 		 *
 		 * @return int
-		 * 
+		 *
 		 * @since 4.6.3
 		 */
 		public static function get_memory_limit() {
@@ -110,12 +110,12 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 		 * A timeout limit of 30s is common on shared hosting.
 		 *
 		 * @param string $start_time start timestamp.
-		 * @param float $fraction Time fraction.
-		 * 
+		 * @param float  $fraction Time fraction.
+		 *
 		 * @return bool
-		 * 
+		 *
 		 * @since 4.6.3
-		 * 
+		 *
 		 * @since Added $fraction parameter
 		 */
 		public static function time_exceeded( $start_time = 0, $fraction = 0.6 ) {
@@ -131,10 +131,10 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 		}
 
 		/**
-		 * Method to get Server time limit 
-		 * 
+		 * Method to get Server time limit
+		 *
 		 * @return int $time_limit Server time limit.
-		 * 
+		 *
 		 * @since  4.6.3
 		 */
 		public static function get_time_limit() {
@@ -151,14 +151,14 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 
 		/**
 		 * Method to add new action scheduler task. Task added by this function are called by Action Scheduler library when execution time comes.
-		 * 
+		 *
 		 * @param string $action Action name.
-		 * @param array $action_args Action arguements.
-		 * @param bool $process_asynchronously Should process action asynchronously.
-		 * @param bool $should_wait Should wait before making asynchronous request to process the action.
-		 * 
+		 * @param array  $action_args Action arguements.
+		 * @param bool   $process_asynchronously Should process action asynchronously.
+		 * @param bool   $should_wait Should wait before making asynchronous request to process the action.
+		 *
 		 * @return int|bool $action_id Action ID on success or false on failure.
-		 * 
+		 *
 		 * @since 4.6.3
 		 */
 		public static function add_action_scheduler_task( $action = '', $action_args = array(), $process_asynchronously = true, $should_wait = false, $time = 0 ) {
@@ -168,7 +168,7 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 			}
 
 			if ( function_exists( 'as_schedule_single_action' ) ) {
-				$time = ! empty( $time ) ? $time : time();
+				$time      = ! empty( $time ) ? $time : time();
 				$action_id = as_schedule_single_action( $time, $action, array( $action_args ), 'email-subscribers' );
 
 				if ( ! empty( $action_id ) ) {
@@ -206,9 +206,9 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 		/**
 		 * Method to get required waiting time in seconds before making async request.
 		 * Chaining async requests can crash MySQL. A brief waiting period in PHP helps in preventing that.
-		 * 
+		 *
 		 * @return int Waiting time in seconds.
-		 * 
+		 *
 		 * @since 4.6.3
 		 */
 		public static function get_wait_seconds() {
@@ -219,10 +219,10 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 		 * Method to send asynchronous background request to admin-ajax.
 		 *
 		 * @param array $request_args Async request's arguments.
-		 * @param bool $should_wait Should wait before making this async request.
-		 * 
+		 * @param bool  $should_wait Should wait before making this async request.
+		 *
 		 * @return array $response Async request's response.
-		 * 
+		 *
 		 * @since 4.6.3
 		 */
 		public static function send_async_ajax_request( $request_args = array(), $should_wait = false ) {
@@ -236,7 +236,7 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 			// Should wait before making async request.
 			if ( $should_wait ) {
 				$wait_seconds = self::get_wait_seconds();
-							
+
 				if ( $wait_seconds ) {
 
 					// Sleep to prevent crashing of MYSQL due to chaining of async request.
@@ -252,9 +252,9 @@ if ( ! class_exists( 'IG_ES_Background_Process_Helper' ) ) {
 				'cookies'   => $_COOKIE,
 				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 			);
-			
+
 			$args = apply_filters( 'ig_es_async_request_args', $args );
-			
+
 			// Make a asynchronous request.
 			$response = wp_remote_get( esc_url_raw( $admin_ajax_url ), $args );
 

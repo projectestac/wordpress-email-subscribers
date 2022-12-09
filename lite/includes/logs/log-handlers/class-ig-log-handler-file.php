@@ -79,10 +79,10 @@ if ( ! class_exists( 'IG_Log_Handler_File' ) ) {
 		/**
 		 * Builds a log entry text from timestamp, level and message.
 		 *
-		 * @param int $timestamp Log timestamp.
+		 * @param int    $timestamp Log timestamp.
 		 * @param string $level emergency|alert|critical|error|warning|notice|info|debug.
 		 * @param string $message Log message.
-		 * @param array $context Additional information for log handlers.
+		 * @param array  $context Additional information for log handlers.
 		 *
 		 * @return string Formatted log entry.
 		 */
@@ -122,6 +122,11 @@ if ( ! class_exists( 'IG_Log_Handler_File' ) ) {
 			if ( $file ) {
 				if ( ! file_exists( $file ) ) {
 					$temphandle = @fopen( $file, 'w+' ); // @codingStandardsIgnoreLine.
+					
+					if ( ! $temphandle ) {
+						return false;
+					}
+					
 					@fclose( $temphandle ); // @codingStandardsIgnoreLine.
 
 					if ( defined( 'FS_CHMOD_FILE' ) ) {
@@ -275,7 +280,7 @@ if ( ! class_exists( 'IG_Log_Handler_File' ) ) {
 		/**
 		 * Increment a log file suffix.
 		 *
-		 * @param string $handle Log handle.
+		 * @param string   $handle Log handle.
 		 * @param null|int $number Optional. Default null. Log suffix number to be incremented.
 		 *
 		 * @return bool True if increment was successful, otherwise false.

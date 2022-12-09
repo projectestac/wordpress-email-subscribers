@@ -12,7 +12,7 @@ function header_part() {
 
 		<div class="headerpart">
 			<div class="esbgheader">
-				<h1>Email Subscribers V4.0</h1>
+				<h1>Icegram Express (formerly known as Email Subscribers & Newsletters) V4.0</h1>
 			</div>
 		</div>
 		<?php
