@@ -312,6 +312,27 @@ class ES_DB_Forms extends ES_DB {
 	}
 
 	/**
+	 * Get form settings based on form id
+	 *
+	 * @param $form_id
+	 *
+	 * @return $settings
+	 *
+	 * @since 5.6.2
+	 */
+	public function get_form_settings( $form_id ) {
+		if ( ! empty( $form_id ) ) {
+			$form_data 	= ES()->forms_db->get_form_by_id( $form_id );
+			$settings  	= ig_es_get_data( $form_data, 'settings', array() );
+
+			if ( ! empty( $settings ) ) {
+				$settings        = maybe_unserialize( $settings );
+				return $settings;
+			}
+		}			
+	}
+
+	/**
 	 * Delete Forms
 	 *
 	 * @param $ids

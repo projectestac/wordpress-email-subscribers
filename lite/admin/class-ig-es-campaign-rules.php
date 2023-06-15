@@ -416,7 +416,7 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 																				<?php
 																				if ( ES()->is_pro() ) :
 																					?>
-																				<option value="0"><?php echo esc_html__( 'Any list', 'email-subscribers' ); ?></option>
+																				<option value="0"><?php echo esc_html__( 'Select list', 'email-subscribers' ); ?></option>
 																					<?php
 																				endif;
 																				foreach ( $lists as $list_id => $list_name ) :
@@ -855,12 +855,13 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 		 */
 		public function get_country_name( $code ) {
 
-			$country_name = ES_Geolocation::get_countries_iso_code_name_map( $code );
+			$country_name = ES_Geolocation::get_country_name_from_country_code( $code );
 			return $country_name;
 		}
 
 		/**
 		 * Remove empty conditions from campaign data
+		 * We check condition field and condition value to check for empty conditions
 		 *
 		 * @param array $conditions_data
 		 *
@@ -872,9 +873,9 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 				$list_conditions = $conditions_data;
 				foreach ( $list_conditions as $i => $and_cond ) {
 					foreach ( $and_cond as $j => $cond ) {
-						if ( ! isset( $list_conditions[ $i ][ $j ]['field'] ) ) {
+						if ( ! isset( $list_conditions[ $i ][ $j ]['field'] ) || ! isset( $list_conditions[ $i ][ $j ]['value'] ) ) {
 							unset( $list_conditions[ $i ][ $j ] );
-						} elseif ( isset( $list_conditions[ $i ][ $j ]['value'] ) && is_array( $list_conditions[ $i ][ $j ]['value'] ) ) {
+						} elseif ( is_array( $list_conditions[ $i ][ $j ]['value'] ) ) {
 							$list_conditions[ $i ][ $j ]['value'] = array_values( array_unique( $list_conditions[ $i ][ $j ]['value'] ) );
 						}
 					}

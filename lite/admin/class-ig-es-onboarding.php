@@ -56,12 +56,6 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				'create_default_subscription_form',
 				'add_widget_to_sidebar',
 			),
-			'email_delivery_check_tasks' => array(
-				'queue_default_broadcast_newsletter',
-				'dispatch_emails_from_server',
-				'check_test_email_on_server',
-				'evaluate_email_delivery',
-			),
 			'completion_tasks'           => array(
 				'subscribe_to_es',
 				'save_final_configuration',
@@ -195,7 +189,9 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 		 */
 		public function ajax_perform_configuration_tasks() {
 
-			update_option( self::$onboarding_step_option, 2 );
+			$autoload = false;
+			$step     = 2;
+			update_option( self::$onboarding_step_option, $step, $autoload );
 			return $this->perform_onboarding_tasks( 'configuration_tasks' );
 		}
 
@@ -421,15 +417,6 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				'status' => 'error',
 			);
 
-			$default_list = ES()->lists_db->get_list_by_name( IG_DEFAULT_LIST );
-			// Check if list already not exists.
-			if ( empty( $default_list['id'] ) ) {
-				// Add default list.
-				$default_list_id = ES()->lists_db->add_list( IG_DEFAULT_LIST );
-			} else {
-				$default_list_id = $default_list['id'];
-			}
-
 			$main_list = ES()->lists_db->get_list_by_name( IG_MAIN_LIST );
 			// Check if list already not exists.
 			if ( empty( $main_list['id'] ) ) {
@@ -437,6 +424,15 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				$main_list_id = ES()->lists_db->add_list( IG_MAIN_LIST );
 			} else {
 				$main_list_id = $main_list['id'];
+			}
+			
+			$default_list = ES()->lists_db->get_list_by_name( IG_DEFAULT_LIST );
+			// Check if list already not exists.
+			if ( empty( $default_list['id'] ) ) {
+				// Add default list.
+				$default_list_id = ES()->lists_db->add_list( IG_DEFAULT_LIST );
+			} else {
+				$default_list_id = $default_list['id'];
 			}
 
 			// Check if lists created successfully.
@@ -472,13 +468,14 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				$main_list_id = $main_list['id'];
 			}
 
-			// Get contact data for admin
+			// Get contact data for 
 			$admin_email = get_option( 'admin_email' );
-			$admin_name  = get_option( 'admin_email' );
 			$user        = get_user_by( 'email', $admin_email );
+			$admin_name  = '';			
 			$wp_user_id  = 0;
 			if ( $user instanceof WP_User ) {
 				$wp_user_id = $user->ID;
+				$admin_name = $user->display_name;
 			}
 
 			// Prepare admin contact data.
@@ -635,10 +632,13 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			return $response;
 		}
 
+		
 		/**
 		 * Create default form
 		 *
 		 * @since 4.6.0
+		 * 
+		 * @modify 5.5.14
 		 */
 		public function create_default_subscription_form() {
 
@@ -649,73 +649,38 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$form_data    = array();
 			$default_list = ES()->lists_db->get_list_by_name( IG_MAIN_LIST );
 			$list_id      = $default_list['id'];
-
-			$body = array(
-				array(
-					'type'     => 'text',
-					'name'     => 'Name',
-					'id'       => 'name',
-					'params'   => array(
-						'label'    => 'Name',
-						'show'     => true,
-						'required' => true,
-					),
-
-					'position' => 1,
-				),
-
-				array(
-					'type'     => 'text',
-					'name'     => 'Email',
-					'id'       => 'email',
-					'params'   => array(
-						'label'    => 'Email',
-						'show'     => true,
-						'required' => true,
-					),
-
-					'position' => 2,
-				),
-
-				array(
-					'type'     => 'checkbox',
-					'name'     => 'Lists',
-					'id'       => 'lists',
-					'params'   => array(
-						'label'    => 'Lists',
-						'show'     => false,
-						'required' => true,
-						'values'   => array( $list_id ),
-					),
-
-					'position' => 3,
-				),
-
-				array(
-					'type'     => 'submit',
-					'name'     => 'submit',
-					'id'       => 'submit',
-					'params'   => array(
-						'label' => 'Subscribe',
-						'show'  => true,
-					),
-
-					'position' => 4,
-				),
-
-			);
-
-			$settings = array(
-				'lists' => array( $list_id ),
-				'desc'  => '',
-			);
-
+			
 			$add_gdpr_consent = ig_es_get_request_data( 'add_gdpr_consent', '' );
 
 			// Add GDPR setting if admin has opted for.
 			if ( 'yes' === $add_gdpr_consent ) {
-				$settings['gdpr']['consent']      = 'yes';
-				$settings['gdpr']['consent_text'] = __( 'Please accept terms & condition', 'email-subscribers' );
+				$body = '<div class="es-form-field-container"><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_name_ce8b84bd85771" class="es-field-label">Name</label><input type="text" name="esfpx_name" autocomplete="off" placeholder="Enter your name" class="es-name" id="esfpx_name_ce8b84bd85771" required/></div></div><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_email_ce8b84bd85771" class="es-field-label">Email</label><input type="email" required class="es-email" name="esfpx_email" autocomplete="off" placeholder="Enter your email" id="esfpx_email_ce8b84bd85771"/></div></div><div class="gjs-row"><div class="gjs-cell"><div id="undefined" class="es_gdpr es-field-wrap"><label><input type="checkbox" name="es_gdpr_consent" value="true" required="required"/>Please read our <a href="' . home_url() . '">terms and conditions</a></label></div></div></div><div class="gjs-row"><div class="gjs-cell"><input type="submit" name="submit" value="Subscribe" required/></div></div></div>';
+			
+				$settings = array
+				(
+					'editor_type'     => 'drag-and-drop',
+					'form_style'      => '',
+					'dnd_editor_data' => '[{"type":"form-field-container","classes":["es-form-field-container"],"components":[{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_name_fa8e5109b0bef"},"components":[{"type":"textnode","content":"Name"}]},{"type":"name","void":true,"classes":["es-name"],"attributes":{"type":"text","name":"esfpx_name","autocomplete":"off","placeholder":"Enter your name","id":"esfpx_name_fa8e5109b0bef","required":true}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_email_fa8e5109b0bef"},"components":[{"type":"textnode","content":"Email"}]},{"type":"email","void":true,"classes":["es-email"],"attributes":{"type":"email","required":true,"name":"esfpx_email","autocomplete":"off","placeholder":"Enter your email","id":"esfpx_email_fa8e5109b0bef"}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"classes":["es_gdpr"],"components":[{"tagName":"label","type":"text","content":"<input type=\"checkbox\" name=\"es_gdpr_consent\" value=\"true\" required=\"required\"/>Please read our <a href=\"' . home_url() . '\">terms and conditions</a>","classes":["es-field-label"]}]}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"type":"submit","void":true,"attributes":{"type":"submit","name":"submit","value":"Subscribe","required":true}}]}]}]}]',
+					'dnd_editor_css'  => '* { box-sizing: border-box; } body {margin: 0;}.es-form-field-container .gjs-row{display:flex;justify-content:flex-start;align-items:stretch;flex-wrap:nowrap;}.es-form-field-container .gjs-cell{flex-grow:1;flex-basis:100%;}.es-form-field-container .gjs-cell[data-highlightable="1"]:empty{border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-style:dashed;border-right-style:dashed;border-bottom-style:dashed;border-left-style:dashed;border-top-color:rgb(204, 204, 204);border-right-color:rgb(204, 204, 204);border-bottom-color:rgb(204, 204, 204);border-left-color:rgb(204, 204, 204);border-image-source:initial;border-image-slice:initial;border-image-width:initial;border-image-outset:initial;border-image-repeat:initial;height:30px;}.es-form-field-container .gjs-row .gjs-cell input[type="checkbox"], .es-form-field-container .gjs-row .gjs-cell input[type="radio"]{margin-top:0px;margin-right:5px;margin-bottom:0px;margin-left:0px;width:auto;}.es-form-field-container .gjs-row{margin-bottom:0.6em;}.es-form-field-container label.es-field-label{display:block;}@media (max-width: 320px){.es-form-field-container{padding-top:1rem;padding-right:1rem;padding-bottom:1rem;padding-left:1rem;}}',
+					'lists'           => array( $list_id ),
+					'captcha'         => 'no',
+					'popup_headline'  => ''
+				);			
+			}
+
+			if ( 'no' === $add_gdpr_consent ) {
+				$body = '<div class="es-form-field-container"><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_name_e93fb7b28432b" class="es-field-label">Name</label><input type="text" name="esfpx_name" autocomplete="off" placeholder="Enter your name" class="es-name" id="esfpx_name_e93fb7b28432b" required/></div></div><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_email_e93fb7b28432b" class="es-field-label">Email</label><input type="email" required class="es-email" name="esfpx_email" autocomplete="off" placeholder="Enter your email" id="esfpx_email_e93fb7b28432b"/></div></div><div class="gjs-row"><div class="gjs-cell"><input type="submit" name="submit" value="Subscribe" required/></div></div></div>';
+
+				$settings = array
+				(
+					'editor_type'     => 'drag-and-drop',
+					'form_style'      => '',
+					'dnd_editor_data' => '[{"type":"form-field-container","classes":["es-form-field-container"],"components":[{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_name_0fe74ada6116e"},"components":[{"type":"textnode","content":"Name"}]},{"type":"name","void":true,"classes":["es-name"],"attributes":{"type":"text","name":"esfpx_name","autocomplete":"off","placeholder":"Enter your name","id":"esfpx_name_0fe74ada6116e","required":true}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_email_0fe74ada6116e"},"components":[{"type":"textnode","content":"Email"}]},{"type":"email","void":true,"classes":["es-email"],"attributes":{"type":"email","required":true,"name":"esfpx_email","autocomplete":"off","placeholder":"Enter your email","id":"esfpx_email_0fe74ada6116e"}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"type":"submit","void":true,"attributes":{"type":"submit","name":"submit","value":"Subscribe","required":true}}]}]}]}]',
+					'dnd_editor_css'  => '* { box-sizing: border-box; } body {margin: 0;}.es-form-field-container .gjs-row{display:flex;justify-content:flex-start;align-items:stretch;flex-wrap:nowrap;}.es-form-field-container .gjs-cell{flex-grow:1;flex-basis:100%;}.es-form-field-container .gjs-cell[data-highlightable="1"]:empty{border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-style:dashed;border-right-style:dashed;border-bottom-style:dashed;border-left-style:dashed;border-top-color:rgb(204, 204, 204);border-right-color:rgb(204, 204, 204);border-bottom-color:rgb(204, 204, 204);border-left-color:rgb(204, 204, 204);border-image-source:initial;border-image-slice:initial;border-image-width:initial;border-image-outset:initial;border-image-repeat:initial;height:30px;}.es-form-field-container .gjs-row .gjs-cell input[type="checkbox"], .es-form-field-container .gjs-row .gjs-cell input[type="radio"]{margin-top:0px;margin-right:5px;margin-bottom:0px;margin-left:0px;width:auto;}.es-form-field-container .gjs-row{margin-bottom:0.6em;}.es-form-field-container label.es-field-label{display:block;}@media (max-width: 320px){.es-form-field-container{padding-top:1rem;padding-right:1rem;padding-bottom:1rem;padding-left:1rem;}}',
+					'lists'           => array( $list_id ),
+					'captcha'         => 'no',
+					'popup_headline'  => ''
+				);
 			}
 
 			$form_data['name']       = 'First Form';
@@ -813,12 +778,12 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 
 			// First Create Default Template.
 			// Start-IG-Code.
-			$sample = '<strong style="color: #990000">What can you achieve using Icegram Express (formerly known as Email Subscribers & Newsletters)?</strong><p>Add subscription forms on website, send HTML newsletters & automatically notify subscribers about new blog posts once it is published.';
+			$sample = '<strong style="color: #990000">What can you achieve using Icegram Express?</strong><p>Add subscription forms on website, send HTML newsletters & automatically notify subscribers about new blog posts once it is published.';
 			// End-IG-Code.
 			// Start-Woo-Code.
-			$sample = '<strong style="color: #990000">What can you achieve using Icegram Express (formerly known as Email Subscribers & Newsletters)?</strong><p>Add subscription forms on website, send HTML newsletters.';
+			$sample = '<strong style="color: #990000">What can you achieve using Icegram Express?</strong><p>Add subscription forms on website, send HTML newsletters.';
 			// End-Woo-Code.
-			$sample .= ' You can also Import or Export subscribers from any list to Icegram Express (formerly known as Email Subscribers & Newsletters).</p>';
+			$sample .= ' You can also Import or Export subscribers from any list to Icegram Express.</p>';
 			$sample .= ' <strong style="color: #990000">Plugin Features</strong><ol>';
 			// Start-IG-Code.
 			$sample .= ' <li>Send notification emails to subscribers when new blog posts are published.</li>';
@@ -833,8 +798,8 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$sample .= ' </ol>';
 			$sample .= ' <strong>Thanks & Regards,</strong><br/>Admin<br/>';
 
-			$title   = esc_html__( 'Welcome To Icegram Express (formerly known as Email Subscribers & Newsletters)', 'email-subscribers' );
-			$subject = esc_html__( 'Welcome To Icegram Express (formerly known as Email Subscribers & Newsletters)', 'email-subscribers' );
+			$title   = esc_html__( 'Welcome To Icegram Express', 'email-subscribers' );
+			$subject = esc_html__( 'Welcome To Icegram Express', 'email-subscribers' );
 
 			// Create Broadcast Campaign
 
@@ -1188,21 +1153,16 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 		}
 
 		/**
-		 * Method to subscribe to klawoo in the onboarding process.
+		 * Method to save final configuration.
 		 *
 		 * @since 4.6.0
+		 * 
+		 * @modify 5.6.7
 		 */
 		public function save_final_configuration() {
 
 			$response = array();
-
-			$is_trial = ig_es_get_request_data( 'is_trial', '' );
-
-			if ( ! empty( $is_trial ) ) {
-				// Add trial preferences.
-				ES()->trial->add_trial_data( $is_trial, time() );
-			}
-
+			
 			// Set flag for onboarding completion.
 			update_option( 'ig_es_onboarding_complete', 'yes' );
 

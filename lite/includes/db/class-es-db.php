@@ -733,6 +733,72 @@ abstract class ES_DB {
 	}
 
 	/**
+	 * Update data into bulk
+	 *
+	 * @param array $values
+	 * @param int   $length
+	 * 
+	 */
+	public function bulk_update( $values = array(), $length = 100 ) {
+		global $wpbd;
+
+		if ( ! is_array( $values ) ) {
+			return false;
+		}
+
+		// Get the first value from an array to check data structure
+		$first_value = array_slice( $values, 0, 1 );
+
+		$data = array_shift( $first_value );
+
+		// Set default values
+		$data = wp_parse_args( $data, $this->get_column_defaults() );
+
+		// Initialise column format array
+		$column_formats = $this->get_columns();
+
+		// Remove primary key as we don't require while inserting data
+		unset( $column_formats[ $this->primary_key ] );
+
+		// Convert Batches into smaller chunk
+		$batches = array_chunk( $values, $length );
+
+		foreach ( $batches as $key => $batch ) {
+			
+			$formats = array();
+			$cases   = array();
+			foreach ( $column_formats as $column => $format ) {
+
+				$formats[] = $format;
+
+				$when = array();				
+
+				foreach ( $batch as $value ) {	
+					if ( empty( $value[$column] ) ) {
+						continue;
+					}
+					$when[] = $wpbd->prepare( ' WHEN email = "' . $value['email'] . '" THEN ' . "$format", $value[$column] );
+					$emails[]    = $value['email'];		
+				}
+
+				if ( !empty( $when ) ) {
+					$case = $column . '=(CASE ' . implode( ' ', $when ) . ' END)';
+					$cases[] = $case;
+				}
+				
+			}					
+
+			$query  = "UPDATE {$wpbd->prefix}ig_contacts SET " . implode( ' , ', $cases );
+			$query .= 'WHERE email IN( \'' . implode( '\',\'', $emails ) . '\')';			
+			$result = $wpbd->query( $query );
+
+			return $result;
+			
+		}
+
+	}
+
+	/**
 	 * Bulk insert data into given table
 	 *
 	 * @param $table_name

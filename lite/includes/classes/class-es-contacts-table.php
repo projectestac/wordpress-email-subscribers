@@ -79,7 +79,6 @@ class ES_Contacts_Table extends ES_List_Table {
 		add_filter( 'ig_es_audience_tab_main_navigation', array( $this, 'get_audience_main_tabs' ), 10, 2 );
 
 		// @since 4.3.1
-		add_action( 'ig_es_list_deleted', array( $this, 'delete_contacts_from_list' ), 10, 1 );
 		add_action( 'ig_es_form_deleted', array( $this, 'set_default_form_id' ), 10, 1 );
 	}
 
@@ -322,11 +321,12 @@ class ES_Contacts_Table extends ES_List_Table {
 	 * @since 4.3.1
 	 */
 	public function get_contacts_reports() {
+		$args                            = array( 'days' => 60 );
 		$es_total_contact                = ES_Reports_Data::get_total_contacts();
-		$es_total_subscribed_contacts    = ES_Reports_Data::get_total_subscribed_contacts( 60 );
-		$es_total_unsubscribed_contacts  = ES_Reports_Data::get_total_unsubscribed_contacts( 60 );
-		$es_total_unconfirmed_contacts   = ES_Reports_Data::get_total_unconfirmed_contacts( 60 );
-		$es_total_contacts_opened_emails = ES_Reports_Data::get_total_contacts_opened_emails( 60 );
+		$es_total_subscribed_contacts    = ES_Reports_Data::get_total_subscribed_contacts( $args );
+		$es_total_unsubscribed_contacts  = ES_Reports_Data::get_total_unsubscribed_contacts( $args);
+		$es_total_unconfirmed_contacts   = ES_Reports_Data::get_total_unconfirmed_contacts( $args );
+		$es_total_contacts_opened_emails = ES_Reports_Data::get_total_contacts_opened_emails( $args );
 		?>
 		<div class="border-0 mt-8 mb-4">
 			<table class="min-w-full overflow-hidden bg-white rounded-lg shadow font-sans">
@@ -1523,23 +1523,6 @@ class ES_Contacts_Table extends ES_List_Table {
 				return $response;
 			}
 		}
-	}
-
-	/**
-	 * Remove contacts from list when list is deleted
-	 *
-	 * @param $list_id
-	 *
-	 * @since 4.3.1
-	 * @since 4.3.5 Used remove_contacts_from_list method
-	 */
-	public function delete_contacts_from_list( $list_id = 0 ) {
-
-		if ( empty( $list_id ) ) {
-			return;
-		}
-
-		return ES()->lists_contacts_db->remove_all_contacts_from_list( $list_id );
 	}
 
 	/**

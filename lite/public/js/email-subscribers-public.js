@@ -68,27 +68,40 @@
 
     function handleResponse(response, form) {
 
-        var status = response.status;
+        var redirection_url = response['redirection_url'];
 
-        var message_class = 'success';
-        if (status === 'ERROR') {
-            message_class = 'error';
-        }
+        if ( 'undefined' !== typeof redirection_url ) {
 
-        var responseText = response['message_text'];
-        var messageContainer = $(form).next('.es_subscription_message');
-        messageContainer.attr('class', 'es_subscription_message ' + message_class);
-        messageContainer.html(responseText);
-        var esSuccessEvent = {
-            detail: {
-                es_response: message_class,
-                msg: responseText
-            },
-            bubbles: true,
-            cancelable: true
-        };
+            redirection_url = redirection_url.trim();
+            if (typeof(redirection_url) === 'string' && redirection_url != '') {
+                if (!/^https?:\/\//i.test(redirection_url) ) {
+                    redirection_url = "http://"+redirection_url;
+                }
+                window.location.href = redirection_url;
+            }
 
-        $(form).trigger('es_response', [esSuccessEvent]);
+        } else {
+            var status = response.status;
+            var message_class = 'success';
+            if (status === 'ERROR') {
+                message_class = 'error';
+            }
+
+            var responseText = response['message_text'];
+            var messageContainer = $(form).next('.es_subscription_message');
+            messageContainer.attr('class', 'es_subscription_message ' + message_class);
+            messageContainer.html(responseText);
+            var esSuccessEvent = {
+                detail: {
+                    es_response: message_class,
+                    msg: responseText
+                },
+                bubbles: true,
+                cancelable: true
+            };
+
+            $(form).trigger('es_response', [esSuccessEvent]);
+        }        
     }
 
     function handleBindFunction(form, is_ig = false) {

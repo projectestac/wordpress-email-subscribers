@@ -1,3 +1,10 @@
+/** Common UI Elements CSS - START */
+.es-spinner-loader {
+	display: none;
+}
+/** Common UI Elements CSS - END */
+
+
 #menu-content-change:focus {
 	box-shadow: none;
 	color: #FFFFFF;
@@ -85,6 +92,11 @@ a:focus {
 
 tr#ig-es-no-api-keys-message:not(:only-child) {
     display:none;
+}
+
+/* Hide sub heading for Icegram Mailer info */
+#ig_es_icegram_mailer_info-field-row .es_sub_headline {
+    display: none;
 }
 
 .help-info-content {
@@ -858,6 +870,66 @@ h5.es-badge {
 	margin: 0.2em 0;
 }
 
+.es-w-25 {
+	width: 25%;
+}
+
+.es-w-35 {
+	width: 35%;
+}
+
+.es-w-40 {
+	width: 40%;
+}
+
+.es-w-45 {
+	width: 45%;
+}
+
+.es-w-50 {
+    width: 50%;
+}
+
+.es-w-55 {
+    width: 55%;
+}
+
+.es-w-65 {
+	width: 65%;
+}
+
+table#top-countries {
+	width: 90%;
+}
+
+table#top-countries tbody tr:last-child:not(first-child),
+table#recent-subscribers-activities tbody tr:last-child:not(first-child) {
+    border-bottom: none;
+}
+
+table#top-countries tbody tr:last-child:not(first-child) td, table#recent-subscribers-activities tbody tr:last-child:not(first-child) td {
+    padding-bottom: 5px;
+}
+
+#subscribers-stats.loading,
+#recent-subscribers-activities.loading {
+    cursor: progress;
+}
+
+#es-dashboard-stats select {
+    --text-opacity: 1;
+    color: #9fa6b2;
+    color: rgba(159, 166, 178, var(--text-opacity));
+    border-color: #e5e7eb;
+    box-shadow: none;
+	background: #fff url('../images/arrow.svg') no-repeat right 5px top 55%;
+	max-width: 120px;
+}
+
+#es-dashboard-stats .premium-icon {
+    position: relative;
+    top: -3px;
+}
 /**** Dashboard : end ***/
 
 .es_list_contact_status:before {
@@ -1801,12 +1873,63 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
 
 .premium-icon {
 	display: inline-block;
-	vertical-align: middle;
 	color: #319795;
-  	width: 20px;
-  	height: 21px;
-  	padding-top: 0.25rem;
-	background: url('../images/premium-icon.svg');
+	width: 44px;
+	height: 20px;
+	position: relative;
+}
+
+.premium-icon-rocket {
+    display: inline-block;
+    vertical-align: middle;
+    color: #319795;
+    width: 20px;
+    height: 21px;
+    padding-top: 0.25rem;
+    background: url(../images/premium-icon-white.svg);
+}
+
+.premium-icon::before {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 0px 10px;
+    border-radius: 5px;
+    background-color: #e7e6fd;
+    color: #5850ec;
+    position: absolute;
+    line-height: 1.8;
+    left: 0;
+    top: 50%;
+    transform: translate(0, -50%);
+    width: 100%;
+    height: 100%;
+}
+
+.premium-icon.max::before {
+    content: 'MAX';
+}
+
+.premium-icon::before {
+    content: 'PRO';
+}
+
+.es-mailer-logo .premium-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.es-mailer-logo {
+    position: relative;
+}
+
+.es-mailer-logo .premium-icon::before {
+    border-radius: 0;
+    border-top-right-radius: 5px;
+}
+
+#ig-es-campaign-gallery-items-wrapper .premium-icon {
+	display: none;
 }
 
 .trial-icon {
@@ -1905,7 +2028,7 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
     overflow:auto !important;
 }
 
-.step2-status, .step2-list,.progress.finished,.importing-progress.finished, .wrapper-start-contacts-import{
+.step2-status, .step2-list, .step2-update-existing-subscribers, .progress.finished,.importing-progress.finished, .wrapper-start-contacts-import{
 	display: none;
 }
 
@@ -1988,7 +2111,7 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
 	padding-top: 0 !important;
 }
 
-#es_campaign_report .pulse-animation{
+.es-pulse-animation{
 	animation: es-pulse-animation 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
 }
@@ -2053,19 +2176,22 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
 }
 
 .ig-es-conditions-value-fields .select2-container--default .select2-selection--multiple .select2-selection__choice,
-.es-post-type-categories .select2-container--default .select2-selection--multiple .select2-selection__choice {
+.es-post-type-categories .select2-container--default .select2-selection--multiple .select2-selection__choice,
+.ig-es-form-multiselect + .select2-container--default .select2-selection--multiple .select2-selection__choice {
     margin-bottom: 0;
 	margin-top: 4px;
 }
 
 .ig-es-conditions-value-fields .select2-container .select2-search--inline,
-.es-post-type-categories .select2-container .select2-search--inline {
+.es-post-type-categories .select2-container .select2-search--inline,
+.ig-es-form-multiselect + .select2-container .select2-search--inline {
     margin-bottom: 0;
 }
 
 .ig-es-conditions-value-fields .select2-container:not(.select2-container--focus) .select2-search--inline:not(:only-child),
 .ig-es-post-notification-form .select2-container:not(.select2-container--focus) .select2-search--inline:not(:only-child),
-.es-post-type-categories .select2-container:not(.select2-container--focus) .select2-search--inline:not(:only-child) {
+.es-post-type-categories .select2-container:not(.select2-container--focus) .select2-search--inline:not(:only-child),
+.ig-es-form-multiselect + .select2-container:not(.select2-container--focus) .select2-search--inline:not(:only-child) {
 	display: none;
 }
 
@@ -2253,6 +2379,7 @@ body[class*="es_reports"] .recipient-text {
 /** Import subscribers CSS - START */
 .es-importer-logo {
 	width: 160px;
+	min-height: 135px;
 }
 /** Import subscribers CSS - END */
 
@@ -2374,13 +2501,16 @@ body[class*="page_es_subscribers"] .wp-list-table.contacts th#last_opened_at {
     background-color: #fff;
 }
 
+#ig-es-tags-dropdown, #ig-es-tag-icon-dropdown {
+	height: 300px;
+    overflow: hidden scroll;
+}
 
 .campaign-email-preview-container-left {
 	font-size: 13px;
 	color: #787878;
 	display: inline-block;
 }
-
 
 .campaign-email-preview-container-right {
 
@@ -2710,14 +2840,14 @@ top: 50%;}
 
 
 
-.es-dashboard-stats-item .tooltip-text {background: transparent;}
+#es-dashboard-stats .tooltip-text {background: transparent;}
 
-.es-dashboard-stats-item .es-tooltip .tooltip-text {right: 25px;
+#es-dashboard-stats .es-tooltip .tooltip-text {right: 25px;
     top: 50%;left: initial;transform: translate(50%,0%);
     /* left: 50%; */
     /* opacity: 0.9;z-index: 999;} */
 
-/* .es-dashboard-stats-item svg.tooltip-arrow {display: none;} */
+/* #es-dashboard-stats svg.tooltip-arrow {display: none;} */
 /** Enagement Score CSS - END **/
 
 /** DND form build CSS - START **/
@@ -2772,3 +2902,33 @@ top: 50%;}
 	width: 58%;
 }
 /** Workflow Rules CSS - END **/
+
+#ig-es-log-files-container .select2-container--default .select2-selection--single {
+	height: 34px;
+}
+
+#ig-es-log-files-container .select2-container--default .select2-selection--single .select2-selection__arrow b {
+    background: #fff url('../images/arrow.svg') no-repeat;
+    border: none;
+    height: 15px;
+    width: 20px;
+    position: absolute;
+    margin-top: 0px;
+    transform: translate(-50%, -50%);
+}
+
+.ig-es-log-file-name {
+	line-height: 32px;
+}
+
+.ig-es-log-files-dropdown {
+	width:300px;
+}
+
+#ig_es_log_content {
+	overflow-y: auto;
+}
+
+#ig_es_ess_promotion_message p {
+    margin: 0;
+}

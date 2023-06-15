@@ -47,6 +47,8 @@ class ES_Admin_Settings {
 				$options = apply_filters( 'ig_es_before_save_settings', $options );
 
 				$options['ig_es_disable_wp_cron']             = isset( $options['ig_es_disable_wp_cron'] ) ? $options['ig_es_disable_wp_cron'] : 'no';
+				$options['ig_es_ess_opted_for_sending_service']             = isset( $options['ig_es_ess_opted_for_sending_service'] ) ? $options['ig_es_ess_opted_for_sending_service'] : 'no';
+				$options['ig_es_ess_branding_enabled']             = isset( $options['ig_es_ess_branding_enabled'] ) ? $options['ig_es_ess_branding_enabled'] : 'no';
 				$options['ig_es_track_email_opens']           = isset( $options['ig_es_track_email_opens'] ) ? $options['ig_es_track_email_opens'] : 'no';
 				$options['ig_es_enable_ajax_form_submission'] = isset( $options['ig_es_enable_ajax_form_submission'] ) ? $options['ig_es_enable_ajax_form_submission'] : 'no';
 				$options['ig_es_enable_welcome_email']        = isset( $options['ig_es_enable_welcome_email'] ) ? $options['ig_es_enable_welcome_email'] : 'no';
@@ -147,10 +149,6 @@ class ES_Admin_Settings {
 						'icon' => '<svg class="w-6 h-6 inline -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>',
 						'name' => __( 'General', 'email-subscribers' ),
 					),
-					'signup_confirmation' => array(
-						'icon' => '<svg class="w-6 h-6 inline -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>',
-						'name' => __( 'Notifications', 'email-subscribers' ),
-					),
 					'email_sending'       => array(
 						'icon' => '<svg class="w-6 h-6 inline -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>',
 						'name' => __( 'Email Sending', 'email-subscribers' ),
@@ -165,7 +163,7 @@ class ES_Admin_Settings {
 						'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 inline -mt-1.5" style="stroke-width:2">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" />
 					  </svg>',
-						'name' => __( 'REST API', 'email-subscribers' ),
+						'name' => __( 'API', 'email-subscribers' ),
 					);
 				}
 				$es_settings_tabs = apply_filters( 'ig_es_settings_tabs', $es_settings_tabs );
@@ -203,11 +201,12 @@ class ES_Admin_Settings {
 	}
 
 	public static function get_from_email_notice( $from_email ) {
-		$from_email_notice 		 = '';
+		$from_email_notice = '';
+
 		$from_email              = get_option( 'ig_es_from_email' );
 		$is_popular_domain	     = ES_Common::is_popular_domain( $from_email );
 		$from_email_notice_class = $is_popular_domain ? '' : 'hidden';
-		$from_email_notice       = '<span id="ig-es-from-email-notice" class="text-red-600 ' . $from_email_notice_class . '">' . __( 'Your emails might land in spam if you use above email address..', 'email-subscribers' );
+		$from_email_notice      .= '<span id="ig-es-from-email-notice" class="text-red-600 ' . $from_email_notice_class . '">' . __( 'Your emails might land in spam if you use above email address..', 'email-subscribers' );
 		$site_url				 = site_url();
 		$site_domain             = ES_Common::get_domain_from_url( $site_url );
 		/* translators: %s: Site domain */
@@ -284,7 +283,7 @@ class ES_Admin_Settings {
 				'name'    => __( 'Enable AJAX subscription form submission', 'email-subscribers' ),
 				'info'    => __( 'Enabling this will let users to submit their subscription form without page reload using AJAX call.', 'email-subscribers' ),
 				'type'    => 'checkbox',
-				'default' => 'no',
+				'default' => 'yes',
 			),
 
 			'ig_es_track_email_opens'               => array(
@@ -440,6 +439,7 @@ class ES_Admin_Settings {
 		$test_email = ES_Common::get_admin_email();
 
 		$total_emails_sent = ES_Common::count_sent_emails();
+		$account_url       = ES()->mailer->get_current_mailer_account_url();
 
 		$email_sending_settings = array(
 			'ig_es_cronurl'                 => array(
@@ -459,9 +459,8 @@ class ES_Admin_Settings {
 				'default'      => 'no',
 				'id'           => 'ig_es_disable_wp_cron',
 				'name'         => __( 'Disable Wordpress Cron', 'email-subscribers' ),
-				'info'         => __( 'Enable this option if you do not want Icegram Express (formerly known as Email Subscribers & Newsletters) to use WP Cron to send emails.', 'email-subscribers' ),
+				'info'         => __( 'Enable this option if you do not want Icegram Express to use WP Cron to send emails.', 'email-subscribers' ),
 			),
-
 			'ig_es_cron_interval'           => array(
 				'id'      => 'ig_es_cron_interval',
 				'name'    => __( 'Send emails at most every', 'email-subscribers' ),
@@ -478,7 +477,8 @@ class ES_Admin_Settings {
 				'default'      => 50,
 				'id'           => 'ig_es_hourly_email_send_limit',
 				'name'         => __( 'Maximum emails to send in an hour', 'email-subscribers' ),
-				'desc'         => __( 'Total emails your host can send in an hour.<br>Total emails sent in current hour: <b>' . $total_emails_sent . '</b>' , 'email-subscribers' ),
+				/* translators: 1. Break tag 2. ESP Account url with anchor tag 3. ESP name 4. Closing anchor tag */
+				'desc'         => __( 'Total emails sent in current hour: <b>' . $total_emails_sent . '</b>' , 'email-subscribers' ) . ( $account_url ? sprintf( __( '%1$sCheck sending limit from your %2$s%3$s\'s account%4$s.', 'email-subscribers' ), '<br/>', '<a href="' . esc_url( $account_url ) . '" target="_blank">', ES()->mailer->get_current_mailer_name(), '</a>' ) : '' ),
 			),
 
 			'ig_es_max_email_send_at_once'  => array(
@@ -493,8 +493,7 @@ class ES_Admin_Settings {
 
 			'ig_es_test_send_email'         => array(
 				'type'         => 'html',
-				/* translators: %s: Spinner image path */
-				'html'         => sprintf( '<input id="es-test-email" type="email" value=%s class="mt-3 mb-1 border-gray-400 form-input h-9"/><input type="submit" name="submit" id="es-send-test" class="ig-es-primary-button" value="Send Email"><span class="es_spinner_image_admin" id="spinner-image" style="display:none"><img src="%s" alt="Loading..."/></span>', $test_email, ES_PLUGIN_URL . 'lite/public/images/spinner.gif' ),
+				'html'         => self::get_test_send_email_html( $test_email ),
 				'placeholder'  => '',
 				'supplemental' => '',
 				'default'      => '',
@@ -537,8 +536,8 @@ class ES_Admin_Settings {
 				'supplemental' => '',
 				'default'      => '',
 				'id'           => 'ig_es_mailer_settings',
-				'name'         => __( 'Select a mailer to send mail', 'email-subscribers' ),
-				'desc'         => '',
+				'name'         => __( 'Email Sender', 'email-subscribers' ),
+				'info'         => '',
 			),
 		);
 
@@ -570,16 +569,16 @@ class ES_Admin_Settings {
 			$rest_api_settings = array(
 				'allow_api' => array(
 					'id'	=> 'ig_es_allow_api',
-					'name'  => __( 'Enable REST API', 'email-subscribers' ),
-					'info'    => __( 'Enable REST API to add/edit/delete subscribers through third-party sites or apps.', 'email-subscribers' ),
+					'name'  => __( 'Enable API', 'email-subscribers' ),
+					'info'    => __( 'Enable API to add/edit/delete subscribers through third-party sites or apps.', 'email-subscribers' ),
 					'type'    => 'checkbox',
-					'default' => 'yes',
+					'default' => 'no',
 					/* translators: REST API endpoint */
-					'desc' => sprintf( __( 'REST endpoint: %s', 'email-subscribers'), '<code class="es-code">' . $rest_api_endpoint . '</code>' )
+					'desc' => sprintf( __( 'URL endpoint: %s', 'email-subscribers'), '<code class="es-code">' . $rest_api_endpoint . '</code>' )
 				),
 				'api_key_access_section' => array(
 					'id'   => 'ig_es_api_keys_section',
-					'name' => __( 'REST API Keys', 'email-subscribers' ),
+					'name' => __( 'API Keys', 'email-subscribers' ),
 					'type' => 'html',
 					'html' => self::render_rest_api_keys_section(),
 				),
@@ -627,7 +626,7 @@ class ES_Admin_Settings {
 		$html        = ! empty( $arguments['html'] ) ? $arguments['html'] : '';
 		$id_key      = ! empty( $id_key ) ? $id_key : $uid;
 		$class       = ! empty( $arguments['class'] ) ? $arguments['class'] : '';
-		$rows        = ! empty( $arguments['rows'] ) ? $arguments['rows'] : 12;
+		$rows        = ! empty( $arguments['rows'] ) ? $arguments['rows'] : 8;
 		$disabled    = ! empty( $arguments['disabled'] ) ? 'disabled="' . $arguments['disabled'] . '"' : '';
 		$value       = ! empty( $arguments['value'] ) ? $arguments['value'] : $value;
 
@@ -714,11 +713,12 @@ class ES_Admin_Settings {
 		$html .= '<tbody>';
 		foreach ( $fields as $key => $field ) {
 			if ( ! empty( $field['name'] ) ) {
-				$html .= "<tr class='py-4 ml-4 border-b border-gray-100 '><th scope='row' class='block pt-3 pb-8 pr-4 ml-6 text-left pt-7'><span class='pb-2 text-sm font-semibold text-gray-600'>";
+				$html .= "<tr id='" . $field['id'] . "-field-row' class='py-4 ml-4 border-b border-gray-100 '><th scope='row' class='block pt-3 pb-8 pr-4 ml-6 text-left pt-7'><span class='pb-2 text-sm font-semibold text-gray-600'>";
 				$html .= $field['name'];
 
 				if ( ! empty( $field['is_premium'] ) ) {
-					$html .= '</span><a class="ml-1" href="' . $field['link'] . '" target="_blank"><span class="premium-icon"></span></a>';
+					$premium_plan = isset( $field['plan'] ) ? $field['plan'] : '';
+					$html .= '</span><a class="ml-1" href="' . $field['link'] . '" target="_blank"><span class="premium-icon ' . $premium_plan . '"></span></a>';
 				}
 
 				// If there is help text
@@ -858,7 +858,8 @@ class ES_Admin_Settings {
 			. $mailer['name'] . '</p>';
 
 			if ( ! empty( $mailer['is_premium'] ) ) {
-				$html .= '<span class="premium-icon"></span>';
+				$plan = isset( $mailer['plan'] ) ? $mailer['plan'] : '';
+				$html .= '<span class="premium-icon ' . $plan . '"></span>';
 			}
 
 			$html .= '</div>';
@@ -870,6 +871,102 @@ class ES_Admin_Settings {
 			$html .= '</label>';
 		}
 
+		return $html;
+	}
+
+	/**
+	 * Prepare Icegram Mailer Setting
+	 *
+	 * @return string
+	 */
+	public static function get_icegram_mailer_html() {
+		$html                      = '';
+		$opted_for_sending_service = get_option( 'ig_es_ess_opted_for_sending_service', 'no' );
+		$es_ess_data               = get_option( 'ig_es_ess_data', '' );
+		$current_date              = ig_es_get_current_date();
+		$allocated_limit           = isset( $es_ess_data['allocated_limit'] ) ? $es_ess_data['allocated_limit']: 0;
+		$used_limit                = isset( $es_ess_data['used_limit'][$current_date] ) ? $es_ess_data['used_limit'][$current_date] : 0;
+		$plan                      = ES_Service_Email_Sending::get_plan();
+		$premium_plans             = array( 'pro', 'max' );
+		$is_premium_plan           = in_array( $plan, $premium_plans, true );
+		$is_ess_branding_enabled   = ES_Service_Email_Sending::is_ess_branding_enabled();
+		ob_start();
+		?>
+		<section id="sending_service_optin" class="pb-4">
+			<label for="ig_es_ess_opted_for_sending_service" class="inline-flex items-center mt-4 cursor-pointer">
+				<span class="relative">
+					<input id="ig_es_ess_opted_for_sending_service" type="checkbox" name="ig_es_ess_opted_for_sending_service" value="yes" <?php echo 'yes' === $opted_for_sending_service ? esc_attr( 'checked="checked"') : ''; ?> class="absolute w-0 h-0 mt-6 opacity-0 es-check-toggle ">
+					<span class="es-mail-toggle-line"></span>
+					<span class="es-mail-toggle-dot"></span>
+				</span>
+				<span class="pl-2 text-sm font-semibold text-gray-600">
+					<?php echo esc_html__( 'Enable Icegram email sending service', 'email-subscribers' ); ?>
+				</span>
+			</label>
+			<p class="pl-11 text-xs italic font-normal leading-snug text-gray-500">
+				<?php
+					/* translators: %s Break tag */
+					echo sprintf( esc_html__( 'Use this to get high speed & reliable email delivery via %sIcegram\'s own Email Sending Service at 100 free emails/day.', 'email-subscribers' ), '<br/>' );
+				?>
+			</p>
+		</section>
+		<section id="sending_service_info" class="pb-4">
+			<?php if ( $is_premium_plan ) : ?>
+			<label for="ig_es_ess_branding_enabled" class="inline-flex items-center mt-4 cursor-pointer">
+				<span class="relative">
+					<input id="ig_es_ess_branding_enabled" type="checkbox" name="ig_es_ess_branding_enabled" value="yes" <?php echo $is_ess_branding_enabled ? esc_attr( 'checked="checked"') : ''; ?> class="absolute w-0 h-0 mt-6 opacity-0 es-check-toggle">
+					<span class="es-mail-toggle-line"></span>
+					<span class="es-mail-toggle-dot"></span>
+				</span>
+				<span class="pl-2 text-sm font-semibold text-gray-600">
+					<?php echo esc_html__( 'Show "Sent by Icegram"', 'email-subscribers' ); ?>
+				</span>
+			</label>
+			<p class="pl-11 text-xs italic font-normal leading-snug text-gray-500">
+				<?php
+					/* translators: %s Break tag */
+					echo sprintf( esc_html__( 'Include "Sent by Icegram" link in the footer of your emails.', 'email-subscribers' ), '<br/>' );
+				?>
+			</p>
+			<br/>
+			<?php endif; ?>
+			<label id="icegram-mailer-info" class="inline-flex items-center cursor-pointer">
+				<div class="mr-4 border border-gray-200 rounded-lg shadow-md es-mailer-logo">
+					<div class="border-0 es-logo-wrapper">
+					<img src="<?php echo esc_url( ES_PLUGIN_URL . 'lite/admin/images/icegram-mailer.png' ); ?>" alt="Default (none)">
+					</div>
+					<p class="mb-2 inline-block" title="<?php echo esc_attr__( 'Icegram Email Sending Service', 'email-subscribers' ); ?>">
+						Icegram ESS
+					</p>
+				</div>
+				<?php
+				if ( ! empty( $es_ess_data ) ) {
+					?>
+					<div class="mt-4 mr-4 field-desciption mb-2 text-xs italic font-normal leading-snug text-gray-500 helper">
+						<div>
+							<?php echo esc_html__( 'Allocated limit', 'email-subscribers' ); ?>: <b><?php echo esc_html( $allocated_limit ); ?></b>
+						</div>
+						<div>
+						<?php echo esc_html__( 'Used limit', 'email-subscribers' ); ?>: <b><?php echo esc_html( $used_limit ); ?></b>
+						</div>
+						<div>
+						<?php echo esc_html__( 'Remaining limit', 'email-subscribers' ); ?>: <b><?php echo esc_html( $allocated_limit - $used_limit ); ?></b>
+						</div>
+					</div>
+					<?php
+				}
+				?>
+			</label>
+		</section>
+		<?php
+		$html = ob_get_clean();
+		return $html;
+	}
+
+	public static function get_test_send_email_html( $test_email ) {
+
+		/* translators: %s: Spinner image path */
+		$html = sprintf( '<input id="es-test-email" type="email" value=%s class="mt-3 mb-1 border-gray-400 form-input h-9"/><input type="submit" name="submit" id="es-send-test" class="ig-es-primary-button" value="Send Email"><span class="es_spinner_image_admin" id="spinner-image" style="display:none"><img src="%s" alt="Loading..."/></span>', $test_email, ES_PLUGIN_URL . 'lite/public/images/spinner.gif' );
 		return $html;
 	}
 
@@ -920,6 +1017,20 @@ class ES_Admin_Settings {
 				),
 			);
 			$email_sending_settings = ig_es_array_insert_after( $email_sending_settings, 'ig_es_cronurl', $es_cron_info );
+		}
+
+		$opted_for_sending_service = get_option( 'ig_es_ess_opted_for_sending_service', '' );
+		if ( ! empty( $opted_for_sending_service ) ) {
+			$sending_service_setting = array(
+				'ig_es_icegram_mailer_info'         => array(
+					'type' => 'html',
+					'html' => self::get_icegram_mailer_html(),
+					'id'   => 'ig_es_icegram_mailer_info',
+					'name' => ' ',
+				),
+			);
+
+			$email_sending_settings = ig_es_array_insert_after( $email_sending_settings, 'ig_es_test_send_email', $sending_service_setting );
 		}
 
 		return $email_sending_settings;
@@ -1067,7 +1178,7 @@ class ES_Admin_Settings {
 					'name'    => __( 'Plugin usage tracking', 'email-subscribers' ),
 					'type'    => 'checkbox',
 					'default' => 'no',
-					'info'    => __( 'Help us to improve Icegram Express (formerly known as Email Subscribers & Newsletters) by opting in to share non-sensitive plugin usage data.', 'email-subscribers' ),
+					'info'    => __( 'Help us to improve Icegram Express by opting in to share non-sensitive plugin usage data.', 'email-subscribers' ),
 				),
 			);
 
@@ -1185,7 +1296,7 @@ class ES_Admin_Settings {
 				</select>
 				<button type="button" id="ig-es-generate-rest-api-key" class="ig-es-title-button ml-2 align-middle ig-es-inline-loader">
 					<span>
-						<?php echo esc_html__( 'Generate new key', 'email-subscribers' ); ?>
+						<?php echo esc_html__( 'Generate API key', 'email-subscribers' ); ?>
 					</span>
 					<svg class="es-btn-loader animate-spin h-4 w-4 text-indigo"
 									xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

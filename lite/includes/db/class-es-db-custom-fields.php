@@ -99,6 +99,11 @@ class ES_DB_Custom_Fields extends ES_DB {
 		return $this->get_all();
 	}
 
+	public function get_custom_date_fields() {
+		$where_condition = "type = 'date'";
+		return ES()->custom_fields_db->get_by_conditions( $where_condition );
+	}
+
 	/**
 	 * Add Custom Field
 	 *

@@ -308,7 +308,7 @@ class ES_Import_Subscribers {
 								</div>
 							</div>
 							<div class="w-3/4 mb-6 mr-4 mt-4">
-								<select class="relative form-select shadow-sm border border-gray-400 sm:w-32 lg:w-48 ml-4" name="es_email_status" id="es_email_status">
+								<select class="relative form-select shadow-sm border border-gray-400 sm:w-32 lg:w-48" name="es_email_status" id="es_email_status">
 									<?php
 									$statuses_dropdown = ES_Common::prepare_statuses_dropdown_options();
 									echo wp_kses( $statuses_dropdown, $allowedtags );
@@ -339,7 +339,7 @@ class ES_Import_Subscribers {
 									$select_list_class = 'form-select';
 								}
 								?>
-								<div class="ml-4">
+								<div>
 									<select name="<?php echo esc_attr( $select_list_name ); ?>" id="list_id" class="relative shadow-sm border border-gray-400 sm:w-32 lg:w-48 <?php echo esc_attr( $select_list_class ); ?>" <?php echo esc_attr( $select_list_attr ); ?>>
 										<?php
 										$lists_dropdown = ES_Common::prepare_list_dropdown_options();
@@ -373,6 +373,35 @@ class ES_Import_Subscribers {
 							</div>
 						</div>
 					</div>
+
+					<div class="step2-update-existing-subscribers">
+						<div class="flex flex-row border-gray-100">
+							<div class="flex w-1/4">
+								<div class="ml-6 pt-6">
+									<label><span class="pr-4 text-sm font-medium text-gray-600 pb-2">
+										<?php esc_html_e( 'Update existing subscribers', 'email-subscribers' ); ?> </span>
+									</label>
+								</div>
+							</div>
+								
+							<div class="w-3/4 mb-6 mr-4 mt-4 pt-2">
+								<div class="flex flex-row">
+									<div class="w-1/2">
+										<label class="mr-4">
+											<input type="radio" name="ig-es-update-subscriber-data" class="form-radio" value="yes">
+											<?php echo esc_html__( 'Yes', 'email-subscribers' ); ?>
+										</label>
+										<label>
+											<input type="radio" name="ig-es-update-subscriber-data" class="form-radio" value="no" checked>
+											<?php echo esc_html__( 'No', 'email-subscribers' ); ?>
+										</label>
+									</div>									
+								</div>
+							</div>	
+
+						</div>
+					</div>
+
 					<div class="wrapper-start-contacts-import" style="padding-top:10px;">
 							<?php wp_nonce_field( 'import-contacts', 'import_contacts' ); ?>
 							<input type="submit" name="submit" class="start-import cursor-pointer ig-es-primary-button px-4 py-2 ml-6 mr-2 my-4" value="<?php esc_html_e( 'Import', 'email-subscribers' ); ?>" />
@@ -823,14 +852,16 @@ class ES_Import_Subscribers {
 			$bulkdata = ig_es_get_data( $_POST, 'options', array(), true );
 		}
 
-		$bulkdata                    = wp_parse_args( $bulkdata, get_option( 'ig_es_bulk_import' ) );
-		$erroremails                 = get_option( 'ig_es_bulk_import_errors', array() );
-		$order                       = isset( $bulkdata['mapping_order'] ) ? $bulkdata['mapping_order'] : array();
-		$list_id                     = isset( $bulkdata['list_id'] ) ? $bulkdata['list_id'] : array();
-		$parts_at_once               = 10;
-		$selected_status             = $bulkdata['status'];
-		$send_optin_emails           = isset( $bulkdata['send_optin_emails'] ) ? $bulkdata['send_optin_emails'] : 'no';
-		$need_to_send_welcome_emails = ( 'yes' === $send_optin_emails );
+		$bulkdata                        = wp_parse_args( $bulkdata, get_option( 'ig_es_bulk_import' ) );
+		$erroremails                     = get_option( 'ig_es_bulk_import_errors', array() );
+		$order                           = isset( $bulkdata['mapping_order'] ) ? $bulkdata['mapping_order'] : array();
+		$list_id                         = isset( $bulkdata['list_id'] ) ? $bulkdata['list_id'] : array();
+		$parts_at_once                   = 10;
+		$selected_status                 = $bulkdata['status'];
+		$send_optin_emails               = isset( $bulkdata['send_optin_emails'] ) ? $bulkdata['send_optin_emails'] : 'no';
+		$need_to_send_welcome_emails     = ( 'yes' === $send_optin_emails );
+		$update_subscribers_data         = isset( $bulkdata['update_subscribers_data'] ) ? $bulkdata['update_subscribers_data'] : 'no';
+		$need_to_update_subscribers_data = ( 'yes' === $update_subscribers_data );
 
 		$error_codes = array(
 			'invalid' => __( 'Email address is invalid.', 'email-subscribers' ),
@@ -1012,8 +1043,20 @@ class ES_Import_Subscribers {
 				if ( count( $current_batch_emails ) > 0 ) {
 
 					$current_batch_emails = array_unique( $current_batch_emails );
-
+					
 					$existing_contacts_email_id_map = ES()->contacts_db->get_email_id_map( $current_batch_emails );
+
+					if ( $need_to_update_subscribers_data ) {
+						if ( ! empty( $existing_contacts_email_id_map ) ) {
+							$existing_contacts 	   = array_intersect_key( $contacts_data, $existing_contacts_email_id_map );
+							$updated_contacts  = ES()->contacts_db->bulk_update( $existing_contacts, 100 );		
+							if ( ! empty( $updated_contacts ) ) {
+								$bulkdata['updated_contacts'] += $updated_contacts; 
+							}
+						}
+					}
+					
+
 					if ( ! empty( $existing_contacts_email_id_map ) ) {
 						$contacts_data = array_diff_key( $contacts_data, $existing_contacts_email_id_map );
 					}
@@ -1061,6 +1104,8 @@ class ES_Import_Subscribers {
 			$return['memoryusage']            = size_format( memory_get_peak_usage( true ), 2 );
 			$return['errors']                 = isset( $bulkdata['errors'] ) ? $bulkdata['errors'] : 0;
 			$return['duplicate_emails_count'] = isset( $bulkdata['duplicate_emails_count'] ) ? $bulkdata['duplicate_emails_count'] : 0;
+			$return['existing_contacts']      = isset( $bulkdata['existing_contacts'] ) ? $bulkdata['existing_contacts'] : 0;
+			$return['updated_contacts']       = isset( $bulkdata['updated_contacts'] ) ? $bulkdata['updated_contacts'] : 0;
 			$return['imported']               = ( $bulkdata['imported'] );
 			$return['total']                  = ( $bulkdata['lines'] );
 			$return['f_errors']               = number_format_i18n( $bulkdata['errors'] );
@@ -1071,8 +1116,18 @@ class ES_Import_Subscribers {
 			$return['html'] = '';
 
 			if ( ( $bulkdata['imported'] + $bulkdata['errors'] + $bulkdata['duplicate_emails_count'] ) >= $bulkdata['lines'] ) {
-				/* translators: 1. Total imported contacts 2. Total contacts */
-				$return['html'] .= '<p class="text-base text-gray-600 pt-2 pb-1.5">' . sprintf( esc_html__( '%1$s of %2$s contacts imported.', 'email-subscribers' ), '<span class="font-medium">' . number_format_i18n( $bulkdata['imported'] ) . '</span>', '<span class="font-medium">' . number_format_i18n( $bulkdata['lines'] ) . '</span>' );
+				$return['html'] = '<p class="text-base text-gray-600 pt-2 pb-1.5">';
+				
+				$total_imported_contacts = $bulkdata['imported'] - $bulkdata['updated_contacts'];
+				if ( $total_imported_contacts > 0 ) {
+					/* translators: 1. Total imported contacts */
+					$return['html'] .= sprintf( esc_html__( '%1$s contacts imported.', 'email-subscribers' ) . ' ', '<span class="font-medium">' . number_format_i18n( $total_imported_contacts ) . '</span>' );
+				}
+
+				if ( $bulkdata['updated_contacts'] > 0 ) {
+					/* translators: 1. Total updated contacts */
+					$return['html'] .= sprintf( esc_html__( '%1$s contacts updated.', 'email-subscribers' ), '<span class="font-medium">' . number_format_i18n( $bulkdata['updated_contacts'] ) . '</span>' );
+				}				
 
 				if ( $bulkdata['duplicate_emails_count'] ) {
 					$duplicate_email_string = _n( 'email', 'emails', $bulkdata['duplicate_emails_count'], 'email-subscribers' );
@@ -1462,6 +1517,8 @@ class ES_Import_Subscribers {
 			'imported'               => 0,
 			'errors'                 => 0,
 			'duplicate_emails_count' => 0,
+			'existing_contacts'		 => 0,
+			'updated_contacts'		 => 0,
 			'encoding'               => $encoding,
 			'parts'                  => $partcount,
 			'lines'                  => $lines_count,

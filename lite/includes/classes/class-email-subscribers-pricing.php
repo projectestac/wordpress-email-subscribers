@@ -350,7 +350,7 @@ class Email_Subscribers_Pricing {
 						<div style="line-height: 2.5rem;">
 							<?php
 								/* translators: %s: Offer text */
-								echo sprintf( esc_html__( 'Congratulations! You just unlocked %s on Icegram Express (formerly known as Email Subscribers & Newsletters) Premium!', 'email-subscribers' ), '<span class="ig_es_discount_code">' . esc_html__( '25% off', 'email-subscribers' ) . '</span>' );
+								echo sprintf( esc_html__( 'Congratulations! You just unlocked %s on Icegram Express Premium!', 'email-subscribers' ), '<span class="ig_es_discount_code">' . esc_html__( '25% off', 'email-subscribers' ) . '</span>' );
 							?>
 						</div>
 						<div style="padding-left: 0.5rem;">🎉</div>
@@ -400,7 +400,7 @@ class Email_Subscribers_Pricing {
 				</div>
 			</div>
 			<div class="ig_es_row" id="ig_es_comparison_table">
-				<div class="ig_es_sub_headline"><span class="dashicons dashicons-awards"></span><?php echo esc_html__( ' More powerful features with Icegram Express (formerly known as Email Subscribers & Newsletters) Premium!', 'email-subscribers' ); ?></div>
+				<div class="ig_es_sub_headline"><span class="dashicons dashicons-awards"></span><?php echo esc_html__( ' More powerful features with Icegram Express Premium!', 'email-subscribers' ); ?></div>
 				<table class="ig_es_feature_table wp-list-table widefat">
 					<thead>
 						<tr>
@@ -490,7 +490,7 @@ class Email_Subscribers_Pricing {
 								<?php echo esc_html__( 'Default SMTP', 'email-subscribers' ); ?>
 							</td>
 							<td class="ig_es_pro_feature_name">
-								<?php echo esc_html__( 'Amazon SES, Mailgun, SendGrid, SparkPost, Postmark, Sendinblue & Mailjet.', 'email-subscribers' ); ?>
+								<?php echo esc_html__( 'Amazon SES, Mailgun, SendGrid, SparkPost, Postmark, Sendinblue, Mailjet & Mailersend.', 'email-subscribers' ); ?>
 							</td>
 						</tr>
 						<tr>
@@ -778,7 +778,7 @@ class Email_Subscribers_Pricing {
 			<div class="ig_es_row" id="ig_es_product_page_link">
 				<?php 
 					/* translators: %s: Pricing page URL */
-					echo sprintf( esc_html__( 'You can either manually send normal email marketing campaigns or use %s to automate reliable emails that land in subscribers’ inboxes, not in the spam folders.', 'email-subscribers' ), '<a style="color: #00848D;" target="_blank" href="https://www.icegram.com/email-subscribers/?utm_source=es_in_app&utm_medium=in_app_pricing&utm_campaign=es_pricing_footer">' . esc_html__( 'Icegram Express (formerly known as Email Subscribers & Newsletters)', 'email-subscribers' ) . '</a>' );
+					echo sprintf( esc_html__( 'You can either manually send normal email marketing campaigns or use %s to automate reliable emails that land in subscribers’ inboxes, not in the spam folders.', 'email-subscribers' ), '<a style="color: #00848D;" target="_blank" href="https://www.icegram.com/email-subscribers/?utm_source=es_in_app&utm_medium=in_app_pricing&utm_campaign=es_pricing_footer">' . esc_html__( 'Icegram Express', 'email-subscribers' ) . '</a>' );
 				?>
 				<br>
 			</div>

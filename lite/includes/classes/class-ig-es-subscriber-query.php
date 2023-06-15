@@ -214,7 +214,9 @@ class IG_ES_Subscribers_Query {
 							$sub_cond[] = $this->get_condition( $field, $operator, $value );
 						} else {
 
-							$value = $this->remove_empty_values( $value );
+							if ( '_sent_before' !== $field ) {
+								$value = $this->remove_empty_values( $value );
+							}
 
 							$alias = 'actions' . $field . '_' . $i . '_' . $j;
 
@@ -246,9 +248,9 @@ class IG_ES_Subscribers_Query {
 								} elseif ( '_sent__not_in' === $field ) {
 									$sub_cond[] = "$alias.contact_id IS NULL";
 								} elseif ( '_sent_before' === $field ) {
-									$sub_cond[] = "$alias.timestamp <= " . $this->get_timestamp( $value );
+									$sub_cond[] = "$alias.created_at <= " . $this->get_timestamp( $value );
 								} elseif ( '_sent_after' === $field ) {
-									$sub_cond[] = "$alias.timestamp >= " . $this->get_timestamp( $value );
+									$sub_cond[] = "$alias.created_at >= " . $this->get_timestamp( $value );
 								}
 
 								$joins[] = $join;

@@ -28,7 +28,7 @@ class ES_Trigger_User_Unconfirmed extends ES_Workflow_Trigger {
 	 */
 	public function load_admin_details() {
 		$this->title       = __( 'User Unconfirmed', 'email-subscribers' );
-		$this->description = __( 'Fires when someone submit subscriber form.', 'email-subscribers' );
+		$this->description = __( 'Fires when someone submits subscription form.', 'email-subscribers' );
 		$this->group       = __( 'Subscriber', 'email-subscribers' );
 	}
 

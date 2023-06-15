@@ -79,10 +79,10 @@ class ES_Workflow_Admin_Edit {
 	public static function send_workflow_action_test_email() {
 		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
 
-		$email   = sanitize_email( ig_es_get_request_data( 'es_test_email' ) );
-		$subject = ig_es_get_request_data( 'subject', '' );
-		$content = ig_es_get_request_data( 'content', '', false );
-		$trigger = ig_es_get_request_data( 'trigger', '' );
+		$email    = sanitize_email( ig_es_get_request_data( 'es_test_email' ) );
+		$subject  = ig_es_get_request_data( 'subject', '' );
+		$content  = ig_es_get_request_data( 'content', '', false );
+		$trigger  = ig_es_get_request_data( 'trigger', '' );
 		$template = ig_es_get_request_data( 'template', '' );
 		$heading  = ig_es_get_request_data( 'heading', '' );
 
@@ -399,7 +399,7 @@ class ES_Workflow_Admin_Edit {
 		add_meta_box( 'ig_es_workflow_trigger', __( 'Trigger', 'email-subscribers' ), array( __CLASS__, 'trigger_metabox' ), $page_prefix . '_page_es_workflows', 'normal', 'high' );
 		add_meta_box( 'ig_es_workflow_rules', __( 'Rules', 'email-subscribers' ), array( __CLASS__, 'rules_metabox' ), $page_prefix . '_page_es_workflows', 'normal', 'core' );
 		add_meta_box( 'ig_es_workflow_actions', __( 'Actions', 'email-subscribers' ), array( __CLASS__, 'actions_metabox' ), $page_prefix . '_page_es_workflows', 'normal', 'low' );
-		add_meta_box( 'ig_es_workflow_save', __( 'Save', 'email-subscribers' ), array( __CLASS__, 'save_metabox' ), $page_prefix . '_page_es_workflows', 'side', 'default' );
+		add_meta_box( 'ig_es_workflow_save', __( 'Save', 'email-subscribers' ), array( __CLASS__, 'save_metabox' ), $page_prefix . '_page_es_workflows', 'side', 'high' );
 		add_meta_box( 'ig_es_workflow_variables', __( 'Placeholders', 'email-subscribers' ), array( __CLASS__, 'variables_metabox' ), $page_prefix . '_page_es_workflows', 'side', 'default' );
 
 		if ( ES()->can_upsell_features( array( 'lite', 'trial' ) ) ) {
@@ -508,6 +508,11 @@ class ES_Workflow_Admin_Edit {
 			if ( is_callable( [ $rule, 'get_search_ajax_action' ] ) ) {
 				$rule_data['ajax_action'] = $rule->get_search_ajax_action();
 			}
+
+			if ( is_callable( [ $rule, 'get_select_choices' ] ) ) {
+				$rule_data['select_choices'] = $rule->get_select_choices();
+			}
+			
 			$data[ $rule->name ] = $rule_data;
 		}
 
@@ -592,21 +597,7 @@ class ES_Workflow_Admin_Edit {
 			)
 		);
 	}
-
-	/**
-	 * Timing meta box
-	 *
-	 * @since 4.4.1
-	 */
-	public static function timing_metabox() {
-		ES_Workflow_Admin::get_view(
-			'meta-box-timing',
-			array(
-				'workflow' => self::$workflow,
-			)
-		);
-	}
-
+	
 	/**
 	 * Options meta box
 	 *
@@ -1062,13 +1053,13 @@ class ES_Workflow_Admin_Edit {
 			<h2 class="ig-es-workflow-gallery-item-title font-medium text-gray-600 tracking-wide text-base mb-2">
 			<?php
 				/* translators: 1. Email Subscriber name 3. Supported plugin name */
-				echo sprintf( esc_html__( 'Connect %1$s and %2$s', 'email-subscribers' ), '<strong>Icegram Express</strong>(formerly known as <strong>Email Subscribers & Newsletters</strong>)', '<strong>' . esc_html( $supported_plugin_name ) . '</strong>' );
+				echo sprintf( esc_html__( 'Connect %1$s and %2$s', 'email-subscribers' ), '<strong>Icegram Express</strong>)', '<strong>' . esc_html( $supported_plugin_name ) . '</strong>' );
 			?>
 			</h2>
 			<p>
 				<?php
 					/* translators: 1. Plugin name */
-					echo sprintf( esc_html__( 'Automatically sync your %1$s users/members into %2$s\'s audience list through our workflow integrations.', 'email-subscribers' ), '<strong>' . esc_html( $supported_plugin_name ) . '</strong>', '<strong>Icegram Express</strong>(formerly known as <strong>Email Subscribers & Newsletters</strong>)', '<strong>' );
+					echo sprintf( esc_html__( 'Automatically sync your %1$s users/members into %2$s\'s audience list through our workflow integrations.', 'email-subscribers' ), '<strong>' . esc_html( $supported_plugin_name ) . '</strong>', '<strong>Icegram Express</strong>)', '<strong>' );
 				?>
 				<br/>
 				<a href="<?php echo esc_url( $workflow_gallery_url ); ?>" class="ig-es-primary-button px-3 py-1 mt-2 align-middle">

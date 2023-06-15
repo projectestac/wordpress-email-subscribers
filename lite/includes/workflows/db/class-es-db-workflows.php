@@ -156,8 +156,8 @@ class ES_DB_Workflows extends ES_DB {
 		if ( ! empty( $query_args['trigger_names'] ) ) {
 			$trigger_names_count        = count( $query_args['trigger_names'] );
 			$trigger_names_placeholders = array_fill( 0, $trigger_names_count, '%s' );
-			$query[]          = ' trigger_name IN( ' . implode( ',', $trigger_names_placeholders ) . ' )';
-			$args             = array_merge( $args, $query_args['trigger_names'] );
+			$query[]                    = ' trigger_name IN( ' . implode( ',', $trigger_names_placeholders ) . ' )';
+			$args                       = array_merge( $args, $query_args['trigger_names'] );
 		}
 
 		if ( isset( $query_args['status'] ) ) {
@@ -942,4 +942,38 @@ class ES_DB_Workflows extends ES_DB {
 
 		return $child_tracking_campaign_ids;
 	}
+
+	/**
+	 * Get count of active workflows
+	 *
+	 * @return int active workflows count
+	 * 
+	 * @since 5.5.7
+	 */
+	public function get_active_workflows_count() {
+
+		$args = array( 
+			'status' => '1',
+		);
+
+		return self::get_workflows( $args, null, true );
+	}
+
+	/**
+	 * Get count of active workflows grouped by common trigger names
+	 *
+	 * @return array $result
+	 * 
+	 * @since 5.5.7
+	 */
+	public function get_workflows_count_by_triggername() {
+
+		global $wpdb;
+
+		$result = $wpdb->get_results( "SELECT trigger_name, count(trigger_name) AS trigger_count FROM {$wpdb->prefix}ig_workflows WHERE status = 1 GROUP BY trigger_name", ARRAY_A );
+
+		return $result;
+	}
+
 }
+

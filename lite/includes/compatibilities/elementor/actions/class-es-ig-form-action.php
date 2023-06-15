@@ -24,7 +24,7 @@ class Es_Form_Action extends Integration_Base {
 	 * @return string
 	 */
 	public function get_label() {
-		return __( 'Icegram Express (formerly known as Email Subscribers & Newsletters)', 'email-subscribers' );
+		return __( 'Icegram Express', 'email-subscribers' );
 	}
 
 	/**

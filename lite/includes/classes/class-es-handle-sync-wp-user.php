@@ -259,7 +259,7 @@ class ES_Handle_Sync_Wp_User {
 					<?php
 					$workflows_page_url = menu_page_url( 'es_workflows', false );
 					/* translators: %s: Link to Workflow page */
-					echo wp_kses_post( sprintf( __( 'Hey!!! now sync users using Icegram Express (formerly known as Email Subscribers & Newsletters)\' workflows. <a href="%s" class="text-indigo-400">Create new workflows</a>', 'email-subscribers' ), $workflows_page_url ) );
+					echo wp_kses_post( sprintf( __( 'Hey!!! now sync users using Icegram Express\' workflows. <a href="%s" class="text-indigo-400">Create new workflows</a>', 'email-subscribers' ), $workflows_page_url ) );
 					?>
 				</span>
 				</div>

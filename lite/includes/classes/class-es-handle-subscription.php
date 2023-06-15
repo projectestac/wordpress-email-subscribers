@@ -201,8 +201,9 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 			);
 
 			$es           = ! empty( $_POST['es'] ) ? sanitize_text_field( wp_unslash( $_POST['es'] ) ) : '';
+			$es_form_id   = ! empty( $_POST['esfpx_form_id'] ) ? sanitize_text_field( wp_unslash( $_POST['esfpx_form_id'] ) ) : '';
 			$es_subscribe = ! empty( $_POST['esfpx_es-subscribe'] ) ? sanitize_text_field( wp_unslash( $_POST['esfpx_es-subscribe'] ) ) : '';
-
+			
 			if ( ! empty( $es_subscribe ) && wp_verify_nonce( $es_subscribe, 'es-subscribe' ) ) {
 				$nonce_verified = true;
 			}
@@ -210,7 +211,7 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 			$doing_ajax      = defined( 'DOING_AJAX' ) && DOING_AJAX;
 			$return_response = defined( 'IG_ES_RETURN_HANDLE_RESPONSE' ) && IG_ES_RETURN_HANDLE_RESPONSE;
 
-			// Verify nonce only if it is submitted through Icegram Express (formerly known as Email Subscribers & Newsletters)' subscription form else check if we have form data in $external_form_data.
+			// Verify nonce only if it is submitted through Icegram Express' subscription form else check if we have form data in $external_form_data.
 			if ( ( 'subscribe' === $es ) || ! empty( $external_form_data ) ) {
 
 				// Get form data from external source if passed.
@@ -405,15 +406,24 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 								$response['message'] = 'es_optin_success_message';
 							}
 
-							$response['status'] = 'SUCCESS';
+							$response['status']  = 'SUCCESS';
+							$form_settings       = ES()->forms_db->get_form_settings( $es_form_id );
+							$action_after_submit = ! empty( $form_settings['action_after_submit'] ) ? $form_settings['action_after_submit'] : '';
+
+							if ( 'redirect_to_url' === $action_after_submit ) {
+								$redirection_url             = ! empty( $form_settings['redirection_url'] ) ? $form_settings['redirection_url'] : '';
+								$is_hash_not_added 		 	 = false === strpos( $redirection_url, '#' );
+								$response['redirection_url'] = $is_hash_not_added ? $redirection_url . '#' : $redirection_url;
+							}
 						} else {
 
 							$response['message'] = 'es_db_error_notice';
 						}
 					} else {
 						$response['status']  = 'SUCCESS';
-						$response['message'] = 'es_optin_success_message';
-						$response            = $this->do_response( $response );
+						$response['message'] = 'es_optin_success_message';							
+						
+						$response = $this->do_response( $response );
 						if ( $return_response ) {
 							return $response;
 						} elseif ( $doing_ajax ) {
@@ -434,7 +444,7 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 					}
 				}
 			} else {
-				$response['message'] = 'es_permission_denied_notice';
+				$response['message'] = 'es_permission_denied_notice';				
 			}
 
 			$response = $this->do_response( $response );
@@ -454,13 +464,15 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 		 * @param $response
 		 *
 		 * @since 4.0.0
+		 * 
+		 * @modify 5.6.1
 		 */
 		public function do_response( $response ) {
 
 			$message                  = isset( $response['message'] ) ? $response['message'] : '';
 			$response['message_text'] = '';
 			if ( ! empty( $message ) ) {
-				$response['message_text'] = self::get_messages( $message );
+				$response['message_text'] = $this->get_messages( $message );
 			}
 
 			return $response;
@@ -474,6 +486,8 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 		 * @return array|mixed|void
 		 *
 		 * @since 4.0.0
+		 * 
+		 * @modify 5.6.7
 		 */
 		public function validate_data( $data ) {
 
@@ -509,7 +523,7 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 				return $es_response;
 			}
 
-			$is_domain_blocked = $this->is_domain_blocked( $email );
+			$is_domain_blocked = ES_Common::is_domain_blocked( $email );
 
 			// Store it blocked emails
 			if ( $is_domain_blocked ) {
@@ -545,54 +559,7 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 
 			return $es_response;
 		}
-
-		/**
-		 * Check if the domain is blocked based on email
-		 *
-		 * @param $email
-		 *
-		 * @return bool
-		 *
-		 * @since 4.1.0
-		 */
-		public function is_domain_blocked( $email ) {
-
-			if ( empty( $email ) ) {
-				return true;
-			}
-
-			$domains = trim( get_option( 'ig_es_blocked_domains', '' ) );
-
-			// No domains to block? Return
-			if ( empty( $domains ) ) {
-				return false;
-			}
-
-			$domains = explode( PHP_EOL, $domains );
-
-			$domains = apply_filters( 'ig_es_blocked_domains', $domains );
-
-			if ( empty( $domains ) ) {
-				return false;
-			}
-
-			$rev_email = strrev( $email );
-			foreach ( $domains as $domain ) {
-				$domain = trim( $domain );
-				if ( strpos( $rev_email, strrev( $domain ) ) === 0 ) {
-					$email_parts = explode( '@', $email );
-					if ( ! empty( $email_parts[1] ) ) {
-						$email_domain = $email_parts[1];
-						if ( $email_domain === $domain ) {
-							return true;
-						}
-					}
-				}
-			}
-
-			return false;
-		}
-
+				
 		/**
 		 * Get Message description based on message
 		 *
@@ -601,13 +568,23 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 		 * @return array|mixed|string|void
 		 *
 		 * @since 4.0.0
+		 * 
+		 * @modify 5.6.1
 		 */
-		public static function get_messages( $message ) {
+		public function get_messages( $message ) {
 			$ig_es_form_submission_success_message = get_option( 'ig_es_form_submission_success_message' );
+			$form_data 							   = ES()->forms_db->get_form_by_id( $this->form_id );
+			$settings  							   = ig_es_get_data( $form_data, 'settings', array() );
+
+			if ( ! empty( $settings ) ) {
+				$settings        = maybe_unserialize( $settings );
+				$success_message = ! empty( $settings['success_message'] ) ? $settings['success_message'] : '';
+			}
+
 			$messages                              = array(
 				'es_empty_email_notice'       => __( 'Please enter email address', 'email-subscribers' ),
 				'es_rate_limit_notice'        => __( 'You need to wait for some time before subscribing again', 'email-subscribers' ),
-				'es_optin_success_message'    => ! empty( $ig_es_form_submission_success_message ) ? $ig_es_form_submission_success_message : __( 'Successfully Subscribed.', 'email-subscribers' ),
+				'es_optin_success_message'    => ! empty( $success_message ) ? $success_message : $ig_es_form_submission_success_message,
 				'es_email_exists_notice'      => __( 'Email Address already exists!', 'email-subscribers' ),
 				'es_unexpected_error_notice'  => __( 'Oops.. Unexpected error occurred.', 'email-subscribers' ),
 				'es_invalid_email_notice'     => __( 'Invalid email address', 'email-subscribers' ),
@@ -632,6 +609,8 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 		 * Method to handle external subscriptions.
 		 *
 		 * @since 4.4.7
+		 * 
+		 * @modify 5.6.2
 		 **/
 		public function handle_subscription() {
 
@@ -674,10 +653,16 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 			$doing_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
 			// Run only when it is normal form submission and not ajax form submission.
 			if ( ! $doing_ajax ) {
-				$es_action = ig_es_get_post_data( 'es' );
+				$es_action = ig_es_get_post_data( 'es' );				
 				if ( ! empty( $es_action ) && 'subscribe' === $es_action ) {
 					// Store the response, so that it can be shown while outputting the subscription form HTML.
-					ES_Shortcode::$response = $this->process_request();
+					$response = $this->process_request();
+					if ( ! empty ( $response['redirection_url'] ) ) {
+						wp_redirect( $response['redirection_url'] );
+						exit;
+					} 
+
+					ES_Shortcode::$response = $response;
 				}
 			}
 		}

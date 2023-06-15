@@ -27,6 +27,7 @@ if ( ! ES()->is_starter() ) {
 			'ig_es_ninja_forms_submitted'      => __( 'Ninja Form Submitted', 'email-subscribers' ),
 			'ig_es_gravity_forms_submitted'    => __( 'Gravity Form Submitted', 'email-subscribers' ),
 			'ig_es_forminator_forms_submitted' => __( 'Forminator Form Submitted', 'email-subscribers' ),
+			'ig_es_formidable_forms_submitted' => __( 'Formidable Form Submitted', 'email-subscribers' ),
 		),
 		'Order'   => array(
 			'ig_es_wc_order_completed'    => __( 'WooCommerce Order Completed', 'email-subscribers' ),

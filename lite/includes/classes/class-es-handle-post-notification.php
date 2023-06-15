@@ -179,11 +179,12 @@ class ES_Handle_Post_Notification {
 
 								$mailing_queue_hash = $guid;
 								$campaign_id        = $notification['id'];
-								ES_DB_Sending_Queue::do_insert_from_contacts_table( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
+								$emails_queued		= ES_DB_Sending_Queue::queue_emails( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
 
-								update_post_meta( $post_id, 'ig_es_is_post_notified', 1 );
-
-								$post_mailing_queue_ids[] = $mailing_queue_id;
+								if ( $emails_queued ) {
+									update_post_meta( $post_id, 'ig_es_is_post_notified', 1 );
+									$post_mailing_queue_ids[] = $mailing_queue_id;
+								}
 							}
 						}
 					}
@@ -271,7 +272,7 @@ class ES_Handle_Post_Notification {
 		// Get post description
 		$post_description_length = 50;
 		$post_description        = $post->post_content;
-		$post_description        = strip_tags( strip_shortcodes( $post_description ) );
+		$post_description        = strip_tags( self::strip_shortcodes( $post_description ) );
 		$words                   = explode( ' ', $post_description, $post_description_length + 1 );
 		if ( count( $words ) > $post_description_length ) {
 			array_pop( $words );
@@ -293,7 +294,7 @@ class ES_Handle_Post_Notification {
 		// Get text before the more(<!--more-->) tag.
 		$text_before_more_tag = $more_tag_data['main'];
 		$strip_excluded_tags  = ig_es_get_strip_excluded_tags();
-		$text_before_more_tag = strip_tags( strip_shortcodes( $text_before_more_tag ), implode( '', $strip_excluded_tags ) );
+		$text_before_more_tag = strip_tags( self::strip_shortcodes( $text_before_more_tag ), implode( '', $strip_excluded_tags ) );
 		$es_templ_body        = str_replace( '{{POSTMORETAG}}', $text_before_more_tag, $es_templ_body );
 		$es_templ_body        = str_replace( '{{post.more_tag}}', $text_before_more_tag, $es_templ_body );
 
@@ -340,7 +341,7 @@ class ES_Handle_Post_Notification {
 			$post_link_with_title = "<a href='" . $post_link . "' target='_blank'>" . $post_title . '</a>';
 			$es_templ_body        = str_replace( '{{POSTLINK-WITHTITLE}}', $post_link_with_title, $es_templ_body );
 			$es_templ_body        = str_replace( '{{post.link_with_title}}', $post_link_with_title, $es_templ_body );
-			$post_link            = "<a href='" . $post_link . "' target='_blank'>" . $post_link . '</a>';
+			$post_link            = "<a href='" . urldecode( $post_link ) . "' target='_blank'>" . urldecode( $post_link ) . '</a>';
 		}
 		$es_templ_body = str_replace( '{{POSTLINK}}', $post_link, $es_templ_body );
 		$es_templ_body = str_replace( '{{post.link}}', $post_link, $es_templ_body );
@@ -561,6 +562,11 @@ class ES_Handle_Post_Notification {
 		}
 
 		return $notice_text;
+	}
+
+	public static function strip_shortcodes( $content ) {
+		$content = preg_replace('/\[[^\[\]]*\]/', '', $content);
+		return $content;
 	}
 
 }

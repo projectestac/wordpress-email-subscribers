@@ -183,7 +183,6 @@ class ES_Reports_Table extends ES_List_Table {
 	 */
 	public function column_default( $item, $column_name ) {
 		global $wpdb;
-		$item = apply_filters( 'es_add_additional_report_column_data', $item, $column_name );
 		switch ( $column_name ) {
 			case 'start_at':
 			case 'finish_at':
@@ -208,6 +207,11 @@ class ES_Reports_Table extends ES_List_Table {
 			case 'total_sent':
 				$total_emails_sent = ES()->actions_db->get_count_based_on_id_type( $item['campaign_id'], $item['id'], IG_MESSAGE_SENT );
 				return number_format_i18n( $total_emails_sent );
+			case 'total_opened':
+				$total_emails_sent   = ES()->actions_db->get_count_based_on_id_type( $item['campaign_id'], $item['id'], IG_MESSAGE_SENT );
+				$total_emails_opened = ES()->actions_db->get_count_based_on_id_type( $item['campaign_id'], $item['id'], IG_MESSAGE_OPEN );
+				$open_rate           = ! empty( $total_emails_sent) ? number_format_i18n( ( ( $total_emails_opened * 100 ) / $total_emails_sent ), 2 ) : 0;
+				return number_format_i18n( $total_emails_opened ) . esc_html( ' (' . $open_rate . '%)' );
 			default:
 				$column_data = isset( $item[ $column_name ] ) ? $item[ $column_name ] : '-';
 
@@ -319,14 +323,15 @@ class ES_Reports_Table extends ES_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'         => '<input type="checkbox" />',
-			'subject'    => __( 'Subject', 'email-subscribers' ),
-			'type'       => __( 'Type', 'email-subscribers' ),
-			'status'     => __( 'Status', 'email-subscribers' ),
-			'start_at'   => __( 'Start Date', 'email-subscribers' ),
-			'finish_at'  => __( 'End Date', 'email-subscribers' ),
-			'count'      => __( 'Total contacts', 'email-subscribers' ),
-			'total_sent' => __( 'Total sent', 'email-subscribers' ),
+			'cb'         	 => '<input type="checkbox" />',
+			'subject'    	 => __( 'Subject', 'email-subscribers' ),
+			'type'       	 => __( 'Type', 'email-subscribers' ),
+			'status'     	 => __( 'Status', 'email-subscribers' ),
+			'start_at'   	 => __( 'Start Date', 'email-subscribers' ),
+			'finish_at'  	 => __( 'End Date', 'email-subscribers' ),
+			'count'      	 => __( 'Total contacts', 'email-subscribers' ),
+			'total_sent' 	 => __( 'Total sent', 'email-subscribers' ),
+			'total_opened'	 => __( 'Total Opened', 'email-subscribers' ),
 		);
 
 		return $columns;
@@ -465,14 +470,14 @@ class ES_Reports_Table extends ES_List_Table {
 
 			if ( preg_match('/^[0-9]{6}$/', $filter_reports_by_month_year) ) {
 
-				$year_val 	= substr($filter_reports_by_month_year, 0, 4);
-				$month_val 	= substr($filter_reports_by_month_year, 4 );
+				$year_val  = substr($filter_reports_by_month_year, 0, 4);
+				$month_val = substr($filter_reports_by_month_year, 4 );
 
 				$date_string = $year_val . '-' . $month_val;
-				$date = new DateTime($date_string);
+				$date        = new DateTime($date_string);
 
 				$start_date = $date->format('Y-m-01 H:i:s') ;
-				$end_date = $date->format('Y-m-t H:i:s');
+				$end_date   = $date->format('Y-m-t H:i:s');
 
 				array_push( $where_columns, 'start_at >= %s', 'start_at <= %s' );
 				array_push($where_args, $start_date, $end_date);
@@ -563,7 +568,7 @@ class ES_Reports_Table extends ES_List_Table {
 			} else {
 				$notification_ids = absint( ig_es_get_request_data( 'list' ) );
 				ES_DB_Mailing_Queue::delete_notifications( array( $notification_ids ) );
-				ES_DB_Sending_Queue::delete_sending_queue_by_mailing_id( array( $notification_ids ) );
+				ES_DB_Sending_Queue::delete_by_mailing_queue_id( array( $notification_ids ) );
 				$message = __( 'Report deleted successfully!', 'email-subscribers' );
 				ES_Common::show_message( $message, 'success' );
 			}
@@ -577,7 +582,7 @@ class ES_Reports_Table extends ES_List_Table {
 
 			if ( count( $notification_ids ) > 0 ) {
 				ES_DB_Mailing_Queue::delete_notifications( $notification_ids );
-				ES_DB_Sending_Queue::delete_sending_queue_by_mailing_id( $notification_ids );
+				ES_DB_Sending_Queue::delete_by_mailing_queue_id( $notification_ids );
 				$message = __( 'Reports deleted successfully!', 'email-subscribers' );
 				ES_Common::show_message( $message, 'success' );
 			}

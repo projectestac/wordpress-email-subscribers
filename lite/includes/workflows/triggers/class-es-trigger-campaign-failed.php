@@ -41,11 +41,13 @@ class ES_Trigger_Campaign_Failed extends ES_Workflow_Trigger {
 
 
 	/**
-	 * Catch user subscribed hook
+	 * Catch campaign failed hook
 	 *
-	 * @param int $notification_guid Notification ID.
+	 * @param array $trigger_data.
 	 */
-	public function handle_campaign_failed( $notification_guid ) {
+	public function handle_campaign_failed( $trigger_data ) {
+
+		$notification_guid = $trigger_data['notification_guid'];
 
 		// Prepare data.
 		$data = array(

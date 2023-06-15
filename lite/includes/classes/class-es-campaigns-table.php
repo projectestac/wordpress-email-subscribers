@@ -93,6 +93,14 @@ class ES_Campaigns_Table extends ES_List_Table {
 	public function render() {
 		$action = ig_es_get_request_data( 'action' );
 		global $ig_es_tracker;
+		$campaign_id = ig_es_get_request_data('id');
+		if ( ! empty( $campaign_id ) ) {
+			if ( ! empty( $action ) ) {
+				$campaign    = new ES_Campaign( $campaign_id );
+			}
+			$campaign_edit_url = $campaign->get_edit_url();
+		}
+
 		$message      = '';
 		$message_type = '';
 		?>
@@ -113,6 +121,10 @@ class ES_Campaigns_Table extends ES_List_Table {
 		} elseif ( 'campaign_updated' === $action ) {
 			$message      = __( 'Campaign updated successfully.', 'email-subscribers' );
 			$message_type = 'success';
+		} elseif ( 'error' === $action ) {
+			/* translators: 1. Anchor link start 2. Anchor link end */
+			$message      = sprintf( __( 'Campaign not scheduled. Click %1$shere%2$s to edit campaign.', 'email-subscribers' ), '<a href="' . esc_url( $campaign_edit_url ) . '" class="text-indigo-600">', '</a>' );
+			$message_type = 'error';
 		}
 
 		if ( ! empty( $message ) ) {

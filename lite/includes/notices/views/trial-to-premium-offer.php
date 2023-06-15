@@ -85,7 +85,7 @@ if ( ! empty( $discount_messages[ $offer_type_to_show ] ) ) {
 }
 
 /* translators: 1. Trial expiration message. 2. Discount message. */
-$offer_message = sprintf( __( 'Hi there,<br/>Hope you are enjoying <strong>Icegram Express (formerly known as Email Subscribers & Newsletters) MAX trial</strong>.<br/>%1$s<br/>Upgrade now to continue uninterrupted use of premium features like <strong>block fake signups, prevent bot attacks, broadcast scheduling, automatic email sending, detailed campaign report, prevent emails from going to spam</strong> & lot more....<br/>%2$s', 'email-subscribers' ), $trial_expiration_message, $discount_message );
+$offer_message = sprintf( __( 'Hi there,<br/>Hope you are enjoying <strong>Icegram Express MAX trial</strong>.<br/>%1$s<br/>Upgrade now to continue uninterrupted use of premium features like <strong>block fake signups, prevent bot attacks, broadcast scheduling, automatic email sending, detailed campaign report, prevent emails from going to spam</strong> & lot more....<br/>%2$s', 'email-subscribers' ), $trial_expiration_message, $discount_message );
 
 ?>
 <div id="ig-es-trial-to-premium-notice" class="notice notice-success">

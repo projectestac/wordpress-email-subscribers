@@ -305,6 +305,15 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				'ig_es_migrate_workflow_trigger_conditions_to_rules',
 				'ig_es_update_550_db_version',
 			),
+			'5.6.3'  => array(
+				'ig_es_update_563_enable_newsletter_summary_automation',
+				'ig_es_update_563_db_version',
+			),
+			'5.6.6' => array(
+				'ig_es_add_average_opened_at_to_contacts_table',
+				'ig_es_migrate_customer_timezone_settings',
+				'ig_es_update_566_db_version'
+			),
 		);
 
 		/**
@@ -401,7 +410,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 
 			if ( self::is_new_install() ) {
 
-				self::$logger->info( 'It seems new Icegram Express (formerly known as Email Subscribers & Newsletters). Start Installation process.', self::$logger_context );
+				self::$logger->info( 'It seems new Icegram Express. Start Installation process.', self::$logger_context );
 
 				// If we made it till here nothing is running yet, lets set the transient now.
 				set_transient( 'ig_es_installing', 'yes', MINUTE_IN_SECONDS * 10 );
@@ -800,7 +809,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 			$report .= 'Thank You.';
 
 			$new_contact_email_subject = 'One more contact joins our tribe!';
-			$new_contact_email_content = "Hi,\r\n\r\nYour friendly Icegram Express (formerly known as Email Subscribers & Newsletters) notification bot here!\r\n\r\n{{NAME}} ({{EMAIL}}) joined our tribe just now.\r\n\r\nWhich list/s? {{LIST}}\r\n\r\nIf you know this person, or if they are an influencer, you may want to reach out to them personally!\r\n\r\nLater...";
+			$new_contact_email_content = "Hi,\r\n\r\nYour friendly Icegram Express notification bot here!\r\n\r\n{{NAME}} ({{EMAIL}}) joined our tribe just now.\r\n\r\nWhich list/s? {{LIST}}\r\n\r\nIf you know this person, or if they are an influencer, you may want to reach out to them personally!\r\n\r\nLater...";
 
 			$confirmation_email_subject = 'Thanks!';
 			$confirmation_email_content = "Hi {{NAME}},\r\n\r\nJust one more step before we share the awesomeness from {{SITENAME}}!\r\n\r\nPlease confirm your subscription by clicking on <a href='{{SUBSCRIBE-LINK}}'>this link</a>\r\n\r\nThanks!";
@@ -977,7 +986,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				'ig_es_disable_wp_cron'                           => array( 'default' => 'no' ),
 				'ig_es_enable_sending_mails_in_customer_timezone' => array( 'default' => 'no' ),
 				'ig_es_track_email_opens'                         => array( 'default' => 'yes' ),
-				'ig_es_enable_ajax_form_submission'               => array( 'default' => 'no' ),
+				'ig_es_enable_ajax_form_submission'               => array( 'default' => 'yes' ),
 				'ig_es_show_opt_in_consent'                       => array( 'default' => 'yes' ),
 				'ig_es_opt_in_consent_text'                       => array( 'default' => 'Subscribe to our email updates as well.' ),
 				'ig_es_installed_on'                              => array(
@@ -1095,6 +1104,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 				`unsubscribed` tinyint(1) NOT NULL DEFAULT '0',
 				`hash` varchar(50) DEFAULT NULL,
 				`engagement_score` float DEFAULT NULL,
+				`average_opened_at` TIME DEFAULT NULL,
 				`created_at` datetime DEFAULT NULL,
 				`updated_at` datetime DEFAULT NULL,
 				`is_verified` tinyint(1) DEFAULT '0',

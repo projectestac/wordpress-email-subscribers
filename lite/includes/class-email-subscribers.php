@@ -205,6 +205,15 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public $lists_contacts_db;
 
 		/**
+		 * ES_DB_Lists_Contacts object
+		 *
+		 * @since 4.3.5
+		 *
+		 * @var object|ES_DB_Lists_Contacts
+		 */
+		public $custom_fields_db;
+
+		/**
 		 * ES_Integrations object
 		 *
 		 * @since 4.2.1
@@ -372,7 +381,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				);
 
 				/* translators: %s: ES Pro URL */
-				$disable_wp_cron_notice .= '<br/>' . sprintf( __( 'Or use <strong><a href="%s" target="_blank">Icegram Express (formerly known as Email Subscribers & Newsletters) Pro</a></strong> for automatic Cron support', 'email-subscribers' ), $es_pro_url );
+				$disable_wp_cron_notice .= '<br/>' . sprintf( __( 'Or use <strong><a href="%s" target="_blank">Icegram Express Pro</a></strong> for automatic Cron support', 'email-subscribers' ), $es_pro_url );
 				$html                    = '<div class="notice notice-warning" style="background-color: #FFF;"><p style="letter-spacing: 0.6px;">' . $disable_wp_cron_notice . '<a style="float:right" class="es-admin-btn es-admin-btn-secondary " href="' . esc_url( $notice_dismiss_url ) . '">' . __(
 					'OK, I Got it!',
 					'email-subscribers'
@@ -758,6 +767,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/mailers/class-es-pepipost-mailer.php',
 				'lite/includes/mailers/class-es-phpmail-mailer.php',
 				'lite/includes/mailers/class-es-wpmail-mailer.php',
+				'lite/includes/mailers/class-es-icegram-mailer.php',
 
 				// Common Class
 				'lite/includes/class-es-common.php',
@@ -770,6 +780,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/services/class-es-service-handle-cron-data.php',
 				'lite/includes/services/class-es-service-process-email-content.php',
 				'lite/includes/services/class-es-email-auth-header-verify.php',
+				'lite/includes/services/class-es-service-email-sending.php',
 
 				// Classes
 				'lite/includes/classes/class-es-list-table.php',
@@ -815,6 +826,9 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 
 				// pricing
 				'lite/includes/classes/class-email-subscribers-pricing.php',
+
+				// logs
+				'lite/includes/classes/class-email-subscribers-logs.php',
 
 				// Core Functions
 				'lite/includes/es-core-functions.php',
@@ -924,7 +938,11 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/workflows/class-es-workflow-triggers.php',
 
 				// rest api
+				'lite/includes/rest-api/class-es-archived-campaigns-request-handler.php',
 				'lite/includes/rest-api/class-es-rest-api-handler.php',
+
+				// Icegram site's weekly email summary automation
+				'lite/admin/class-es-newsletter-summary-automation.php',
 
 				// Abstracts workflow actions
 				'lite/includes/workflows/actions/abstracts/class-ig-es-action-send-email-abstract.php',
@@ -973,7 +991,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				// Compatibilities
 				'lite/includes/compatibilities/elementor/class-ig-es-compatibility.php',
 
-				// Campaign Rules
+				'lite/admin/class-es-dashboard.php',
 				'lite/admin/class-ig-es-campaign-rules.php',
 				'lite/admin/class-es-admin.php',
 				'lite/admin/class-es-campaign-admin.php',
@@ -1115,7 +1133,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			if ( ES()->trial->is_trial_valid() ) {
 				$is_request_valid = true;
 			} elseif ( $this->is_premium() ) {
-				$es_services = apply_filters( 'ig_es_services', array() );
+				$es_services = $this->get_es_services();
 				if ( ! empty( $es_services ) ) {
 					// Check if there is not any invalid service in $services array which is not present in the $es_services.
 					$invalid_services = array_diff( $services, $es_services );
@@ -1126,6 +1144,18 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			}
 
 			return $is_request_valid;
+		}
+
+		/**
+		 * Get registered services
+		 * 
+		 * @since 5.6.1
+		 * 
+		 * @return array $es_services
+		 */
+		public function get_es_services() {
+			$es_services = apply_filters( 'ig_es_services', array() );
+			return $es_services;
 		}
 
 		/**
@@ -1232,6 +1262,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				"{$prefix}_page_es_newsletters",
 				"{$prefix}_page_es_notifications",
 				"{$prefix}_page_es_reports",
+				"{$prefix}_page_es_logs",
 				"{$prefix}_page_es_settings",
 				"{$prefix}_page_es_tools",
 				"{$prefix}_page_es_general_information",
@@ -1392,7 +1423,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				self::$instance->custom_fields_db  = new ES_DB_Custom_Fields();
 
 				// Start-IG-Code.
-				$name         = 'Icegram Express (formerly known as Email Subscribers & Newsletters)';
+				$name         = 'Icegram Express';
 				$plugin       = 'email-subscribers';
 				$plugin_abbr  = 'ig_es';
 				$plugin_plan  = self::$instance->get_plan();
@@ -1404,11 +1435,11 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 					$ig_es_feedback_class = 'IG_Feedback_V_' . str_replace( '.', '_', IG_ES_FEEDBACK_TRACKER_VERSION );
 
 					if ( self::$instance->is_pro() ) {
-						$name         = 'Icegram Express (formerly known as Email Subscribers & Newsletters) MAX';
+						$name         = 'Icegram Express MAX';
 						$plugin       = 'email-subscribers-newsletters-pro';
 						$event_prefix = 'espro.';
 					} elseif ( self::$instance->is_starter() ) {
-						$name         = 'Icegram Express (formerly known as Email Subscribers & Newsletters) Starter';
+						$name         = 'Icegram Express PRO';
 						$plugin       = 'email-subscribers-newsletters-starter';
 						$event_prefix = 'esstarter.';
 					}
@@ -1706,6 +1737,15 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 
 					break;
 
+				case 'mailersend':
+					switch ( $key ) {
+						case 'api_token':
+							$return = defined( 'IG_ES_MAILERSEND_API_TOKEN' ) && IG_ES_MAILERSEND_API_TOKEN;
+							break;
+					}
+
+					break;
+
 				case 'sendinblue':
 					switch ( $key ) {
 						case 'api_token':
@@ -1842,6 +1882,15 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 					switch ( $key ) {
 						case 'api_token':
 							$return = $this->is_const_defined( $group, $key ) ? IG_ES_POSTMARK_API_TOKEN : $value;
+							break;
+					}
+
+					break;
+
+				case 'mailersend':
+					switch ( $key ) {
+						case 'api_token':
+							$return = $this->is_const_defined( $group, $key ) ? IG_ES_MAILERSEND_API_TOKEN : $value;
 							break;
 					}
 
@@ -1998,6 +2047,15 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 
 						break;
 
+					case 'mailersend':
+						switch ( $key ) {
+							case 'api_token':
+								$return = 'IG_ES_MAILERSEND_API_TOKEN';
+								break;
+						}
+
+						break;
+
 					default:
 						$return = '';
 				}
@@ -2066,6 +2124,17 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		public function get_es_optin_list_hash() {
 			$es_optin_list_hash = 'bc4f8995201a';
 			return $es_optin_list_hash;
+		}
+
+		public function get_action_types() {
+			$action_types = apply_filters( 'ig_es_action_types', array(
+				IG_MESSAGE_SENT,
+				IG_MESSAGE_OPEN,
+				IG_CONTACT_UNSUBSCRIBE,
+				IG_LINK_CLICK,
+				IG_MESSAGE_HARD_BOUNCE
+			) );
+			return $action_types;
 		}
 	}
 }

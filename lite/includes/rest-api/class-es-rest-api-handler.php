@@ -47,7 +47,6 @@ if ( ! class_exists( 'ES_Rest_Api_Handler' ) ) {
 				'callback' => array( __CLASS__, 'delete_subscribers' ),
 				'permission_callback' => array( __CLASS__, 'check_permission' )
 			]);
-
 		}
 
 		/**
@@ -428,8 +427,6 @@ if ( ! class_exists( 'ES_Rest_Api_Handler' ) ) {
 			}
 
 		}
-
-
 	}
 	
 	ES_Rest_Api_Handler::init();

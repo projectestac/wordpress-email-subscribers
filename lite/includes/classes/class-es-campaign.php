@@ -430,5 +430,28 @@ if ( ! class_exists( 'ES_Campaign' ) ) {
 		public function get_meta( $key ) {
 			return isset( $this->meta[ $key ] ) ? $this->meta[ $key ] : '';
 		}
+
+		/**
+		 * Method to get edit url of a campaign
+		 *
+		 * @since 5.5.13
+		 *
+		 * @return string  $edit_url Campaign edit URL
+		 */
+		public function get_edit_url() {
+
+			$id       = $this->get_id();
+			$edit_url = admin_url( 'admin.php?page=es_newsletters' );
+
+			$edit_url = add_query_arg(
+				array(
+					'list'   => $id,
+					'action' => 'edit',
+				),
+				$edit_url
+			);
+
+			return $edit_url;
+		}
 	}
 }

@@ -49,7 +49,7 @@ class ES_Forms_Table extends ES_List_Table {
 	}
 
 	public function init() {
-		add_action( 'ig_es_additional_form_options', array( $this, 'show_in_popup_setting' ) );
+		add_action( 'ig_es_additional_form_options', array( $this, 'show_additional_form_setting' ) );
 	}
 
 	/**
@@ -311,18 +311,65 @@ class ES_Forms_Table extends ES_List_Table {
 		}
 	}
 
-	public function show_in_popup_setting( $form_data ) {
+	/**
+	 * Show additional form setting for es form
+	 *
+	 * @param $form_data
+	 *
+	 * @since 5.6.1
+	 */
+	public function show_additional_form_setting( $form_data ) {
 
 		$editor_type   = ! empty( $form_data['settings']['editor_type'] ) ? $form_data['settings']['editor_type'] : '';
 		$is_dnd_editor = IG_ES_DRAG_AND_DROP_EDITOR === $editor_type;
 		if ( $is_dnd_editor ) {
 			$this->show_dnd_show_in_popup_settings( $form_data );
+			$this->show_success_message( $form_data );
 		} else {
 			$this->show_classic_show_in_popup_settings( $form_data );
 		}
 		
 	}
 
+	/**
+	 * Show success message
+	 *
+	 * @param $form_data
+	 *
+	 * @since 5.6.1
+	 * 
+	 * @modify 5.6.3
+	 */
+	public function show_success_message( $form_data ) {
+		$action_after_submit = ! empty( $form_data['settings']['action_after_submit'] ) ? $form_data['settings']['action_after_submit'] : 'show_success_message';
+		$success_message     = ! empty( $form_data['settings']['success_message'] ) ? $form_data['settings']['success_message'] : '';
+		?>
+		<div class="pt-2 mx-4 border-t border-gray-200">
+			<div class="block w-full">
+			<span class="block pr-4 text-sm font-medium text-gray-600 pb-2"><?php esc_html_e( 'after submit...', 'email-subscribers' ); ?></span>
+				<div class="py-2">
+					<input id="success_message" type="radio" name="form_data[settings][action_after_submit]" class="form-radio ig_es_action_after_submit" value="show_success_message" <?php checked( $action_after_submit, 'show_success_message' ); ?>/>
+					<label for="success_message"
+						class="text-sm font-medium text-gray-500"><?php echo esc_html__( 'Show message', 'email-subscribers' ); ?>
+					</label>
+					<br>					
+					<div id="show_message_block" class="pt-2 px-6">												
+						<input class="form-input block border-gray-400 w-full pl-3 pr-3 shadow-sm  focus:bg-gray-100 sm:text-sm sm:leading-5" name="form_data[settings][success_message]" value="<?php echo esc_attr( stripslashes( $success_message ) ); ?>" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
+		do_action( 'ig_es_redirect_to_url' );
+	}
+
+	/**
+	 * Show show in popup setting in classic form
+	 *
+	 * @param $form_data
+	 *
+	 * @since 5.6.1
+	 */
 	public function show_classic_show_in_popup_settings( $form_data ) {
 		$popup_field_name  = 'form_data[show_in_popup]';
 		$popup_field_value = $form_data['show_in_popup'];
@@ -379,6 +426,13 @@ class ES_Forms_Table extends ES_List_Table {
 		<?php
 	}
 
+	/**
+	 * Show show in popup setting in DND form
+	 *
+	 * @param $form_data
+	 *
+	 * @since 5.6.1
+	 */
 	public function show_dnd_show_in_popup_settings( $form_data ) {
 		$popup_field_name  = 'form_data[settings][show_in_popup]';
 		$popup_field_value = isset( $form_data['settings']['show_in_popup'] ) ? $form_data['settings']['show_in_popup'] : 'no';
@@ -456,9 +510,9 @@ class ES_Forms_Table extends ES_List_Table {
 		$editor_type   = ! empty( $data['settings']['editor_type'] ) ? sanitize_text_field( $data['settings']['editor_type'] ) : '';
 		$is_dnd_editor = IG_ES_DRAG_AND_DROP_EDITOR === $editor_type;
 
-		$es_form_popup      = ! empty( $data['show_in_popup'] ) ? 'yes' : 'no';
-		$es_popup_headline  = ! empty( $data['popup_headline'] ) ? sanitize_text_field( $data['popup_headline'] ) : '';
-
+		$es_form_popup         = ! empty( $data['show_in_popup'] ) ? 'yes' : 'no';
+		$es_popup_headline     = ! empty( $data['popup_headline'] ) ? sanitize_text_field( $data['popup_headline'] ) : '';
+		
 		if ( ! $is_dnd_editor ) {
 			$desc               = ! empty( $data['desc'] ) ? wp_kses_post( trim( wp_unslash( $data['desc'] ) ) ) : '';
 			$email_label        = ! empty( $data['email_label'] ) ? sanitize_text_field( $data['email_label'] ) : '';
@@ -551,10 +605,9 @@ class ES_Forms_Table extends ES_List_Table {
 					'consent_text' => $gdpr_consent_text,
 				),
 				'es_form_popup'  => array(
-					'show_in_popup'   => $es_form_popup,
-					'popup_headline'  => $es_popup_headline,
-				),
-	
+					'show_in_popup'  => $es_form_popup,
+					'popup_headline' => $es_popup_headline,
+				),						
 			);
 	
 			$settings = apply_filters( 'ig_es_form_settings', $settings, $data );
@@ -592,10 +645,10 @@ class ES_Forms_Table extends ES_List_Table {
 		$is_dnd_editor = IG_ES_DRAG_AND_DROP_EDITOR === $editor_type;
 
 		if ( ! $is_dnd_editor ) {
-			$gdpr_consent      = 'no';
-			$gdpr_consent_text = '';
-			$es_form_popup     = ! empty( $settings_data['es_form_popup']['show_in_popup'] ) ? $settings_data['es_form_popup']['show_in_popup'] : 'no';
-			$es_popup_headline = ! empty( $settings_data['es_form_popup']['popup_headline'] ) ? $settings_data['es_form_popup']['popup_headline'] : '';
+			$gdpr_consent      	  = 'no';
+			$gdpr_consent_text 	  = '';
+			$es_form_popup     	  = ! empty( $settings_data['es_form_popup']['show_in_popup'] ) ? $settings_data['es_form_popup']['show_in_popup'] : 'no';
+			$es_popup_headline 	  = ! empty( $settings_data['es_form_popup']['popup_headline'] ) ? $settings_data['es_form_popup']['popup_headline'] : '';
 	
 			$captcha = ES_Common::get_captcha_setting( $id, $settings_data );
 	
@@ -605,17 +658,17 @@ class ES_Forms_Table extends ES_List_Table {
 			}
 	
 			$form_data = array(
-				'form_id'           => $id,
-				'name'              => $name,
-				'af_id'             => $af_id,
-				'desc'              => $desc,
-				'form_version'      => $form_version,
-				'gdpr_consent'      => $gdpr_consent,
-				'gdpr_consent_text' => $gdpr_consent_text,
-				'captcha'           => $captcha,
-				'show_in_popup'     => $es_form_popup,
-				'popup_headline'    => $es_popup_headline,
-				'editor_type'       => $editor_type,
+				'form_id'              => $id,
+				'name'                 => $name,
+				'af_id'                => $af_id,
+				'desc'                 => $desc,
+				'form_version'         => $form_version,
+				'gdpr_consent'         => $gdpr_consent,
+				'gdpr_consent_text'    => $gdpr_consent_text,
+				'captcha'              => $captcha,
+				'show_in_popup'        => $es_form_popup,
+				'popup_headline'       => $es_popup_headline,
+				'editor_type'          => $editor_type,
 			);
 	
 			foreach ( $body_data as $d ) {

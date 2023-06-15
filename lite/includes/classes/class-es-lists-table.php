@@ -395,7 +395,7 @@ class ES_Lists_Table extends ES_List_Table {
 					</div>
 
 				</div>
-
+		</div>				
 				<?php
 
 	}
@@ -608,15 +608,16 @@ class ES_Lists_Table extends ES_List_Table {
 
 		$list_nonce = wp_create_nonce( 'es_list' );
 
+		$list_id = (int) $item['id'];
 		$title   = '<strong>' . $item['name'] . '</strong>';
-		$actions = array();
-		if ( 1 != $item['id'] ) {
-			$page    = ig_es_get_request_data( 'page' );
-			$actions = array(
-				'edit'   => '<a href="?page=' . esc_attr( $page ) . '&action=edit&list=' . absint( $item['id'] ) . '&_wpnonce=' . $list_nonce . '" class="text-indigo-600">' . esc_html__( 'Edit', 'email-subscribers' ) . '</a>',
+		$page    = ig_es_get_request_data( 'page' );
+		$actions = array(
+			'edit'   => '<a href="?page=' . esc_attr( $page ) . '&action=edit&list=' . absint( $item['id'] ) . '&_wpnonce=' . $list_nonce . '" class="text-indigo-600">' . esc_html__( 'Edit', 'email-subscribers' ) . '</a>',
+		);
 
-				'delete' => '<a href="?page=' . esc_attr( $page ) . '&action=delete&list=' . absint( $item['id'] ) . '&_wpnonce=' . $list_nonce . '" onclick="return checkDelete()">' . esc_html__( 'Delete', 'email-subscribers' ) . '</a>',
-			);
+		// We consider list with id 1 as a Master list and don't allow its deletion.
+		if ( 1 !== $list_id ) {
+			$actions['delete'] = '<a href="?page=' . esc_attr( $page ) . '&action=delete&list=' . absint( $item['id'] ) . '&_wpnonce=' . $list_nonce . '" onclick="return checkDelete()">' . esc_html__( 'Delete', 'email-subscribers' ) . '</a>';
 		}
 
 		return $title . $this->row_actions( $actions );

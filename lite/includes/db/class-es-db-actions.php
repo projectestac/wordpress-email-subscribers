@@ -149,6 +149,242 @@ class ES_DB_Actions extends ES_DB {
 	}
 
 	/**
+	 * Insert data into bulk
+	 *
+	 * @param array $values
+	 * @param int   $length
+	 * @param bool  $return_insert_ids
+	 *
+	 * @since 4.2.1
+	 *
+	 * @since 4.3.5 Fixed issues and started using it.
+	 */
+	public function bulk_add( $values = array(), $length = 100, $explicit = true ) {
+		global $wpbd;
+
+		if ( ! is_array( $values ) ) {
+			return false;
+		}
+
+		// Get the first value from an array to check data structure
+		$first_value = array_slice( $values, 0, 1 );
+
+		$data = array_shift( $first_value );
+
+		// Set default values
+		$data = wp_parse_args( $data, $this->get_column_defaults() );
+
+		// Initialise column format array
+		$column_formats = $this->get_columns();
+
+		// Remove primary key as we don't require while inserting data
+		unset( $column_formats[ $this->primary_key ] );
+
+		// Force fields to lower case
+		$data = array_change_key_case( $data );
+
+		// White list columns
+		$data = array_intersect_key( $data, $column_formats );
+
+		// Reorder $column_formats to match the order of columns given in $data
+		$data = wp_parse_args( $data, $this->get_column_defaults() );
+
+		$data_keys = array_keys( $data );
+
+		$fields = array_keys( array_merge( array_flip( $data_keys ), $column_formats ) );
+
+		// Convert Batches into smaller chunk
+		$batches = array_chunk( $values, $length );
+
+		$success = false;
+
+		// Holds first and last row ids of each batch insert
+		$bulk_rows_start_end_ids = [];
+
+		foreach ( $batches as $key => $batch ) {
+
+			$place_holders = array();
+			$final_values  = array();
+			$fields_str    = '';
+
+			foreach ( $batch as $value ) {
+
+				$formats = array();
+				foreach ( $column_formats as $column => $format ) {
+					$final_values[] = isset( $value[ $column ] ) ? $value[ $column ] : $data[ $column ]; // set default if we don't have
+					$formats[]      = $format;
+				}
+
+				$place_holders[] = '( ' . implode( ', ', $formats ) . ' )';
+				$fields_str      = '`' . implode( '`, `', $fields ) . '`';
+			}
+
+			$query  = "INSERT INTO $this->table_name ({$fields_str}) VALUES ";
+			$query .= implode( ', ', $place_holders );
+			$query .= ' ON DUPLICATE KEY UPDATE';
+			$query .= ' count = count + 1';
+			$sql    = $wpbd->prepare( $query, $final_values );
+
+			if ( $wpbd->query( $sql ) ) {
+				$success = true;
+			}
+		}
+
+		return $success;
+	}
+
+	/**
+	 * Get contacts count based on type, list id, days args
+	 *
+	 * @param int $args
+	 *
+	 * @return int $count
+	 *
+	 * @since 5.5.5
+	 */
+	public function get_count( $args = array(), $distinct = true ) {
+		global $wpbd;
+
+		$contacts_count = 0;
+
+		$query = 'SELECT';
+		if ( $distinct ) {
+			$query .= ' COUNT( DISTINCT ( contact_id ) )';
+		} else {
+			$query .= ' COUNT( contact_id )';
+		}
+
+		$query .= " FROM {$wpbd->prefix}ig_actions";
+
+		$where = array();
+		if ( ! empty( $args['type'] ) ) {
+			$where[] = $wpbd->prepare( 'type = %d', esc_sql( $args['type'] ) );
+		}
+
+		if ( ! empty( $args['list_id'] ) ) {
+			$where[] = $wpbd->prepare( 'list_id = %d', esc_sql( $args['list_id'] ) );
+		}
+
+		if ( ! empty( $args['days'] ) ) {
+			$where[] = $wpbd->prepare( 'created_at >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY))', esc_sql( $args['days'] ) );
+		}
+
+		if ( ! empty( $where ) ) {
+			$query .= ' WHERE ' . implode( ' AND ', $where );
+		}
+
+		$contacts_count = $wpbd->get_var(
+			$query
+		);
+
+		return $contacts_count;
+	}
+
+	public function get_actions( $args = array() ) {
+		global $wpbd;
+
+		$where = array();
+		if ( ! empty( $args['type'] ) ) {
+			$where[] = $wpbd->prepare( 'type = %d', esc_sql( $args['type'] ) );
+		}
+
+		if ( ! empty( $where ) ) {
+			$where = 'WHERE (' . implode( ') AND (', $where ) . ')';
+		} else {
+			$where = '';
+		}
+
+		$limit = '';
+		if ( ! empty( $args['limit'] ) ) {
+			$limit = $wpbd->prepare( 'LIMIT %d', esc_sql( $args['limit'] ) );
+		}
+
+		$order_by = '';
+		if ( ! empty( $args['order_by'] ) ) {
+			$order_by_column = esc_sql( $args['order_by'] );
+			$order           = ! empty( $args['order'] ) ? esc_sql( $args['order'] ) : 'ASC';
+			$order_by        = "ORDER BY {$order_by_column} {$order}";
+		}
+
+		$query = "SELECT * FROM {$wpbd->prefix}ig_actions {$where} {$order_by} {$limit}" ;
+
+		$actions = $wpbd->get_results(
+			$query,
+			ARRAY_A
+		);
+
+		return $actions;
+	}
+
+	public function get_actions_count( $args = array() ) {
+		global $wpbd;
+
+		$query   = 'SELECT';
+		$columns = array();
+		if ( ! empty( $args['types'] ) ) {
+			$types = $args['types'];
+			foreach ( $types as $type ) {
+				$column_name = ''; 
+				switch ( $type ) {
+					case IG_CONTACT_SUBSCRIBE:
+						$column_name = 'subscribed';
+						break;
+					case IG_MESSAGE_SENT:
+						$column_name = 'sent';
+						break;
+					case IG_MESSAGE_OPEN:
+						$column_name = 'opened';
+						break;
+					case IG_LINK_CLICK:
+						$column_name = 'clicked';
+						break;
+					case IG_CONTACT_UNSUBSCRIBE:
+						$column_name = 'unsubscribed';
+						break;
+					case IG_MESSAGE_SOFT_BOUNCE:
+						$column_name = 'soft_bounced';
+						break;
+					case IG_MESSAGE_HARD_BOUNCE:
+						$column_name = 'hard_bounced';
+						break;
+				}
+				$columns[] = 'SUM( IF( type = ' . $type . ", 1, 0 ) ) AS '" . $column_name . "'";
+			}
+		}
+
+		if ( ! empty( $columns ) ) {
+			$query .= ' ' . implode( ',', $columns );
+		} else {
+			$query .= ' COUNT( contact_id )';
+		}
+
+		$query .= " FROM {$wpbd->prefix}ig_actions";
+
+		$where = array();
+
+		if ( ! empty( $args['list_id'] ) ) {
+			// Since list_id isn't store for sent/opened/clicked/bounced events, we are using contacts ids from list_contacts table from list id.
+			$where[] = $wpbd->prepare( "contact_id IN(SELECT contact_id FROM `{$wpbd->prefix}ig_lists_contacts` WHERE list_id = %d )", esc_sql( $args['list_id'] ) );
+		}
+
+		if ( ! empty( $args['days'] ) ) {
+			$where[] = $wpbd->prepare( 'created_at >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %d DAY))', esc_sql( $args['days'] ) );
+		}
+
+		if ( ! empty( $where ) ) {
+			$query .= ' WHERE ' . implode( ' AND ', $where );
+		}
+
+		$results = $wpbd->get_row(
+			$query,
+			ARRAY_A
+		);
+
+		return $results;
+		
+	}
+
+	/**
 	 * Get total contacts who have clicked links in last $days
 	 *
 	 * @param int $days
@@ -213,7 +449,7 @@ class ES_DB_Actions extends ES_DB {
 	 *
 	 * @return string|null
 	 */
-	public function get_total_contact_lost( $days = 0, $distinct = true ) {
+	public function get_total_contact_unsubscribed( $days = 0, $distinct = true ) {
 		global $wpdb;
 
 		$args = array(
@@ -454,5 +690,18 @@ class ES_DB_Actions extends ES_DB {
 			return $last_opened_at;
 		}
 		return $result;
+	}
+
+	public function delete_by_mailing_queue_id( $mailing_queue_ids ) {
+		global $wpbd;
+
+		if ( ! empty( $mailing_queue_ids ) ) {
+			$mailing_queue_ids = esc_sql( $mailing_queue_ids );
+			$mailing_queue_ids = implode( ',', array_map( 'absint', $mailing_queue_ids ) );
+	
+			$wpbd->query(
+				"DELETE FROM {$wpbd->prefix}ig_actions WHERE message_id IN ($mailing_queue_ids)"
+			);
+		}
 	}
 }

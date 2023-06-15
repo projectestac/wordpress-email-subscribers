@@ -1023,10 +1023,13 @@ class ES_DB_Contacts extends ES_DB {
 	 * @return array
 	 *
 	 * @since 4.8.4
+	 * 
+	 * @modify 5.6.7
 	 */
 	public function add_custom_field_col_in_contacts_table( $slug_name, $custom_field_type = 'text' ) {
 		global $wpbd;
 
+		$slug_name = sanitize_title( $slug_name );
 		$col_added = 0;
 		if ( ! empty( $slug_name ) ) {
 			// To check if column exists or not
@@ -1104,6 +1107,13 @@ class ES_DB_Contacts extends ES_DB {
 		return $contact_id;
 	}
 
+	/**
+	 * Get last contact's id
+	 * 
+	 * @since 5.3.14
+	 * 
+	 * @param @int $last_contact_id
+	 */
 	public function get_last_contact_id() {
 		global $wpdb;
 		$last_contact_id = $wpdb->get_var( "SELECT id FROM {$wpdb->prefix}ig_contacts ORDER BY id DESC LIMIT 0, 1" );

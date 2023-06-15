@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class ES_Form_Widget extends WP_Widget {
 
 	public function __construct() {
-		parent::__construct( 'email-subscribers-form', __( 'Icegram Express (formerly known as Email Subscribers & Newsletters)', 'email-subscribers' ), array( 'description' => __( 'Icegram Express (formerly known as Email Subscribers & Newsletters) Form', 'email-subscribers' ) ) );
+		parent::__construct( 'email-subscribers-form', __( 'Icegram Express', 'email-subscribers' ), array( 'description' => __( 'Icegram Express Form', 'email-subscribers' ) ) );
 	}
 
 	public function widget( $args, $instance ) {

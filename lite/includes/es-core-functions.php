@@ -847,6 +847,9 @@ if ( ! function_exists( 'ig_es_allowed_html_tags_in_esc' ) ) {
 				'class'  => true,
 				'points' => true,
 			),
+			'span' => array(
+				'hidden' => true
+			),
 		);
 
 		$allowedtags = array_merge_recursive( $context_allowed_tags, $custom_allowed_tags );

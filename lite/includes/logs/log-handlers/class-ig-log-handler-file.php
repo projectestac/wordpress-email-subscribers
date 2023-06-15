@@ -413,5 +413,30 @@ if ( ! class_exists( 'IG_Log_Handler_File' ) ) {
 
 			return $result;
 		}
+
+		/**
+		 * Method to sort log files by their created time
+		 * 
+		 * @param $log_files
+		 * 
+		 * @return $log_files
+		 * 
+		 * @since 5.6.6
+		 */
+		public static function sort_log_files_by_created_time( $log_files ) {
+			$directory = IG_LOG_DIR;
+
+			// Sort the files based on their creation dates
+			usort($log_files, function( $a, $b) use ( $directory) {
+				$file_1 = $directory . $a;
+				$file_2 = $directory . $b;
+				$time_1 = filectime($file_1);
+				$time_2 = filectime($file_2);
+				return $time_1 - $time_2;
+			});
+
+			return $log_files;
+		}
+
 	}
 }

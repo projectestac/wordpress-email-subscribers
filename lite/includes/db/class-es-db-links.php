@@ -163,5 +163,16 @@ if ( ! class_exists( 'ES_DB_Links' ) ) {
 			return $this->get_by_conditions( $where );
 		}
 
+		public function get_links_by_ids( $link_ids ) {
+			global $wpbd;
+
+			$ids_count        = count( $link_ids );
+			$ids_placeholders = array_fill( 0, $ids_count, '%d' );
+
+			$where = $wpbd->prepare( ' id IN( ' . implode( ',', $ids_placeholders ) . ' )', $link_ids );
+
+			return $this->get_by_conditions( $where );
+		}
+
 	}
 }

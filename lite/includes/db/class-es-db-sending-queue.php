@@ -320,25 +320,25 @@ class ES_DB_Sending_Queue {
 	}
 
 	/**
-	 * Method to insert sending queue data from contact table.
+	 * Method to queue emails from contact table.
 	 *
 	 * @param int          $mailing_queue_id Mailing queue ID.
 	 * @param string       $mailing_queue_hash Mailing Hash.
 	 * @param int          $campaign_id Campaign ID.
 	 * @param array|string $list_ids List IDs seperated by commas if string i.e. '1,2,3' or array( 1, 2, 3 ) if array.
 	 *
-	 * @return bool $is_inserted Is contacts inserted into sending_queue table.
+	 * @return bool $emails_queued Emails queued or not.
 	 *
 	 * @since 4.6.4
 	 */
-	public static function do_insert_from_contacts_table( $mailing_queue_id = 0, $mailing_queue_hash = '', $campaign_id = 0, $list_ids = array() ) {
+	public static function queue_emails( $mailing_queue_id = 0, $mailing_queue_hash = '', $campaign_id = 0, $list_ids = array() ) {
 
 		global $wpbd;
 
-		$is_inserted = false;
+		$emails_queued = false;
 
 		if ( empty( $mailing_queue_id ) || empty( $mailing_queue_hash ) || empty( $campaign_id ) ) {
-			return $is_inserted;
+			return $emails_queued;
 		}
 
 		$column_defaults = self::get_column_defaults();
@@ -389,21 +389,65 @@ class ES_DB_Sending_Queue {
 			$queue_opened_at,
 		);
 
+		$send_at_query = '';
 		if ($send_immediately) {
 			$send_at_query = $wpbd->prepare('%s AS `send_at`', array($current_utc_time));
 		} else {
-			$send_at_query = $wpbd->prepare("
-			CASE 
-				WHEN `timezone` IS null THEN %s
-		        ELSE 
-		            CASE
-		                WHEN CONVERT_TZ(%s,`timezone`,'+0:00') < %s THEN DATE_ADD(CONVERT_TZ(%s,`timezone`,'+0:00'), INTERVAL 86400 SECOND)
-		                ELSE CONVERT_TZ(%s,`timezone`,'+0:00')
-		            END
-		    END AS `send_at`
-			", array($scheduled_utc_time,$schedule_base_time,$current_utc_time,$schedule_base_time,$schedule_base_time));
+			if ( ES()->is_pro() ) {
+				$is_optimzation_enabled = ES_Email_Send_Time_Optimizer::is_optimizer_enabled();
+				if ( $is_optimzation_enabled ) {
+					$optimization_method = ES_Email_Send_Time_Optimizer::get_optimization_method();
+					if ( 'subscriber_average_open_time' === $optimization_method ) {
+						$send_at_query = $wpbd->prepare('
+						CASE 
+							WHEN `average_opened_at` IS null THEN %s
+							ELSE 
+								CASE
+									WHEN DATE_ADD(DATE(%s), INTERVAL `average_opened_at` HOUR_SECOND) < %s THEN DATE_ADD(DATE_ADD(DATE(%s),INTERVAL `average_opened_at` HOUR_SECOND), INTERVAL 86400 SECOND)
+									ELSE DATE_ADD(DATE(%s),INTERVAL `average_opened_at` HOUR_SECOND)
+								END
+						END AS `send_at`
+						', array($scheduled_utc_time,$schedule_base_time,$current_utc_time,$schedule_base_time,$schedule_base_time));
+					} else {
+						$send_at_query = $wpbd->prepare("
+						CASE 
+							WHEN `timezone` IS null THEN %s
+							ELSE 
+								CASE
+									WHEN CONVERT_TZ(%s,`timezone`,'+0:00') < %s THEN DATE_ADD(CONVERT_TZ(%s,`timezone`,'+0:00'), INTERVAL 86400 SECOND)
+									ELSE CONVERT_TZ(%s,`timezone`,'+0:00')
+								END
+						END AS `send_at`
+						", array($scheduled_utc_time,$schedule_base_time,$current_utc_time,$schedule_base_time,$schedule_base_time));
+					}
+				}
+			}
 		}
 
+		if ( empty( $send_at_query ) ) {
+			$send_at_query = $wpbd->prepare('%s AS `send_at`', array($current_utc_time));
+		}
+		
+		$query = $wpbd->prepare(
+			"SELECT 
+				%d AS `mailing_queue_id`,
+				%s AS `mailing_queue_hash`,
+				%d AS `campaign_id`,
+				MAX(`ig_contacts`.`id`) AS `contact_id`,
+				MAX(`ig_contacts`.`hash`) AS `contact_hash`,
+				`ig_contacts`.`email` AS `email`,
+				%s AS `status`,
+				%s AS `links`,
+				%d AS `opened`,
+				%s AS `sent_at`,
+				%s AS `opened_at`,
+				   {$send_at_query}
+			FROM `{$wpbd->prefix}ig_contacts` AS `ig_contacts` 
+			WHERE id IN ( " . $sql_query . ')
+			GROUP BY `ig_contacts`.`email`',
+			$query_args
+		);
+		
 		$total_contacts_added = $wpbd->query(
 			$wpbd->prepare(
 				"INSERT INTO `{$wpbd->prefix}ig_sending_queue` 
@@ -443,12 +487,18 @@ class ES_DB_Sending_Queue {
 
 		// Check if contacts added.
 		if ( ! empty( $total_contacts_added ) ) {
-			$is_inserted = true;
+			$emails_queued = true;
 		} else {
-
+			// Delete report if there aren't any emails queued.
+			ES_DB_Mailing_Queue::delete_notifications( array( $mailing_queue_id ) );
+			
+			if ( empty( $list_ids ) ) {
+				return false;
+			}
+			
 			// If some how above sql query fails then queue emails using old approach.
 			// i.e. Preparing data for insert query in PHP and then doing insert.
-
+			
 			// Converto to an array if already not an array.
 			if ( ! is_array( $list_ids ) ) {
 				$list_ids = explode( ',', $list_ids );
@@ -464,11 +514,11 @@ class ES_DB_Sending_Queue {
 				$delivery_data['subscribers']      = $subscribers;
 				$delivery_data['campaign_id']      = $campaign_id;
 				$delivery_data['mailing_queue_id'] = $mailing_queue_id;
-				$is_inserted                       = self::do_batch_insert( $delivery_data );
+				$emails_queued                      = self::do_batch_insert( $delivery_data );
 			}
 		}
 
-		if ( $is_inserted ) {
+		if ( $emails_queued ) {
 			$data = array(
 				'count' => $total_contacts_added,
 				'status' => IG_ES_MAILING_QUEUE_STATUS_QUEUED
@@ -476,7 +526,7 @@ class ES_DB_Sending_Queue {
 			ES_DB_Mailing_Queue::update_mailing_queue( $mailing_queue_id, $data );
 		}
 
-		return $is_inserted;
+		return $emails_queued;
 	}
 
 	public static function update_viewed_status( $guid = '', $email = '', $message_id = 0 ) {
@@ -682,15 +732,17 @@ class ES_DB_Sending_Queue {
 		$wpbd->query( $query );
 	}
 
-	public static function delete_sending_queue_by_mailing_id( $mailing_queue_ids ) {
+	public static function delete_by_mailing_queue_id( $mailing_queue_ids ) {
 		global $wpbd;
 
-		$mailing_queue_ids = esc_sql( $mailing_queue_ids );
-		$mailing_queue_ids = implode( ',', array_map( 'absint', $mailing_queue_ids ) );
+		if ( ! empty( $mailing_queue_ids ) ) {
+			$mailing_queue_ids = esc_sql( $mailing_queue_ids );
+			$mailing_queue_ids = implode( ',', array_map( 'absint', $mailing_queue_ids ) );
 
-		$wpbd->query(
-			"DELETE FROM {$wpbd->prefix}ig_sending_queue WHERE mailing_queue_id IN ($mailing_queue_ids)"
-		);
+			$wpbd->query(
+				"DELETE FROM {$wpbd->prefix}ig_sending_queue WHERE mailing_queue_id IN ($mailing_queue_ids)"
+			);
+		}
 	}
 
 	// Query to get total viewed emails per report
@@ -785,7 +837,7 @@ class ES_DB_Sending_Queue {
 	 *
 	 * @since 4.3.7
 	 */
-	public static function get_emails_id_map_by_campaign( $campaign_id = 0, $emails = array() ) {
+	public static function get_emails_id_map_by_campaign( $campaign_id = 0, $message_id = 0, $emails = array() ) {
 		global $wpbd;
 
 		$emails      = esc_sql( $emails );
@@ -799,8 +851,9 @@ class ES_DB_Sending_Queue {
 
 		$results = $wpbd->get_results(
 			$wpbd->prepare(
-				"SELECT contact_id, email FROM {$wpbd->prefix}ig_sending_queue WHERE campaign_id = %d AND email IN($emails_str)",
-				$campaign_id
+				"SELECT contact_id, email FROM {$wpbd->prefix}ig_sending_queue WHERE campaign_id = %d AND mailing_queue_id = %d AND email IN($emails_str)",
+				$campaign_id,
+				$message_id
 			),
 			ARRAY_A
 		);

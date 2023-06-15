@@ -76,6 +76,16 @@ class ES_Tools {
 
 			if ( $response && 'SUCCESS' === $response['status'] ) {
 				$response['message'] = __( 'Email has been sent. Please check your inbox', 'email-subscribers' );
+			} else {
+				$can_promote_ess = ES_Service_Email_Sending::can_promote_ess();
+				if ( $can_promote_ess ) {
+					$promotion_message_html = ES_Service_Email_Sending::get_ess_promotion_message_html();
+					if ( is_array( $response['message'] ) ) {
+						$response['message'][] = $promotion_message_html;
+					} else {
+						$response['message'] .= $promotion_message_html;
+					}
+				}
 			}
 		}
 

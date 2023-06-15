@@ -321,11 +321,7 @@ jQuery(document).ready(function() {
 
 	// Variable to hold order of onboarding tasks to be performed.
 	let onboarding_functions_queue = [
-		'perform_configuration_tasks',
-		'queue_default_broadcast_newsletter',
-		'dispatch_emails_from_server',
-		'check_test_email_on_server',
-		'evaluate_email_delivery',
+		'perform_configuration_tasks'
 	];
 
 	jQuery('#es_create_post_notification').show();

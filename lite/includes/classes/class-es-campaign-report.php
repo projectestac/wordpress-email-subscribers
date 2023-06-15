@@ -126,7 +126,7 @@ class ES_Campaign_Report extends ES_List_Table {
 	 */
 	public function view_report_description_lite( $notification, $report_kpi_statistics ) {
 		?>
-		<div class="wrap max-w-7xl">
+		<div class="wrap max-w-7xl w-full">
 			<div class="wp-heading-inline flex items-center justify-between">
 				<div class="flex-shrink-0 break-words">
 					<h2 class="text-2xl font-medium leading-7 tracking-wide text-gray-900 pt-1">
@@ -235,9 +235,19 @@ class ES_Campaign_Report extends ES_List_Table {
 								<span class = "text-xl font-bold leading-none text-indigo-600">
 									<?php	echo esc_html( '(0.00%)'); ?>
 								</span>
-
+								<?php
+								$utm_args = array(
+									'utm_medium' => 'campaign-report-analytics',
+									'url'		 => 'https://www.icegram.com/documentation/what-analytics-does-email-subscribers-track/'
+								);
+						
+								$pricing_url = ES_Common::get_utm_tracking_url( $utm_args );
+								?>
 								<p class="mt-1 font-medium leading-6 text-gray-500">
-									<?php echo esc_html__( 'Clicked', 'email-subscribers' ); ?><span class="premium-icon ml-2 mb-1"></span>
+									<?php echo esc_html__( 'Clicked', 'email-subscribers' ); ?>
+									<a target="_blank" href="<?php echo esc_url( $pricing_url ); ?>">
+										<span class="premium-icon max ml-2 mb-1"></span>
+									</a>	
 								</p>
 							</div>
 
@@ -259,7 +269,10 @@ class ES_Campaign_Report extends ES_List_Table {
 								</span>
 
 								<p class="mt-1 font-medium leading-6 text-gray-500">
-									<?php echo esc_html__( 'Unsubscribed', 'email-subscribers' ); ?><span class="premium-icon ml-2 mb-1"></span>
+									<?php echo esc_html__( 'Unsubscribed', 'email-subscribers' ); ?>
+									<a target="_blank" href="<?php echo esc_url( $pricing_url ); ?>">
+										<span class="premium-icon max ml-2 mb-1"></span>
+									</a>
 								</p>
 							</div>
 
@@ -800,7 +813,7 @@ class ES_Campaign_Report extends ES_List_Table {
 								data
 							),
 							beforeSend: function(){
-								$('#es_campaign_report table.wp-list-table.widefat.fixed.striped.table-view-list.reports tbody').addClass('pulse-animation').css({'filter': 'blur(1px)', '-webkit-filter' : 'blur(1px)'});
+								$('#es_campaign_report table.wp-list-table.widefat.fixed.striped.table-view-list.reports tbody').addClass('es-pulse-animation').css({'filter': 'blur(1px)', '-webkit-filter' : 'blur(1px)'});
 							},
 							success: function (response) {
 								var response = $.parseJSON(response);
@@ -817,7 +830,7 @@ class ES_Campaign_Report extends ES_List_Table {
 
 							}
 						}).always(function(){
-							$('#es_campaign_report table.wp-list-table.widefat.fixed.striped.table-view-list.reports tbody').removeClass('pulse-animation').css({'filter': 'blur(0px)', '-webkit-filter' : 'blur(0px)'});
+							$('#es_campaign_report table.wp-list-table.widefat.fixed.striped.table-view-list.reports tbody').removeClass('es-pulse-animation').css({'filter': 'blur(0px)', '-webkit-filter' : 'blur(0px)'});
 						});
 					},
 

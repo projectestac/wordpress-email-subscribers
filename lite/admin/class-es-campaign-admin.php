@@ -87,8 +87,10 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 					}
 				}
 			} else {
-				$this->campaign_data['type']                = $this->get_campaign_type_from_url();
-				$this->campaign_data['meta']['editor_type'] = $this->get_editor_type_from_url();
+				if ( empty( $this->campaign_data ) ) {
+					$this->campaign_data['type']                = $this->get_campaign_type_from_url();
+					$this->campaign_data['meta']['editor_type'] = $this->get_editor_type_from_url();
+				}
 			}
 		}
 
@@ -126,6 +128,8 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 		 * Method to process campaign submission.
 		 *
 		 * @since 4.4.7
+		 * 
+		 * @modify 5.6.4
 		 */
 		public function process_submission() {
 
@@ -144,6 +148,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 
 					// Check if user has added required data for creating campaign.
 					if ( ! empty( $campaign_data['subject'] ) && ! empty( $campaign_data['body'] ) && ! empty( $subject ) ) {
+						$campaign_data['subject']          = wp_strip_all_tags( $campaign_data['subject'] );
 						$is_updating_campaign              = ! empty( $campaign_data['id'] ) ? true : false;
 						$campaign_data['base_template_id'] = $template_id;
 						$campaign_data['list_ids']         = $list_id;
@@ -152,11 +157,12 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 						$meta['es_schedule_date']          = ! empty( $campaign_data['es_schedule_date'] ) ? $campaign_data['es_schedule_date'] : '';
 						$meta['es_schedule_time']          = ! empty( $campaign_data['es_schedule_time'] ) ? $campaign_data['es_schedule_time'] : '';
 						$meta['pre_header']                = ! empty( $campaign_data['pre_header'] ) ? $campaign_data['pre_header'] : '';
+						$meta['preheader']                 = ! empty( $campaign_data['preheader'] ) ? $campaign_data['preheader'] : '';
 
 						if ( ! empty( $meta['list_conditions'] ) ) {
 							$meta['list_conditions'] = IG_ES_Campaign_Rules::remove_empty_conditions( $meta['list_conditions'] );
 						}
-
+						
 						$meta = apply_filters( 'ig_es_before_save_campaign_meta', $meta, $campaign_data );
 
 						$campaign_data['meta'] = maybe_serialize( $meta );
@@ -169,27 +175,33 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 
 						$campaign_saved = self::save_campaign( $campaign_data );
 
-						$campaign_created = ! $is_updating_campaign && $campaign_saved;
-						$campaign_updated = $is_updating_campaign && $campaign_saved;
-
-						$campaign_scheduled = false;
+						$campaign_status = ! $is_updating_campaign && $campaign_saved ? 'campaign_created' : 'error';
+						$campaign_status = $is_updating_campaign && $campaign_saved ? 'campaign_updated' : 'error';
 
 						if ( 'schedule' === $campaign_action ) {
-							$campaign_scheduled = self::schedule_campaign( $campaign_data );
+							if ( empty( $meta['list_conditions'] ) ) {
+								$error_message = __( 'No recipients were found. Please add some recipients.', 'email-subscribers' );
+							} else {
+								$scheduling_status = self::schedule_campaign( $campaign_data );
+								if ( 'success' !== $scheduling_status ) {
+									if ( 'emails_not_queued' === $scheduling_status ) {
+										$error_message = __( 'Campaign not scheduled. Please check if there are some recipients according to the selected campaign rules.', 'email-subscribers' );
+									} elseif ( '' === $scheduling_status ) {
+										$error_message = __( 'Campaign not scheduled due to some error. Please try again later.', 'email-subscribers' );
+									}
+								}
+							}
+							if ( ! empty( $error_message ) ) {
+								
+								$campaign_data['status'] = IG_ES_CAMPAIGN_STATUS_IN_ACTIVE; // Revert back camaign status to inactive(draft), if scheduling fails.
+								self::save_campaign( $campaign_data );
+								$this->campaign_data = ig_es_get_request_data( 'campaign_data' );
+								ES_Common::show_message( $error_message, 'error' );
+								return;
+							}
 						}
 
-						$campaign_action = '';
-						if ( $campaign_scheduled ) {
-							$campaign_action = 'campaign_scheduled';
-						} elseif ( $campaign_updated ) {
-							$campaign_action = 'campaign_updated';
-						} elseif ( $campaign_created ) {
-							$campaign_action = 'campaign_created';
-						} else {
-							$campaign_action = 'error';
-						}
-
-						$campaign_url = admin_url( 'admin.php?page=es_campaigns&action=' . $campaign_action );
+						$campaign_url = admin_url( 'admin.php?page=es_campaigns&id=' . $campaign_data['id'] . '&action=' . $campaign_status );
 
 						wp_safe_redirect( $campaign_url );
 						exit();
@@ -197,6 +209,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 				} else {
 					$message = __( 'Sorry, you are not allowed to add/edit campaign.', 'email-subscribers' );
 					ES_Common::show_message( $message, 'error' );
+					return;
 				}
 			}
 		}
@@ -395,7 +408,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 					'label'   => __( 'Name', 'email-subscribers' ),
 				),
 				array(
-					'keyword' => 'subscriber.fist_name',
+					'keyword' => 'subscriber.first_name',
 					'label'   => __( 'First name', 'email-subscribers' ),
 				),
 				array(
@@ -434,7 +447,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			$subscriber_tags = $this->get_subscriber_tags();
 			if ( ! empty( $subscriber_tags ) ) {
 				?>
-				<div id="ig-es-subscriber-tags">
+				<div id="ig-es-subscriber-tags" class="pt-2">
 					<?php
 						$this->render_merge_tags( $subscriber_tags );
 					?>
@@ -444,7 +457,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			$site_tags = $this->get_site_tags();
 			if ( ! empty( $site_tags ) ) {
 				?>
-				<div id="ig-es-site-tags">
+				<div id="ig-es-site-tags" class="pt-2">
 					<?php
 						$this->render_merge_tags( $site_tags );
 					?>
@@ -454,7 +467,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			$campaign_tags = $this->get_campaign_tags();
 			if ( ! empty( $campaign_tags ) ) {
 				?>
-				<div id="ig-es-campaign-tags">
+				<div id="ig-es-campaign-tags" class="pt-2">
 				<?php foreach ($campaign_tags as $type => $tags ) : ?>
 					<?php
 						$class = $type !== $campaign_type ? 'hidden' : '';
@@ -475,13 +488,39 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			if ( empty( $merge_tags ) ) {
 				return;
 			}
-			foreach ( $merge_tags as $tag_key => $tag ) {
+
+			$subscriber_tags = $this->get_subscriber_tags();
+			$site_tags 		 = $this->get_site_tags();
+			$campaign_tags   = $this->get_campaign_tags();
+
+			if ( $merge_tags === $campaign_tags['post_notification'] ) {
 				?>
-				<span data-tag-text="<?php echo is_string( $tag_key ) ? esc_attr( $tag ) : ''; ?>" class="ig-es-merge-tag cursor-pointer block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900">
+				<b class="pl-2 pb-2"><?php echo esc_html__( 'Post', 'email-subscribers' ); ?></b>
+				<?php
+			} elseif ( ! empty( $campaign_tags['post_digest'] ) && $merge_tags === $campaign_tags['post_digest'] ) {
+				?>
+				<b class="pl-2 pb-2"><?php echo esc_html__( 'Post', 'email-subscribers' ); ?></b>
+				<?php
+			} elseif ( $merge_tags === $subscriber_tags ) {
+				?>
+				<b class="pl-2 pb-2"><?php echo esc_html__( 'Subscriber', 'email-subscribers' ); ?></b>
+				<?php
+			} elseif ( $merge_tags === $site_tags ) {
+				?>
+				<b class="pl-2 pb-2"><?php echo esc_html__( 'Site', 'email-subscribers' ); ?></b>
+				<?php
+			}
+
+			foreach ( $merge_tags as $tag_key => $tag ) {				
+				?>
+				<span data-tag-text="<?php echo is_string( $tag_key ) ? esc_attr( $tag ) : ''; ?>" class="ig-es-merge-tag cursor-pointer block px-2 pl-5 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900">
 					<?php echo is_string( $tag_key ) ? esc_html( $tag_key ) : esc_html( $tag ); ?>
 				</span>
 				<?php
 			}
+			?>
+			<hr>
+			<?php
 		}
 
 		/**
@@ -542,6 +581,8 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 		 * @param array $campaign_data Posted campaign data
 		 *
 		 * @since  4.4.2 Added $campaign_data param
+		 * 
+		 * @modify 5.6.4
 		 */
 		public function show_campaign_form( $message_data = array() ) {
 
@@ -556,7 +597,8 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			$campaign_subject   = ! empty( $campaign_data['subject'] ) ? $campaign_data['subject'] : $this->get_campaign_default_subject();
 			$campaign_status    = ! empty( $campaign_data['status'] ) ? (int) $campaign_data['status'] : IG_ES_CAMPAIGN_STATUS_IN_ACTIVE;
 			$campaign_type      = ! empty( $campaign_data['type'] ) ? $campaign_data['type']               : '';
-			$editor_type        = ! empty( $campaign_data['meta']['editor_type'] ) ? $campaign_data['meta']['editor_type']               : '';
+			$editor_type        = ! empty( $campaign_data['meta']['editor_type'] ) ? $campaign_data['meta']['editor_type'] : '';
+			$campaign_preheader = ! empty( $campaign_data['meta']['preheader'] ) ? $campaign_data['meta']['preheader'] : '';
 			$campaign_text      = '';
 			$gallery_page_url   = admin_url( 'admin.php?page=es_gallery' );
 
@@ -687,17 +729,25 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 														<span class="dashicons dashicons-tag cursor-pointer"></span>
 														<div x-show="open" id="ig-es-tag-icon-dropdown" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100"
 														 x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 mt-2 z-10 hidden w-56 origin-top-right rounded-md shadow-lg">
-														<div class="bg-white rounded-md shadow-xs">
-															<?php
-															$this->show_merge_tags( $campaign_type );
-															?>
+															<div class="bg-white rounded-md shadow-xs">
+																<?php
+																$this->show_merge_tags( $campaign_type );
+																?>
+															</div>
 														</div>
-													</div>
 													</div>
 													<div>
 														<input id="ig_es_campaign_subject"  style="width:95%;" class="outline-none" name="campaign_data[subject]" value="<?php echo esc_attr( $campaign_subject ); ?>"/>
 													</div>
 													
+												</div>
+											</div>
+											<div class="block px-4 py-2">
+												<label class="text-sm font-medium leading-5 text-gray-700"><?php echo esc_html__( 'Preheader', 'email-subscribers' ); ?></label>
+												<div class="w-full mt-1 relative text-sm leading-5 rounded-md shadow-sm form-input border-gray-400">
+													<div>
+														<input style="width:100%;" class="outline-none" name="campaign_data[preheader]" value="<?php echo esc_attr( $campaign_preheader ); ?>"/>
+													</div>
 												</div>
 											</div>
 											<div class="w-full px-4 pt-1 pb-2 mt-1 message-label-wrapper">
@@ -1054,7 +1104,6 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 		 * @since 5.3.3
 		 */
 		public static function save_campaign( $campaign_data ) {
-
 			$campaign_saved = false;
 			if ( ! empty( $campaign_data['body'] ) ) {
 				$campaign_id   = ! empty( $campaign_data['id'] ) ? $campaign_data['id'] : 0;
@@ -1068,6 +1117,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 				$campaign_data = apply_filters( 'ig_es_' . $campaign_type . '_data', $campaign_data );
 
 				if ( ! empty( $campaign_id ) ) {
+
 					$campaign_saved = ES()->campaigns_db->save_campaign( $campaign_data, $campaign_id );
 				}
 			}
@@ -1079,13 +1129,13 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 		 * Schedule a campaign
 		 *
 		 * @param array $data
-		 * @return boolean $campaign_scheduled
+		 * @return string $scheduling_status
 		 *
 		 * @since 5.3.3
 		 */
 		public static function schedule_campaign( $data ) {
 
-			$campaign_scheduled = false;
+			$scheduling_status = '';
 			if ( ! empty( $data['id'] ) ) {
 				$campaign_id   = ! empty( $data['id'] ) ? $data['id'] : 0;
 				$campaign_meta = ES()->campaigns_db->get_campaign_meta_by_id( $campaign_id );
@@ -1141,10 +1191,12 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 					if ( $should_queue_emails ) {
 						$list_ids = '';
 						// Delete existing sending queue if any already present.
-						ES_DB_Sending_Queue::delete_sending_queue_by_mailing_id( array( $mailing_queue_id ) );
-						$is_inserted = ES_DB_Sending_Queue::do_insert_from_contacts_table( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_ids );
-						if ( $is_inserted ) {
-							$campaign_scheduled = true;
+						ES_DB_Sending_Queue::delete_by_mailing_queue_id( array( $mailing_queue_id ) );
+						$emails_queued = ES_DB_Sending_Queue::queue_emails( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_ids );
+						if ( $emails_queued ) {
+							$scheduling_status = 'success';
+						} else {
+							$scheduling_status = 'emails_not_queued';
 						}
 					}
 
@@ -1167,7 +1219,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 				}
 			}
 
-			return $campaign_scheduled;
+			return $scheduling_status;
 		}
 
 		public function add_campaign_body_data( $campaign_data ) {
@@ -1208,12 +1260,32 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 				) );
 
 
-				$campaign_body = ES_Common::replace_keywords_with_fallback( $campaign_body, array(
+				$subscriber_tags = array(
 					'subscriber.first_name' => $first_name,
 					'subscriber.name'      => $username,
 					'subscriber.last_name'  => $last_name,
 					'subscriber.email'     => $useremail
-				) );
+				);
+
+				$custom_field_values = array();
+				foreach ( $contact_data as $merge_tag_key => $merge_tag_value ) {
+					if ( false !== strpos( $merge_tag_key, 'cf_' ) ) {
+						$merge_tag_key_parts = explode( '_', $merge_tag_key );
+						$merge_tag_key       = $merge_tag_key_parts[2];
+						$custom_field_values[ 'subscriber.' . $merge_tag_key ] = $merge_tag_value;
+					}
+				}
+
+				$subscriber_tags_values = array(
+					'subscriber.first_name' => $first_name,
+					'subscriber.name'      => $username,
+					'subscriber.last_name'  => $last_name,
+					'subscriber.email'     => $useremail
+				);
+
+				$subscriber_tags_values = array_merge( $subscriber_tags_values, $custom_field_values );
+
+				$campaign_body = ES_Common::replace_keywords_with_fallback( $campaign_body, $subscriber_tags_values );
 
 				$campaign_type = $campaign_data['type'];
 
@@ -1239,9 +1311,9 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 
 				$campaign_data['body'] = $campaign_body;
 
-				return $campaign_data;
 			}
-
+			
+			return $campaign_data;
 		}
 
 		/**
@@ -1273,18 +1345,20 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 				unset( $campaign_data['id'] );
 			}
 
+
 			$campaign_data['base_template_id'] = $template_id;
 			$campaign_data['list_ids']         = $list_id;
 			$campaign_data['status']           = ! empty( $campaign_data['status'] ) ? (int) $campaign_data['status'] : 0;
 			$meta                              = ! empty( $campaign_data['meta'] ) ? $campaign_data['meta'] : array();
 			$meta['pre_header']                = ! empty( $campaign_data['pre_header'] ) ? $campaign_data['pre_header'] : '';
 
+
 			if ( ! empty( $meta['list_conditions'] ) ) {
 				$meta['list_conditions'] = IG_ES_Campaign_Rules::remove_empty_conditions( $meta['list_conditions'] );
 			}
 
 			$campaign_data['meta'] = maybe_serialize( $meta );
-			$campaign_data['name'] = $campaign_data['subject'];
+			$campaign_data['name'] = wp_strip_all_tags( $campaign_data['subject'] );
 			$campaign_data['slug'] = sanitize_title( sanitize_text_field( $campaign_data['name'] ) );
 
 			$campaign_data = apply_filters( 'ig_es_campaign_data', $campaign_data );
@@ -1381,7 +1455,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 				}
 			}
 
-			$preview_data['campaign_subject'] = ! empty( $campaign_data['subject'] ) ? esc_html( $campaign_data['subject'] ) : '';
+			$preview_data['campaign_subject'] = ! empty( $campaign_data['subject'] ) ? wp_strip_all_tags( $campaign_data['subject'] ) : '';
 			$preview_data['contact_name']     = esc_html( $first_name . ' ' . $last_name );
 			$preview_data['contact_email']    = esc_html( $email );
 
@@ -1504,7 +1578,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 				$ignore_last_run        = true;
 				$campaign_id 			= $campaign_data['id'];
 				$campaign_body 			= $campaign_data['body'];
-				$post_ids               = ES_Post_Digest::get_post_id_for_post_digest( $campaign_id, $ignore_stored_post_ids, $ignore_last_run );
+				$post_ids               = ES_Post_Digest::get_matching_post_ids( $campaign_id, $ignore_stored_post_ids, $ignore_last_run );
 				$campaign_body          = ES_Post_Digest::process_post_digest_template( $campaign_body, $post_ids );
 				$campaign_data['body']  = $campaign_body;
 			}
@@ -1601,18 +1675,18 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 
 			$response = array();
 
-			$campaign_data    = ig_es_get_request_data( 'campaign_data', array(), false );
-			$campaign_type    = ! empty( $campaign_data['type'] ) ? $campaign_data['type'] : IG_ES_DRAG_AND_DROP_EDITOR;
-			$campaign_body    = ! empty( $campaign_data['body'] ) ? $campaign_data['body'] : '';
-			$campaign_subject = ! empty( $campaign_data['subject'] ) ? $campaign_data['subject'] : '';
+			$campaign_data       = ig_es_get_request_data( 'campaign_data', array(), false );
+			$campaign_type       = ! empty( $campaign_data['type'] ) ? $campaign_data['type'] : IG_ES_DRAG_AND_DROP_EDITOR;
+			$campaign_body       = ! empty( $campaign_data['body'] ) ? $campaign_data['body'] : '';
+			$campaign_subject    = ! empty( $campaign_data['subject'] ) ? $campaign_data['subject'] : '';
 
 			if ( ! empty( $campaign_subject) && ! empty( $campaign_body ) ) {
 
 				$template_data = array(
-					'post_title'   => $campaign_subject,
-					'post_content' => $campaign_body,
-					'post_type'    => 'es_template',
-					'post_status'  => 'publish',
+					'post_title'   	  => $campaign_subject,
+					'post_content'    => $campaign_body,
+					'post_type'       => 'es_template',
+					'post_status'     => 'publish',
 				);
 
 				$template_id       = wp_insert_post( $template_data );

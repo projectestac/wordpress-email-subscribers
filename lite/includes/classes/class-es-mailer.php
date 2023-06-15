@@ -101,19 +101,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 * @since 4.3.2
 		 */
 		public function __construct() {
-
-			$ig_es_mailer_settings = get_option( 'ig_es_mailer_settings', array() );
-
-			$mailer = ! empty( $ig_es_mailer_settings['mailer'] ) ? $ig_es_mailer_settings['mailer'] : 'wpmail';
-
-			$mailer_class = 'ES_' . ucfirst( $mailer ) . '_Mailer';
-
-			// If we don't found mailer class, fallback to WP Mail.
-			if ( ! class_exists( $mailer_class ) ) {
-				$mailer_class = 'ES_Wpmail_Mailer';
-			}
-
-			$this->mailer = new $mailer_class();
+			$this->set_mailer();
 		}
 
 		/**
@@ -415,23 +403,20 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 */
 		public function send_welcome_email( $email, $data = array() ) {
 
-			if ( $this->can_send_welcome_email() ) {
+			// Prepare Welcome Email Subject
+			$subject = $this->get_welcome_email_subject();
 
-				// Prepare Welcome Email Subject
-				$subject = $this->get_welcome_email_subject();
+			// Prepare Welcome Email Content
+			$content = $this->get_welcome_email_content();
 
-				// Prepare Welcome Email Content
-				$content = $this->get_welcome_email_content();
+			// Backward Compatibility...Earlier we used to use {{LINK}} for Unsubscribe link
+			$content = str_replace( '{{LINK}}', '{{UNSUBSCRIBE-LINK}}', $content );
 
-				// Backward Compatibility...Earlier we used to use {{LINK}} for Unsubscribe link
-				$content = str_replace( '{{LINK}}', '{{UNSUBSCRIBE-LINK}}', $content );
-
-				// Don't add Unsubscribe link. It should be there in content
-				$this->add_unsubscribe_link = false;
-				$this->add_tracking_pixel   = false;
-				// Send Email
-				$this->send( $subject, $content, $email, $data );
-			}
+			// Don't add Unsubscribe link. It should be there in content
+			$this->add_unsubscribe_link = false;
+			$this->add_tracking_pixel   = false;
+			// Send Email
+			$this->send( $subject, $content, $email, $data );
 
 		}
 
@@ -572,6 +557,8 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 * @return mixed
 		 *
 		 * @since 4.3.2
+		 * 
+		 * @modify 5.6.4
 		 */
 		public function send( $subject, $content, $emails = array(), $merge_tags = array(), $nl2br = false ) {
 
@@ -598,6 +585,11 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 					}
 
 					$campaign_meta = maybe_unserialize( $campaign['meta'] );
+
+					if ( ! empty( $campaign_meta['preheader'] ) ) {
+						$content = '<span class="preheader" style="display: none !important; visibility: hidden; opacity: 0; color: transparent; height: 0; width: 0;">' . $campaign_meta['preheader'] . '</span>' . $content;
+					}
+
 					if ( ! empty( $campaign_meta['attachments'] ) ) {
 						$sender_data['attachments'] = array();
 						$attachments                = $campaign_meta['attachments'];
@@ -645,7 +637,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 					$this->email_id_map = ES()->contacts_db->get_email_id_map( $emails );
 				} else {
 					// If the campaign isn't a sequence message, then we can fetch contact-email mapping data from sending_queue table
-					$this->email_id_map = ES_DB_Sending_Queue::get_emails_id_map_by_campaign( $campaign_id, $emails );
+					$this->email_id_map = ES_DB_Sending_Queue::get_emails_id_map_by_campaign( $campaign_id, $message_id, $emails );
 				}
 			}
 
@@ -1072,8 +1064,10 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			// Format Templates.
 			$data['content']     = $content;
 			$campaign_id         = ! empty( $merge_tags['campaign_id'] ) ? $merge_tags['campaign_id'] : 0;
+			$message_id          = ! empty( $merge_tags['message_id'] ) ? $merge_tags['message_id'] : 0;
 			$data['tmpl_id']     = ! empty( $campaign_id ) ? ES()->campaigns_db->get_template_id_by_campaign( $campaign_id ) : 0;
 			$data['campaign_id'] = $campaign_id;
+			$data['message_id']  = $message_id;
 
 			$data = apply_filters( 'es_after_process_template_body', $data );
 
@@ -1122,17 +1116,17 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			$total_contacts = ES()->contacts_db->get_total_contacts();
 			$site_url       = home_url( '/' );
 
-			$name        = ig_es_get_data( $merge_tags, 'name', '' );
-			$first_name  = ig_es_get_data( $merge_tags, 'first_name', '' );
-			$last_name   = ig_es_get_data( $merge_tags, 'last_name', '' );
-			$list_name   = ig_es_get_data( $merge_tags, 'list_name', '' );
-			$hash        = ig_es_get_data( $merge_tags, 'hash', '' );
-			$email       = ig_es_get_data( $merge_tags, 'email', '' );
-			$contact_id  = ig_es_get_data( $merge_tags, 'contact_id', 0 );
-			$campaign_id = ig_es_get_data( $merge_tags, 'campaign_id', 0 );
-			$message_id  = ig_es_get_data( $merge_tags, 'message_id', 0 );
-			$list_ids    = ig_es_get_data( $merge_tags, 'list_ids', '' );
-
+			$name          = ig_es_get_data( $merge_tags, 'name', '' );
+			$first_name    = ig_es_get_data( $merge_tags, 'first_name', '' );
+			$last_name     = ig_es_get_data( $merge_tags, 'last_name', '' );
+			$list_name     = ig_es_get_data( $merge_tags, 'list_name', '' );
+			$hash          = ig_es_get_data( $merge_tags, 'hash', '' );
+			$email         = ig_es_get_data( $merge_tags, 'email', '' );
+			$contact_id    = ig_es_get_data( $merge_tags, 'contact_id', 0 );
+			$campaign_id   = ig_es_get_data( $merge_tags, 'campaign_id', 0 );
+			$message_id    = ig_es_get_data( $merge_tags, 'message_id', 0 );
+			$list_ids      = ig_es_get_data( $merge_tags, 'list_ids', '' );
+			
 			$link_data = array(
 				'message_id'  => $message_id,
 				'campaign_id' => $campaign_id,
@@ -1154,12 +1148,25 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 				'EMAIL'     => $email
 			) );
 
-			$content = ES_Common::replace_keywords_with_fallback( $content, array(
+			$custom_field_values = array();
+			foreach ( $merge_tags as $merge_tag_key => $merge_tag_value ) {
+				if ( false !== strpos( $merge_tag_key, 'cf_' ) ) {
+					$merge_tag_key_parts = explode( '_', $merge_tag_key );
+					$merge_tag_key       = $merge_tag_key_parts[2];
+					$custom_field_values[ 'subscriber.' . $merge_tag_key ] = $merge_tag_value;
+				}
+			}
+
+			$subscriber_tags_values = array(
 				'subscriber.first_name' => $first_name,
-				'subscriber.name'      => $name,
+				'subscriber.name'       => $name,
 				'subscriber.last_name'  => $last_name,
-				'subscriber.email'     => $email
-			) );
+				'subscriber.email'      => $email
+			);
+
+			$subscriber_tags_values = array_merge( $subscriber_tags_values, $custom_field_values );
+
+			$content = ES_Common::replace_keywords_with_fallback( $content, $subscriber_tags_values );
 
 			// TODO: This is a quick workaround to handle <a href="{{LINK}}?utm_source=abc" >
 			// TODO: Implement some good solution
@@ -1719,6 +1726,13 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 				$total_emails_can_send_now = $can_total_emails_send_at_once;
 			}
 
+			if ( ES_Service_Email_Sending::use_icegram_mailer() ) {
+				$remaining_limit = ES_Service_Email_Sending::get_remaining_limit();
+				if ( $total_emails_can_send_now > $remaining_limit ) {
+					$total_emails_can_send_now = $remaining_limit;
+				}
+			}
+
 			return $total_emails_can_send_now;
 		}
 
@@ -1851,7 +1865,68 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			$phpmailer          = new PHPMailer( true );
 			$phpmailer->CharSet = 'UTF-8';
 
+			$phpmailer::$validator = static function ( $email ) {
+				return (bool) is_email( $email );
+			};
+
 			return $phpmailer;
+		}
+
+		/**
+		 * Get current mailer slug
+		 *
+		 * @return string $mailer
+		 * 
+		 * @since 5.5.7
+		 */
+		public function get_current_mailer_slug() {
+			$mailer_settings     = get_option( 'ig_es_mailer_settings', '');
+			$current_mailer_slug = ( !empty( $mailer_settings['mailer'] ) ) ? $mailer_settings['mailer'] : 'wpmail';
+			return $current_mailer_slug;
+		}
+
+		public function get_current_mailer_class() {
+			$malier_slug          = $this->get_current_mailer_slug();
+			$current_mailer_class = 'ES_' . ucfirst( $malier_slug ) . '_Mailer';
+			// If we don't found mailer class, fallback to WP Mail.
+			if ( ! class_exists( $current_mailer_class ) ) {
+				$current_mailer_class = 'ES_Wpmail_Mailer';
+			}
+			return $current_mailer_class;
+		}
+
+		/**
+		 * Get current mailer name
+		 *
+		 * @return string Mailer name
+		 * 
+		 * @since 5.6.0
+		 */
+		public function get_current_mailer_name() {
+			$current_mailer_class = $this->get_current_mailer_class();
+			$current_mailer       = new $current_mailer_class();
+			return $current_mailer->get_name();
+		}
+
+		/**
+		 * Set mailer to be used while sending emails.
+		 * 
+		 * @since 5.6.0
+		 */
+		public function set_mailer() {
+			if ( ES_Service_Email_Sending::use_icegram_mailer() ) {
+				$mailer_class = 'ES_Icegram_Mailer';
+			} else {
+				$mailer_class = $this->get_current_mailer_class();
+			}
+
+			$this->mailer = new $mailer_class();
+		}
+
+		public function get_current_mailer_account_url() {
+			$current_mailer_class = $this->get_current_mailer_class();
+			$current_mailer       = new $current_mailer_class();
+			return $current_mailer->get_account_url();
 		}
 	}
 }

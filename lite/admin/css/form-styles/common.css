@@ -1,0 +1,25 @@
+.es-form-field-container .gjs-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-wrap: nowrap;
+}
+
+.es-form-field-container .gjs-cell {
+    flex-grow: 1;
+    flex-basis: 100%;
+}
+
+.es-form-field-container .gjs-cell[data-highlightable="1"]:empty {
+    border: 1px dashed #ccc;
+    height: 30px;
+}
+
+.es-form-field-container .gjs-row .gjs-cell input[type="checkbox"],
+.es-form-field-container .gjs-row .gjs-cell input[type="radio"] {
+  margin-top: 0px;
+  margin-right: 5px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  width: auto;
+}

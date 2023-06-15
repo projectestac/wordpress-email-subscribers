@@ -335,7 +335,10 @@ class ES_Shortcode {
 				if ( 'yes' === $prefill_form ) {
 					$current_user    = wp_get_current_user();
 					$submitted_email = $current_user->user_email;
-					$submitted_name  = $current_user->user_firstname . ' ' . $current_user->user_lastname;
+
+					if ( ! empty( $current_user->user_firstname ) && ! empty( $current_user->user_lastname ) ) {
+						$submitted_name = $current_user->user_firstname . ' ' . $current_user->user_lastname;
+					}
 				}
 			}
 		}
@@ -354,15 +357,15 @@ class ES_Shortcode {
 		// Form html
 		$form_html = '<input type="hidden" name="esfpx_form_id" value="' . $form_id . '" />';
 
-		$form_header_html = '<div class="emaillist" id="es_form_' . self::$form_identifier . '">';
-		$form_data_html = '';
-		$form_orig_html = '';
+		$form_header_html = '';
+		$form_data_html   = '';
+		$form_orig_html   = '';
 
 		$form_orig_html = $form_header_html;
 		// Don't show form if submission was successful.
 		if ( 'success' !== $message_class) {
 			$form_action_url             = ES_Common::get_current_request_url();
-			$enable_ajax_form_submission = get_option( 'ig_es_enable_ajax_form_submission', 'no' );
+			$enable_ajax_form_submission = get_option( 'ig_es_enable_ajax_form_submission', 'yes' );
 			$extra_form_class            = ( 'yes' == $enable_ajax_form_submission ) ? ' es_ajax_subscription_form' : '';
 
 			$form_header_html .= '<form action="' . $form_action_url . '#es_form_' . self::$form_identifier . '" method="post" class="es_subscription_form es_shortcode_form ' . esc_attr( $extra_form_class ) . '" id="es_subscription_form_' . $unique_id . '" data-source="ig-es" data-form-id="' . $form_id . '">';
@@ -377,7 +380,7 @@ class ES_Shortcode {
 			<input type="hidden" name="esfpx_es_email_page_url" value="' . $current_page_url . '"/>
 			<input type="hidden" name="esfpx_status" value="Unconfirmed"/>
 			<input type="hidden" name="esfpx_es-subscribe" id="es-subscribe-' . $unique_id . '" value="' . $nonce . '"/>
-			<label style="' . $hp_style . '"><input type="email" name="esfpx_es_hp_email" class="es_required_field" tabindex="-1" autocomplete="-1" value=""/></label>';
+			<label style="' . $hp_style . '" aria-hidden="true"><span hidden>' . __( 'Please leave this field empty.', 'email-subscribers' ) . '</span><input type="email" name="esfpx_es_hp_email" class="es_required_field" tabindex="-1" autocomplete="-1" value=""/></label>';
 
 			$spinner_image_path = ES_PLUGIN_URL . 'lite/public/images/spinner.gif';
 
@@ -416,23 +419,24 @@ class ES_Shortcode {
 				$form_body = '';
 				if ( ! empty( $data['settings']['dnd_editor_css'] ) ) {
 					$editor_css = $data['settings']['dnd_editor_css'];
-					// We are using attribute selector data-form-id to apply Form style and not form unique id since when using it, it overrides Grapejs custom style changes.
+					// We are using attribute selector data-form-id to apply Form style and not form unique id since when using it, it overrides GrapeJs custom style changes done through GrapeJS style editor.
 					$editor_css = str_replace( '.es-form-field-container', 'form[data-form-id="' . $form_id . '"] .es-form-field-container', $editor_css );
 					$form_body  = '<style type="text/css">' . $editor_css . '</style>';
 				}
 				$form_body .= ! empty( $data['body'] ) ? do_shortcode( $data['body'] ) : '';
 				$form = array( $form_header_html, $form_html, $form_data_html, $form_body );
 				$form_orig_html = implode( '', $form );
-				$form_data_html .= $form_orig_html;
+				$form_data_html = $form_orig_html;
 			}
-
-
 
 			$form_data_html .= '<span class="es_spinner_image" id="spinner-image"><img src="' . $spinner_image_path . '" alt="Loading"/></span></form>';
 		
 		}
 		
-		$form_data_html .= '<span class="es_subscription_message ' . $message_class . '" id="es_subscription_message_' . $unique_id . '">' . $message_text . '</span></div>';
+		$form_data_html .= '<span class="es_subscription_message ' . $message_class . '" id="es_subscription_message_' . $unique_id . '">' . $message_text . '</span>';
+
+		// Wrap form html inside a container.
+		$form_data_html = '<div class="emaillist" id="es_form_' . self::$form_identifier . '">' . $form_data_html . '</div>';
 
 		$form = $form_data_html;
 
@@ -496,9 +500,9 @@ class ES_Shortcode {
 			return $form; 
 			
 		} else {
-			add_filter( 'safe_style_css', 'ig_es_allowed_css_style' );
+			add_filter( 'safe_style_css', 'ig_es_allowed_css_style', 999 );
 			echo wp_kses( $form, $allowedtags );
-			
+			remove_filter( 'safe_style_css', 'ig_es_allowed_css_style', 999 );
 		}
 	}
 

@@ -115,7 +115,7 @@ License	   : GPLv3
 
 **4.2.3 (17.10.2019)**
 
-* Update: Now, only administrators can access  Icegram Express (formerly known as Email Subscribers & Newsletters) menus.
+* Update: Now, only administrators can access  Icegram Express menus.
 * Fix: Email open tracking
 * Fix: Vulnerability while exporting contacts
 * Fix: Vulnerability while sending a test email
@@ -138,7 +138,7 @@ License	   : GPLv3
 **4.1.15 (12.09.2019)**
 
 * New: Stop email sending if hourly email sending limit exceeded.
-* Update: Added option to customize message after form submission (Icegram Express (formerly known as Email Subscribers & Newsletters) > Settings Menu)
+* Update: Added option to customize message after form submission (Icegram Express > Settings Menu)
 * Fixed: Import contacts issue
 
 **4.1.14 (28.08.2019)**
@@ -251,7 +251,7 @@ License	   : GPLv3
 **4.0.16 (23.04.2019)**
 
 * New : New keywords added : {{TOTAL-CONTACTS}} , {{SITEURL}}, {{SITENAME}}
-* New : Added option to enable/ disable WordPress Cron for Icegram Express (formerly known as Email Subscribers & Newsletters)
+* New : Added option to enable/ disable WordPress Cron for Icegram Express
 * New : Added option to enable/ disable email open tracking
 * Fix : Database error while sorting list
 * Fix : Incorrect viewed and sent dates in report details
@@ -366,7 +366,7 @@ License	   : GPLv3
 
 **4.0.1 (02.03.2019)**
 
-* Fix: Widget sidebar is broken due to Icegram Express (formerly known as Email Subscribers & Newsletters) Widget
+* Fix: Widget sidebar is broken due to Icegram Express Widget
 * Fix: GDPR consent checkbox is missing
 * Fix: PHP HTML Mail/ Plain Text email option missing
 * Fix: "Name" & "Email" label missing in subscription form
@@ -509,7 +509,7 @@ License	   : GPLv3
 ************************************************************Version 3.4.11************************************************************
 
 * Fix: Special characters in the post title showing as html entities when using {{POSTTITLE}} keyword [due to `get_the_title($post)`]
-* Fix: 'Oops.. Unexpected error occurred 0.' in Icegram Express (formerly known as Email Subscribers & Newsletters) - Group Selector form when subscriber status is unconfirmed or unsubscribed
+* Fix: 'Oops.. Unexpected error occurred 0.' in Icegram Express - Group Selector form when subscriber status is unconfirmed or unsubscribed
 
 ************************************************************Version 3.4.10************************************************************
 
@@ -570,7 +570,7 @@ License	   : GPLv3
 
 ************************************************************Version 3.4.4************************************************************
 
-* New: Introducing [Icegram Express (formerly known as Email Subscribers & Newsletters) Pro](https://www.icegram.com/email-subscribers-pricing/) plan
+* New: Introducing [Icegram Express Pro](https://www.icegram.com/email-subscribers-pricing/) plan
 * Update: Change in logic for showing subscribers in subscribers dashboard
 
 ************************************************************Version 3.4.3************************************************************
@@ -645,8 +645,8 @@ License	   : GPLv3
 * Update: Do not include ###GROUP### name by default in welcome email. Admin can add ###GROUP### name manually using keyword (New users only)
 * Update: Text improvement at few places
 * Update: POT file
-* Tweak: Show Cron menu before User Roles menu in Icegram Express (formerly known as Email Subscribers & Newsletters) -> Settings for better accessibility
-* Tweak: Use email dashicon instead of mail image for Icegram Express (formerly known as Email Subscribers & Newsletters) menu
+* Tweak: Show Cron menu before User Roles menu in Icegram Express -> Settings for better accessibility
+* Tweak: Use email dashicon instead of mail image for Icegram Express menu
 * Tweak: Use search dashicon instead of preview image for Reports menu
 * Tweak: Use no dashicon instead of delete image for Reports menu
 
@@ -680,7 +680,7 @@ License	   : GPLv3
 
 ************************************************************Version 3.3.1************************************************************
 
-* New: Admin can now include user subscribed group name in the Welcome Email (Icegram Express (formerly known as Email Subscribers & Newsletters) v3.3.1+)
+* New: Admin can now include user subscribed group name in the Welcome Email (Icegram Express v3.3.1+)
 * Update: Documentation links
 * Update: POT file
 * Update: Translation for French (fr_FR) language updated (Thanks to Serge)
@@ -706,7 +706,7 @@ License	   : GPLv3
 
 ************************************************************Version 3.2.10************************************************************
 
-* New: Admin can now include user subscribed group name in the Welcome Email (Icegram Express (formerly known as Email Subscribers & Newsletters) v3.2.10+)
+* New: Admin can now include user subscribed group name in the Welcome Email (Icegram Express v3.2.10+)
 * New: Show recently subscribed subscribers on top of the Subscribers page
 * New: Show submission time of subscribers on Subscribers page
 * New: Show count of total & active subscribers on Subscribers page (for admin view only)
@@ -903,8 +903,8 @@ License	   : GPLv3
 
 ************************************************************Version 3.1.2************************************************************
 
-* New: You can now include Unsubscribe link in Welcome Email (Icegram Express (formerly known as Email Subscribers & Newsletters) v3.1.2+)
-* New: Welcome Page on activating Icegram Express (formerly known as Email Subscribers & Newsletters)
+* New: You can now include Unsubscribe link in Welcome Email (Icegram Express v3.1.2+)
+* New: Welcome Page on activating Icegram Express
 * Fix: Shortcode not showing error messages upon user subscription
 * Fix: Show full sized featured image when using ###POSTIMAGE### shortlink
 * Fix: Can't edit settings in admin panel if SSL is enabled
@@ -1055,7 +1055,7 @@ Call to undefined method es_cls_common::es_sent_report_html() 	- Fixed
 
 First version.
 
-Icegram Express (formerly known as Email Subscribers & Newsletters) plugin has options to send newsletters to subscribers. It has a separate page with HTML editor to create a HTML newsletter.
+Icegram Express plugin has options to send newsletters to subscribers. It has a separate page with HTML editor to create a HTML newsletter.
 Also have options to send notification email to subscribers when new posts are published to your blog. Separate page available to include and
 exclude categories to send notifications. Using plugin Import and Export options admins can easily import registered users and commenters to
 subscriptions list.

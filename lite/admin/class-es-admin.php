@@ -841,7 +841,7 @@ if ( ! class_exists( 'ES_Admin' ) ) {
 				$ignore_last_run        = true;
 				$template_id 			= $template_data['id'];
 				$template_body 			= $template_data['body'];
-				$post_ids               = ES_Post_Digest::get_post_id_for_post_digest( $template_id, $ignore_stored_post_ids, $ignore_last_run );
+				$post_ids               = ES_Post_Digest::get_matching_post_ids( $template_id, $ignore_stored_post_ids, $ignore_last_run );
 				$template_body          = ES_Post_Digest::process_post_digest_template( $template_body, $post_ids );
 				$template_data['body']  = $template_body;
 			}
@@ -986,6 +986,28 @@ if ( ! class_exists( 'ES_Admin' ) ) {
 			}
 
 			wp_send_json_error();
+		}
+
+		/**
+		 * Method to load admin views
+		 *
+		 * @since 5.5.4
+		 *
+		 * @param string $view View name.
+		 * @param array  $imported_variables Passed variables.
+		 * @param mixed  $path Path to view file.
+		 */
+		public static function get_view( $view, $imported_variables = array(), $path = false ) {
+
+			if ( $imported_variables && is_array( $imported_variables ) ) {
+				extract( $imported_variables ); // phpcs:ignore
+			}
+
+			if ( ! $path ) {
+				$path = ES_PLUGIN_DIR . 'lite/admin/views/';
+			}
+
+			include $path . $view . '.php';
 		}
 	}
 

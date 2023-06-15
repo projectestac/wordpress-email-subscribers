@@ -702,6 +702,12 @@ class ES_Common {
 		if ( ! is_array( $category_names ) ) {
 			$category_names = array();
 		}
+
+		// By default select All Categories option.
+		if ( empty( $category_names ) ) {
+			$category_names = array( 'All' );
+		}
+
 		$checked_selected = ! array_intersect( array( 'All', 'None' ), $category_names ) ? "checked='checked'" : '';
 		$category_html    = '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;" ><span class="block pr-4 text-sm font-normal text-gray-600 pb-1"><input class="es-note-category-parent form-radio text-indigo-600" type="radio" ' . esc_attr( $checked_selected ) . ' value="selected_cat"  name="campaign_data[es_note_cat_parent]">' . __(
 			'Select Categories',
@@ -1605,7 +1611,6 @@ class ES_Common {
 			'ig_es_subscription_success_message',
 			'ig_es_sync_wp_users',
 			'ig_es_unsubscribe_error_message',
-			'ig_es_enable_summary_automation',
 			'ig_es_run_cron_on',
 			'ig_es_run_cron_time',
 			'ig_es_unsubscribe_link',
@@ -1617,6 +1622,7 @@ class ES_Common {
 			'ig_es_welcome_email_content',
 			'ig_es_welcome_email_subject',
 			'ig_es_email_sent_data',
+			'ig_es_remote_gallery_items',
 		);
 
 	}
@@ -1660,27 +1666,46 @@ class ES_Common {
 	 */
 	public static function get_ig_es_meta_info() {
 
-		$total_contacts           = ES()->contacts_db->count();
-		$total_lists              = ES()->lists_db->count_lists();
-		$total_forms              = ES()->forms_db->count_forms();
-		$total_newsletters        = ES()->campaigns_db->get_total_newsletters();
-		$total_post_notifications = ES()->campaigns_db->get_total_post_notifications();
-		$total_sequences          = ES()->campaigns_db->get_total_sequences();
+		$plan 						= ES()->get_plan();
+		$total_contacts             = ES()->contacts_db->count();
+		$total_unconfirmed_contacts = ES()->lists_contacts_db->get_unconfirmed_contacts_count();
+		$total_lists                = ES()->lists_db->count_lists();
+		$total_forms                = ES()->forms_db->count_forms();
+		$total_newsletters          = ES()->campaigns_db->get_total_newsletters();
+		$total_post_notifications   = ES()->campaigns_db->get_total_post_notifications();
+		$total_post_digests 		= ( 'pro' === $plan ) ? ES()->campaigns_db->get_total_post_digests() : 0;
+		$total_sequences            = ( 'pro' === $plan ) ? ES()->campaigns_db->get_total_sequences() : 0;
+		$active_workflows_count     = ES()->workflows_db->get_active_workflows_count();
+		$remote_gallery_items   	= get_option('ig_es_imported_remote_gallery_template_ids', array());
+		$editor_count_by_type		= ES()->campaigns_db->get_count_by_editor_type();
+		$workflows_count_by_type	= ES()->workflows_db->get_workflows_count_by_triggername();
+		$mailer_name 				= ES()->mailer->get_current_mailer_slug();
+		$campaign_sending_frequency = ES_DB_Mailing_Queue::get_campaign_sending_frequency(10);
+
 
 		return array(
 			'version'                  => ES_PLUGIN_VERSION,
 			'installed_on'             => get_option( 'ig_es_installed_on', '' ),
 			'is_premium'               => ES()->is_premium() ? 'yes' : 'no',
-			'plan'                     => ES()->get_plan(),
+			'plan'                     => $plan,
 			'is_trial'                 => ES()->trial->is_trial() ? 'yes' : 'no',
 			'is_trial_expired'         => ES()->trial->is_trial_expired() ? 'yes' : 'no',
 			'trial_start_at'           => ES()->trial->get_trial_start_date(),
 			'total_contacts'           => $total_contacts,
+			'unconfirmed_contacts'	   => $total_unconfirmed_contacts,		// Added in 5.5.7
 			'total_lists'              => $total_lists,
 			'total_forms'              => $total_forms,
 			'total_newsletters'        => $total_newsletters,
 			'total_post_notifications' => $total_post_notifications,
+			'total_post_digests'	   => $total_post_digests,				// Added in 5.5.7
 			'total_sequences'          => $total_sequences,
+			'editor_count_by_type'	   => $editor_count_by_type, 			// Added in 5.5.7
+			'active_workflows_count'   => $active_workflows_count, 			// Added in 5.5.7
+			'campaign_sending_frequency' => $campaign_sending_frequency,	// Added in 5.5.7
+			'workflows_count_by_type'  => $workflows_count_by_type, 		// Added in 5.5.7
+			'mailer'				   => $mailer_name,						// Added in 5.5.7
+			'remote_gallery_items'	   => $remote_gallery_items, 			// Added in 5.5.7
+			'is_rest_api_used'	       => self::is_rest_api_used(),		 	// Added in 5.5.7
 			'settings'                 => self::get_all_settings(),
 		);
 	}
@@ -1804,6 +1829,7 @@ class ES_Common {
 				'workflows',
 				'audience',
 				'reports',
+				'logs',
 				'forms',
 				'campaigns',
 				'sequences',
@@ -1879,7 +1905,7 @@ class ES_Common {
 			$pricing_page_url = admin_url( 'admin.php?page=es_pricing' );
 
 			$articles_upsell[] = array(
-				'title'       => __( '<b>Icegram Express</b> (formerly known as <br/><b>Email Subscribers & Newsletters</b>) Secret Club', 'email-subscribers' ),
+				'title'       => __( '<b>Icegram Express</b> Secret Club', 'email-subscribers' ),
 				'link'        => 'https://www.facebook.com/groups/2298909487017349/',
 				'label'       => __( 'Join Now', 'email-subscribers' ),
 				'label_class' => 'bg-green-100 text-green-800',
@@ -1887,9 +1913,9 @@ class ES_Common {
 
 			if ( ! ES()->is_premium() ) {
 				$articles_upsell[] = array(
-					'title'       => __( 'Icegram Express (formerly known as Email Subscribers & Newsletters) MAX', 'email-subscribers' ),
+					'title'       => __( 'Unlock all premium features', 'email-subscribers' ),
 					'link'        => $pricing_page_url,
-					'label'       => __( 'MAX', 'email-subscribers' ),
+					'label'       => __( '25% OFF', 'email-subscribers' ),
 					'label_class' => 'bg-green-100 text-green-800',
 				);
 			}
@@ -2669,6 +2695,53 @@ class ES_Common {
 	}
 
 	/**
+	 * Check if the domain is blocked based on email
+	 *
+	 * @param $email
+	 *
+	 * @return bool
+	 *
+	 * @since 4.1.0
+	 */
+	public static function is_domain_blocked( $email ) {
+
+		if ( empty( $email ) ) {
+			return true;
+		}
+
+		$domains = trim( get_option( 'ig_es_blocked_domains', '' ) );
+
+		// No domains to block? Return
+		if ( empty( $domains ) ) {
+			return false;
+		}
+
+		$domains = explode( PHP_EOL, $domains );
+
+		$domains = apply_filters( 'ig_es_blocked_domains', $domains );
+
+		if ( empty( $domains ) ) {
+			return false;
+		}
+
+		$rev_email = strrev( $email );
+		foreach ( $domains as $domain ) {
+			$domain = trim( $domain );
+			if ( strpos( $rev_email, strrev( $domain ) ) === 0 ) {
+				$email_parts = explode( '@', $email );
+				if ( ! empty( $email_parts[1] ) ) {
+					$email_domain = $email_parts[1];
+					if ( $email_domain === $domain ) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get column datatype for custom field in contacts table
 	 *
 	 * @param $selected
@@ -2941,5 +3014,63 @@ class ES_Common {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check if WordPress User is using Rest API feature
+	 * 
+	 * @since 5.5.7
+	 * 
+	 * @return string yes|no
+	 */
+	public static function is_rest_api_used() {
+		
+		// Check if REST API settings option is enabled
+		$is_api_enabled = get_option('ig_es_allow_api', 'no');
+
+		if ( 'no' === $is_api_enabled ) {
+			return 'no';
+		}
+
+		// Ensure there is atleast one users for whom REST API keys are generated
+		$rest_api_users_ids = get_users( array(
+			'meta_key' => 'ig_es_rest_api_keys',
+			'fields'   => 'ID'
+		) );
+
+		if ( empty( $rest_api_users_ids ) ) {
+			return 'no';
+		}
+		
+		return 'yes';
+
+	}
+
+	public static function is_positive_number( $number ) {
+		return is_numeric( $number ) && $number > 0;
+	}
+
+	/**
+	 * Get the date when plugin was activated for first time
+	 * 
+	 * @return string $installation_date
+	 * 
+	 * @since 5.6.0
+	 */
+	public static function get_plugin_installation_date() {
+		$installation_date = get_option( 'ig_es_installed_on' );
+		return $installation_date;
+	}
+
+	public static function get_gmt_timestamp_from_day_and_time( $day_and_time ) {
+		try {
+			$date                   = new DateTime( $day_and_time );
+			$scheduled_datetime     = $date->format( 'Y-m-d h:i:s A' );
+			$scheduled_datetime_gmt = get_gmt_from_date( $scheduled_datetime );
+
+			return strtotime( $scheduled_datetime_gmt );
+		} catch ( Exception $e ) {
+			return null;
+		}
 	}
 }

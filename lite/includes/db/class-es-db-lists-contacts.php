@@ -48,6 +48,17 @@ class ES_DB_Lists_Contacts extends ES_DB {
 		$this->primary_key = 'id';
 
 		$this->version = '1.0';
+
+		add_action( 'init', array( $this, 'init' ) );
+	}
+
+	/**
+	 * Initializes class
+	 *
+	 * @since 5.5.7
+	 */
+	public function init() {
+		add_action( 'ig_es_list_deleted', array( $this, 'delete_contacts_from_list' ) );
 	}
 
 	/**
@@ -1017,5 +1028,23 @@ class ES_DB_Lists_Contacts extends ES_DB {
 	 */
 	public function get_all_contacts() {
 		return $this->get_contacts( 'all' );
+	}
+
+	/**
+	 * Remove contacts from list
+	 *
+	 * @param $list_id
+	 * 
+	 * @return bool
+	 *
+	 * @since 5.5.7
+	 */
+	public function delete_contacts_from_list( $list_id = 0 ) {
+
+		if ( empty( $list_id ) ) {
+			return;
+		}
+
+		return $this->remove_all_contacts_from_list( $list_id );
 	}
 }

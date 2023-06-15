@@ -598,9 +598,9 @@ class ES_Newsletters {
 					if ( $should_queue_emails ) {
 
 						// Delete existing sending queue if any already present.
-						ES_DB_Sending_Queue::delete_sending_queue_by_mailing_id( array( $mailing_queue_id ) );
+						ES_DB_Sending_Queue::delete_by_mailing_queue_id( array( $mailing_queue_id ) );
 
-						ES_DB_Sending_Queue::do_insert_from_contacts_table( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
+						ES_DB_Sending_Queue::queue_emails( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
 					}
 
 					$mailing_queue = ES_DB_Mailing_Queue::get_mailing_queue_by_id( $mailing_queue_id );

@@ -97,22 +97,14 @@ class Export_Subscribers {
 			'all'          => __( 'All contacts', 'email-subscribers' ),
 			'subscribed'   => __( 'Subscribed contacts', 'email-subscribers' ),
 			'unsubscribed' => __( 'Unsubscribed contacts', 'email-subscribers' ),
-			// 'confirmed'    => __( 'Confirmed Contacts', 'email-subscribers' ),
 			'unconfirmed'  => __( 'Unconfirmed contacts', 'email-subscribers' ),
 			'select_list'  => $list_dropdown_html,
 		);
 
 		$i = 1;
+		$export_nonce = wp_create_nonce( 'ig-es-subscriber-export-nonce' );
 		foreach ( $export_lists as $key => $export_list ) {
-			/*
-			$class = '';
-			if ( $i % 2 === 0 ) {
-				$class = 'alternate';
-			}*/
-
-			$export_nonce = wp_create_nonce( 'ig-es-subscriber-export-nonce' );
-			$url          = "admin.php?page=download_report&report=users&status={$key}&export-nonce={$export_nonce}";
-
+			$url = "admin.php?page=download_report&report=users&status={$key}&export-nonce={$export_nonce}";
 			?>
 
 			<tr class="border-b text-sm font-normal text-gray-700 border-gray-200" id="ig_es_export_<?php echo esc_attr( $key ); ?>">
@@ -348,9 +340,10 @@ class Export_Subscribers {
 
 			foreach ( $subscribers as $key => $subscriber ) {
 
-				$data['first_name'] = trim( str_replace( '"', '""', $subscriber['first_name'] ) );
-				$data['last_name']  = trim( str_replace( '"', '""', $subscriber['last_name'] ) );
-				$data['email']      = trim( str_replace( '"', '""', $subscriber['email'] ) );
+				$data 				= array();
+				$data['first_name'] = trim( str_replace( '"', '""', $this->escape_data( $subscriber['first_name'] ) ) );
+				$data['last_name']  = trim( str_replace( '"', '""', $this->escape_data( $subscriber['last_name'] ) ) );
+				$data['email']      = trim( str_replace( '"', '""', $this->escape_data( $subscriber['email'] ) ) );
 
 				$contact_id = $subscriber['id'];
 				if ( ! empty( $contact_list_map[ $contact_id ] ) ) {
@@ -367,6 +360,32 @@ class Export_Subscribers {
 		}
 
 		return $csv_output;
+	}
+
+	/**
+	 * Escape a string to be used in a CSV context
+	 *
+	 * Malicious input can inject formulas into CSV files, opening up the possibility
+	 * for phishing attacks and disclosure of sensitive information.
+	 *
+	 * Additionally, Excel exposes the ability to launch arbitrary commands through
+	 * the DDE protocol.
+	 *
+	 * @see http://www.contextis.com/resources/blog/comma-separated-vulnerabilities/
+	 * @see https://hackerone.com/reports/72785
+	 *
+	 * @since 5.5.3
+	 * @param string $data CSV field to escape.
+	 * @return string
+	 */
+	public function escape_data( $data ) {
+		$active_content_triggers = array( '=', '+', '-', '@' );
+
+		if ( in_array( mb_substr( $data, 0, 1 ), $active_content_triggers, true ) ) {
+			$data = "'" . $data;
+		}
+
+		return $data;
 	}
 
 }

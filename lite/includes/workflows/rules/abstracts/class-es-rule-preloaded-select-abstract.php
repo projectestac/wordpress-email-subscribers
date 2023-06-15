@@ -25,7 +25,7 @@ if ( ! class_exists( 'Es_Rule_Preloaded_Select_Abstract' ) ) {
 		 *
 		 * @return array
 		 */
-		public function load_select_choices() {
+		public function get_select_choices() {
 			return [];
 		}
 
@@ -36,9 +36,9 @@ if ( ! class_exists( 'Es_Rule_Preloaded_Select_Abstract' ) ) {
 		 *
 		 * @return array
 		 */
-		public function get_select_choices() {
+		public function load_select_choices() {
 			if ( ! isset( $this->select_choices ) ) {
-				$this->select_choices = apply_filters( 'ig_es_rules_preloaded_select_choices', $this->load_select_choices(), $this );
+				$this->select_choices = apply_filters( 'ig_es_rules_preloaded_select_choices', $this->get_select_choices(), $this );
 			}
 
 			return $this->select_choices;

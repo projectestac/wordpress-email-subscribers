@@ -53,7 +53,7 @@ function ig_es_render_general_feedback_widget() {
 			'width'             => 700,
 			'force'             => true,
 			'confirmButtonText' => __( 'Send', 'email-subscribers' ),
-			'consent_text'      => __( 'Allow Icegram Express (formerly known as Email Subscribers & Newsletters) to track plugin usage. It will help us to understand your issue better. We guarantee no sensitive data is collected.', 'email-subscribers' ),
+			'consent_text'      => __( 'Allow Icegram Express to track plugin usage. It will help us to understand your issue better. We guarantee no sensitive data is collected.', 'email-subscribers' ),
 			'name'              => '',
 		);
 
@@ -107,7 +107,7 @@ function ig_es_render_fb_widget() {
 		$total_contacts = ES()->contacts_db->count();
 
 		// Got 25 contacts?
-		// It's time to Join Icegram Express (formerly known as Email Subscribers & Newsletters) Secret Club on Facebook
+		// It's time to Join Icegram Express Secret Club on Facebook
 		if ( $total_contacts >= 25 ) {
 
 			$event = 'join.fb';
@@ -116,7 +116,7 @@ function ig_es_render_fb_widget() {
 				'type'              => 'fb',
 				'title'             => __( 'Not a member yet?', 'email-subscribers' ),
 				'event'             => $event,
-				'html'              => '<div style="text-align:center;"> ' . __( 'Join', 'email-subscribers' ) . '<strong> ' . __( 'Icegram Express (formerly known as Email Subscribers & Newsletters) Secret Club', 'email-subscribers' ) . '</strong> ' . __( 'on Facebook', 'email-subscribers' ) . '</div>',
+				'html'              => '<div style="text-align:center;"> ' . __( 'Join', 'email-subscribers' ) . '<strong> ' . __( 'Icegram Express Secret Club', 'email-subscribers' ) . '</strong> ' . __( 'on Facebook', 'email-subscribers' ) . '</div>',
 				'position'          => 'bottom-center',
 				'width'             => 500,
 				'delay'             => 2, // seconds
@@ -146,7 +146,7 @@ if ( ! function_exists( 'ig_es_review_message_data' ) ) {
 
 		$review_url = 'https://wordpress.org/support/plugin/email-subscribers/reviews/';
 		$icon_url   = ES_PLUGIN_URL . 'lite/admin/images/icon-64.png';
-		$message    = __( "<span><p>We hope you're enjoying <b>Icegram Express (formerly known as Email Subscribers & Newsletters)</b> plugin! Could you please do us a BIG favor and give us a 5-star rating on WordPress to help us spread the word and boost our motivation?</p>", 'email-subscribers' );
+		$message    = __( "<span><p>We hope you're enjoying <b>Icegram Express</b> plugin! Could you please do us a BIG favor and give us a 5-star rating on WordPress to help us spread the word and boost our motivation?</p>", 'email-subscribers' );
 
 		$review_data['review_url'] = $review_url;
 		$review_data['icon_url']   = $icon_url;
@@ -225,7 +225,7 @@ function ig_es_render_iges_merge_feedback() {
 				'type'              => 'poll',
 				'title'             => __( 'Subscription forms and CTAs??', 'email-subscribers' ),
 				'event'             => $event,
-				'desc'              => '<div><p class="mt-4">You use <a href="https://wordpress.org/plugins/email-subscribers" target="_blank"><b class="text-blue-700 font-semibold underline">Icegram Express (formerly known as Email Subscribers & Newsletters)</b></a> to send email campaigns.</p><p class="mt-3">Would you like us to include onsite popups and action bars in the plugin as well? This way you can <b class="font-semibold">convert visitors to subscribers, drive traffic and run email marketing from a single plugin</b>.</p> <p class="mt-3">Why do we ask?</p> <p class="mt-3">Our <a class="text-blue-700 font-semibold underline" href="https://wordpress.org/plugins/icegram" target="_blank"><b>Icegram</b></a> plugin already does onsite campaigns. We are thinking of merging Icegram & Icegram Express (formerly known as Email Subscribers & Newsletters) into a single plugin.</p> <p class="mt-3"><b class="font-semibold">Will a comprehensive ConvertKit / MailChimp like email + onsite campaign plugin be useful to you?</b></p> </div><p class="mt-3">',
+				'desc'              => '<div><p class="mt-4">You use <a href="https://wordpress.org/plugins/email-subscribers" target="_blank"><b class="text-blue-700 font-semibold underline">Icegram Express</b></a> to send email campaigns.</p><p class="mt-3">Would you like us to include onsite popups and action bars in the plugin as well? This way you can <b class="font-semibold">convert visitors to subscribers, drive traffic and run email marketing from a single plugin</b>.</p> <p class="mt-3">Why do we ask?</p> <p class="mt-3">Our <a class="text-blue-700 font-semibold underline" href="https://wordpress.org/plugins/icegram" target="_blank"><b>Icegram</b></a> plugin already does onsite campaigns. We are thinking of merging Icegram & Icegram Express into a single plugin.</p> <p class="mt-3"><b class="font-semibold">Will a comprehensive ConvertKit / MailChimp like email + onsite campaign plugin be useful to you?</b></p> </div><p class="mt-3">',
 				'fields' => array(
 					array(
 						'type' => 'radio',

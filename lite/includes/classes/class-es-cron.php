@@ -14,6 +14,7 @@ class ES_Cron {
 	 */
 	public function __construct() {
 		add_action( 'wp_loaded', array( &$this, 'init' ), 1 );
+		add_filter( 'cron_schedules', array( &$this, 'cron_schedules' ) );
 		add_action( 'ig_es_plugin_deactivate', array( &$this, 'clear' ) );
 		add_action( 'ig_es_after_settings_save', array( &$this, 'reschedule' ) );
 	}
@@ -24,9 +25,6 @@ class ES_Cron {
 	 * @since 4.3.1
 	 */
 	public function init() {
-
-		add_filter( 'cron_schedules', array( &$this, 'cron_schedules' ) );
-
 		add_action( 'ig_es_cron', array( &$this, 'hourly' ) );
 		add_action( 'ig_es_cron_worker', array( &$this, 'handler' ), - 1 );
 
@@ -160,9 +158,12 @@ class ES_Cron {
 				}
 			}
 
-			$list_cleanup_cron_scheduled = wp_next_scheduled( 'ig_es_list_cleanup_worker' );
-			if ( ! $list_cleanup_cron_scheduled ) {
-				wp_schedule_event( floor( time() / 300 ) * 300, 'ig_es_monthly_interval', 'ig_es_list_cleanup_worker' );
+			$es_services = ES()->get_es_services();
+			if ( ! empty( $es_services ) && in_array( 'list_cleanup', $es_services, true ) ) {
+				$list_cleanup_cron_scheduled = wp_next_scheduled( 'ig_es_list_cleanup_worker' );
+				if ( ! $list_cleanup_cron_scheduled ) {
+					wp_schedule_event( floor( time() / 300 ) * 300, 'ig_es_monthly_interval', 'ig_es_list_cleanup_worker' );
+				}
 			}
 		}
 
@@ -278,11 +279,10 @@ class ES_Cron {
 	 * @since 4.3.2 Changed name from filter_cron_schedules to cron_schedules
 	 */
 	public function cron_schedules( $schedules = array() ) {
-
 		$es_schedules = array(
 			'ig_es_cron_interval'   => array(
 				'interval' => $this->get_cron_interval(),
-				'display'  => __( 'Icegram Express (formerly known as Email Subscribers & Newsletters) Cronjob Interval', 'email-subscribers' ),
+				'display'  => __( 'Icegram Express Cronjob Interval', 'email-subscribers' ),
 			),
 			'ig_es_two_minutes'     => array(
 				'interval' => 2 * MINUTE_IN_SECONDS,

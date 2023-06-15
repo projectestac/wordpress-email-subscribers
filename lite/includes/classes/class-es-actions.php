@@ -367,6 +367,34 @@ if ( ! class_exists( 'ES_Actions' ) ) {
 
 			return $device_info;
 		}
+
+		public function get_action_verb( $action_type ) {
+			$action_verb = '';
+			switch ( $action_type ) {
+				case IG_CONTACT_SUBSCRIBE:
+					$action_verb = __( 'subscribed to', 'email-subscribers' );
+					break;
+				case IG_MESSAGE_SENT:
+					$action_verb = __( 'received', 'email-subscribers' );
+					break;
+				case IG_MESSAGE_OPEN:
+					$action_verb = __( 'opened', 'email-subscribers' );
+					break;
+				case IG_LINK_CLICK:
+					$action_verb = __( 'clicked on', 'email-subscribers' );
+					break;
+				case IG_CONTACT_UNSUBSCRIBE:
+					$action_verb = __( 'unsubscribed from', 'email-subscribers' );
+					break;
+				case IG_MESSAGE_SOFT_BOUNCE:
+					$action_verb = __( 'marked as soft bounced', 'email-subscribers' );
+					break;
+				case IG_MESSAGE_HARD_BOUNCE:
+					$action_verb = __( 'marked as hard bounced', 'email-subscribers' );
+					break;
+			}
+			return $action_verb;
+		}
 	}
 }
 

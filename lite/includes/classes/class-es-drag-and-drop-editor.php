@@ -97,8 +97,9 @@ class ES_Drag_And_Drop_Editor {
 			$lists = ES()->lists_db->get_lists();
 
 			$form_editor_data = array(
-				'lists' => $lists,
-				'i18n' => array(
+				'site_url' => home_url(),
+				'lists'    => $lists,
+				'i18n'     => array(
 					'no_list_selected_message' => __( 'Please select list(s) in which contact will be subscribed.', 'email-subscribers' ),
 				),
 			);
@@ -117,7 +118,16 @@ class ES_Drag_And_Drop_Editor {
 				'subscriberTags'  => $subscriber_tags,
 				'siteTags'        => $site_tags,
 				'isPro'		      => ES()->is_pro(),
+				'plugin_url'      => ES_PLUGIN_URL,
+				'i18n'            => array(
+					'survey_block_heading_text' => __( 'Happy with our products and services?', 'email-subscribers' ),
+					'survey_block_default_thank_you_text' => __( 'Thank you for your response! Your feedback is highly appreciated.', 'email-subscribers' ),
+					'survey_type_field_label' => __( 'Survey type', 'email-subscribers' ),
+					'survey_message_field_label' => __( 'Survey message', 'email-subscribers' ),
+				),
 			);
+
+			$campaign_editor_data = apply_filters( 'ig_es_campaign_editor_data', $campaign_editor_data );
 
 			wp_localize_script( 'es_editor_js', 'ig_es_campaign_editor_data', $campaign_editor_data );
 		}

@@ -185,6 +185,8 @@ if ( ! class_exists( 'ES_Pepipost_Mailer' ) ) {
 				$recipient_variables['tracking_pixel_url'] = $tracking_pixel_url;
 			}
 
+			$recipient_variables = apply_filters( 'ig_es_contact_mail_data', $recipient_variables, $merge_tags );
+
 			$this->set_recipients(
 				array(
 					'personalizations' => array(
@@ -209,14 +211,20 @@ if ( ! class_exists( 'ES_Pepipost_Mailer' ) ) {
 		 * @since 4.7.5
 		 */
 		public function convert_es_tags_to_mailer_tags( $string = '' ) {
-			$string = ES_Common::replace_keywords_with_fallback( $string, array(
+
+			$mailer_tags_mapping = array(
 				'subscriber.name'             => '[%name%]',
 				'subscriber.first_name'        => '[%first_name%]',
 				'subscriber.last_name'         => '[%last_name%]',
 				'subscriber.email'            => '[%email%]',
 				'subscriber.unsubscribe_link' => '[%unsubscribe_link%]',
 				'subscriber.subscribe_link'   => '[%subscribe_link%]',
-			));
+			);
+
+			$mailer_tags_mapping = apply_filters( 'ig_es_mailer_tags_mapping', $mailer_tags_mapping );
+
+			$string = ES_Common::replace_keywords_with_fallback( $string, $mailer_tags_mapping);
+			
 
 			return ES_Common::replace_keywords_with_fallback( $string, array(
 				'NAME'             => '[%NAME%]',

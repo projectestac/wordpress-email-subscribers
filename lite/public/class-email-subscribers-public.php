@@ -300,6 +300,30 @@ class Email_Subscribers_Public {
 					}
 				}
 
+			} elseif ( 'survey' === $option ) {
+				if ( ! empty( $data['survey_number'] ) ) {
+					$campaign_id   = $data['campaign_id'];
+					$message_id    = $data['message_id'];
+					$survey_number = $data['survey_number'];
+					if ( ! empty( $survey_number ) ) {
+						if ( ! empty( $message_id ) ) {
+							$notification = ES_DB_Mailing_Queue::get_mailing_queue_by_id( $message_id );
+							if ( ! empty( $notification ) ) {
+								$notificaion_meta = maybe_unserialize( $notification['meta'] );
+								$survey           = ! empty( $notificaion_meta['survey'] ) ? $notificaion_meta['survey'] : array();
+								$message          = $survey[$survey_number]['message'];
+							}
+						} elseif ( ! empty( $campaign_id ) ) {
+							$campaign = ES()->campaigns_db->get( $campaign_id );
+							if ( ! empty( $campaign ) ) {
+								$campaign_meta    = maybe_unserialize( $campaign['meta'] );
+								$survey           = ! empty( $campaign_meta['survey'] ) ? $campaign_meta['survey'] : array();
+								$message          = $survey[$survey_number]['message'];
+							}
+						}
+						include 'partials/subscription-successfull.php';
+					}
+				}
 			}
 
 		}
@@ -490,7 +514,7 @@ class Email_Subscribers_Public {
 	}
 
 	/**
-	 * Add Icegram Express (formerly known as Email Subscribers & Newsletters) template types
+	 * Add Icegram Express template types
 	 *
 	 * @param array $template_type Template types
 	 *

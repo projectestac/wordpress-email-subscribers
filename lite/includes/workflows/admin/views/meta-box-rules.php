@@ -53,7 +53,8 @@ if ( is_callable( array( $selected_trigger, 'get_name' ) ) ) {
 </script>
 <div class="ig-es-metabox-footer rules-metabox-footer hidden">
 	<button type="button"
-			class="ig-es-add-rule-group inline-flex justify-center rounded-md border border-transparent px-4 py-1.5 bg-white text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue transition ease-in-out duration-150"><?php echo esc_html__( '+ Add Rule Group', 'email-subscribers' ); ?></button>
+			class="ig-es-add-rule-group inline-flex justify-center rounded-md border border-transparent px-4 py-1.5 bg-white text-sm leading-5 font-medium text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue transition ease-in-out duration-150"><?php echo esc_html__( '+ Add rule group', 'email-subscribers' ); ?>
+	</button>
 </div>
 
 <div class="hidden" id="rule-template-container">
@@ -65,7 +66,30 @@ if ( is_callable( array( $selected_trigger, 'get_name' ) ) ) {
 		); 
 	?>
 		</p>
-	<p class="ig-es-no-rules-message px-4 py-1.5"><?php printf( esc_attr__( 'Selected triggers has no rules.. Please select different triggers', 'email-subscribers' ), '<strong>', '</strong>' ); ?></p>
+	<div class="ig-es-no-rules-message px-4 py-3">
+		<span class="inline-block">
+			<?php
+				esc_attr_e( 'Selected trigger does not have any rules.', 'email-subscribers' );
+			?>
+		</span>
+		<?php
+		if ( ! ES()->is_pro() ) {
+			$utm_args = array(
+				'utm_medium' => 'workflow_rules',
+			);
+	
+			$pricing_url = ES_Common::get_utm_tracking_url( $utm_args );
+			?>
+				<span class="workflow-rules-upgrade-to-max-message">
+				<?php
+				/* translators: 1: HTML Tag 2: HTML Tag */
+				printf( esc_attr__( 'Upgrade to %1$sMAX%2$s to get finer control with additional rules.', 'email-subscribers' ), '<a href="' . esc_url( $pricing_url ) . '" target="_blank"><strong>', '</strong></a>' );
+				?>
+				</span>
+			<?php
+		}
+		?>
+	</div>
 	<input type="text" disabled class="ig-es-field rule-value-text-field border-gray-400">
 	<select class="ig-es-field rule-value-object-field" data-placeholder="" data-action=""></select>
 	<select class="ig-es-field rule-value-select-field ig-es-field--type-select"></select>

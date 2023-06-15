@@ -35,8 +35,11 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 		 * ES()->lists_contacts_db->get_total_subscribed_contacts
 		 * @since 4.3.6 Modified function name from get_subscribed_contacts_count to get_subscribed_contacts_count
 		 */
-		public static function get_total_subscribed_contacts( $days = 0 ) {
-			return ES()->lists_contacts_db->get_subscribed_contacts_count( $days );
+		public static function get_total_subscribed_contacts( $args = array() ) {
+			$distinct = true;
+			$list_id  = ! empty( $args['list_id'] ) ? $args['list_id'] : 0;
+			$days     = ! empty( $args['days'] ) ? $args['days'] : 0;
+			return ES()->lists_contacts_db->get_contacts( 'subscribed', $list_id, $days, true, $distinct );
 		}
 
 		/**
@@ -51,7 +54,8 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 		 * ES()->lists_contacts_db->get_total_unsubscribed_contacts
 		 * @since 4.3.6 Modified function name from get_total_unsubscribed_contacts to get_unsubscribed_contacts_count
 		 */
-		public static function get_total_unsubscribed_contacts( $days = 0 ) {
+		public static function get_total_unsubscribed_contacts( $args = array() ) {
+			$days = ! empty( $args['days'] ) ? $args['days'] : 0;
 			return ES()->lists_contacts_db->get_unsubscribed_contacts_count( $days );
 		}
 
@@ -64,7 +68,8 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 		 *
 		 * @since 4.5.7
 		 */
-		public static function get_total_unconfirmed_contacts( $days = 0 ) {
+		public static function get_total_unconfirmed_contacts( $args = array() ) {
+			$days = ! empty( $args['days'] ) ? $args['days'] : 0;
 			return ES()->lists_contacts_db->get_unconfirmed_contacts_count( $days );
 		}
 
@@ -77,10 +82,11 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 		 *
 		 * @since 4.3.2
 		 *
-		 * @modify 4.4.0 Now, we are calculating stats from actions table
+		 * @modify 5.5.5 Used ES()->actions_db->get_count() function to get type
 		 */
-		public static function get_total_contacts_opened_emails( $days = 60, $distinct = true ) {
-			return ES()->actions_db->get_total_contacts_opened_message( $days, $distinct );
+		public static function get_total_contacts_opened_emails( $args = array(), $distinct = true ) {
+			$args['type'] = IG_MESSAGE_OPEN;
+			return ES()->actions_db->get_count( $args, $distinct );
 		}
 
 		/**
@@ -92,10 +98,11 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 		 *
 		 * @since 4.3.2
 		 *
-		 * @modify 4.4.0
+		 * @modify 5.5.5 Used ES()->actions_db->get_count() function to get type
 		 */
-		public static function get_total_contacts_clicks_links( $days = 60, $distinct = true ) {
-			return ES()->actions_db->get_total_contacts_clicks_links( $days, $distinct );
+		public static function get_total_contacts_clicks_links( $args = array(), $distinct = true ) {
+			$args['type'] = IG_LINK_CLICK;
+			return ES()->actions_db->get_count( $args, $distinct );
 		}
 
 		/**
@@ -105,10 +112,11 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 		 *
 		 * @return int
 		 *
-		 * @since 4.4.0
+		 * @modify 5.5.5 Used ES()->actions_db->get_count() function to get type
 		 */
-		public static function get_total_emails_sent( $days = 60, $distinct = true ) {
-			return ES()->actions_db->get_total_emails_sent( $days, $distinct );
+		public static function get_total_emails_sent( $args = array(), $distinct = true ) {
+			$args['type'] = IG_MESSAGE_SENT;
+			return ES()->actions_db->get_count( $args, $distinct );
 		}
 
 		/**
@@ -117,9 +125,12 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 		 * @param int $days
 		 *
 		 * @return int
+		 * 
+		 * @modify 5.5.5 Used ES()->actions_db->get_count() function to get type
 		 */
-		public static function get_total_contact_lost( $days = 60, $distinct = true ) {
-			return ES()->actions_db->get_total_contact_lost( $days, $distinct );
+		public static function get_total_contact_unsubscribed( $args = array(), $distinct = true ) {
+			$args['type'] = IG_CONTACT_UNSUBSCRIBE;
+			return ES()->actions_db->get_count( $args, $distinct );
 		}
 
 		/**
@@ -161,7 +172,8 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 		 *
 		 * @since 4.8.0
 		 */
-		public static function get_contacts_growth_percentage( $days = 60 ) {
+		public static function get_contacts_growth_percentage( $args = array() ) {
+			$days = ! empty( $args['days'] ) ? $args['days'] : 60;
 			//For example, It will get last 60'days subscribers count
 			$present_subscribers_count = ES()->lists_contacts_db->get_subscribed_contacts_count( $days );
 			//For example, It will get last 120'days subscribers count
@@ -169,10 +181,8 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 			//For example, It will get last 60-120'days subscribers count
 			$past_subscribers_count = intval( $past_to_present_subscribers_count ) - intval( $present_subscribers_count );
 
-			if ( $past_subscribers_count <= 0 && $present_subscribers_count <= 0 ) {
+			if ( 0 === $past_subscribers_count ) {
 				return 0;
-			} elseif ( $past_subscribers_count <= 0 && $present_subscribers_count > 0 ) {
-				return 100;
 			} else {
 				return round( ( $present_subscribers_count - $past_subscribers_count ) / $past_subscribers_count * 100, 2 );
 			}
@@ -185,7 +195,7 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 		 *
 		 * @since 4.4.0
 		 */
-		public static function get_dashboard_reports_data( $source, $refresh = false, $days = 60, $campaign_count = 5 ) {
+		public static function get_dashboard_reports_data( $page, $override_cache = false, $args = array(), $campaign_count = 3 ) {
 
 			/**
 			 * - Get Total Contacts
@@ -199,7 +209,7 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 			 */
 			$cache_key = 'dashboard_reports_data';
 
-			if ( ! $refresh ) {
+			if ( ! $override_cache ) {
 
 				$cached_data = ES_Cache::get_transient( $cache_key );
 
@@ -208,32 +218,20 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 				}
 			}
 
-			$total_contacts            = self::get_total_contacts();
-			$total_forms               = ES()->forms_db->count_forms();
-			$total_lists               = ES()->lists_db->count_lists();
-			$total_campaigns           = ES()->campaigns_db->get_total_campaigns();
-			$total_contacts_subscribed = self::get_total_subscribed_contacts( $days );
+			$total_subscribed = self::get_total_subscribed_contacts( $args );
 
-			$total_email_opens  = self::get_total_contacts_opened_emails( $days, false );
-			$total_links_clicks = self::get_total_contacts_clicks_links( $days, false );
-			$total_message_sent = self::get_total_emails_sent( $days, false );
-			$total_contact_lost = self::get_total_unsubscribed_contacts( $days );
+			$action_types       = ES()->get_action_types();
+			$args['types']      = $action_types;
+			$actions_counts     = ES()->actions_db->get_actions_count( $args );
+			$total_email_opens  = $actions_counts['opened'];
+			$total_links_clicks = $actions_counts['clicked'];
+			$total_message_sent = $actions_counts['sent'];
+			$total_unsubscribed = $actions_counts['unsubscribed'];
 			$contacts_growth    = self::get_contacts_growth();
 
-			$total_open_rate  = 0;
-			$total_click_rate = 0;
-			$total_lost_rate  = 0;
+			$avg_open_rate = 0;
 			if ( $total_message_sent > 0 ) {
-				$total_open_rate  = ( $total_email_opens ) / $total_message_sent;
-				$total_click_rate = ( $total_links_clicks ) / $total_message_sent;
-				$total_lost_rate  = ( $total_contact_lost ) / $total_message_sent;
-			}
-
-			$avg_open_rate  = 0;
-			$avg_click_rate = 0;
-			if ( $total_message_sent > 0 ) {
-				$avg_open_rate  = ( $total_email_opens * 100 ) / $total_message_sent;
-				$avg_click_rate = ( $total_links_clicks * 100 ) / $total_message_sent;
+				$avg_open_rate = ( $total_email_opens * 100 ) / $total_message_sent;
 			}
 
 			/**
@@ -242,74 +240,82 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 			 *      - Get total clicks (4)
 			 *      - Get total unsubscribe (5)
 			 */
-
-			$data = array();
-
-			$can_show = self::can_show_campaign_stats( $source );
-			if ( $can_show ) {
-
-				$data = self::get_campaign_stats( $campaign_count );
-			}
-
 			
+			$data = self::get_campaign_stats( $campaign_count );
 
 			$reports_data = array(
-				'total_contacts'            => number_format( $total_contacts ),
-				'total_lists'               => number_format( $total_lists ),
-				'total_forms'               => number_format( $total_forms ),
-				'total_campaigns'           => number_format( $total_campaigns ),
-				'total_contacts_subscribed' => number_format( $total_contacts_subscribed ),
-				'total_email_opens'         => number_format( $total_email_opens ),
-				'total_links_clicks'         => number_format( $total_links_clicks ),
-				'total_message_sent'        => number_format( $total_message_sent ),
-				'total_contact_lost'        => number_format( $total_contact_lost ),
-				'avg_open_rate'             => number_format( $avg_open_rate, 2 ),
-				'avg_click_rate'            => number_format( $avg_click_rate, 2 ),
-				'total_open_rate'           => number_format( $total_open_rate, 2 ),
-				'total_click_rate'          => $total_click_rate,
-				'total_lost_rate'           => $total_lost_rate,
-				'contacts_growth'           => $contacts_growth,
+				'total_subscribed'   => number_format( $total_subscribed ),
+				'total_email_opens'  => number_format( $total_email_opens ),
+				'total_links_clicks' => number_format( $total_links_clicks ),
+				'total_message_sent' => number_format( $total_message_sent ),
+				'total_unsubscribed' => number_format( $total_unsubscribed ),
+				'avg_open_rate'      => number_format( $avg_open_rate, 2 ),
+				'contacts_growth'    => $contacts_growth,
 			);
 
-			$is_dashboard_page = 'es_dashboard' === $source;
+			$is_dashboard_page = 'es_dashboard' === $page;
 			if ( $is_dashboard_page ) {
-				$comparison_days         = 120;
-				$last_four_months_opens  = self::get_total_contacts_opened_emails( $comparison_days, false );
+				$comp_args         = $args;
+				$comp_args['days'] = $args['days'] * 2;
+
+				$last_four_months_actions_count = ES()->actions_db->get_actions_count( $comp_args );
 				
-				$open_before_two_months  = $last_four_months_opens - $total_email_opens;
+				$last_four_months_sent  = $last_four_months_actions_count['sent'];
+				$sent_before_two_months = $last_four_months_sent - $total_message_sent;
+				if ( $sent_before_two_months > 0 ) {
+					$sent_percentage_growth = ( ( $total_message_sent - $sent_before_two_months ) / $sent_before_two_months ) * 100;
+				} else {
+					$sent_percentage_growth = 0;
+				}
+				
+				$last_four_months_opens = $last_four_months_actions_count['opened'];
+				$open_before_two_months = $last_four_months_opens - $total_email_opens;
 				if ( $open_before_two_months > 0 ) {
 					$open_percentage_growth = ( ( $total_email_opens - $open_before_two_months ) / $open_before_two_months ) * 100;
-				} elseif ( 0 === (int) $total_email_opens && 0 === (int) $open_before_two_months) {
-					$open_percentage_growth = 0;
 				} else {
-					$open_percentage_growth = 100;
+					$open_percentage_growth = 0;
 				}
 
-				$last_four_months_clicks = self::get_total_contacts_clicks_links( $comparison_days, false );
+				$last_four_months_clicks = $last_four_months_actions_count['clicked'];
 				$click_before_two_months = $last_four_months_clicks - $total_links_clicks;
 				if ( $click_before_two_months > 0 ) {
 					$click_percentage_growth = ( ( $total_links_clicks - $click_before_two_months ) / $click_before_two_months ) * 100;
-				} elseif ( 0 === (int) $total_links_clicks && 0 === (int) $click_before_two_months) {
-					$click_percentage_growth = 0;
 				} else {
-					$click_percentage_growth = 100;
+					$click_percentage_growth = 0;
 				}
 
-				$reports_data['open_percentage_growth']  = number_format_i18n( $open_percentage_growth, 2 );
-				$reports_data['open_before_two_months']  = number_format_i18n( $open_before_two_months );
-				$reports_data['click_percentage_growth'] = number_format_i18n( $click_percentage_growth, 2 );
-				$reports_data['click_before_two_months'] = number_format_i18n( $click_before_two_months );
-				
-				$start_time  = strtotime( '-' . $days . ' days', time() );
-				
-				if ( ES()->is_pro() ) {
-					$average_engagement_score = ES_Engagement_Score::get_average_engagement_score( $start_time );
+				$last_four_months_unsubscribes  = $last_four_months_actions_count['unsubscribed'];
+				$unsubscribes_before_two_months = $last_four_months_unsubscribes - $total_unsubscribed;
+				if ( $unsubscribes_before_two_months > 0 ) {
+					$unsubscribes_percentage_growth = ( ( $total_unsubscribed - $unsubscribes_before_two_months ) / $unsubscribes_before_two_months ) * 100;
+				} else {
+					$unsubscribes_percentage_growth = 0;
+				}
+
+				if ( isset( $actions_counts['hard_bounced'] ) ) {
+					$total_hard_bounces             = $actions_counts['hard_bounced'];
+					$last_four_months_hard_bounces  = $last_four_months_actions_count['hard_bounced'];
+					$hard_bounces_before_two_months = $last_four_months_hard_bounces - $total_hard_bounces;
+					if ( $hard_bounces_before_two_months > 0 ) {
+						$hard_bounces_percentage_growth = ( ( $total_hard_bounces - $hard_bounces_before_two_months ) / $hard_bounces_before_two_months ) * 100;
+					} else {
+						$hard_bounces_percentage_growth = 0;
+					}
 	
-					$reports_data['average_engagement_score'] = number_format_i18n( $average_engagement_score, 1 );
+					$reports_data['total_hard_bounced_contacts']    = number_format_i18n( $total_hard_bounces );
+					$reports_data['hard_bounces_before_two_months'] = number_format_i18n( $hard_bounces_before_two_months );
+					$reports_data['hard_bounces_percentage_growth'] = 0 !== $hard_bounces_percentage_growth ? number_format_i18n( $hard_bounces_percentage_growth, 2 ) : 0;
 				}
 
-				$top_performing_campaigns 				  = self::get_top_performing_campaigns( $start_time );
-				$reports_data['top_performing_campaigns'] = $top_performing_campaigns;
+				$reports_data['sent_percentage_growth']        = 0 !== $sent_percentage_growth ? number_format_i18n( $sent_percentage_growth, 2 ) : 0;
+				$reports_data['sent_before_two_months']        = number_format_i18n( $sent_before_two_months );
+				$reports_data['open_percentage_growth']        = 0 !== $open_percentage_growth ? number_format_i18n( $open_percentage_growth, 2 ) : 0;
+				$reports_data['open_before_two_months']        = number_format_i18n( $open_before_two_months );
+				$reports_data['click_percentage_growth']       = 0 !== $click_percentage_growth ? number_format_i18n( $click_percentage_growth, 2 ) : 0;
+				$reports_data['click_before_two_months']       = number_format_i18n( $click_before_two_months );
+				$reports_data['unsubscribe_percentage_growth'] = 0 !== $unsubscribes_percentage_growth ? number_format_i18n( $unsubscribes_percentage_growth, 2 ) : 0;
+				$reports_data['unsubscribe_before_two_months'] = number_format_i18n( $unsubscribes_before_two_months );
+				
 			}
 
 			$data = array_merge( $data, $reports_data );
@@ -340,7 +346,7 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 					$message_id  = $campaign['id'];
 					$campaign_id = $campaign['campaign_id'];
 
-					if ( 0 == $campaign_id ) {
+					if ( 0 === $campaign_id ) {
 						continue;
 					}
 
@@ -415,6 +421,7 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 					$campaigns_data[ $key ]['status']               = $campaign['status'];
 					$campaigns_data[ $key ]['campaign_type']        = $campaign_type;
 					$campaigns_data[ $key ]['type']                 = $type;
+					$campaigns_data[ $key ]['total_sent']           = $stats['total_sent'];
 					$campaigns_data[ $key ]['campaign_opens_rate']  = round( $campaign_opens_rate );
 					$campaigns_data[ $key ]['campaign_clicks_rate'] = round( $campaign_clicks_rate );
 					$campaigns_data[ $key ]['campaign_losts_rate']  = round( $campaign_losts_rate );

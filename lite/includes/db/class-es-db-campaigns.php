@@ -54,26 +54,26 @@ class ES_DB_Campaigns extends ES_DB {
 	 */
 	public function get_columns() {
 		return array(
-			'id'               => '%d',
-			'slug'             => '%s',
-			'name'             => '%s',
-			'type'             => '%s',
-			'parent_id'        => '%d',
-			'parent_type'      => '%s',
-			'subject'          => '%s',
-			'body'             => '%s',
-			'from_name'        => '%s',
-			'from_email'       => '%s',
-			'reply_to_name'    => '%s',
-			'reply_to_email'   => '%s',
-			'categories'       => '%s',
-			'list_ids'         => '%s',
-			'base_template_id' => '%d',
-			'status'           => '%d',
-			'created_at'       => '%s',
-			'updated_at'       => '%s',
-			'deleted_at'       => '%s',
-			'meta'             => '%s',
+		'id'               => '%d',
+		'slug'             => '%s',
+		'name'             => '%s',
+		'type'             => '%s',
+		'parent_id'        => '%d',
+		'parent_type'      => '%s',
+		'subject'          => '%s',
+		'body'             => '%s',
+		'from_name'        => '%s',
+		'from_email'       => '%s',
+		'reply_to_name'    => '%s',
+		'reply_to_email'   => '%s',
+		'categories'       => '%s',
+		'list_ids'         => '%s',
+		'base_template_id' => '%d',
+		'status'           => '%d',
+		'created_at'       => '%s',
+		'updated_at'       => '%s',
+		'deleted_at'       => '%s',
+		'meta'             => '%s',
 		);
 	}
 
@@ -88,25 +88,25 @@ class ES_DB_Campaigns extends ES_DB {
 		$from_email = ES_Common::get_ig_option( 'from_email' );
 
 		return array(
-			'slug'             => null,
-			'name'             => null,
-			'type'             => null,
-			'parent_id'        => null,
-			'parent_type'      => null,
-			'subject'          => null,
-			'body'             => '',
-			'from_name'        => $from_name,
-			'from_email'       => $from_email,
-			'reply_to_name'    => $from_name,
-			'reply_to_email'   => $from_email,
-			'categories'       => '',
-			'list_ids'         => '',
-			'base_template_id' => 0,
-			'status'           => 0,
-			'created_at'       => ig_get_current_date_time(),
-			'updated_at'       => null,
-			'deleted_at'       => null,
-			'meta'             => null,
+		'slug'             => null,
+		'name'             => null,
+		'type'             => null,
+		'parent_id'        => null,
+		'parent_type'      => null,
+		'subject'          => null,
+		'body'             => '',
+		'from_name'        => $from_name,
+		'from_email'       => $from_email,
+		'reply_to_name'    => $from_name,
+		'reply_to_email'   => $from_email,
+		'categories'       => '',
+		'list_ids'         => '',
+		'base_template_id' => 0,
+		'status'           => 0,
+		'created_at'       => ig_get_current_date_time(),
+		'updated_at'       => null,
+		'deleted_at'       => null,
+		'meta'             => null,
 		);
 	}
 
@@ -805,6 +805,12 @@ class ES_DB_Campaigns extends ES_DB {
 			$where              .= $wpbd->prepare( ' AND status IN( ' . implode( ',', $status_placeholders ) . ' )', $args['status'] );
 		}
 
+		if ( ! empty( $args['campaigns_in'] ) ) {
+			$ids_count        = count( $args['campaigns_in'] );
+			$ids_placeholders = array_fill( 0, $ids_count, '%d' );
+			$where           .= $wpbd->prepare( ' AND id IN( ' . implode( ',', $ids_placeholders ) . ' )', $args['campaigns_in'] );
+		}
+
 		if ( ! empty( $args['campaigns_not_in'] ) ) {
 			$ids_count        = count( $args['campaigns_not_in'] );
 			$ids_placeholders = array_fill( 0, $ids_count, '%d' );
@@ -860,4 +866,54 @@ class ES_DB_Campaigns extends ES_DB {
 
 		return $list_ids;
 	}
+
+	/**
+	 * Get total post_digests count
+	 *
+	 * @return string|null
+	 *
+	 * @since 
+	 */
+	public function get_total_post_digests() {
+		return $this->get_total_campaigns_by_type( 'post_digest' );
+	}
+
+	/**
+	 * Get count of editor type used from campaign meta
+	 * 
+	 * @return array editor type count
+	 *
+	 * @since 5.5.7
+	 */
+	public function get_count_by_editor_type() {
+
+		$campaign_editor_count = array(
+			'classic' => 0,
+			'dnd'	  => 0,
+		);
+
+		$campaign_types = array(
+			'include_types' => array( 'newsletter','post_notification','post_digest'),
+		);
+	
+		$campaigns = self::get_all_campaigns($campaign_types);
+
+		if ( count($campaigns) > 0 ) {
+			foreach ($campaigns as $campaign) {
+				$campaign_meta = ( !empty( $campaign['meta'] ) ) ? maybe_unserialize($campaign['meta']) : null;
+
+				if ( !empty( $campaign_meta ) ) {
+					if ( IG_ES_DRAG_AND_DROP_EDITOR === $campaign_meta['editor_type'] ) {
+						$campaign_editor_count['dnd']++;
+					} else {
+						$campaign_editor_count['classic']++;
+					}
+				}
+			}
+		}
+
+		return $campaign_editor_count;
+	}
+
+	
 }

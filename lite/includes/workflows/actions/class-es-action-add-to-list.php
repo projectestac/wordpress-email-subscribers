@@ -90,6 +90,8 @@ if ( ! class_exists( 'ES_Action_Add_To_List' ) ) {
 		 *
 		 * @param int   $list_id List id to add the contact's data.
 		 * @param array $data Contact's data.
+		 * 
+		 * @modify 5.6.7
 		 */
 		public function add_contact( $list_id = 0, $data = array(), $user_list_status = '' ) {
 
@@ -100,6 +102,19 @@ if ( ! class_exists( 'ES_Action_Add_To_List' ) ) {
 
 			// Email not found? Say good bye.
 			if ( empty( $data['email'] ) || ! filter_var( $data['email'], FILTER_VALIDATE_EMAIL ) ) {
+				return;
+			}
+
+			$is_domain_blocked = ES_Common::is_domain_blocked( $data['email'] );
+
+			// Store it blocked emails
+			if ( $is_domain_blocked ) {
+				$data = array(
+					'email' => $data['email'],
+					'ip'    => ig_es_get_ip(),
+				);
+
+				ES()->blocked_emails_db->insert( $data );
 				return;
 			}
 

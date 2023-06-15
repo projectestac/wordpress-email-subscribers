@@ -15,11 +15,13 @@ class ES_Info {
 
 	public function plugin_menu() {
 
+		$update_text = ES()->is_starter() ? esc_html__( ' Go MAX', 'email-subscribers' ) : esc_html__( ' Go PRO', 'email-subscribers' );
+
 		// Start-IG-Code.
 		$help_title = __( 'Help & Info', 'email-subscribers' );
 		add_submenu_page( 'es_dashboard', $help_title, $help_title, 'edit_posts', 'es_general_information', array( $this, 'es_information_callback' ) );
 
-		$pro_title = '<span class="es-fire-sale"> 🔥 </span>' . esc_html__( ' Go Max', 'email-subscribers' );
+		$pro_title = $update_text . ' <span class="premium-icon-rocket"></span>';
 		if ( ! ES()->is_pro() ) {
 			add_submenu_page( 'es_dashboard', $pro_title, $pro_title, 'edit_posts', 'es_pricing', array( $this, 'es_pricing_callback' ) );
 		}

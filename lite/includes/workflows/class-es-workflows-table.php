@@ -113,7 +113,7 @@ class ES_Workflows_Table extends ES_List_Table {
 			<p class="pb-2 text-sm font-normal text-gray-500">
 				<?php
 					/* translators: 1. Opening strong tag(<strong>) 2: Closing strong tag(</strong>) */
-					echo sprintf( esc_html__( 'Here\'s a collection of some useful workflows for you. Simply click on %1$sCreate workflow%2$s button to begin.', 'email-subscribers' ), '<strong>', '</strong>' );
+					echo sprintf( esc_html__( 'Here\'s a collection of some useful workflows for you. Simply click on %1$sUse workflow%2$s button to begin.', 'email-subscribers' ), '<strong>', '</strong>' );
 				?>
 			</p>
 		</div>

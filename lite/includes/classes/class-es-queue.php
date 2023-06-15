@@ -148,7 +148,8 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 								$post_ids = array();
 								if ( class_exists( 'ES_Post_Digest' ) ) {
-									$post_ids = ES_Post_Digest::get_post_id_for_post_digest( $campaign_id );
+									$ignore_stored_post_ids = true; // Set it to true so that we don't get same post ids which were set in the last run.
+									$post_ids               = ES_Post_Digest::get_matching_post_ids( $campaign_id, $ignore_stored_post_ids );
 								}
 
 								// Proceed only if we have posts for digest.
@@ -171,7 +172,11 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 										if ( ! empty( $mailing_queue_id ) ) {
 											$mailing_queue_hash = $result['hash'];
-											ES_DB_Sending_Queue::do_insert_from_contacts_table( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
+											$emails_queued      = ES_DB_Sending_Queue::queue_emails( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
+											if ( $emails_queued ) {
+												$meta_data['post_ids'] = $post_ids;
+												$meta_data['last_run'] = strtotime( ig_get_current_date_time() );
+											}
 										}
 									}
 								}
@@ -267,6 +272,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 						continue;
 					}
 					
+					$send_when    = ! empty( $rules['send_when'] ) ? $rules['send_when'] : 'after_subscription';
 					$delay_unit   = $rules['unit'];
 					$delay_amount = $rules['amount'];
 
@@ -295,28 +301,39 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 							$conditions = $campaign_meta['list_conditions'];
 						}
 					}
-
+					
 					$conditions = ! empty( $meta['list_conditions'] ) ? $meta['list_conditions'] : array();
+
 					$end_time   = gmdate( 'Y-m-d H:i:s', $now );
+					if ( 'after_subscription' === $send_when ) {
+						$timestamp_field = 'lists_subscribers.subscribed_at';
+						$having = array( "timestamp <= UNIX_TIMESTAMP ( CONVERT_TZ( '$end_time', '+0:00', @@session.time_zone ) )" );
+					} else {
+						$timestamp_field = 'subscribers.' . $send_when;
+						$having          = array( "DATE_FORMAT(FROM_UNIXTIME(timestamp),'%m-%d') = DATE_FORMAT(NOW(),'%m-%d')" );
+					}
+
+					
 					$query_args = array(
 						'select'        => array(
 							'lists_subscribers.contact_id AS contact_id',
 							// Since UNIX_TIMESTAMP expect date to be in session time zone and subscribed_at is already in UTC, we are first converting subscribed_at date from UTC time to session time and then passing it to .
-							"UNIX_TIMESTAMP ( CONVERT_TZ( lists_subscribers.subscribed_at + INTERVAL $offset, '+0:00', @@session.time_zone ) ) AS timestamp",
+							"UNIX_TIMESTAMP ( CONVERT_TZ( $timestamp_field + INTERVAL $offset, '+0:00', @@session.time_zone ) ) AS timestamp",
 						),
 						'sent__not_in'  => array( $campaign_id ),
 						'queue__not_in' => array( $campaign_id ),
 						'lists'         => $list_ids,
 						'conditions'    => $conditions,
-						'having'        => array( "timestamp <= UNIX_TIMESTAMP ( CONVERT_TZ( '$end_time', '+0:00', @@session.time_zone ) )" ),
+						'having'        => $having,
 						'orderby'       => array( 'timestamp' ),
 						'groupby'       => 'lists_subscribers.contact_id',
 						'status'		=> 'subscribed',
 						'subscriber_status'		=> array( 'verified' ),
 					);
 
-					if ( $grace_period ) {
-						$start_time             = gmdate( 'Y-m-d H:i:s', $now - $grace_period );
+					if ( $grace_period && 'after_subscription' === $send_when ) {
+						$start_time = gmdate( 'Y-m-d H:i:s', $now - $grace_period );
+
 						$query_args['having'][] = "timestamp >= UNIX_TIMESTAMP ( CONVERT_TZ( '$start_time', '+0:00', @@session.time_zone ) )";
 					}
 
@@ -636,11 +653,8 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 									ES()->mailer->send( $subject, $content, $email, $merge_tags );
 								}
 
-								do_action( 'ig_es_message_sent', $contact_id, $campaign_id, 0 );
-
 								$email_sending_limit--;
 
-								// Email Sent now delete from queue now.
 								$this->db->delete_from_queue( $campaign_id, $contact_id );
 							}
 
@@ -727,6 +741,13 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 							// Set status to Sending only if it in the queued status currently.
 							if ( 'In Queue' === $notification['status'] ) {
 								ES_DB_Mailing_Queue::update_sent_status( $notification_guid, 'Sending' );
+								if ( 'post_digest' === $campaign_type ) {
+									$campaign_meta = ES()->campaigns_db->get_campaign_meta_by_id( $campaign_id );
+									if ( ! empty( $campaign_meta['post_ids'] ) ) {
+										$post_ids = $campaign_meta['post_ids'];
+										ES_Post_Digest::set_post_notified_flag( $campaign_id, $post_ids );
+									}
+								}
 							}
 
 							// Sync mailing queue content with the related campaign.
@@ -748,14 +769,11 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 								$subject = $notification['subject'];
 								$content = $notification['body'];
 
-								// $content = utf8_encode( $content );
-								ES()->mailer->send( $subject, $content, $emails, $merge_tags );
+								$send_result = ES()->mailer->send( $subject, $content, $emails, $merge_tags );
 
 								$total_remaining_emails      = ES_DB_Sending_Queue::get_total_emails_to_be_sent_by_hash( $notification_guid );
 								$remaining_emails_to_be_sent = ES_DB_Sending_Queue::get_total_emails_to_be_sent();
 
-								// No emails left for the $notification_guid??? Send admin notification for the
-								// Completion of a job
 								if ( 0 == $total_remaining_emails ) {
 									ES_DB_Mailing_Queue::update_sent_status( $notification_guid, 'Sent' );
 
@@ -774,8 +792,8 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 								}
 
 								
-								$campaign_failed = did_action( 'ig_es_message_failed' );
-								if ( $campaign_failed ) {
+								$sending_failed = ! empty( $send_result['status'] ) && 'ERROR' === $send_result['status'];
+								if ( $sending_failed ) {
 									$pending_statuses = array( 
 										IG_ES_SENDING_QUEUE_STATUS_QUEUED,
 										IG_ES_SENDING_QUEUE_STATUS_SENDING 
@@ -789,9 +807,19 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 										$notification_data = array(
 											'meta'    => maybe_serialize( $notification_meta ),
 										);
-										if ( $failed_count >= 3 ) {
+
+										$maximum_failed_counts = apply_filters( 'ig_es_maximum_failed_counts', 3 );
+										$failed_count_exceeded = $failed_count >= $maximum_failed_counts;
+										if ( $failed_count_exceeded ) {
 											$notification_data['status'] = IG_ES_MAILING_QUEUE_STATUS_FAILED;
-											do_action( 'ig_es_campaign_failed', $notification_guid );
+											$error_message               = $send_result['message'];
+											$action_data                 = array(
+												'notification_guid' => $notification_guid,
+												'message_id'        => $message_id,
+												'campaign_id'       => $campaign_id,
+												'error_message'     => $error_message,
+											);
+											do_action( 'ig_es_campaign_failed', $action_data );
 										}
 										ES_DB_Mailing_Queue::update_mailing_queue( $message_id, $notification_data );
 									}									
@@ -820,10 +848,13 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 								update_option( 'ig_es_last_cron_run', time() );
 
 							} else {
-								$response['es_remaining_email_count'] = 0;
-								$response['message']                  = 'EMAILS_NOT_FOUND';
-								$response['status']                   = 'SUCCESS';
-								ES_DB_Mailing_Queue::update_sent_status( $notification_guid, 'Sent' );
+								$pending_emails = ES_DB_Sending_Queue::get_total_emails_to_be_sent_by_hash( $notification_guid );
+								if ( empty( $pending_emails ) ) {
+									$response['es_remaining_email_count'] = 0;
+									$response['message']                  = 'EMAILS_NOT_FOUND';
+									$response['status']                   = 'SUCCESS';
+									ES_DB_Mailing_Queue::update_sent_status( $notification_guid, 'Sent' );
+								}
 							}
 
 							$this->unlock_cron_job( $cron_job );
@@ -863,6 +894,9 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 			}
 			if ( ! empty( $sent_count ) ) {
 				ES_Common::update_total_email_sent_count( $sent_count );
+				if ( ES_Service_Email_Sending::using_icegram_mailer() ) {
+					ES_Service_Email_Sending::update_used_limit( $sent_count );
+				}
 			}
 		}
 

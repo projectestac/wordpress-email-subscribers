@@ -188,7 +188,7 @@ class ES_Geolocation {
 	 *
 	 * @since 4.5.0
 	 */
-	public static function get_countries_iso_code_name_map( $country_code = '' ) {
+	public static function get_country_name_from_country_code( $country_code = '' ) {
 
 		$countries_data = self::get_countries();
 

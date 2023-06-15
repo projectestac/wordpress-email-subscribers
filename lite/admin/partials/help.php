@@ -82,7 +82,7 @@ $articles = array(
 		'class' => 'font-medium text-blue-500 hover:text-blue-700',
 	),
 	array(
-		'title' => 'What data Icegram Express (formerly known as Email Subscribers & Newsletters) stores on your end?',
+		'title' => 'What data Icegram Express stores on your end?',
 		'link'  => 'https://www.icegram.com/documentation/es-gdpr-what-data-email-subscribers-stores-on-your-end/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page',
 		'class' => 'font-medium text-blue-500 hover:text-blue-700',
 	),
@@ -133,7 +133,7 @@ $articles = array(
 					<p class="px-2 py-2">
 					<?php
 						/* translators: 1. Starting strong tag 2. Closing strong tag */
-						echo sprintf( esc_html__( 'If you found duplicate campaigns, lists, forms, reports after upgrading from Icegram Express (formerly known as Email Subscribers & Newsletters) 3.5.x to 4.x and want to run the database migration again to fix this, please click the below %1$sRun the updater%2$s button.', 'email-subscribers' ), '<strong>', '</strong>' );
+						echo sprintf( esc_html__( 'If you found duplicate campaigns, lists, forms, reports after upgrading from Icegram Express 3.5.x to 4.x and want to run the database migration again to fix this, please click the below %1$sRun the updater%2$s button.', 'email-subscribers' ), '<strong>', '</strong>' );
 					?>
 					</p>
 
