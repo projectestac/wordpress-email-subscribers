@@ -151,6 +151,14 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 							  <a href="<?php echo esc_url( $new_broadcast_url ); ?>" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"><?php echo esc_html__( 'New Broadcast', 'email-subscribers' ); ?></a>
 								<!-- Start-IG-Code -->
 							  <a href="<?php echo esc_url( $new_post_notification_url ); ?>" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"><?php echo esc_html__( 'New Post Notification', 'email-subscribers' ); ?></a>
+
+                                <?php
+                                // XTEC ************ AFEGIT - Removed new sequence
+                                // 2023.06.22 @Guillemduno
+                                if (is_xtec_super_admin()) {
+                                // ************ Fi
+                                ?>
+
 								<!-- End-IG-Code -->
 								<?php if ( ES()->is_pro() ) { ?>
 								  <a href="<?php echo esc_url( $new_sequence_url ); ?>" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"><?php echo esc_html__( 'New Sequence', 'email-subscribers' ); ?></a>
@@ -158,6 +166,14 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 								  <a href="<?php echo esc_url( $icegram_pricing_url ); ?>" target="_blank" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900"><?php echo esc_html__( 'New Sequence', 'email-subscribers' ); ?>
 									  <span class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full"><?php echo esc_html__( 'Premium', 'email-subscribers' ); ?></span></a>
 								<?php } ?>
+
+                                <?php
+                                // XTEC ************ AFEGIT - Removed new sequence
+                                // 2023.06.22 @Guillemduno
+                                }
+                                // ************ Fi
+                                ?>
+
 							</div>
 							<div class="border-t border-gray-100"></div>
 							<div class="py-1">
@@ -207,6 +223,14 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 				);
 				?>
 			</div>
+
+            <?php
+            // XTEC ************ AFEGIT - Removed top countries and recent activities
+            // 2023.06.22 @Guillemduno
+            if (is_xtec_super_admin()) {
+            // ************ Fi
+            ?>
+
 			<div class="flex-auto min-w-0 es-w-45 px-3">
 			<?php
 			if ( ES_Service_Email_Sending::is_onboarding_completed() ) {
@@ -242,7 +266,22 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 			}
 			?>
 			</div>
+
+            <?php
+            // XTEC ************ AFEGIT - Removed top countries and recent activities
+            // 2023.06.22 @Guillemduno
+            }
+            // ************ Fi
+            ?>
+
 		</section>
+
+        <?php
+        // XTEC ************ AFEGIT - Removed top countries and recent activities
+        // 2023.06.22 @Guillemduno
+        if (is_xtec_super_admin()) {
+        // ************ Fi
+        ?>
 
 		<section id="es-sending-service" class="py-4 my-8 bg-white rounded-lg shadow md:flex md:items-start md:justify-between sm:px-4 sm:grid sm:grid-cols-2">
 		<div class="flex-auto min-w-0 es-w-35 px-2">
@@ -333,6 +372,13 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 			</div>
 		</section>
 
+        <?php
+        // XTEC ************ AFEGIT - Removed top countries and recent activities
+        // 2023.06.22 @Guillemduno
+        }
+        // *********** Fi
+        ?>
+
 		<section id="es-campaign-stats" class="pt-4 my-8 bg-white rounded-lg shadow md:flex md:items-start md:justify-between sm:px-4 sm:grid sm:grid-cols-2">
 			<div class="flex-auto min-w-0 es-w-65 px-2">
 				<p class="px-2 text-lg font-medium leading-6 text-gray-400">
@@ -351,6 +397,14 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 					);
 					?>
 			</div>
+
+            <?php
+            // XTEC ************ AFEGIT - Removed tips & tricks
+            // 2023.06.22 @Guillemduno
+            if (is_xtec_super_admin()) {
+            //*********** Fi
+            ?>
+
 			<div class="flex-auto min-w-0 es-w-35 pr-2">
 				<p class="text-lg font-medium leading-6 text-gray-400">
 					<span>
@@ -368,6 +422,14 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 					);
 					?>
 			</div>
+
+            <?php
+            // XTEC ************ AFEGIT - Removed tips & tricks
+            // 2023.06.22 @Guillemduno
+            }
+            // *********** Fi
+            ?>
+
 		</section>
 
 		<section class="my-16">
@@ -376,6 +438,12 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 			foreach ( $feature_blocks as $feature => $data ) {
 				$is_trial_block = strpos( $feature, 'trial' ) !== false;
 				$bg             = $is_trial_block ? 'bg-teal-100' : 'bg-white';
+
+            // XTEC ************ AFEGIT - Removed trial/broadcast/autoresponder,etc
+            // 2023.06.22 @Guillemduno
+            if (is_xtec_super_admin()) {
+            // *********** Fi
+
 				?>
 				<div id="ig-es-<?php echo esc_attr( $feature ); ?>-block" class="relative p-6 rounded-lg shadow <?php echo esc_attr( $bg ); ?>">
 					<h3 class="text-lg font-medium tracking-tight text-gray-900">
@@ -419,6 +487,12 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 					</div>
 				</div>
 				<?php
+
+            // XTEC ************ AFEGIT - Removed trial/broadcast/autoresponder
+            // 2023.06.22 @Guillemduno
+            }
+            // *********** Fi
+
 			}
 			?>
 			</div>

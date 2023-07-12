@@ -146,6 +146,10 @@ class ES_Campaigns_Table extends ES_List_Table {
 				do_action( 'ig_es_after_campaign_type_buttons' );
 
 				// Start-IG-Code.
+
+                // XTEC ************ ELIMINAT - Removed access to Onsite Campaigns
+                // 2021.02.05 @aginard
+                /*
 				$icegram_plugin = 'icegram/icegram.php';
 				$active_plugins = $ig_es_tracker::get_active_plugins();
 				if ( in_array( $icegram_plugin, $active_plugins ) ) {
@@ -156,6 +160,9 @@ class ES_Campaigns_Table extends ES_List_Table {
 					<!-- <a href="admin.php?page=go_to_icegram&action=create_campaign" class="ig-es-link-button px-3 py-1 ml-2 align-middle"><?php esc_html_e( 'Onsite Campaigns', 'email-subscribers' ); ?></a> -->
 					<?php
 				}
+                */
+                // ********* Fi
+
 				// End-IG-Code.
 				?>
 

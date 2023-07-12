@@ -230,6 +230,13 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 						}
 						/************** Update Review Status (End) */
 
+                        // XTEC ************ AFEGIT - Removed feedback box
+                        // 2021.02.05 @aginard
+                        if (!is_xtec_super_admin()) {
+                            $got_feedback = true;
+                        }
+                        // ************ Fi
+
 						if ( ! $got_feedback ) {
 
 							$review_url = "https://wordpress.org/support/plugin/{$this->plugin}/reviews/";
@@ -720,7 +727,12 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 
 					var feedbackButtonClass = 'ig-feedback-button-<?php echo esc_js( $this->plugin ); ?>';
 
+                    // XTEC ************ ELIMINAT - Delete Feedback button
+                    // 2019.12.20 @nacho
+                    /*
 					$('#wpwrap').append('<div class="ig-es-feedback-button ' + feedbackButtonClass + '">Feedback</div>');
+                    */
+                    // ************ Fi
 
 					$('.' + feedbackButtonClass).on('click', function () {
 						Swal.mixin({

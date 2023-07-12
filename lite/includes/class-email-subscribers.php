@@ -388,6 +388,14 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				) . '</a></p></div>';
 				$args['html']            = $html;
 				ES_Admin_Notices::add_custom_notice( 'show_wp_cron', $args );
+
+                // XTEC ************ AFEGIT - Delete message email subscribers cron
+                // 2021.01.20 @aginard
+                if (! is_xtec_super_admin()) {
+                    ES_Admin_Notices::remove_notice( 'show_wp_cron' );
+                }
+                // ************ Fi
+
 			} else {
 				// Remove the notice if user hasn't disabled the WP CRON or renabled the WP CRON.
 				ES_Admin_Notices::remove_notice( 'show_wp_cron' );
@@ -1231,6 +1239,14 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 		 * @since 4.6.1
 		 */
 		public function can_upsell_features( $show_for_plans = array() ) {
+
+            // XTEC ************ AFEGIT - Hidden PRO features to all users but xtecadmin
+            // 2021.01.20 @aginard
+            if (! is_xtec_super_admin()) {
+                return false;
+            }
+            // ********* Fi
+
 			$es_current_plan = $this->get_plan();
 			if ( in_array( $es_current_plan, $show_for_plans ) ) {
 				return true;
@@ -1389,7 +1405,19 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				require_once plugin_dir_path( __FILE__ ) . 'class-email-subscribers-deactivator.php';
 
 				// Start-IG-Code.
+
+                // XTEC ************ AFEGIT - Blocked access to action scheduler to all users but xtecadmin
+                // 2021.04.30 @aginard
+                if (is_xtec_super_admin()) {
+                // ************ Fi
+
 				require_once plugin_dir_path( __FILE__ ) . 'libraries/action-scheduler/action-scheduler.php';
+
+                // XTEC ************ AFEGIT - Blocked access to action scheduler to all users but xtecadmin
+                // 2021.04.30 @aginard
+                }
+                // ************ Fi
+
 				// End-IG-Code.
 
 				self::$instance->email_subscribers = 'email-subscribers';
@@ -1552,6 +1580,11 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			global $ig_es_tracker;
 
 			$menu_title = __( 'Icegram Express', 'email-subscribers' );
+
+            // XTEC ************ AFEGIT - Set the admin menu name
+            // 2023.06.28 @Guillemduno
+            $menu_title = 'Subscripcions';
+            // ************ Fi
 
 			if ( 'woo' === IG_ES_PLUGIN_PLAN ) {
 				$menu_title = __( 'Icegram', 'email-subscribers' );

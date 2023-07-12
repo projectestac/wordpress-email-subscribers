@@ -244,6 +244,14 @@ $last_period_end_date     = gmdate( $convert_date_format, strtotime( '-' . $days
 				</p>
 			</span>
 		</div>
+
+        <?php
+        // XTEC ************ ELIMINAT - Removed click stats
+        // 2023.06.22 @Guillemduno
+        if (is_xtec_super_admin()) {
+        // ************ Fi
+        ?>
+
 		<div class="p-1">
 			<div id="es-dashboard-click-stats">
 				<span class="text-2xl font-bold leading-none text-indigo-600">
@@ -309,5 +317,13 @@ $last_period_end_date     = gmdate( $convert_date_format, strtotime( '-' . $days
 													</p>
 			</div>
 		</div>
+
+        <?php
+        // XTEC ************ AFEGIT - Removed click stats
+        // 2023.06.22 @Guillemduno
+        }
+        // ************ Fi
+        ?>
+
 	</div>
 </div>

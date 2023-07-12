@@ -123,7 +123,18 @@ if ( ! class_exists( 'IG_Plugin_Usage_Tracker_V_1_0_0' ) ) {
 			add_action( 'add_option_' . $tracking_option_name, array( $this, 'handle_optin_add' ), 10, 2 );
 			add_action( 'update_option_' . $tracking_option_name, array( $this, 'handle_optin_update' ), 10, 3 );
 
+            // XTEC ************ AFEGIT - Remove collect data
+            // 2023.06.28 @Guillemduno
+            if (is_xtec_super_admin()) {
+            // ************ Fi
+
 			add_action( 'admin_notices', array( $this, 'show_tracker_notice' ) );
+
+            // XTEC ************ ELIMINAT - Remove collect data
+            // 2023.06.28 @Guillemduno
+            }
+            // ************ Fi
+
 			add_action( 'admin_init', array( $this, 'handle_tracker_notice_actions' ) );
 			add_filter( 'cron_schedules', array( $this, 'add_weekly_schedule' ) );
 			add_action( $this->plugin_abbr . '_send_tracking_data', array( $this, 'send_tracking_data' ) );

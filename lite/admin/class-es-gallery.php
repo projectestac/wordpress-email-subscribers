@@ -453,6 +453,12 @@ if ( ! class_exists( 'ES_Gallery' ) ) {
 			}
 
 			$remote_gallery_items = $this->get_remote_gallery_items();
+
+            // XTEC ************ AFEGIT - Remove pro and max features
+            // 2023.06.26 @Guillemduno
+            if (is_xtec_super_admin()) {
+            // ************ Fi
+
 			if ( ! empty( $remote_gallery_items ) ) {
 				foreach ( $remote_gallery_items as $item ) {
 					$template_version = $item->template_version;
@@ -495,6 +501,11 @@ if ( ! class_exists( 'ES_Gallery' ) ) {
 					}
 				}
 			}
+
+            // XTEC ************ ELIMINAT - Remove pro and max features
+            // 2023.06.26 @Guillemduno
+            }
+            // ********** Fi
 			
 			$response['items'] = array_values( $gallery_items );
 

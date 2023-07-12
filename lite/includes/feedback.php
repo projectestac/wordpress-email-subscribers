@@ -260,7 +260,18 @@ function ig_es_render_iges_merge_feedback() {
 	}
 }
 
+// XTEC ************ ELIMINAT - Removed pop up
+// 2021.02.05 @aginard
+if (is_xtec_super_admin()) {
+// ************ Fi
+
 add_action( 'admin_footer', 'ig_es_render_iges_merge_feedback' );
+
+// XTEC ************ ELIMINAT - Removed pop up
+// 2021.02.05 @aginard
+}
+// ************ Fi
+
 
 /**
  * Can load sweetalert js file
@@ -399,6 +410,11 @@ add_filter( 'ig_es_can_load_sweetalert_css', 'ig_es_can_load_sweetalert_css' );
 
 if ( ! function_exists( 'ig_es_show_feature_survey' ) ) {
 	function ig_es_show_feature_survey() {
+
+        // XTEC ************ AFEGIT - Remove survey in admin pages
+        // 2023.07.12 @aginard
+        return ;
+        // ************ Fi
 
 		if ( ! ES()->is_es_admin_screen() ) {
 			return;

@@ -9,6 +9,10 @@
 </style>
 <?php
 
+// XTEC ************ ELIMINAT - Disable advertising
+// 2019.12.20 @nacho
+/*
+
 if ( ( get_option( 'ig_es_offer_covid_19' ) !== 'yes' ) && ( $ig_current_date >= strtotime( '2020-04-08' ) ) && ( $ig_current_date <= strtotime( '2020-04-30' ) ) ) {
 	$notice_dismiss_url = wp_nonce_url(
 		add_query_arg(
@@ -25,3 +29,7 @@ if ( ( get_option( 'ig_es_offer_covid_19' ) !== 'yes' ) && ( $ig_current_date >=
 	</div>
 
 <?php } ?>
+
+<?php
+*/
+// ************ Fi

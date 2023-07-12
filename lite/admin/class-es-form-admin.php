@@ -510,6 +510,14 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 												<div class="pt-2 pb-4 mx-4">
 													<div class="flex w-full border-b border-gray-200 pb-2">
 														<div class="w-1/3 text-sm font-normal text-gray-600 leading-9">${__( 'Form style', 'email-subscribers' )}</div>
+
+                                            <?php
+                                            // XTEC ************ AFEGIT - Removed Form style
+                                            // 2023.06.23 @Guillemduno
+                                            if (is_xtec_super_admin()) {
+                                            // ************ Fi
+                                            ?>
+
 														<div class="w-2/3 text-right">
 															<span class="relative inline-block">
 																<button id="form-style-button" type="button" class="py-1 px-2 ig-es-title-button">
@@ -529,6 +537,14 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 																</div>
 															</span>
 														</div>
+
+                                            <?php
+                                            // XTEC ************ ELIMINAT - Removed Form style
+                                            // 2023.06.23 @Guillemduno
+                                            }
+                                            // *********** Fi
+                                            ?>
+
 													</div>
 												</div>
 											</div>`;
