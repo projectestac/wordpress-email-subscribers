@@ -11,7 +11,16 @@
     const esForms     = window.es_forms;
     registerBlockType( 'email-subscribers/subscription-form-block', {
         apiVersion: 2,
+
+        // XTEC ************ MODIFICAT - Customized not-localized string.
+        // 2023.09.15 @aginard
+        title: 'Formulari de subscripció',
+        //************ ORIGINAL
+        /*
         title: 'Icegram Express Form',
+        */
+        //************ FI
+
         icon: 'feedback',
         category: 'common',
         attributes: { // The data this block will be storing
