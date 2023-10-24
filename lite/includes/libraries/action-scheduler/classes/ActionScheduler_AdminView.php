@@ -70,6 +70,12 @@ class ActionScheduler_AdminView extends ActionScheduler_AdminView_Deprecated {
 	 * System Status page, and for sites where WooCommerce isn't active.
 	 */
 	public function register_menu() {
+
+        // XTEC ************ AFEGIT - Blocked access to action scheduler to all users but xtecadmin
+        // 2021.04.30 @aginard
+        if (is_xtec_super_admin()) {
+        // ************ Fi
+
 		$hook_suffix = add_submenu_page(
 			'tools.php',
 			__( 'Scheduled Actions', 'action-scheduler' ),
@@ -79,6 +85,12 @@ class ActionScheduler_AdminView extends ActionScheduler_AdminView_Deprecated {
 			array( $this, 'render_admin_ui' )
 		);
 		add_action( 'load-' . $hook_suffix , array( $this, 'process_admin_ui' ) );
+
+        // XTEC ************ AFEGIT - Blocked access to action scheduler to all users but xtecadmin
+        // 2021.04.30 @aginard
+        }
+        // ************ Fi
+
 	}
 
 	/**
