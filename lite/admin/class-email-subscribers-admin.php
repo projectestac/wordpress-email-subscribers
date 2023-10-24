@@ -351,8 +351,13 @@ class Email_Subscribers_Admin {
 
         // XTEC ************ AFEGIT - Hidden workflows to all users
         // 2021.01.20 @aginard
-        if (($key = array_search('workflows', $accessible_sub_menus, true)) !== false) {
-            unset($accessible_sub_menus[$key]);
+        if (!is_xtec_super_admin()) {
+            if (($key = array_search('workflows', $accessible_sub_menus, true)) !== false) {
+                unset($accessible_sub_menus[$key]);
+            }
+            if (($key = array_search('logs', $accessible_sub_menus, true)) !== false) {
+                unset($accessible_sub_menus[$key]);
+            }
         }
         // ********* Fi
 
@@ -418,19 +423,9 @@ class Email_Subscribers_Admin {
 			add_submenu_page( 'es_dashboard', __( 'Reports', 'email-subscribers' ), __( 'Reports', 'email-subscribers' ), 'edit_posts', 'es_reports', array( $this, 'load_reports' ) );
 		}
 
-        // XTEC ************ AFEGIT - Remove log submenu
-        // 2023.06.28 @Guillemduno
-        if (is_xtec_super_admin()) {
-        // ************ Fi
-
 		if ( in_array( 'logs', $accessible_sub_menus ) ) {
 			add_submenu_page( 'es_dashboard', __( 'Logs', 'email-subscribers' ), __( 'Logs', 'email-subscribers' ), 'edit_posts', 'es_logs', array( $this, 'load_logs' ) );
 		}
-
-        // XTEC ************ ELIMINAT - Remove log submenu
-        // 2023.06.28 @Guillemduno
-        }
-        // ************ Fi
 
 		if ( in_array( 'settings', $accessible_sub_menus ) ) {
 			add_submenu_page( 'es_dashboard', __( 'Settings', 'email-subscribers' ), __( 'Settings', 'email-subscribers' ), 'manage_options', 'es_settings', array( $this, 'load_settings' ) );
