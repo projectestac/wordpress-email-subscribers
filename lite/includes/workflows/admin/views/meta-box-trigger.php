@@ -82,6 +82,11 @@ if ( ! ES()->is_pro() ) {
 			'ig_es_wcm_membership_expired' => __( 'Membership Expired', 'email-subscribers' ),
 			'ig_es_wcm_membership_canceled'  => __( 'Membership Canceled', 'email-subscribers' ),
 		),
+		'BuddyBoss' => array(
+			'es_trigger_buddyboss_user_account_activated'   => __( 'Buddyboss user activated', 'email-subscribers' ),
+			'es_trigger_buddyboss_user_account_suspended'   => __( 'Buddyboss user suspended', 'email-subscribers' ),
+			'es_trigger_buddyboss_user_account_unsuspended' => __( 'Buddyboss user unsuspended', 'email-subscribers' ),
+		),
 	);
 	$trigger_list     = array_merge_recursive( $trigger_list, $pro_trigger_list );
 }

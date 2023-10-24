@@ -62,7 +62,7 @@ if ( is_callable( array( $selected_trigger, 'get_name' ) ) ) {
 	<?php 
 	printf(
 			/* translators: 1: HTML Tag 2: HTML Tag */
-			esc_attr__( 'Rules can be used to add conditional logic to workflows. Click the %1$s+ Add Rule Group%2$s button to create a rule.', 'email-subscribers' ), '<strong>', '</strong>'
+			esc_attr__( 'Rules can be used to add conditional logic to workflows. Click the %1$s+ Add rule group%2$s button to create a rule.', 'email-subscribers' ), '<strong>', '</strong>'
 		); 
 	?>
 		</p>

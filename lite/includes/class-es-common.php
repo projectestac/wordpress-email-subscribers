@@ -708,8 +708,8 @@ class ES_Common {
 			$category_names = array( 'All' );
 		}
 
-		$checked_selected = ! array_intersect( array( 'All', 'None' ), $category_names ) ? "checked='checked'" : '';
-		$category_html    = '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;" ><span class="block pr-4 text-sm font-normal text-gray-600 pb-1"><input class="es-note-category-parent form-radio text-indigo-600" type="radio" ' . esc_attr( $checked_selected ) . ' value="selected_cat"  name="campaign_data[es_note_cat_parent]">' . __(
+		$checked_selected = ! array_intersect( array( 'All', 'None', 'all', 'none' ), $category_names ) ? "checked='checked'" : '';
+		$category_html    = '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;" ><span class="block pr-4 text-sm font-normal text-gray-600 pb-1"><input class="es-note-category-parent form-radio text-indigo-600" type="radio" ' . esc_attr( $checked_selected ) . ' value="selected_cat"  name="data[es_note_cat_parent]">' . __(
 			'Select Categories',
 			'email-subscribers'
 		) . '</td></tr>';
@@ -721,16 +721,16 @@ class ES_Common {
 				$checked = '';
 			}
 
-			$category_html .= '<tr class="es-note-child-category"><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;"><span class="block pr-4 text-sm font-normal text-gray-600 pb-1"><input type="checkbox" class="form-checkbox" ' . esc_attr( $checked ) . ' value="' . esc_attr( $category->term_id ) . '" id="es_note_cat[]" name="campaign_data[es_note_cat][]">' . esc_html( $category->name ) . '</td></tr>';
+			$category_html .= '<tr class="es-note-child-category"><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;"><span class="block pr-4 text-sm font-normal text-gray-600 pb-1"><input type="checkbox" class="form-checkbox" ' . esc_attr( $checked ) . ' value="' . esc_attr( $category->term_id ) . '" id="es_note_cat[]" name="data[es_note_cat][]">' . esc_html( $category->name ) . '</td></tr>';
 		}
-		$checked_all = in_array( 'All', $category_names ) ? "checked='checked'" : '';
-		$all_html    = '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;"><span class="block pr-4 text-sm font-normal text-gray-600 pb-1"><input type="radio" class="form-radio text-indigo-600 es-note-category-parent"  ' . esc_attr( $checked_all ) . ' value="{a}All{a}"  name="campaign_data[es_note_cat_parent]">' . __(
+		$checked_all = in_array( 'All', $category_names ) || in_array( 'all', $category_names ) ? "checked='checked'" : '';
+		$all_html    = '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;"><span class="block pr-4 text-sm font-normal text-gray-600 pb-1"><input type="radio" class="form-radio text-indigo-600 es-note-category-parent"  ' . esc_attr( $checked_all ) . ' value="{a}All{a}"  name="data[es_note_cat_parent]">' . __(
 			'All Categories (Also include all categories which will create later)',
 			'email-subscribers'
 		) . '</td></tr>';
 
-		$checked_none = in_array( 'None', $category_names, true ) ? "checked='checked'" : '';
-		$none_html    = '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;"><span class="block pr-4 text-sm font-normal text-gray-600 pb-1"><input type="radio" class="form-radio text-indigo-600 es-note-category-parent"  ' . esc_attr( $checked_none ) . ' value="{a}None{a}"  name="campaign_data[es_note_cat_parent]">' . __(
+		$checked_none = in_array( 'None', $category_names, true ) || in_array( 'none', $category_names, true ) ? "checked='checked'" : '';
+		$none_html    = '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;"><span class="block pr-4 text-sm font-normal text-gray-600 pb-1"><input type="radio" class="form-radio text-indigo-600 es-note-category-parent"  ' . esc_attr( $checked_none ) . ' value="{a}None{a}"  name="data[es_note_cat_parent]">' . __(
 			'None (Don\'t include post from any category)',
 			'email-subscribers'
 		) . '</td></tr>';
@@ -812,7 +812,7 @@ class ES_Common {
 				} else {
 					$checked = '';
 				}
-				$custom_post_type_html .= '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;"><span class="block pr-4 text-sm font-medium text-gray-600 pb-2"><input type="checkbox" ' . esc_attr( $checked ) . ' value="{T}' . esc_html( $post_type ) . '{T}" class="es_custom_post_type form-checkbox" name="campaign_data[es_note_cpt][]">' . esc_html( $post_type ) . '</td></tr>';
+				$custom_post_type_html .= '<tr><td style="padding-top:4px;padding-bottom:4px;padding-right:10px;"><span class="block pr-4 text-sm font-medium text-gray-600 pb-2"><input type="checkbox" ' . esc_attr( $checked ) . ' value="{T}' . esc_html( $post_type ) . '{T}" class="es_custom_post_type form-checkbox" name="data[es_note_cpt][]">' . esc_html( $post_type ) . '</td></tr>';
 			}
 		} else {
 			$custom_post_type_html = '<tr><span class="block pr-4 text-sm font-normal text-gray-600 pb-2">' . __( 'No Custom Post Types Available', 'email-subscribers' ) . '</tr>';
@@ -1625,89 +1625,6 @@ class ES_Common {
 			'ig_es_remote_gallery_items',
 		);
 
-	}
-
-	/**
-	 * Get all ES settings
-	 *
-	 * @return array
-	 *
-	 * @since 4.1.0
-	 */
-	public static function get_all_settings() {
-
-		global $wpdb;
-
-		$option_name_like = 'ig_es_%';
-		$results          = $wpdb->get_results( $wpdb->prepare( "SELECT option_name, option_value FROM {$wpdb->prefix}options WHERE option_name LIKE %s  AND option_name != %s", $option_name_like, 'ig_es_managed_blocked_domains' ), ARRAY_A );
-
-		$options_name_value_map = array();
-		if ( count( $results ) > 0 ) {
-			$restricted_settings = self::get_restricted_settings();
-			foreach ( $results as $result ) {
-
-				if ( in_array( $result['option_name'], $restricted_settings ) ) {
-					continue;
-				}
-
-				$options_name_value_map[ $result['option_name'] ] = $result['option_value'];
-			}
-		}
-
-		return $options_name_value_map;
-	}
-
-	/**
-	 * Get plugin meta info
-	 *
-	 * @return array
-	 *
-	 * @since 4.1.0
-	 */
-	public static function get_ig_es_meta_info() {
-
-		$plan 						= ES()->get_plan();
-		$total_contacts             = ES()->contacts_db->count();
-		$total_unconfirmed_contacts = ES()->lists_contacts_db->get_unconfirmed_contacts_count();
-		$total_lists                = ES()->lists_db->count_lists();
-		$total_forms                = ES()->forms_db->count_forms();
-		$total_newsletters          = ES()->campaigns_db->get_total_newsletters();
-		$total_post_notifications   = ES()->campaigns_db->get_total_post_notifications();
-		$total_post_digests 		= ( 'pro' === $plan ) ? ES()->campaigns_db->get_total_post_digests() : 0;
-		$total_sequences            = ( 'pro' === $plan ) ? ES()->campaigns_db->get_total_sequences() : 0;
-		$active_workflows_count     = ES()->workflows_db->get_active_workflows_count();
-		$remote_gallery_items   	= get_option('ig_es_imported_remote_gallery_template_ids', array());
-		$editor_count_by_type		= ES()->campaigns_db->get_count_by_editor_type();
-		$workflows_count_by_type	= ES()->workflows_db->get_workflows_count_by_triggername();
-		$mailer_name 				= ES()->mailer->get_current_mailer_slug();
-		$campaign_sending_frequency = ES_DB_Mailing_Queue::get_campaign_sending_frequency(10);
-
-
-		return array(
-			'version'                  => ES_PLUGIN_VERSION,
-			'installed_on'             => get_option( 'ig_es_installed_on', '' ),
-			'is_premium'               => ES()->is_premium() ? 'yes' : 'no',
-			'plan'                     => $plan,
-			'is_trial'                 => ES()->trial->is_trial() ? 'yes' : 'no',
-			'is_trial_expired'         => ES()->trial->is_trial_expired() ? 'yes' : 'no',
-			'trial_start_at'           => ES()->trial->get_trial_start_date(),
-			'total_contacts'           => $total_contacts,
-			'unconfirmed_contacts'	   => $total_unconfirmed_contacts,		// Added in 5.5.7
-			'total_lists'              => $total_lists,
-			'total_forms'              => $total_forms,
-			'total_newsletters'        => $total_newsletters,
-			'total_post_notifications' => $total_post_notifications,
-			'total_post_digests'	   => $total_post_digests,				// Added in 5.5.7
-			'total_sequences'          => $total_sequences,
-			'editor_count_by_type'	   => $editor_count_by_type, 			// Added in 5.5.7
-			'active_workflows_count'   => $active_workflows_count, 			// Added in 5.5.7
-			'campaign_sending_frequency' => $campaign_sending_frequency,	// Added in 5.5.7
-			'workflows_count_by_type'  => $workflows_count_by_type, 		// Added in 5.5.7
-			'mailer'				   => $mailer_name,						// Added in 5.5.7
-			'remote_gallery_items'	   => $remote_gallery_items, 			// Added in 5.5.7
-			'is_rest_api_used'	       => self::is_rest_api_used(),		 	// Added in 5.5.7
-			'settings'                 => self::get_all_settings(),
-		);
 	}
 
 	/**
@@ -2727,7 +2644,7 @@ class ES_Common {
 		$rev_email = strrev( $email );
 		foreach ( $domains as $domain ) {
 			$domain = trim( $domain );
-			if ( strpos( $rev_email, strrev( $domain ) ) === 0 ) {
+			if ( ! empty( $domain ) && strpos( $rev_email, strrev( $domain ) ) === 0 ) {
 				$email_parts = explode( '@', $email );
 				if ( ! empty( $email_parts[1] ) ) {
 					$email_domain = $email_parts[1];
@@ -3016,35 +2933,7 @@ class ES_Common {
 		return true;
 	}
 
-	/**
-	 * Check if WordPress User is using Rest API feature
-	 * 
-	 * @since 5.5.7
-	 * 
-	 * @return string yes|no
-	 */
-	public static function is_rest_api_used() {
-		
-		// Check if REST API settings option is enabled
-		$is_api_enabled = get_option('ig_es_allow_api', 'no');
-
-		if ( 'no' === $is_api_enabled ) {
-			return 'no';
-		}
-
-		// Ensure there is atleast one users for whom REST API keys are generated
-		$rest_api_users_ids = get_users( array(
-			'meta_key' => 'ig_es_rest_api_keys',
-			'fields'   => 'ID'
-		) );
-
-		if ( empty( $rest_api_users_ids ) ) {
-			return 'no';
-		}
-		
-		return 'yes';
-
-	}
+	
 
 	public static function is_positive_number( $number ) {
 		return is_numeric( $number ) && $number > 0;

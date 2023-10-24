@@ -37,7 +37,9 @@ class ES_Service_Email_Sending extends ES_Services {
 	public $cmd = 'accounts/register';
 
 	/**
-	 * Variable to hold all onboarding tasks list
+	 * Variable to hold all onboarding tasks list.
+	 * 
+	 * UPDATE : Added ess cron scheduling in 5.6.11
 	 *
 	 * @since 4.6.0
 	 * @var array
@@ -46,7 +48,7 @@ class ES_Service_Email_Sending extends ES_Services {
 		'configuration_tasks' => array(
 			'create_ess_account',
 			'set_sending_service_consent',
-			// 'schedule_ess_cron',
+			'schedule_ess_cron',			
 		),
 		'email_delivery_check_tasks' => array(
 			'dispatch_emails_from_server',
@@ -119,8 +121,7 @@ class ES_Service_Email_Sending extends ES_Services {
 	public function init() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'wp_ajax_ig_es_setup_email_sending_service', array( $this, 'setup_email_sending_service' ) );
-		add_action( 'ig_es_ess_cron_worker', array( $this, 'update_ess_stats' ) );
-		add_action( 'ig_es_ess_account_cron_worker', array( $this, 'send_limit_data_to_ess' ) );
+		add_action( 'ig_es_ess_update_account', array( $this, 'send_plan_data_to_ess') );
 		add_action( 'ig_es_message_sent', array( $this, 'update_sending_service_status' ) );
 		// We are marking sending service status as failed only when we can't send a campaign after trying 3 times.
 		// This will be helpful in avoiding temporary failure errors due to network calls/site load on ESS end.
@@ -189,8 +190,8 @@ class ES_Service_Email_Sending extends ES_Services {
 			$response['message'] = __( 'Email sending service is not supported on local or dev environments.', 'email-subscribers' );
 			return $response;
 		}
-		
 
+		$plan = $this->get_plan();
 		$from_email = get_option( 'ig_es_from_email' );
 		$home_url   = home_url();
 		$parsed_url = parse_url( $home_url );
@@ -199,7 +200,7 @@ class ES_Service_Email_Sending extends ES_Services {
 			$response['message'] = __( 'Site url is not valid. Please check your site url.', 'email-subscribers' );
 			return $response;
 		}
-		
+
 		$email = get_option( 'admin_email' );
 		$limit = 100;
 
@@ -217,6 +218,7 @@ class ES_Service_Email_Sending extends ES_Services {
 			'email'      => $email,
 			'from_email' => $from_email,
 			'from_name'  => $from_name,
+			'plan'		 => $plan,
 		);
 
 		$options = array(
@@ -232,6 +234,7 @@ class ES_Service_Email_Sending extends ES_Services {
 			$allocated_limit = $request_response['allocated_limit'];
 			$internval       = $request_response['interval'];
 			$from_email      = $request_response['from_email'];
+			$plan			 = $request_response['plan'];
 
 			$ess_data = array(
 				'account_id'      => $account_id,
@@ -239,6 +242,7 @@ class ES_Service_Email_Sending extends ES_Services {
 				'interval'        => $internval,
 				'api_key'         => $api_key,
 				'from_email'      => $from_email,
+				'plan'			  => $plan,
 			);
 
 			update_option( 'ig_es_ess_data', $ess_data );
@@ -679,86 +683,62 @@ class ES_Service_Email_Sending extends ES_Services {
 		$response = array(
 			'status' => 'error',
 		);
-		if ( ! wp_next_scheduled( 'ig_es_ess_cron_worker' ) ) {
-			wp_schedule_event( time() + DAY_IN_SECONDS, 'daily', 'ig_es_ess_cron_worker' );
+
+		if ( ! wp_next_scheduled( 'ig_es_ess_update_account') ) {
+			wp_schedule_event( time(), 'daily', 'ig_es_ess_update_account' );
 		}
-		if ( ! wp_next_scheduled( 'ig_es_ess_account_cron_worker' ) ) {
-			wp_schedule_event( time() + DAY_IN_SECONDS, 'twicedaily', 'ig_es_ess_account_cron_worker' );
-		}
-		do_action( 'ig_es_ess_cron_worker' );
-		do_action( 'ig_es_ess_account_cron_worker' );
+
 		$response['status'] = 'success';
 		return $response;
 	}
 
-	public function update_ess_stats() {
-		$ess_stats = $this->get_ess_stats();
-		$ess_stats = ! empty( $ess_stats['data'] ) ? $ess_stats['data'] : array();
-		if ( ! empty ( $ess_stats ) ) {
-			$ess_stats = (array) $ess_stats;
-			update_option( 'ig_es_ess_stats', $ess_stats );
-		}
+	public function clear_ess_cron() {
+		wp_clear_scheduled_hook('ig_es_ess_update_account');
 	}
 
-	public function get_ess_stats() {
-		$ess_stats = array();
-		$ess_data  = get_option( 'ig_es_ess_data', array() );
-		$api_key   = $ess_data['api_key'];
-		$request_params = array(
-			'headers' => array(
-				'Authorization' => 'Bearer ' . $api_key,
-				'Content-Type'  => 'application/json', 
-			),
-		);
-		$api_url  = 'https://api.igeml.com/accounts/stats/';
-		$response = wp_remote_get( $api_url, $request_params );
-		if ( ! is_wp_error( $response ) ) {
-			$response_body = wp_remote_retrieve_body( $response );
-			$ess_stats     = ( array ) json_decode( $response_body );
-		}
-		return $ess_stats;
-	}
-
-	public function send_limit_data_to_ess() {
+	public function send_plan_data_to_ess() {
 
 		$response = array(
 			'status' => 'error',
 		);
 
-		
-		$ess_data = get_option( 'ig_es_ess_data', array() );
-		$api_key  = $ess_data['api_key'];
-		
-		$limit        = 3;
-		$account_data = get_option( '_icegram_connector_data' );
-		if ( empty( $account_data ) ) {
+		if ( !$this->opted_for_sending_service() ) {
+			$this -> clear_ess_cron();
 			return;
 		}
-		if ( ! empty( $account_data['es_sending_limit'] ) ) {
-			$limit = $account_data['es_sending_limit'];
+
+		$ess_data = get_option( 'ig_es_ess_data', array() );
+		$api_key  = $ess_data['api_key'];
+		$current_plan = $this -> get_plan();
+		
+		// Update account if plan is not registered or it has changed
+		if ( !empty( $ess_data['plan'] ) && $ess_data['plan'] == $current_plan ) {
+			return;
 		}
 
 		$data = array(
-			'limit'   => $limit,
+			'plan'   => $current_plan,
+		);
+
+		$options = array(
+			'timeout' => 50,
+			'method'  => 'POST',
+			'body'    => json_encode($data),
 			'headers' => array(
 				'Authorization' => 'Bearer ' . $api_key,// Keep it like bearer when we send email
 				'Content-Type'  => 'application/json',
 			),
 		);
 
-		$options = array(
-			'timeout' => 50,
-			'method'  => 'POST',
-			'body'    => $data,
-		);
-
 		$api_url = 'https://api.igeml.com/accounts/update/';
+
 		$response = wp_remote_post( $api_url, $options );
+
 		if ( ! is_wp_error( $response ) ) {
 			$response_body = wp_remote_retrieve_body( $response );
 			$response_data = ( array ) json_decode( $response_body );
 			if ( 'success' === $response_data['status'] ) {
-				$ess_data['allocated_limit'] = $limit;
+				$ess_data['plan'] = $this->get_plan();
 				update_option( 'ig_es_ess_data', $ess_data );
 			}
 		}

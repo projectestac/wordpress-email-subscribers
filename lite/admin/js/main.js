@@ -10,12 +10,20 @@ if ( 'undefined' !== typeof wp.i18n ) {
     }
 }
 
-var canUpsellESTemplate = ( templatePlan ) => {
+var canUpsellESTemplate = ( templatePlan, templateVersion ) => {
     let canUpsellTemplate = false;
     if ( 'lite' === ig_es_main_js_data.es_plan || 'trial' === ig_es_main_js_data.es_plan ) {
         canUpsellTemplate = templatePlan === 'starter' || templatePlan === 'pro';
     } else if ( 'starter' === ig_es_main_js_data.es_plan ) {
         canUpsellTemplate = templatePlan === 'pro';
+    }
+
+    if( '1.0.1' === templateVersion ){
+        if ( 'lite' === ig_es_main_js_data.es_plan || 'trial' === ig_es_main_js_data.es_plan ) {
+            canUpsellTemplate = templatePlan === 'pro' || templatePlan === 'max';
+        } else if ( 'starter' === ig_es_main_js_data.es_plan ) {
+            canUpsellTemplate = templatePlan === 'max';
+        }  
     }
     return canUpsellTemplate;
 }

@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 $active_page         = ( isset( $_GET['page'] ) ) ? sanitize_text_field( $_GET['page'] ) : '';
 $workflow_action     = ( isset( $_GET['action'] ) ) ? sanitize_text_field( $_GET['action'] ) : '';
 $show_variables_list = ( 'es_workflows' === $active_page && 'new' !== $workflow_action );
-
 ?>
 <div id="ig-es-variable-info-popup" style="display:none">
 	<div class="fixed flex inset-0 overflow-x-hidden overflow-y-auto z-50 flex justify-center w-full h-full" style="background-color: rgba(0,0,0,.5);">

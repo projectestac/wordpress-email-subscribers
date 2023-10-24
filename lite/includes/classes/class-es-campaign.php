@@ -114,7 +114,7 @@ if ( ! class_exists( 'ES_Campaign' ) ) {
 		public $list_ids;
 
 		/**
-		 * Workflow priority
+		 * Camapign base template id
 		 *
 		 * @since 4.4.1
 		 * @var integer
@@ -122,7 +122,7 @@ if ( ! class_exists( 'ES_Campaign' ) ) {
 		public $base_template_id;
 
 		/**
-		 * Workflow priority
+		 * Camapign meta
 		 *
 		 * @since 4.4.1
 		 * @var integer
@@ -130,7 +130,7 @@ if ( ! class_exists( 'ES_Campaign' ) ) {
 		public $meta;
 	
 		/**
-		 * Workflow creation date/time
+		 * Campaign creation date/time
 		 *
 		 * @since 4.4.1
 		 * @var string
@@ -138,7 +138,7 @@ if ( ! class_exists( 'ES_Campaign' ) ) {
 		public $created_at;
 	
 		/**
-		 * Workflow last update date/time
+		 * Campaign last update date/time
 		 *
 		 * @since 4.4.1
 		 * @var string
@@ -146,12 +146,20 @@ if ( ! class_exists( 'ES_Campaign' ) ) {
 		public $updated_at;
 
 		/**
-		 * Flag to check whether valid workflow object or not
+		 * Flag to check whether valid campaign object or not
 		 *
 		 * @since 4.4.1
 		 * @var bool
 		 */
 		public $exists = false;
+
+		/**
+		 * Campaign status
+		 *
+		 * @since 4.4.1
+		 * @var bool
+		 */
+		public $status = '';
 	
 		/**
 		 * Added Logger Context

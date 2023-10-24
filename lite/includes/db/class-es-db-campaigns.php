@@ -652,35 +652,124 @@ class ES_DB_Campaigns extends ES_DB {
 
 			$where = $wpdb->prepare( "status = %d AND type = %s AND (deleted_at IS NULL OR deleted_at = '0000-00-00 00:00:00')", 1, 'post_notification' );
 
-			if ( 'post' === $post_type ) {
-				$categories       = get_the_category( $post_id );
-				$total_categories = count( $categories );
-				if ( $total_categories > 0 ) {
-					for ( $i = 0; $i < $total_categories; $i ++ ) {
-						if ( 0 === $i ) {
-							$where .= ' and (';
-						} else {
-							$where .= ' or';
+			$new_flow_campaign_ids = get_option( 'ig_es_new_category_format_campaign_ids', array() );
+			// Run old logic for campaign
+			if ( empty( $new_flow_campaign_ids ) ) {
+				if ( 'post' === $post_type ) {
+					$categories       = get_the_category( $post_id );
+					$total_categories = count( $categories );
+					if ( $total_categories > 0 ) {
+						for ( $i = 0; $i < $total_categories; $i ++ ) {
+							if ( 0 === $i ) {
+								$where .= ' and (';
+							} else {
+								$where .= ' or';
+							}
+	
+							$category_str = ES_Common::prepare_category_string( $categories[ $i ]->term_id );
+	
+							$where .= " categories LIKE '%" . $category_str . "%'";
+							if ( ( $total_categories - 1 ) === $i ) {
+								$where .= " OR categories LIKE '%all%'";
+								$where .= ") AND categories NOT LIKE '%none%'";
+							}
 						}
-
-						$category_str = ES_Common::prepare_category_string( $categories[ $i ]->term_id );
-
-						$where .= " categories LIKE '%" . $category_str . "%'";
-						if ( ( $total_categories - 1 ) === $i ) {
-							$where .= " OR categories LIKE '%all%'";
-							$where .= ") AND categories NOT LIKE '%none%'";
-						}
+					} else {
+						// no categories fround for post
+						return $campaigns;
 					}
 				} else {
-					// no categories fround for post
-					return $campaigns;
+					$post_type = ES_Common::prepare_custom_post_type_string( $post_type );
+					$where    .= " and categories LIKE '%" . wp_specialchars_decode( addslashes( $post_type ) ) . "%'";
 				}
-			} else {
-				$post_type = ES_Common::prepare_custom_post_type_string( $post_type );
-				$where    .= " and categories LIKE '%" . wp_specialchars_decode( addslashes( $post_type ) ) . "%'";
 			}
 
 			$campaigns = $this->get_by_conditions( $where, ARRAY_A );
+			if ( ! empty( $campaigns ) ) {
+				$current_post_type  = get_post_type( $post_id );
+				$current_categories = get_the_category( $post_id );
+				$current_categories_lists = array();
+				foreach ( $current_categories as $current_category ) {
+					$current_categories_lists[] = $current_category->term_id;
+				}
+				foreach ( $campaigns as $index => $campaign ) {
+					$campaign_id = $campaign['id'];
+					$categories  = $campaign['categories'];
+					$is_categories_matching = false;
+					$categories = explode( '##', trim( trim( $categories, '##' ) ) );
+					if ( ! empty( $categories ) ) {
+						foreach ( $categories as $category ) {
+							if ( ! empty( $category ) ) {
+								if ( ! empty( $new_flow_campaign_ids ) && in_array( (int) $campaign_id, $new_flow_campaign_ids, true ) ) {
+									$post_categories = explode( '|', $category );
+									foreach ( $post_categories as $post_category ) {
+										list( $post_type, $categories_list ) = explode( ':', $post_category );
+										if ( $post_type === $current_post_type ) {
+											if ( 'post' === $current_post_type ) {
+												if ( 'none' !== $categories_list ) {
+													if ( 'all' === $categories_list ) {
+														$is_categories_matching = true;
+														break;
+													} else {
+														$categories_list = array_map( 'absint', explode( ',', $categories_list ) );
+														$is_categories_matching = count( array_intersect( $categories_list, $current_categories_lists ) ) > 0;
+														if ( $is_categories_matching ) {
+															break;
+														}
+													}
+												}
+											} else {
+												if ( 'all' === $categories_list ) {
+													$is_categories_matching = true;
+													break;
+												} else {
+													$term_ids = array_map( 'absint', explode( ',', $categories_list ) );
+													$taxonomies = get_object_taxonomies( $post_type, 'objects' );
+													if ( ! empty( $taxonomies ) ) {
+														$taxonomies_slug = array_keys( $taxonomies );
+														$post_term_ids = array();
+														foreach ( $taxonomies_slug as $taxonomy_slug ) {
+															$post_terms = get_the_terms( $post_id, $taxonomy_slug );
+															if ( ! $post_terms ) {
+																continue;
+															}
+
+															$taxonomy_term_ids = wp_list_pluck( $post_terms, 'term_id' );
+															$post_term_ids = array_merge( $post_term_ids, $taxonomy_term_ids );
+														}
+														$is_categories_matching = count( array_intersect( $term_ids, $post_term_ids ) ) > 0;
+														if ( $is_categories_matching ) {
+															break;
+														}
+													}
+												}
+											}
+										}
+									}
+								} else {
+									if ( 'post' === $current_post_type ) {
+										if ( is_numeric( $category ) && in_array( ( int ) $category, $current_categories_lists, true ) ) {
+											$is_categories_matching = true;
+											break;
+										} elseif ( '{a}All{a}' === $category ) {
+											$is_categories_matching = true;
+											break;
+										}
+									} elseif ( '{T}' . $current_post_type . '{T}' === $category ) {
+										$is_categories_matching = true;
+										break;
+									}
+								}
+							} 
+						} 
+					}
+					
+					if ( ! $is_categories_matching ) {
+						unset( $campaigns[ $index ] );
+					}
+				}
+			}
+
 			$campaigns = apply_filters( 'ig_es_campaigns_for_post', $campaigns, $post_id );
 		}
 
@@ -903,7 +992,8 @@ class ES_DB_Campaigns extends ES_DB {
 				$campaign_meta = ( !empty( $campaign['meta'] ) ) ? maybe_unserialize($campaign['meta']) : null;
 
 				if ( !empty( $campaign_meta ) ) {
-					if ( IG_ES_DRAG_AND_DROP_EDITOR === $campaign_meta['editor_type'] ) {
+					$editor_type = ! empty( $campaign_meta['editor_type'] ) ? $campaign_meta['editor_type'] : IG_ES_CLASSIC_EDITOR;
+					if ( IG_ES_DRAG_AND_DROP_EDITOR === $editor_type ) {
 						$campaign_editor_count['dnd']++;
 					} else {
 						$campaign_editor_count['classic']++;

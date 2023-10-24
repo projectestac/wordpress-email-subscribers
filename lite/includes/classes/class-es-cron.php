@@ -117,6 +117,7 @@ class ES_Cron {
 	public function schedule() {
 
 		global $ig_es_tracker;
+		$sending_service = new ES_Service_Email_Sending();
 
 		// Add worker only once
 		if ( ! wp_next_scheduled( 'ig_es_cron_auto_responder' ) ) {
@@ -127,21 +128,24 @@ class ES_Cron {
 			wp_schedule_event( floor( time() / 300 ) * 300, 'ig_es_cron_interval', 'ig_es_cron_worker' );
 		}
 
+		if ( ES_Service_Email_Sending::opted_for_sending_service() ) {
+			$sending_service->schedule_ess_cron();
+		}
+		
 		if ( ES()->is_pro() ) {
 
-			//-----------------------------> if not scheduled....schedule hook
 			if ( ! wp_next_scheduled('ig_es_calculate_engagement_score')) {
 				$local_time = 'midnight';
 				$timestamp  = strtotime( $local_time ) - ( get_option('gmt_offset') * HOUR_IN_SECONDS );
 				wp_schedule_event( $timestamp , 'daily', 'ig_es_calculate_engagement_score');
 			}
-			//Schedule hook only our bounce handling feature enabled
+
 			if ( 'yes' === get_option( 'ig_es_enable_bounce_handling_feature', 'yes' ) ) {
 				if ( ! wp_next_scheduled( 'ig_es_bounce_handler_cron_action' ) ) {
 					wp_schedule_event( time(), 'daily', 'ig_es_bounce_handler_cron_action', array() );
 				}
 			}
-			//-----------------------------<
+
 			$is_woocommerce_active = $ig_es_tracker::is_plugin_activated( 'woocommerce/woocommerce.php' );
 			if ( $is_woocommerce_active ) {
 

@@ -43,36 +43,17 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 
 		public function register_hooks() {
 
-			add_action( 'admin_init', array( $this, 'process_submission' ) );
-
-			// Add tracking fields data
-			add_filter( 'ig_es_campaign_data', array( $this, 'add_tracking_fields_data' ) );
-
-			// Check campaign wise open tracking is enabled.
-			add_filter( 'ig_es_track_open', array( $this, 'is_open_tracking_enabled' ), 10, 4 );
-
 			add_action( 'ig_es_before_' . IG_CAMPAIGN_TYPE_POST_NOTIFICATION . '_content_settings', array( $this, 'show_save_as_template' ) );
 			add_action( 'ig_es_before_' . IG_CAMPAIGN_TYPE_POST_DIGEST . '_content_settings', array( $this, 'show_save_as_template' ) );
 			add_action( 'ig_es_before_' . IG_CAMPAIGN_TYPE_NEWSLETTER . '_content_settings', array( $this, 'show_save_as_template' ) );
 
-			add_action( 'ig_es_' . IG_CAMPAIGN_TYPE_POST_NOTIFICATION . '_data', array( $this, 'add_post_notification_data' ) );
-
-			add_action( 'ig_es_' . IG_CAMPAIGN_TYPE_POST_DIGEST . '_data', array( $this, 'add_post_notification_data' ) );
-
 			// preview popup
 			add_action( 'ig_es_campaign_preview_options_content', array( $this, 'show_campaign_preview_options_content' ) );
-
-
-			if ( ! ES()->is_pro() ) {
-				// Add newsletter scheduler data
-				add_filter( 'ig_es_' . IG_CAMPAIGN_TYPE_NEWSLETTER . '_data', array( $this, 'add_broadcast_scheduler_data' ) );
-			}
 
 			add_action( 'wp_ajax_ig_es_draft_campaign', array( $this, 'draft_campaign' ) );
 			add_action( 'wp_ajax_ig_es_get_campaign_preview', array( $this, 'get_campaign_preview' ) );
 			add_action( 'wp_ajax_ig_es_save_as_template', array( $this, 'save_as_template' ) );
 
-			add_action( 'admin_notices', array( $this, 'show_new_keyword_notice' ) );
 			add_action( 'media_buttons', array( $this, 'add_tag_button' ) );
 		}
 
@@ -141,7 +122,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 
 				// Verify nonce.
 				if ( wp_verify_nonce( $campaign_nonce, 'ig-es-campaign-nonce' ) ) {
-					$campaign_data = ig_es_get_request_data( 'campaign_data', array(), false );
+					$campaign_data = ig_es_get_request_data( 'data', array(), false );
 					$list_id       = ! empty( $campaign_data['list_ids'] ) ? $campaign_data['list_ids'] : '';
 					$template_id   = ! empty( $campaign_data['template_id'] ) ? $campaign_data['template_id'] : '';
 					$subject       = ! empty( $campaign_data['subject'] ) ? $campaign_data['subject'] : '';
@@ -195,7 +176,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 								
 								$campaign_data['status'] = IG_ES_CAMPAIGN_STATUS_IN_ACTIVE; // Revert back camaign status to inactive(draft), if scheduling fails.
 								self::save_campaign( $campaign_data );
-								$this->campaign_data = ig_es_get_request_data( 'campaign_data' );
+								$this->campaign_data = ig_es_get_request_data( 'data' );
 								ES_Common::show_message( $error_message, 'error' );
 								return;
 							}
@@ -220,7 +201,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 
 			$campaign_id   = ig_es_get_request_data( 'list' );
 			$submitted     = ig_es_get_request_data( 'ig_es_campaign_submitted' );
-			$campaign_data = ig_es_get_request_data( 'campaign_data', array(), false );
+			$campaign_data = ig_es_get_request_data( 'data', array(), false );
 			$message_data  = array();
 
 			$campaign_action = ig_es_get_request_data( 'ig_es_campaign_action' );
@@ -256,7 +237,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			$campaign_type = isset( $this->campaign_data['type'] ) ? $this->campaign_data['type'] : '';
 			?>
 
-			<div id="ig-es-add-tags-button" class="merge-tags-wrapper relative bg-white inline-block">
+			<div id="ig-es-add-tags-button" data-editor-id="<?php echo esc_attr( $editor_id ); ?>" class="relative bg-white inline-block">
 				<button type="button" class="button">
 					<span class="dashicons dashicons-tag"></span>
 					<?php echo esc_html__( 'Add Tags', 'email-subscribers' ); ?>
@@ -264,7 +245,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 				<div x-show="open" id="ig-es-tags-dropdown" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100"
 				x-transition:leave-end="transform opacity-0 scale-95" class="absolute center-0 z-10 hidden w-56 origin-top-right rounded-md shadow-lg">
 					<div class="bg-white rounded-md shadow-xs">
-						<?php $this->show_merge_tags( $campaign_type ); ?>
+						<?php $this->show_merge_tags( $campaign_type, $editor_id ); ?>
 					</div>
 				  </div>
 		  </div>
@@ -443,8 +424,11 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			return apply_filters( 'ig_es_dnd_site_tags', $site_tags );
 		}
 
-		public function show_merge_tags( $campaign_type ) {
+		public function show_merge_tags( $campaign_type, $target_elem_id ) {
 			$subscriber_tags = $this->get_subscriber_tags();
+			?>
+			<div class="merge-tags-wrapper" data-target-elem-id="<?php echo esc_attr( $target_elem_id ); ?>">
+			<?php
 			if ( ! empty( $subscriber_tags ) ) {
 				?>
 				<div id="ig-es-subscriber-tags" class="pt-2">
@@ -482,6 +466,9 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 				</div>
 				<?php
 			}
+			?>
+			</div>
+			<?php
 		}
 
 		public function render_merge_tags( $merge_tags = array() ) {
@@ -622,10 +609,10 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 				}
 				?>
 				<form action="#" method="POST" id="campaign_form">
-					<input type="hidden" id="campaign_id" name="campaign_data[id]" value="<?php echo esc_attr( $campaign_id ); ?>"/>
-					<input type="hidden" id="campaign_status" name="campaign_data[status]" value="<?php echo esc_attr( $campaign_status ); ?>"/>
-					<input type="hidden" id="campaign_type" name="campaign_data[type]" value="<?php echo esc_attr( $campaign_type ); ?>"/>
-					<input type="hidden" id="editor_type" name="campaign_data[meta][editor_type]" value="<?php echo esc_attr( $editor_type ); ?>"/>
+					<input type="hidden" id="campaign_id" name="data[id]" value="<?php echo esc_attr( $campaign_id ); ?>"/>
+					<input type="hidden" id="campaign_status" name="data[status]" value="<?php echo esc_attr( $campaign_status ); ?>"/>
+					<input type="hidden" id="campaign_type" name="data[type]" value="<?php echo esc_attr( $campaign_type ); ?>"/>
+					<input type="hidden" id="editor_type" name="data[meta][editor_type]" value="<?php echo esc_attr( $editor_type ); ?>"/>
 					<?php wp_nonce_field( 'ig-es-campaign-nonce', 'ig_es_campaign_nonce' ); ?>
 					<fieldset class="block es_fieldset">
 						<div class="mx-auto wp-heading-inline max-w-7xl">
@@ -701,10 +688,17 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 										</div>
 
 										<span id="campaign_summary_actions_buttons_wrapper" class="hidden md:ml-2 xl:ml-2">
-											<button type="submit" id="ig_es_save_campaign_btn" name="ig_es_campaign_action" class="inline-flex justify-center w-24 py-1.5 text-sm font-medium leading-5 text-indigo-600 transition duration-150 ease-in-out border border-indigo-500 rounded-md cursor-pointer select-none pre_btn md:px-1 lg:px-3 xl:px-4 hover:text-indigo-500 hover:border-indigo-600 hover:shadow-md focus:outline-none focus:shadow-outline-indigo focus:shadow-lg" value="save">
+											<button type="button" id="save_campaign_btn" name="ig_es_campaign_action" class="ig-es-inline-loader inline-flex justify-center w-24 py-1.5 text-sm font-medium leading-5 text-indigo-600 transition duration-150 ease-in-out border border-indigo-500 rounded-md cursor-pointer select-none pre_btn md:px-1 lg:px-3 xl:px-4 hover:text-indigo-500 hover:border-indigo-600 hover:shadow-md focus:outline-none focus:shadow-outline-indigo focus:shadow-lg" value="save">
 												<span class="ig_es_campaign_send_option_text">
 													<?php echo esc_html__( 'Save', 'email-subscribers' ); ?>
 												</span>
+												<svg class="es-btn-loader animate-spin h-4 w-4 text-indigo"
+																xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+													<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+															stroke-width="4"></circle>
+													<path class="opacity-75" fill="currentColor"
+															d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+												</svg>
 											</button>
 											<?php
 												do_action( 'ig_es_show_' . $campaign_type . '_campaign_summary_action_buttons', $campaign_data );
@@ -731,13 +725,14 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 														 x-transition:leave-end="transform opacity-0 scale-95" class="absolute right-0 mt-2 z-10 hidden w-56 origin-top-right rounded-md shadow-lg">
 															<div class="bg-white rounded-md shadow-xs">
 																<?php
-																$this->show_merge_tags( $campaign_type );
+																$target_elem_id = 'ig_es_campaign_subject';
+																$this->show_merge_tags( $campaign_type, $target_elem_id );
 																?>
 															</div>
 														</div>
 													</div>
 													<div>
-														<input id="ig_es_campaign_subject"  style="width:95%;" class="outline-none" name="campaign_data[subject]" value="<?php echo esc_attr( $campaign_subject ); ?>"/>
+														<input id="ig_es_campaign_subject"  style="width:95%;" class="outline-none" name="data[subject]" value="<?php echo esc_attr( $campaign_subject ); ?>"/>
 													</div>
 													
 												</div>
@@ -746,7 +741,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 												<label class="text-sm font-medium leading-5 text-gray-700"><?php echo esc_html__( 'Preheader', 'email-subscribers' ); ?></label>
 												<div class="w-full mt-1 relative text-sm leading-5 rounded-md shadow-sm form-input border-gray-400">
 													<div>
-														<input style="width:100%;" class="outline-none" name="campaign_data[preheader]" value="<?php echo esc_attr( $campaign_preheader ); ?>"/>
+														<input style="width:100%;"  id= "ig_es_campaign_preheader"  class="outline-none" name="data[preheader]" value="<?php echo esc_attr( $campaign_preheader ); ?>"/>
 													</div>
 												</div>
 											</div>
@@ -757,7 +752,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 													$editor_id       = 'edit-es-campaign-body';
 													$editor_content  = ! empty( $campaign_data['body'] ) ? $campaign_data['body'] : $this->get_campaign_default_content();
 													$editor_settings = array(
-														'textarea_name' => 'campaign_data[body]',
+														'textarea_name' => 'data[body]',
 														'textarea_rows' => 40,
 														'media_buttons' => true,
 														'tinymce'      => true,
@@ -770,15 +765,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 													$this->show_avaialable_keywords();
 												} else {
 													?>
-													<div id="ig-es-dnd-merge-tags" class="hidden">
-														<div x-show="open" id="ig-es-dnd-tags-dropdown" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100"
-														x-transition:leave-end="transform opacity-0 scale-95" class="absolute center-0 z-10 hidden w-56 origin-top-right rounded-md shadow-lg">
-															<div class="bg-white rounded-md shadow-xs">
-																<?php $this->show_merge_tags( $campaign_type ); ?>
-															</div>
-														</div>
-													</div>
-													<textarea id="campaign-dnd-editor-data" name="campaign_data[meta][dnd_editor_data]" style="display:none;">
+													<textarea id="campaign-dnd-editor-data" name="data[meta][dnd_editor_data]" style="display:none;">
 														<?php
 															$dnd_editor_data     = ! empty( $campaign_data['meta']['dnd_editor_data'] ) ? $campaign_data['meta']['dnd_editor_data'] : $this->get_campaign_default_content();
 															echo esc_html( $dnd_editor_data );
@@ -790,7 +777,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 															if ( '' !== editor_data ) {
 																let is_valid_json = ig_es_is_valid_json( editor_data );
 																if ( is_valid_json ) {
-																	editor_data = JSON.parse( editor_data );
+																	editor_data = JSON.parse( `${editor_data}` );
 																}
 																jQuery(document).on("es_drag_and_drop_editor_loaded",function (event) {
 																	window.esVisualEditor.importMjml(editor_data);
@@ -822,54 +809,18 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 											</div>
 											<script>
 												jQuery(document).ready(function($){
-													var clipboard = new ClipboardJS('.ig-es-merge-tag', {
-													text: function(trigger) {
-															let tag_text = $(trigger).data('tag-text');
-															if ( '' === tag_text ) {
-																tag_text = $(trigger).text();
-															}
-															return tag_text.trim();
-													}
-													});
+													
 
-													clipboard.on('success', function(e) {
-														let sourceElem    = e.trigger;
-														let sourceID	  = $(sourceElem).closest('.merge-tags-wrapper').attr('id');
-														let targetID      = 'ig-es-add-tag-icon' === sourceID ? 'ig_es_campaign_subject': 'edit-es-campaign-body';
-														let clipBoardText = e.text;
-														let editorType    = $('#editor_type').val();
-														if ( 'classic' === editorType || 'ig_es_campaign_subject' === targetID ) {
-															var target        = document.getElementById(targetID);
-											
-															if (target.setRangeText) {
-																target.focus();
-																//if setRangeText function is supported by current browser
-																target.setRangeText(clipBoardText);
-															} else {
-																target.focus()
-																document.execCommand('insertText', false /*no UI*/, clipBoardText);
-															}
-															if ( 'edit-es-campaign-body' === targetID && 'undefined' !== typeof tinymce.activeEditor ) {
-																tinymce.activeEditor.execCommand('mceInsertContent', false, clipBoardText);
-															}
-														} else {
-															// Insert placeholders into DND editor
-															// var canvasDoc = window.esVisualEditor.Canvas.getBody().ownerDocument;
-															// // Insert text at the current pointer position
-															// canvasDoc.execCommand("insertText", false, 'Test');
-															let selectedComponent = window.esVisualEditor.getSelected();
-															let selectedContent   = selectedComponent.get('content');
-															selectedComponent.set({
-																content: selectedContent + clipBoardText
-															});
-															$("#ig-es-dnd-merge-tags-wrapper #ig-es-dnd-tags-dropdown").hide();
+													<?php
+													if ( IG_ES_DRAG_AND_DROP_EDITOR === $editor_type ) {
+														?>
+														let campaign_type = '<?php echo esc_attr( $campaign_type ); ?>';
+														if ( 'newsletter' === campaign_type ) {
+															window.esVisualEditor.RichTextEditor.remove('es-tags');
 														}
-													});
-
-													let campaign_type = '<?php echo esc_attr( $campaign_type ); ?>';
-													if ( 'newsletter' === campaign_type ) {
-														window.esVisualEditor.RichTextEditor.remove('es-tags');
+														<?php
 													}
+													?>
 												});
 											</script>
 											<?php do_action( 'ig_es_after_campaign_left_pan_settings', $campaign_data ); ?>
@@ -915,7 +866,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 										<?php
 										$editor_settings = array(
 											'attributes' => array(
-												'data-html-textarea-name'  => 'campaign_data[body]',
+												'data-html-textarea-name'  => 'data[body]',
 											),
 										);
 										( new ES_Drag_And_Drop_Editor() )->show_editor( $editor_settings );
@@ -979,7 +930,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 														</label>
 													</div>
 													<div class="w-8/12">
-														<input id="from_name" class="block w-full mt-1 text-sm leading-5 border-gray-400 rounded-md shadow-sm form-input" name="campaign_data[from_name]" value="<?php echo esc_attr( $campaign_from_name ); ?>"/>
+														<input id="from_name" class="block w-full mt-1 text-sm leading-5 border-gray-400 rounded-md shadow-sm form-input" name="data[from_name]" value="<?php echo esc_attr( $campaign_from_name ); ?>"/>
 													</div>
 												</div>
 												<div class="flex w-full pb-1">
@@ -987,7 +938,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 														<label for="from_email" class="text-sm font-medium leading-10 text-gray-700"><?php echo esc_html__( 'From Email', 'email-subscribers' ); ?></label>
 													</div>
 													<div class="w-8/12">
-														<input id="from_email" class="block w-full mt-1 text-sm leading-5 border-gray-400 rounded-md shadow-sm form-input" name="campaign_data[from_email]" value="<?php echo esc_attr( $campaign_email ); ?>"/>
+														<input id="from_email" class="block w-full mt-1 text-sm leading-5 border-gray-400 rounded-md shadow-sm form-input" name="data[from_email]" value="<?php echo esc_attr( $campaign_email ); ?>"/>
 													</div>
 												</div>
 												<div class="flex w-full pb-1">
@@ -995,7 +946,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 														<label for="reply_to" class="text-sm font-medium leading-10 text-gray-700"><?php echo esc_html__( 'Reply To', 'email-subscribers' ); ?></label>
 													</div>
 													<div class="w-8/12">
-														<input id="reply_to" class="block w-full mt-1 text-sm leading-5 border-gray-400 rounded-md shadow-sm form-input" name="campaign_data[reply_to_email]" value="<?php echo esc_attr( $campaign_reply_to ); ?>"/>
+														<input id="reply_to" class="block w-full mt-1 text-sm leading-5 border-gray-400 rounded-md shadow-sm form-input" name="data[reply_to_email]" value="<?php echo esc_attr( $campaign_reply_to ); ?>"/>
 													</div>
 												</div>
 											</div>
@@ -1024,7 +975,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 													<label for="enable_open_tracking" class="inline-flex items-center cursor-pointer ">
 													<span class="relative">
 														<input id="enable_open_tracking" type="checkbox" class="absolute w-0 h-0 opacity-0 es-check-toggle"
-															name="campaign_data[meta][enable_open_tracking]" value="yes"  <?php checked( $enable_open_tracking, 'yes' ); ?>/>
+															name="data[meta][enable_open_tracking]" value="yes"  <?php checked( $enable_open_tracking, 'yes' ); ?>/>
 														<span class="block w-8 h-5 bg-gray-300 rounded-full shadow-inner es-mail-toggle-line"></span>
 														<span class="absolute inset-y-0 left-0 block w-3 h-3 mt-1 ml-1 transition-all duration-300 ease-in-out bg-white rounded-full shadow es-mail-toggle-dot focus-within:shadow-outline"></span>
 													</span>
@@ -1329,7 +1280,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 
 			$response = array();
 
-			$campaign_data = ig_es_get_request_data( 'campaign_data', array(), false );
+			$campaign_data = ig_es_get_request_data( 'data', array(), false );
 
 			/**
 			 * To allow insert of new campaign data,
@@ -1395,7 +1346,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			$response = array();
 
 			$preview_type  = ig_es_get_request_data( 'preview_type' );
-			$campaign_data = ig_es_get_request_data( 'campaign_data', array(), false );
+			$campaign_data = ig_es_get_request_data( 'data', array(), false );
 
 			$template_data                = array();
 			$template_data['content']     = ! empty( $campaign_data['body'] ) ? $campaign_data['body'] : '';
@@ -1462,85 +1413,6 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			return $preview_data;
 		}
 
-		/**
-		 * Function to add values of checkbox fields incase they are not checked.
-		 *
-		 * @param array $campaign_data
-		 *
-		 * @return array $campaign_data
-		 *
-		 * @since 4.4.7
-		 */
-		public function add_tracking_fields_data( $campaign_data = array() ) {
-
-			$campaign_meta = ! empty( $campaign_data['meta'] ) ? maybe_unserialize( $campaign_data['meta'] ) : array();
-
-			if ( empty( $campaign_meta['enable_open_tracking'] ) ) {
-				$campaign_meta['enable_open_tracking'] = 'no';
-			}
-
-			$campaign_data['meta'] = maybe_serialize( $campaign_meta );
-
-			return $campaign_data;
-		}
-
-		/**
-		 * Method to check if open tracking is enabled campaign wise.
-		 *
-		 * @param bool  $is_track_email_opens Is open tracking enabled.
-		 * @param int   $contact_id Contact ID.
-		 * @param int   $campaign_id Campaign ID.
-		 * @param array $link_data Link data.
-		 *
-		 * @return bool $is_track_email_opens Is open tracking enabled.
-		 *
-		 * @since 4.4.7
-		 */
-		public function is_open_tracking_enabled( $is_track_email_opens, $contact_id, $campaign_id, $link_data ) {
-			if ( ! empty( $link_data ) ) {
-				$campaign_id = ! empty( $link_data['campaign_id'] ) ? $link_data['campaign_id'] : 0;
-				if ( ! empty( $campaign_id ) ) {
-					$campaign = ES()->campaigns_db->get( $campaign_id );
-					if ( ! empty( $campaign ) ) {
-						$campaign_type = $campaign['type'];
-
-						$supported_campaign_types = array(
-							IG_CAMPAIGN_TYPE_NEWSLETTER,
-							IG_CAMPAIGN_TYPE_POST_NOTIFICATION,
-							IG_CAMPAIGN_TYPE_POST_DIGEST,
-							IG_CAMPAIGN_TYPE_WORKFLOW_EMAIL
-						);
-
-						$is_supported_type = in_array( $campaign_type, $supported_campaign_types, true );
-						if ( $is_supported_type ) {
-							$campaign_meta        = maybe_unserialize( $campaign['meta'] );
-							$is_track_email_opens = ! empty( $campaign_meta['enable_open_tracking'] ) ? $campaign_meta['enable_open_tracking'] : $is_track_email_opens;
-						}
-					}
-				}
-			}
-
-			return $is_track_email_opens;
-		}
-
-		public function add_post_notification_data( $campaign_data ) {
-
-			$categories         = ! empty( $campaign_data['es_note_cat'] ) ? $campaign_data['es_note_cat'] : array();
-			$es_note_cat_parent = $campaign_data['es_note_cat_parent'];
-			$categories         = ( ! empty( $es_note_cat_parent ) && in_array( $es_note_cat_parent, array( '{a}All{a}', '{a}None{a}' ), true ) ) ? array( $es_note_cat_parent ) : $categories;
-
-			// Check if custom post types are selected.
-			if ( ! empty( $campaign_data['es_note_cpt'] ) ) {
-				// Merge categories and selected custom post types.
-				$categories = array_merge( $categories, $campaign_data['es_note_cpt'] );
-			}
-
-
-			$campaign_data['categories'] = ES_Common::convert_categories_array_to_string( $categories );
-
-			return $campaign_data;
-		}
-
 		public static function replace_post_notification_merge_tags_with_sample_post( $campaign_data ) {
 
 			if ( ! empty( $campaign_data['id'] ) ) {
@@ -1584,41 +1456,6 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			}
 
 			return $campaign_data;
-		}
-
-		/**
-		 * Add required broadcast schedule date/time data
-		 *
-		 * @param array $data
-		 *
-		 * @return array $data
-		 *
-		 * @since 4.4.7
-		 */
-		public function add_broadcast_scheduler_data( $data ) {
-
-			$scheduling_option = ! empty( $data['scheduling_option'] ) ? $data['scheduling_option'] : 'schedule_now';
-
-			$schedule_str = '';
-
-			if ( 'schedule_now' === $scheduling_option ) {
-				// Get time without GMT offset, as we are adding later on.
-				$schedule_str = current_time( 'timestamp', false );
-			}
-
-			if ( ! empty( $schedule_str ) ) {
-				$gmt_offset_option = get_option( 'gmt_offset' );
-				$gmt_offset        = ( ! empty( $gmt_offset_option ) ) ? $gmt_offset_option : 0;
-				$schedule_date     = gmdate( 'Y-m-d H:i:s', $schedule_str - ( $gmt_offset * HOUR_IN_SECONDS ) );
-
-				$data['start_at'] = $schedule_date;
-				$meta             = ! empty( $data['meta'] ) ? maybe_unserialize( $data['meta'] ) : array();
-				$meta['type']     = 'one_time';
-				$meta['date']     = $schedule_date;
-				$data['meta']     = maybe_serialize( $meta );
-			}
-
-			return $data;
 		}
 
 		public function show_avaialable_keywords() {
@@ -1675,7 +1512,7 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 
 			$response = array();
 
-			$campaign_data       = ig_es_get_request_data( 'campaign_data', array(), false );
+			$campaign_data       = ig_es_get_request_data( 'data', array(), false );
 			$campaign_type       = ! empty( $campaign_data['type'] ) ? $campaign_data['type'] : IG_ES_DRAG_AND_DROP_EDITOR;
 			$campaign_body       = ! empty( $campaign_data['body'] ) ? $campaign_data['body'] : '';
 			$campaign_subject    = ! empty( $campaign_data['subject'] ) ? $campaign_data['subject'] : '';
@@ -1723,38 +1560,6 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			}
 
 			return $response;
-		}
-
-		public function show_new_keyword_notice() {
-			$notice_pages   = array( 'es_notifications', 'es_templates', 'es_newsletters', 'es_sequence' );
-			$current_page   = ig_es_get_request_data( 'page' );
-			$is_notice_page = in_array( $current_page, $notice_pages, true );
-			if ( ! $is_notice_page ) {
-				return;
-			}
-
-			$action           = ig_es_get_request_data( 'action' );
-			$campaign_actions = array( 'new', 'edit' );
-			$allowed_action   = in_array( $action, $campaign_actions, true );
-			if ( ! $allowed_action ) {
-				return;
-			}
-
-			$new_keyword_notice_shown = get_option( 'ig_es_new_keyword_notice_shown', 'no' );
-			if ( 'no' === $new_keyword_notice_shown ) {
-				$new_keyword_doc_url = 'https://www.icegram.com/documentation/what-keywords-can-be-used-while-designing-the-campaign/?utm_source=es&utm_medium=in_app&utm_campaign=new_keyword_notice';
-				?>
-				<div class="notice notice-success is-dismissible">
-					<p>
-					<?php
-						/* translators: %s: link to new keyword doc */
-						echo sprintf( esc_html__( '%1$s[Update]%2$s: Improved keyword structure. Made it easy to use in campaign. Checkout %3$shere%4$s.', 'email-subscribers' ), '<strong>', '</strong>', '<a href="' . esc_url( $new_keyword_doc_url ) . '" target="_blank">', '</a>');
-					?>
-					</p>
-				</div>
-				<?php
-				update_option( 'ig_es_new_keyword_notice_shown', 'yes', false );
-			}
 		}
 	}
 

@@ -19,7 +19,7 @@ if ( ! function_exists( 'ig_es_get_additional_info' ) ) {
 			$additional_info['server_info']      = $ig_es_tracker::get_server_info();
 
 			// ES Specific information
-			$additional_info['plugin_meta_info'] = ES_Common::get_ig_es_meta_info();
+			$additional_info['plugin_meta_info'] = ES_Plugin_Usage_Data_Collector::get_ig_es_meta_info();
 		}
 
 		return $additional_info;
@@ -474,4 +474,4 @@ if ( ! function_exists( 'ig_es_show_feature_survey' ) ) {
 	}
 }
 
-add_action( 'admin_notices', 'ig_es_show_feature_survey' );
+//add_action( 'admin_notices', 'ig_es_show_feature_survey' );

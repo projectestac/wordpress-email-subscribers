@@ -2,8 +2,6 @@
 
 // Exit if accessed directly
 
-use BaconQrCode\Common\ReedSolomonCodec;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -186,6 +184,9 @@ if ( ! class_exists( 'ES_Gallery' ) ) {
 						ES()->campaigns_db->update( $campaign_id, $campaign_data );
 					} else {
 						$campaign_id = ES()->campaigns_db->save_campaign( $campaign_data );
+						if ( in_array( $campaign_type, array( IG_CAMPAIGN_TYPE_POST_NOTIFICATION, IG_CAMPAIGN_TYPE_POST_DIGEST ), true ) ) {
+							ES_Campaign_Controller::add_to_new_category_format_campaign_ids( $campaign_id );
+						}
 					}
 
 				}
@@ -202,7 +203,7 @@ if ( ! class_exists( 'ES_Gallery' ) ) {
 
 			$template_version = ! empty( $gallery_item->template_version ) ? $gallery_item->template_version : '';
 			
-			if ( '1.0.0' === $template_version ) {
+			if ( in_array( $template_version, array('1.0.0', '1.0.1') ) ) {
 				$subject       = $gallery_item->title->rendered;
 				$content       = $gallery_item->content->rendered;
 				$from_email    = ES_Common::get_ig_option( 'from_email' );
@@ -268,6 +269,9 @@ if ( ! class_exists( 'ES_Gallery' ) ) {
 						$imported_gallery_template_ids   = get_option( 'ig_es_imported_remote_gallery_template_ids', array() );
 						$imported_gallery_template_ids[] = $template_id;
 						update_option( 'ig_es_imported_remote_gallery_template_ids', $imported_gallery_template_ids );
+						if ( in_array( $campaign_type, array( IG_CAMPAIGN_TYPE_POST_NOTIFICATION, IG_CAMPAIGN_TYPE_POST_DIGEST ), true ) ) {
+							ES_Campaign_Controller::add_to_new_category_format_campaign_ids( $campaign_id );
+						}
 					}
 				}
 			}
@@ -284,7 +288,7 @@ if ( ! class_exists( 'ES_Gallery' ) ) {
 
 			$template_version = ! empty( $gallery_item->template_version ) ? $gallery_item->template_version : '';
 			
-			if ( '1.0.0' === $template_version ) {
+			if ( in_array( $template_version, array('1.0.0', '1.0.1') ) ) {
 				$subject       = $gallery_item->title->rendered;
 				$content       = $gallery_item->content->rendered;
 				$editor_type   = ! empty( $gallery_item->es_editor_type ) ? $gallery_item->es_editor_type : IG_ES_CLASSIC_EDITOR;
@@ -452,7 +456,7 @@ if ( ! class_exists( 'ES_Gallery' ) ) {
 			if ( ! empty( $remote_gallery_items ) ) {
 				foreach ( $remote_gallery_items as $item ) {
 					$template_version = $item->template_version;
-					if ( '1.0.0' === $template_version ) {
+					if ( in_array( $template_version, array('1.0.0', '1.0.1') ) ) {
 						$template_slug = $item->slug;
 						// Don't add remote template if local template with same slug already exists. This is to avoid duplicates.
 						if ( isset( $gallery_items[ $template_slug ] ) ) {
@@ -466,6 +470,7 @@ if ( ! class_exists( 'ES_Gallery' ) ) {
 						$campaign_type = ! empty( $item->es_template_type ) ? $item->es_template_type : IG_CAMPAIGN_TYPE_NEWSLETTER;
 						$es_plan       = ! empty( $item->es_plan ) ? $item->es_plan : 'lite';
 						$gallery_type  = 'remote';
+						$template_version = ! empty( $item->template_version ) ? $item->template_version : '1.0.0';
 						
 						$categories = array(
 							$campaign_type,
@@ -477,14 +482,15 @@ if ( ! class_exists( 'ES_Gallery' ) ) {
 						}
 
 						$gallery_items[$template_slug] = array(
-							'ID'           => $item_id,
-							'title'        => $item_title,
-							'thumbnail'    => $thumbnail_url,
-							'categories'   => $categories,
-							'type'		   => $campaign_type,
-							'editor_type'  => $editor_type,
-							'gallery_type' => 'remote',
-							'es_plan'      => $es_plan,
+							'ID'           		=> $item_id,
+							'title'        		=> $item_title,
+							'thumbnail'    		=> $thumbnail_url,
+							'categories'   		=> $categories,
+							'type'		   		=> $campaign_type,
+							'editor_type'  		=> $editor_type,
+							'gallery_type' 		=> 'remote',
+							'es_plan'      		=> $es_plan,
+							'template_version'	=> $template_version,
 						);
 					}
 				}

@@ -61,7 +61,6 @@ class IG_ES_Variables_Processor {
 		}
 		
 		$variable = self::parse_variable( $string );
-
 		if ( ! $variable ) {
 			return '';
 		}
@@ -120,7 +119,7 @@ class IG_ES_Variables_Processor {
 
 		$variable_name = "$data_type.$data_field";
 		$variable      = IG_ES_Variables::get_variable( $variable_name );
-
+		
 		$value = '';
 
 		if ( $variable instanceof IG_ES_Workflow_Variable && method_exists( $variable, 'get_value' ) ) {
@@ -129,8 +128,10 @@ class IG_ES_Variables_Processor {
 				$value = $variable->get_value( $parameters, $this->workflow );
 			} else {
 				$data_item = $this->workflow->get_data_item( $variable->get_data_type() );
+			
 				if ( $data_item ) {
 					$value = $variable->get_value( $data_item, $parameters, $this->workflow );
+					
 				}
 			}
 		}
@@ -167,6 +168,12 @@ class IG_ES_Variables_Processor {
 	 * @return bool
 	 */
 	public static function is_excluded( $variable ) {
+
+		$is_site_tag       = false !== strpos( $variable, 'site.' );
+
+		if ( $is_site_tag ) {
+			return true;
+		}
 		 
 		$excluded = apply_filters('ig_es_variables_processor_excluded', array(
 		   'EMAIL',
@@ -186,7 +193,7 @@ class IG_ES_Variables_Processor {
 		   'DATE',
 		));
 
-		return in_array( $variable, $excluded );
+		return in_array( $variable, $excluded, true );
 	}
 
 }

@@ -495,11 +495,20 @@ class ES_Post_Notifications_Table {
 
 		if ( $is_campaign_inactive ) {
 			?>
-			<button type="submit" name="ig_es_campaign_action" class="w-24 inline-flex justify-center py-1.5 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-indigo-600 border border-transparent rounded-md md:px-2 lg:px-3 xl:px-4 md:ml-2 hover:bg-indigo-500 hover:text-white"
+			<button type="button" id="activate_campaign_btn" name="ig_es_campaign_action" class="ig-es-inline-loader w-24 inline-flex justify-center py-1.5 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-indigo-600 border border-transparent rounded-md md:px-2 lg:px-3 xl:px-4 md:ml-2 hover:bg-indigo-500 hover:text-white"
 					value="activate">
-				<?php
-					echo esc_html__( 'Activate', 'email-subscribers' );
-				?>
+				<span>
+					<?php
+						echo esc_html__( 'Activate', 'email-subscribers' );
+					?>
+				</span> 
+				<svg class="es-btn-loader animate-spin h-4 w-4 text-indigo"
+								xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+					<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+							stroke-width="4"></circle>
+					<path class="opacity-75" fill="currentColor"
+							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+				</svg>
 			</button>
 			<?php
 		}
@@ -581,7 +590,30 @@ class ES_Post_Notifications_Table {
 	public function show_post_notification_fields( $campaign_data ) {
 		// We are storing both post categories and CPTs in one column 'categories'.
 		$categories    = isset( $campaign_data['categories'] ) ? $campaign_data['categories'] : '';
-		$cat_cpts      = ES_Common::convert_categories_string_to_array( $categories, true );
+		$campaign_id   = ! empty( $campaign_data['id'] ) ? $campaign_data['id'] : 0;
+		$selected_post_types = array();
+		$using_new_category_format = ES_Campaign_Controller::is_using_new_category_format( $campaign_id );
+		if ( $using_new_category_format ) {
+			$cat_cpts = array();
+			$categories_str      = trim( trim( $categories ), '##' );
+			$categories_array     = explode( '##', $categories_str );
+			if ( ! empty( $categories_array ) ) {
+				foreach ( $categories_array as $category ) {
+					$cpt_categories = explode( '|', $category );
+					foreach ( $cpt_categories as $cpt_category ) {
+						if ( false !== strpos( $cpt_category, ':' ) ) {
+							list( $post_type, $post_type_categories ) = explode( ':', $cpt_category );
+							if ( 'post' === $post_type ) {
+								$cat_cpts = explode( ',', $post_type_categories );
+							}
+							$selected_post_types[] = $post_type;
+						}
+					}
+				}
+			}
+		} else {
+			$cat_cpts      = ES_Common::convert_categories_string_to_array( $categories, true );
+		}
 		$allowedtags   = ig_es_allowed_html_tags_in_esc();
 		$campaign_type = ! empty( $campaign_data['type'] ) ? $campaign_data['type'] : '';
 		$editor_type   = ! empty( $campaign_data['meta']['editor_type'] ) ? $campaign_data['meta']['editor_type'] : IG_ES_DRAG_AND_DROP_EDITOR;
@@ -620,14 +652,15 @@ class ES_Post_Notifications_Table {
 					<tbody>
 					<?php
 
-					$selected_post_types = array();
+					if ( ! $using_new_category_format ) {
 
-					if ( ! empty( $cat_cpts ) ) {
-						foreach ( $cat_cpts as $cat_cpt ) {
-							// CPTs are stored in the 'categories' column with {T} prefix/suffix.
-							$is_post_type = strpos( $cat_cpt, '{T}' ) !== false;
-							if ( $is_post_type ) {
-								$selected_post_types[] = str_replace( '{T}', '', $cat_cpt );
+						if ( ! empty( $cat_cpts ) ) {
+							foreach ( $cat_cpts as $cat_cpt ) {
+								// CPTs are stored in the 'categories' column with {T} prefix/suffix.
+								$is_post_type = strpos( $cat_cpt, '{T}' ) !== false;
+								if ( $is_post_type ) {
+									$selected_post_types[] = str_replace( '{T}', '', $cat_cpt );
+								}
 							}
 						}
 					}
@@ -651,7 +684,7 @@ class ES_Post_Notifications_Table {
 									<span class="block pr-4 text-sm font-medium text-gray-600 pb-2">
 										<input
 											type="checkbox"
-											id="es_custom_post_type_<?php echo esc_attr( $post_type ); ?>" name="campaign_data[es_note_cpt][]"
+											id="es_custom_post_type_<?php echo esc_attr( $post_type ); ?>" name="data[es_note_cpt][]"
 											value="<?php echo '{T}' . esc_html( $post_type ) . '{T}'; ?>"
 											<?php echo esc_attr( $checked ); ?>
 											class="es_custom_post_type form-checkbox"

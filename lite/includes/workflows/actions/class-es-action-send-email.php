@@ -186,6 +186,7 @@ if ( ! class_exists( 'ES_Action_Send_Email' ) ) {
 								
 								$email_content = str_replace( '{{EMAIL}}', $data['email'], $email_content );
 								$email_content = str_replace( '{{NAME}}', $data['name'], $email_content );
+								$email_content = str_replace( '{{LIST}}', $data['list_name'], $email_content );
 							}
 						}
 	
@@ -215,9 +216,9 @@ if ( ! class_exists( 'ES_Action_Send_Email' ) ) {
 				}
 
 				if ( $tracking_enabled ) {
-					$es_mailer->add_tracking_pixel = true;
+					$es_mailer->can_track_open_clicks = true;
 				} else {
-					$es_mailer->add_tracking_pixel = false;
+					$es_mailer->can_track_open_clicks = false;
 				}
 	
 				$es_mailer->add_unsubscribe_link = false;

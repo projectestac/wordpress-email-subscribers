@@ -861,6 +861,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				// Start-IG-Code.
 				'lite/includes/feedback/class-ig-feedback.php',
 				'lite/includes/feedback/class-ig-plugin-usage-tracker.php',
+				'lite/includes/class-es-plugin-usage-data-collector.php',
 				'lite/includes/feedback.php',
 				// End-IG-Code.
 
@@ -938,7 +939,6 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/workflows/class-es-workflow-triggers.php',
 
 				// rest api
-				'lite/includes/rest-api/class-es-archived-campaigns-request-handler.php',
 				'lite/includes/rest-api/class-es-rest-api-handler.php',
 
 				// Icegram site's weekly email summary automation
@@ -1002,6 +1002,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/admin/class-es-gb-subscription-form-block.php',
 
 				'lite/admin/class-es-rest-api-admin.php',
+				'lite/includes/classes/class-es-router.php',
+				'lite/includes/controllers/class-es-campaign-controller.php',
 
 				'starter/starter-class-email-subscribers.php',
 				'pro/pro-class-email-subscribers.php',
@@ -1457,16 +1459,17 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				}
 
 				$plugin_usage_tracker_class = 'IG_Plugin_Usage_Tracker_V_' . str_replace( '.', '_', IG_ES_PLUGIN_USAGE_TRACKER_VERSION );
+
+				$enable_on_dev = false;
+
 				if ( class_exists( $plugin_usage_tracker_class ) ) {
-					new $plugin_usage_tracker_class( $name, $text_domain, $plugin_abbr, $product_id, $plugin_plan, $plugin_file_path, $ig_es_tracker, $allowed_by_default );
+					new $plugin_usage_tracker_class( $name, $text_domain, $plugin_abbr, $product_id, $plugin_plan, $plugin_file_path, $ig_es_tracker, $allowed_by_default, $enable_on_dev );
 				}
 				// End-IG-Code.
 
 				add_action( 'admin_init', array( self::$instance, 'add_admin_notice' ) );
 				add_filter( 'ig_es_service_request_data', array( self::$instance, 'add_service_authentication_data' ) );
 				add_filter( 'ig_es_plan', array( self::$instance, 'add_trial_plan' ) );
-
-				add_filter( 'ig_es_tracking_data_params', array( self::$instance, 'add_tracking_data' ) );
 
 				if ( ! post_type_exists( 'es_template' ) ) {
 					add_action( 'init', array( 'Email_Subscribers_Activator', 'register_email_templates' ) );
@@ -1506,23 +1509,6 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			}
 
 			return $plan;
-		}
-
-		/**
-		 * Method to add additional plugin usage tracking data specific to Icegram Express
-		 *
-		 * @param array $tracking_data
-		 *
-		 * @return array $tracking_data
-		 *
-		 * @since 4.7.7
-		 */
-		public function add_tracking_data( $tracking_data = array() ) {
-
-			$tracking_data['plugin_meta_info'] = ES_Common::get_ig_es_meta_info();
-			$tracking_data['guid']             = ES()->cron->get_cron_guid();
-
-			return $tracking_data;
 		}
 
 		/**

@@ -2659,10 +2659,6 @@ span.feedback_reason_dot {
     display: none;
 }
 
-.form-drag-and-drop-editor-container span#ig-es-dnd-merge-tags-wrapper {
-    display: none;
-}
-
 #edit-campaign-form-container[data-campaign-type="newsletter"] .gjs-block-category:nth-child(2),
 #edit-campaign-form-container:not([data-campaign-type="post_digest"]) .gjs-block[title="Posts"] {
     display: none;

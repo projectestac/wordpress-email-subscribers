@@ -161,9 +161,9 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 			$countries_data = ES_Geolocation::get_countries();
 
 			if ( 'es_newsletters' === $current_page ) {
-				$input_name = 'campaign_data[meta][list_conditions]';
+				$input_name = 'data[meta][list_conditions]';
 			} elseif ( 'es_notifications' === $current_page ) {
-				$input_name = 'campaign_data[meta][list_conditions]';
+				$input_name = 'data[meta][list_conditions]';
 			} else {
 				$input_name = 'seq_data[' . $campaign_id . '][list_conditions]';
 			}

@@ -704,4 +704,23 @@ class ES_DB_Actions extends ES_DB {
 			);
 		}
 	}
+
+	public function get_link_cliked_subscribers( $campaign_id = '', $link_id = '' ) {
+		global $wpdb;
+		$result = array();
+		if (!empty($campaign_id) && !empty($link_id) && is_numeric($campaign_id) && is_numeric($link_id)) {
+			$result = $wpdb->get_results($wpdb->prepare(
+				"SELECT c.email,c.first_name,c.last_name
+				FROM {$wpdb->prefix}ig_contacts AS c
+				INNER JOIN {$wpdb->prefix}ig_actions AS a ON c.id = a.contact_id
+				WHERE a.campaign_id = %d AND a.link_id = %d",
+				$campaign_id,
+				$link_id
+			), ARRAY_A);
+		}
+		   return $result;
+	}
+
+
+
 }

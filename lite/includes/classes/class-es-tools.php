@@ -44,6 +44,7 @@ class ES_Tools {
 		$subject       = ig_es_get_data( $_POST, 'subject', '', true );
 		$content       = ig_es_get_request_data( 'content', '', false );
 		$attachments   = ig_es_get_data( $_POST, 'attachments', array(), true );
+		$preheader   = ig_es_get_data( $_POST, 'preheader', array(), true );
 
 		if ( ! empty( $email ) ) {
 
@@ -64,6 +65,7 @@ class ES_Tools {
 				}
 
 				$merge_tags['campaign_id'] = $campaign_id;
+				$merge_tags['preheader'] = $preheader;
 
 				$subject = $campaign_data['subject'];
 				$content = $campaign_data['body'];

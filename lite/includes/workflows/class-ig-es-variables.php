@@ -31,7 +31,7 @@ class IG_ES_Variables {
 	 * 
 	 * @var array
 	 */
-	private static $included_variables = array();
+	private static $included_variables = array('subscriber'=>array('email','name','first_name','last_name'));
 
 
 	/**
@@ -48,17 +48,22 @@ class IG_ES_Variables {
 		$variables = array();
 		$included_variables = self::$included_variables;
 
+		if ( ES()->is_pro() ) {
+			$included_variables['subscriber'][] = 'unsubscribe_reason';
+		}
+
 		if ( ! empty( $included_variables ) ) {
 			// generate paths to included variables
 			foreach ( $included_variables as $data_type => $fields ) {
 				foreach ( $fields as $field ) {
 					$filename = str_replace( '_', '-', $data_type ) . '-' . str_replace( '_', '-', $field ) . '.php';
-					$variables[$data_type][$field] = ES_PLUGIN_DIR . 'lite/includes/workflows/variables/' . $filename;
+					$variables[$data_type][$field] = ES_PLUGIN_DIR . 'lite/includes/workflows/variables/' . $data_type . '/' . $filename;
 				}
 			}
 		}
-
+		
 		self::$variables_list = apply_filters( 'ig_es_workflow_variables', $variables );
+		
 		return self::$variables_list;
 	}
 
@@ -90,15 +95,13 @@ class IG_ES_Variables {
 	 * @return IG_ES_Variable|false
 	 */
 	public static function get_variable( $variable_name ) {
-
 		if ( isset( self::$loaded_variables[$variable_name] ) ) {
 			return self::$loaded_variables[$variable_name];
 		}
-
 		list( $data_type, $data_field ) = explode( '.', $variable_name );
 
 		$path = self::get_path_to_variable( $data_type, $data_field );
-
+		
 		if ( ! file_exists( $path ) ) {
 
 			if ( ! file_exists( $path ) ) {
@@ -116,9 +119,9 @@ class IG_ES_Variables {
 		if ( ! $variable_object ) {
 			return false;
 		}
-
+		
 		$variable_object->setup( $variable_name );
-
+		
 		self::$loaded_variables[$variable_name] = $variable_object;
 
 		return $variable_object;

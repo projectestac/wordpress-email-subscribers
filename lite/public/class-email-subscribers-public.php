@@ -154,10 +154,10 @@ class Email_Subscribers_Public {
 			$campaign_id = 0;
 		}
 
-		$email = sanitize_email( $email );
-		$email = str_replace( ' ', '+', $email );
-
+		
 		if ( ! empty( $option ) ) {
+			$email = sanitize_email( $email );
+			$email = str_replace( ' ', '+', $email );
 			if ( ( 'optin' === $option || 'unsubscribe' === $option ) && ! empty( $db_id ) ) {
 				//check if contact exist with id and email
 				$is_contact_exists = ES()->contacts_db->is_contact_exists( $db_id, $email );

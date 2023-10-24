@@ -39,44 +39,6 @@ class ES_Newsletter_Summary_Automation {
 	}
 
 	/**
-	 * Get latest Icegram newsletters
-	 *
-	 * @return array
-	 */
-	public static function get_latest_newsletters() {
-
-		$filter = array(
-			'limit' => 3,
-		);
-		
-		$options = array(
-			'filter' => $filter,
-		);
-
-		$request_url = 'https://www.icegram.com/wp-json/email-subscribers/v1/archived-campaigns?filter[limit]=3';
-
-		$response = wp_remote_get( $request_url, $options );
-
-		if ( is_wp_error( $response ) ) {
-			return array();
-		}
-
-		$json_response = wp_remote_retrieve_body( $response );
-		if ( empty( $json_response ) || ! ES_Common::is_valid_json( $json_response ) ) {
-			return array();
-		}
-
-		$response_data = json_decode( $json_response );
-		if ( empty( $response_data->status ) || empty( $response_data->archived_campaigns ) ) {
-			return array();
-		}
-
-		$latest_newsletters = (array) $response_data->archived_campaigns;
-
-		return $latest_newsletters;
-	}
-
-	/**
 	 * Handle the cron event
 	 *
 	 * @return bool
@@ -91,7 +53,7 @@ class ES_Newsletter_Summary_Automation {
 
 		$email_data = self::get_email_data();
 		if ( ! empty( $email_data ) ) {
-			ES()->mailer->add_tracking_pixel   = false;
+			ES()->mailer->can_track_open_clicks   = false;
 			ES()->mailer->add_unsubscribe_link = false;
 	
 			return ES()->mailer->send( $email_data['subject'], $email_data['content'], $email_data['email'] );
@@ -108,8 +70,6 @@ class ES_Newsletter_Summary_Automation {
 			if ( $user instanceof WP_User ) {
 				$admin_name = $user->display_name;
 			}
-
-			$latest_newsletters = self::get_latest_newsletters();
 			
 			$interval = 7;
 			$today    = time();
@@ -120,7 +80,6 @@ class ES_Newsletter_Summary_Automation {
 				'site_name'          => get_option( 'blogname' ),
 				'admin_name'         => $admin_name,
 				'logo_url'           => ES_PLUGIN_URL . 'lite/admin/images/es-logo-64x64.png',
-				'latest_newsletters'  => $latest_newsletters,
 				'start_date'         => gmdate( 'F d', $today - ( $interval * DAY_IN_SECONDS ) ),
 				'end_date'           => gmdate( 'F d, Y', $today ),
 			);

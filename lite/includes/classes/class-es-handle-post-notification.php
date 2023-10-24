@@ -212,6 +212,30 @@ class ES_Handle_Post_Notification {
 		$post_subject = str_replace( '{{POSTLINK}}', $post_link, $post_subject );
 		$post_subject = str_replace( '{{post.link}}', $post_link, $post_subject );
 
+		if ( strpos( $post_subject, '{{POSTCATS}}' ) >= 0 || strpos( $post_subject, '{{post.cats}}' ) >= 0 ) {
+			$taxonomies = get_object_taxonomies( $post );
+			$post_cats  = array();
+
+			if ( ! empty( $taxonomies ) ) {
+				foreach ( $taxonomies as $taxonomy ) {
+					$taxonomy_object = get_taxonomy( $taxonomy );
+					// Check if taxonomy is hierarchical e.g. have parent-child relationship like categories
+					if ( $taxonomy_object->hierarchical ) {
+						$post_terms = get_the_terms( $post, $taxonomy );
+						if ( ! empty( $post_terms ) ) {
+							foreach ( $post_terms as $term ) {
+								$term_name   = $term->name;
+								$post_cats[] = $term_name;
+							}
+						}
+					}
+				}
+			}
+
+			$post_subject = str_replace( '{{POSTCATS}}', implode( ', ', $post_cats ), $post_subject );
+			$post_subject = str_replace( '{{post.cats}}', implode( ', ', $post_cats ), $post_subject );
+		}
+
 		return $post_subject;
 
 	}
@@ -313,7 +337,7 @@ class ES_Handle_Post_Notification {
 		$es_templ_body          = str_replace( '{{post.author_avatar_url}}', $post_author_avatar_url, $es_templ_body );
 
 		// Check if template has {{POSTCATS}} placeholder.
-		if ( strpos( $es_templ_body, '{{POSTCATS}}' ) >= 0 ) {
+		if ( strpos( $es_templ_body, '{{POSTCATS}}' ) >= 0 || strpos( $es_templ_body, '{{post.cats}}' ) >= 0 ) {
 			$taxonomies = get_object_taxonomies( $post );
 			$post_cats  = array();
 

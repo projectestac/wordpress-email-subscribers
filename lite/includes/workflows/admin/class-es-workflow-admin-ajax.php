@@ -156,7 +156,6 @@ class ES_Workflow_Admin_Ajax {
 		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
 
 		$variable = IG_ES_Variables::get_variable( ES_Clean::string( ig_es_get_request_data( 'variable' ) ) );
-
 		if ( $variable ) {
 			ES_Workflow_Admin::get_view(
 				'modal-variable-info',

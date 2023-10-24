@@ -31,7 +31,7 @@ if ( ! class_exists( 'ES_Trigger_User_Unsubscribed' ) ) {
 		 */
 		public function register_hooks() {
 			// Add action for custom trigger event
-			add_action( 'ig_es_contact_unsubscribe', array( $this, 'handle_trigger_event' ), 10, 4 );
+			add_action( 'ig_es_contact_unsubscribe', array( $this, 'handle_trigger_event' ), 999, 4 );
 		}
 	
 		/**
@@ -43,15 +43,25 @@ if ( ! class_exists( 'ES_Trigger_User_Unsubscribed' ) ) {
 	
 			if ( ! empty( $subscriber_id ) ) {
 				$subscriber = ES()->contacts_db->get( $subscriber_id );
+
+				$list_id = is_array($unsubscribe_lists) ? $unsubscribe_lists[0] : $unsubscribe_lists;
+
+				$unsubscriber_reason = ES()->contacts_db->get_unsubscriber_reason($subscriber_id, $list_id);
+
+				
 				if ( ! empty( $subscriber ) ) {
 					$email      = ! empty( $subscriber['email'] ) && is_email( $subscriber['email'] ) ? $subscriber['email'] : '';
 					$first_name = ! empty( $subscriber['first_name'] ) ? $subscriber['first_name']                          : '';
-					$last_name  = ! empty( $subscriber['last_name'] ) ? $subscriber['last_name']                            : '';
+					$last_name  = ! empty( $subscriber['last_name'] ) ? $subscriber['last_name'] : '';
+
+					$unsubscribe_feedback_text  = ! empty( $unsubscriber_reason ) ? $unsubscriber_reason  :'';            
 	
 					if ( ! empty( $email ) ) {
 						$subscriber = array(
 							'email'      => $email,
 							'name' => $first_name . ' ' . $last_name,
+							'unsubscribe_feedback_text'=>$unsubscribe_feedback_text,
+
 						);
 				
 						// Prepare data.

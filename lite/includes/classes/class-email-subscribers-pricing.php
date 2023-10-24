@@ -9,7 +9,7 @@ class Email_Subscribers_Pricing {
 
 	public static function sm_show_pricing() {
 
-		$utm_medium = apply_filters( 'ig_es_pricing_page_utm_medium', 'in_app_pricing' );
+		$utm_medium  = apply_filters( 'ig_es_pricing_page_utm_medium', 'in_app_pricing' );
 		$allowedtags = ig_es_allowed_html_tags_in_esc();
 
 		?>
@@ -179,8 +179,13 @@ class Email_Subscribers_Pricing {
 				border-radius: 9999px;
 				margin: 0 auto;
 			}
+
+			#ig_es_testimonial-others .ig-es-testimonial-content img.star-ratings {
+				width: 18% !important;
+			}
+
 			.ig_es_testimonial_headline {
-				margin: 0.6em 0 !important;
+				margin: 0.6em 0 0 !important;
 				font-weight: 500 !important;
 				font-size: 1.5em !important;
 			}
@@ -188,7 +193,7 @@ class Email_Subscribers_Pricing {
 				text-align: left;
 				font-size: 1.2em;
 				line-height: 1.6;
-				padding: 1em;
+				padding: 1em 1em 0;
 			}
 			.pricing {
 				border-radius: 5px;
@@ -324,11 +329,16 @@ class Email_Subscribers_Pricing {
 			#wpcontent {
 				padding-left: 0!important;
 			}
-			#ig-es-testimonial-others{
+			#ig_es_testimonial-others, #ig_es_activity{
 				margin-top: 4em;
 			}
 			#ig_es_comparison_table{
 				margin-top: 4em;
+			}
+
+			.ig-es-testimonial-content .ig_es_testimonial_user_name{
+				font-size: 1em;
+				margin-top: 0.5em;
 			}
 			.ig_es_renew_headline{
 				font-size: 1em;
@@ -350,7 +360,7 @@ class Email_Subscribers_Pricing {
 						<div style="line-height: 2.5rem;">
 							<?php
 								/* translators: %s: Offer text */
-								echo sprintf( esc_html__( 'Congratulations! You just unlocked %s on Icegram Express Premium!', 'email-subscribers' ), '<span class="ig_es_discount_code">' . esc_html__( '25% off', 'email-subscribers' ) . '</span>' );
+								echo sprintf( esc_html__( 'Congratulations! You unlocked %s on Icegram Express Premium plans!', 'email-subscribers' ), '<span class="ig_es_discount_code">' . esc_html__( '25% off', 'email-subscribers' ) . '</span>' );
 							?>
 						</div>
 						<div style="padding-left: 0.5rem;">🎉</div>
@@ -367,7 +377,7 @@ class Email_Subscribers_Pricing {
 							</span>
 
 							<div class="center">
-								<a class="ig_es_button small green center" href="https://www.icegram.com/?buy-now=39043&qty=1&coupon=es-upgrade-25&page=6&with-cart=1&utm_source=ig_es&utm_medium=<?php echo esc_attr( $utm_medium ); ?>&utm_campaign=pro" target="_blank" rel="noopener"><?php esc_html_e( 'Get 25% Off', 'email-subscribers' ); ?></a>
+								<a class="ig_es_button small green center" href="https://www.icegram.com/?buy-now=39043&qty=1&coupon=es-upgrade-25&page=6&with-cart=1&utm_source=ig_es&utm_medium=<?php echo esc_attr( $utm_medium ); ?>&utm_campaign=pro" target="_blank" rel="noopener"><?php esc_html_e( 'Buy Now', 'email-subscribers' ); ?></a>
 							</div>
 						</div>
 						<div class="ig_es_column column_one_fourth pricing scaleup" style="border-color: #15576F;padding: 0;border-width: 0.2em;">
@@ -380,7 +390,7 @@ class Email_Subscribers_Pricing {
 							</span>
 
 							<div class="center">
-								<a class="ig_es_button small green center" href="https://www.icegram.com/?buy-now=404335&qty=1&coupon=es-upgrade-25&page=6&with-cart=1&utm_source=ig_es&utm_medium=<?php echo esc_attr( $utm_medium ); ?>&utm_campaign=max" target="_blank" rel="noopener"><?php esc_html_e( 'Get 25% Off', 'email-subscribers' ); ?><span style="width: 1em; height: 1em; background-image: url('https://www.storeapps.org/wp-content/themes/storeapps/assets/images/fidget.svg'); display: inline-block; margin-left: 0.5em" class="fidget spin"></span></a>
+								<a class="ig_es_button small green center" href="https://www.icegram.com/?buy-now=404335&qty=1&coupon=es-upgrade-25&page=6&with-cart=1&utm_source=ig_es&utm_medium=<?php echo esc_attr( $utm_medium ); ?>&utm_campaign=max" target="_blank" rel="noopener"><?php esc_html_e( 'Buy Now', 'email-subscribers' ); ?><span style="width: 1em; height: 1em; background-image: url('https://www.storeapps.org/wp-content/themes/storeapps/assets/images/fidget.svg'); display: inline-block; margin-left: 0.5em" class="fidget spin"></span></a>
 							</div>
 						</div>
 				</div>
@@ -388,15 +398,19 @@ class Email_Subscribers_Pricing {
 			</div>
 			<div class="ig_es_row" id="ig-es-testimonial">
 				<div class="ig_es_column ig-es-testimonial-content">
-					<?php
-					echo wp_kses( apply_filters( 'ig_es_pricing_page_testimonial_1', '<img src=' . ES_IMG_URL . 'mnmatty.jpeg alt="mnmatty" />
-						<h3 class="ig_es_testimonial_headline">' . __( 'Works Well!', 'email-subscribers' ) . '</h3>
-						<div class="ig_es_testimonial_text">
-							' . __( 'Used the free version to get started and it worked well. Upgraded to Premium for some of the convenience features and workflows.
-							Pretty slick to just be able to publish on the site and have the right notifications and newsletters go out automatically!', 'email-subscribers' ) . '<br><br>
-							- ' . __( 'mnmatty', 'email-subscribers' ) . '
-						</div>' ), $allowedtags );
-					?>
+					<img src="https://secure.gravatar.com/avatar/bd09132e1396bf948a5710bcdec25126?s=150&d=retro&r=g" alt="laurendevine" />
+					<h3 class="ig_es_testimonial_headline">
+						<?php echo esc_html__( 'Worked where other subscriber plugins failed…', 'email-subscribers' ); ?>
+					</h3>
+					<img src="<?php echo esc_url( ES_IMG_URL . '/five-stars.png' ); ?>" class="star-ratings" alt="Star ratings">
+					<div class="ig_es_testimonial_text">
+						<?php 
+						echo esc_html__( 'This plugin was quick and easy to set up and implement…and, more important than anything…IT WORKS. Other big-name plugins didn’t work when re: sending out notifications to users re: new blog entries and THIS ONE DOES. Use with their free RAINMAKER plugin to format the look and feel of your form a bit more, and its even better!', 'email-subscribers' );
+						?>
+						<p class="ig_es_testimonial_user_name">
+						- Lauren Devine
+								</p>
+					</div>
 				</div>
 			</div>
 			<div class="ig_es_row" id="ig_es_comparison_table">
@@ -421,61 +435,19 @@ class Email_Subscribers_Pricing {
 					<tbody>
 						<tr>
 							<td class="ig_es_feature_name">
-								<strong><?php echo esc_html__( 'What\'s so special?', 'email-subscribers' ); ?></strong>
+								<strong><?php echo esc_html__( 'Plan Highlights', 'email-subscribers' ); ?></strong>
 							</td>
 							<td class="ig_es_free_feature_name">
 								<?php echo esc_html__( 'Unlimited contacts, emails, forms & lists. Automatic welcome emails and new post notifications.', 'email-subscribers' ); ?>
 							</td>
 							<td class="ig_es_starter_feature_name">
-								<?php echo esc_html__( 'Everything in Free +', 'email-subscribers' ); ?>
+								<?php echo esc_html__( 'Everything in Free + Automatic batch sending, Captcha, Advanced blocks.', 'email-subscribers' ); ?>
 							</td>
 							<td class="ig_es_pro_feature_name">
-								<?php echo esc_html__( 'Everything in Pro +', 'email-subscribers' ); ?>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Post Digest Notifications', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Send automatic blog post notification when a new blog post gets published. Also, send post digest email on a specific day.'), $allowedtags ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Autoresponder & Workflows', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Setup autoresponder email series based on event triggers.'), $allowedtags ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Abandoned Cart Recovery Email', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Send automatic abandoned cart recovery emails when the visitor abandons his/her shopping cart.'), $allowedtags ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
+								<?php
+								/* translators: %s. Line break */
+								echo sprintf( esc_html__( 'Everything in Pro +%s Integrations, List cleanup, Cart recovery emails, Autoresponders', 'email-subscribers' ), '<br/>' );
+								?>
 							</td>
 						</tr>
 						<tr>
@@ -495,51 +467,6 @@ class Email_Subscribers_Pricing {
 						</tr>
 						<tr>
 							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Automatic Batch Sending', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Send reliable emails via our cron that automates triggering pending queues every 5 minutes. Also, schedule your campaign at a specific time.'), $allowedtags ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Captcha & Security', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Combat spams with the robust Captcha system built-in. Add extra security to your email list by blacklisting domains suggested by our experts.'), $allowedtags ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Automatic List Cleanup', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Automatically clean up bad/spam/bounced emails & maintain a healthy email list.'), $allowedtags ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
 								<?php echo esc_html__( 'Detailed Reports/analytics', 'email-subscribers' ); ?>
 								<?php echo wp_kses( ES_Common::get_tooltip_html('Get a detailed email campaign report such as open rate, avg. click rate, user device, browser, country info, IP and more. Also, use built-in UTM to track metrics.'), $allowedtags ); ?>
 							</td>
@@ -555,120 +482,17 @@ class Email_Subscribers_Pricing {
 						</tr>
 						<tr>
 							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'List Unsubscribe', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Allow subscribers to select the specific email list to opt out.'), $allowedtags ); ?>
+								<?php echo esc_html__( 'Weekly Summary Email', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Receive a weekly summary of your all email campaigns & growth of your email list.'), $allowedtags ); ?>
 							</td>
 							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								<?php echo esc_html__( 'Basic Summary', 'email-subscribers' ); ?>
 							</td>
 							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-yes'></span>
+								<?php echo esc_html__( 'Basic Summary', 'email-subscribers' ); ?>
 							</td>
 							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Comment Optin', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Whenever a reader leaves a blog comment, add him/her to a specific email list.'), $allowedtags ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Custom Contact Fields', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Create custom contact fields in your forms and receive responses.'), $allowedtags ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Membership Plugin Integration', 'email-subscribers' ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<?php echo esc_html__( 'Integrate with WooCommerce Memberships, MemberPress, Paid Memberships Pro, Ultimate Members.', 'email-subscribers' ); ?>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Popular Integrations', 'email-subscribers' ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<?php echo esc_html__( 'Integrate with WooCommerce Abandoned Cart, Easy Digital Downloads, GiveWP Donation, Yith Wishlist Item On Sale, LearnDash, Contact Form 7, Ninja Forms, Forminator, Gravity Forms & WP Forms', 'email-subscribers' ); ?>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Gmail Api', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Send reliable transactional emails using your Gmail API safely.'), $allowedtags ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Email Newsletter Archive', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Display a list of all existing email campaign newsletters on your website using a shortcode.'), $allowedtags ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Send WooCommerce Coupons', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Automatically send unique WooCommerce coupons when someone subscribes, places an order, left a product review and more.'), $allowedtags ); ?>
-							</td>
-							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
-							</td>
-							<td class="ig_es_pro_feature_name">
-								<span class='dashicons dashicons-yes'></span>
+								<?php echo esc_html__( 'Advanced Summary', 'email-subscribers' ); ?>
 							</td>
 						</tr>
 						<tr>
@@ -688,14 +512,14 @@ class Email_Subscribers_Pricing {
 						</tr>
 						<tr>
 							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Resend Confirmation Email', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Resend confirmation emails to those who abandon it when you\'re using the double opt-in feature.'), $allowedtags ); ?>
+								<?php echo esc_html__( 'Automatic Batch Sending', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Send reliable emails via our cron that automates triggering pending queues every 5 minutes. Also, schedule your campaign at a specific time.'), $allowedtags ); ?>
 							</td>
 							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								<span class='dashicons dashicons-yes'></span>
 							</td>
 							<td class="ig_es_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
@@ -703,17 +527,210 @@ class Email_Subscribers_Pricing {
 						</tr>
 						<tr>
 							<td class="ig_es_feature_name">
-								<?php echo esc_html__( 'Weekly Summary', 'email-subscribers' ); ?>
-								<?php echo wp_kses( ES_Common::get_tooltip_html('Receive a weekly summary of your all email campaigns & growth of your email list.'), $allowedtags ); ?>
+								<?php echo esc_html__( 'Captcha & Security', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Combat spams with the robust Captcha system built-in. Add extra security to your email list by blacklisting domains suggested by our experts.'), $allowedtags ); ?>
 							</td>
 							<td class="ig_es_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="ig_es_starter_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								<span class='dashicons dashicons-yes'></span>
 							</td>
 							<td class="ig_es_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'List Unsubscribe', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Allow subscribers to select the specific email list to opt out.'), $allowedtags ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Comment Optin', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Whenever a reader leaves a blog comment, add him/her to a specific email list.'), $allowedtags ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Gmail API', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Send reliable transactional emails using your Gmail API safely.'), $allowedtags ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Automatic List Cleanup', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Automatically clean up bad/spam/bounced emails & maintain a healthy email list.'), $allowedtags ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								-
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Custom Contact Fields', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Create custom contact fields in your forms and receive responses.'), $allowedtags ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								-
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Autoresponder & Workflows', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Setup autoresponder email series based on event triggers.'), $allowedtags ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								-
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Send WooCommerce Coupons', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Automatically send unique WooCommerce coupons when someone subscribes, places an order, left a product review and more.'), $allowedtags ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								-
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Abandoned Cart Recovery Email', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Send automatic abandoned cart recovery emails when the visitor abandons his/her shopping cart.'), $allowedtags ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								-
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Post Digest Notifications', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Send automatic blog post notification when a new blog post gets published. Also, send post digest email on a specific day.'), $allowedtags ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								-
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Email Newsletter Archive', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Display a list of all existing email campaign newsletters on your website using a shortcode.'), $allowedtags ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								-
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Resend Confirmation Email', 'email-subscribers' ); ?>
+								<?php echo wp_kses( ES_Common::get_tooltip_html('Resend confirmation emails to those who abandon it when you\'re using the double opt-in feature.'), $allowedtags ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								-
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<span class='dashicons dashicons-yes'></span>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Membership Plugin Integration', 'email-subscribers' ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								-
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<?php echo esc_html__( 'Integrate with WooCommerce Memberships, MemberPress, Paid Memberships Pro, Ultimate Members.', 'email-subscribers' ); ?>
+							</td>
+						</tr>
+						<tr>
+							<td class="ig_es_feature_name">
+								<?php echo esc_html__( 'Popular Integrations', 'email-subscribers' ); ?>
+							</td>
+							<td class="ig_es_free_feature_name">
+								-
+							</td>
+							<td class="ig_es_starter_feature_name">
+								-
+							</td>
+							<td class="ig_es_pro_feature_name">
+								<?php echo esc_html__( 'Integrate with WooCommerce Abandoned Cart, Easy Digital Downloads, GiveWP Donation, Yith Wishlist Item On Sale, LearnDash, Contact Form 7, Ninja Forms, Forminator, Gravity Forms & WP Forms', 'email-subscribers' ); ?>
 							</td>
 						</tr>
 						<tr>
@@ -735,7 +752,7 @@ class Email_Subscribers_Pricing {
 								<?php echo esc_html__( 'Pricing', 'email-subscribers' ); ?>
 							</td>
 							<td class="ig_es_free_feature_name">
-								<span class=''>Free</span>
+								<span><?php echo esc_html__( 'Free', 'email-subscribers' ); ?></span>
 							</td>
 							<td class="ig_es_starter_feature_name">
 								<div class="center">
@@ -751,36 +768,50 @@ class Email_Subscribers_Pricing {
 					</tbody>
 				</table>
 			</div>
-			<div class="ig_es_row" id="ig-es-testimonial-others">
+			<div class="ig_es_row" id="ig_es_testimonial-others">
 				<div style="width: 70%; margin: 0 auto; display: flex; gap: 2em;">
 					<div class="ig_es_column ig-es-testimonial-content">
+						<img src="https://secure.gravatar.com/avatar/df87927c83228d3ab0c85a7167a708b4?s=150&d=retro&r=g" alt="Resolve">
+						<h3 class="ig_es_testimonial_headline">
+							<?php echo esc_html__( 'Perfect plugin for blog promotion', 'email-subscribers' ); ?>
+						</h3>
+						<img src="<?php echo esc_url( ES_IMG_URL . '/five-stars.png' ); ?>" class="star-ratings" alt="Star ratings">
+						<div class="ig_es_testimonial_text">
 						<?php
-							echo wp_kses( apply_filters( 'ig_es_pricing_page_testimonial_2',
-							'<div class="ig_es_testimonial_text">
-							    <div class="font-semibold text-lg pb-2">' . __('Easy to install and use') . '</div>
-								' . __( 'I use this to send a message to my subscribers whenever there’s a new post on my blog. Very easy to install, guided process and clear instructions.', 'email-subscribers' ) . '<br><br>
-								- ' . __( 'rudybrinkman', 'email-subscribers' ) . '
-							</div>' ), $allowedtags );
+							echo esc_html__( 'This plugin works great in WordPress. Simple, yet effective. When a new blog is released, it sends a customized email along with a link to the blog title. Great to stimulate web traffic, yet sends a simple email. Have been using for over 6 months.', 'email-subscribers' );
 						?>
+							<p class="ig_es_testimonial_user_name">
+								- Resolve
+							</p>
+						</div>
 					</div>
 					<div class="ig_es_column ig-es-testimonial-content">
+						<img src="https://secure.gravatar.com/avatar/5f23eacce811025ec51f7bc95f9bd6c7?s=150&d=retro&r=g" alt="Rick Vidallon">
+						<h3 class="ig_es_testimonial_headline">
+							<?php echo esc_html__( 'Great for Professional Bloggers', 'email-subscribers' ); ?>
+						</h3>
+						<img src="<?php echo esc_url( ES_IMG_URL . '/five-stars.png' ); ?>" class="star-ratings" alt="Star ratings">
+						<div class="ig_es_testimonial_text">
 						<?php
-							echo wp_kses( apply_filters( 'ig_es_pricing_page_testimonial_3',
-							'<div class="ig_es_testimonial_text">
-							    <div class="font-semibold text-lg pb-2">' . __('Great for professional bloggers') . '</div>
-								' . __( 'Great for Professional Bloggers and great support! Icegram was very responsive to our questions. I highly recommend this WordPress plugin and the PAID version is worth the cost. The paid version shows intuitive stats and drill-down information.', 'email-subscribers' ) . '<br><br>
-								- ' . __( 'rickvidallon', 'email-subscribers' ) . '
-							</div>' ), $allowedtags );
+							echo esc_html__( 'Great for Professional Bloggers and great support! Icegram was very responsive to our questions. I highly recommend this WordPress plugin and the PAID version is worth the cost. The paid version shows intuitive stats and drill-down information.', 'email-subscribers' );
 						?>
+						<p class="ig_es_testimonial_user_name">
+								- Rick Vidallon
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
-			<div class="ig_es_row" id="ig_es_product_page_link">
-				<?php 
-					/* translators: %s: Pricing page URL */
-					echo sprintf( esc_html__( 'You can either manually send normal email marketing campaigns or use %s to automate reliable emails that land in subscribers’ inboxes, not in the spam folders.', 'email-subscribers' ), '<a style="color: #00848D;" target="_blank" href="https://www.icegram.com/email-subscribers/?utm_source=es_in_app&utm_medium=in_app_pricing&utm_campaign=es_pricing_footer">' . esc_html__( 'Icegram Express', 'email-subscribers' ) . '</a>' );
-				?>
-				<br>
+			<div class="ig_es_row" id="ig_es_activity" style="width: 70%; margin: 0 auto; margin-top: 4em;">
+				<div class="ig_es_sub_headline"> <?php echo esc_html__( 'Few hours left to grab this deal!', 'email-subscribers' ); ?> </div>
+				<p> 
+					<?php
+					/* translators: %s: HTML tag */
+					echo sprintf( esc_html__( '%1$sEmbrace the power of choice%2$s: Choose between the traditional approach of manually sending email marketing campaigns or embrace the revolutionary power of Icegram Express, enabling the seamless automation of reliable emails that effortlessly land in subscribers\' inboxes, untainted by the clutches of spam folders.
+', 'email-subscribers' ), '<strong>', '</strong>' );
+					?>
+				</p>
+				<div style="text-align: center;"><a class="ig_es_button small green center" href="#ig_es_price_column_container" style="text-transform: none;  margin-top: 1.5em;"><?php echo esc_html__( 'Select a plan now', 'email-subscribers' ); ?></a></div>
 			</div>
 		</div>
 		<?php

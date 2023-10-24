@@ -949,7 +949,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				}
 
 				ES_DB_Mailing_Queue::update_sent_status( $notification_guid, 'Sending' );
-				ES()->mailer->add_tracking_pixel   = true;
+				ES()->mailer->can_track_open_clicks   = true;
 				ES()->mailer->add_unsubscribe_link = true;
 				$res = ES()->mailer->send( $title, $email_template, $emails, $merge_tags );
 

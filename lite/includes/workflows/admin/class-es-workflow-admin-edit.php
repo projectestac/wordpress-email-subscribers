@@ -898,17 +898,20 @@ class ES_Workflow_Admin_Edit {
 				foreach ( $workflow_actions as $action_index => $action ) {
 					$action_name = ! empty( $action['action_name'] ) ? $action['action_name'] : '';
 					if ( 'ig_es_send_email' === $action_name ) {
-						$email_subject = ! empty( $action['ig-es-email-subject'] ) ? $action['ig-es-email-subject'] : '';
-						$email_content = ! empty( $action['ig-es-email-content'] ) ? $action['ig-es-email-content'] : '';
-						if ( 'ig_es_user_subscribed' === $trigger_name ) {
-							$email_subject_wp_option = 'ig_es_welcome_email_subject';
-							$email_content_wp_option = 'ig_es_welcome_email_content';
-						} else {
-							$email_subject_wp_option = 'ig_es_confirmation_mail_subject';
-							$email_content_wp_option = 'ig_es_confirmation_mail_content';
+						$is_subscriber_email = false !== strpos( $action['ig-es-send-to'], '{{EMAIL}}' ) || false !== strpos( $action['ig-es-send-to'], '{{subscriber.email}}' );
+						if ( $is_subscriber_email ) {
+							$email_subject = ! empty( $action['ig-es-email-subject'] ) ? $action['ig-es-email-subject'] : '';
+							$email_content = ! empty( $action['ig-es-email-content'] ) ? $action['ig-es-email-content'] : '';
+							if ( 'ig_es_user_subscribed' === $trigger_name ) {
+								$email_subject_wp_option = 'ig_es_welcome_email_subject';
+								$email_content_wp_option = 'ig_es_welcome_email_content';
+							} else {
+								$email_subject_wp_option = 'ig_es_confirmation_mail_subject';
+								$email_content_wp_option = 'ig_es_confirmation_mail_content';
+							}
+							update_option( $email_subject_wp_option, $email_subject );
+							update_option( $email_content_wp_option, $email_content );
 						}
-						update_option( $email_subject_wp_option, $email_subject );
-						update_option( $email_content_wp_option, $email_content );
 					}
 				}
 			}

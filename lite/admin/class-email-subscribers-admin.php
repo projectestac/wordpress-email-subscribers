@@ -178,7 +178,7 @@ class Email_Subscribers_Admin {
 			return;
 		}
 
-		$get_page = ig_es_get_request_data( 'page' );
+		$page = ig_es_get_request_data( 'page' );
 
 		wp_enqueue_script( $this->email_subscribers, plugin_dir_url( __FILE__ ) . 'js/email-subscribers-admin.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-tabs' ), $this->version, false );
 
@@ -191,6 +191,8 @@ class Email_Subscribers_Admin {
 				'broadcast_error_message'         => __( 'An error has occured while saving the broadcast. Please try again later.', 'email-subscribers' ),
 				'broadcast_subject_empty_message' => __( 'Please add a broadcast subject before saving.', 'email-subscribers' ),
 				'campaign_saved_message'          => __( 'Campaign saved successfully.', 'email-subscribers' ),
+				'campaign_activated_message'      => __( 'Campaign activated successfully.', 'email-subscribers' ),
+				'campaign_scheduled_message'      => __( 'Campaign scheduled successfully.', 'email-subscribers' ),
 				'campaign_error_message'          => __( 'An error has occured while saving the campaign. Please try again later.', 'email-subscribers' ),
 				'campaign_preivew_error_message'  => __( 'An error has occured while previewing the campaign. Please try again later.', 'email-subscribers' ),
 				'campaign_subject_empty_message'  => __( 'Please add a campaign subject before saving.', 'email-subscribers' ),
@@ -253,16 +255,28 @@ class Email_Subscribers_Admin {
 			'is_premium' => ES()->is_premium(),
 		);
 
-		if ( 'es_settings' === $get_page ) {
+		if ( 'es_settings' === $page ) {
 			$ig_es_js_data['popular_domains']                           = ES_Common::get_popular_domains();
 			$ig_es_js_data['i18n_data']['delete_rest_api_confirmation'] = __( 'Are you sure you want to delete this key? This action cannot be undone.', 'email-subscribers' );
 			$ig_es_js_data['i18n_data']['select_user']                  = __( 'Please select a user.', 'email-subscribers' );
 		}
 
-		if ( 'es_forms' === $get_page && ES_Drag_And_Drop_Editor::is_dnd_editor_page() ) {
+		if ( 'es_forms' === $page && ES_Drag_And_Drop_Editor::is_dnd_editor_page() ) {
 			$ig_es_js_data['frontend_css'] = ES_Form_Admin::get_frontend_css();
 			$ig_es_js_data['form_styles']  = ES_Form_Admin::get_form_styles();
 			$ig_es_js_data['common_css']   = ES_Form_Admin::get_common_css();
+		}
+
+		if ( 'es_newsletters' === $page || 'es_notifications' === $page ) {
+			$ig_es_js_data['campaign_statuses'] = array(
+				'inactive'  => IG_ES_CAMPAIGN_STATUS_IN_ACTIVE,
+				'active'    => IG_ES_CAMPAIGN_STATUS_ACTIVE,
+				'scheduled' => IG_ES_CAMPAIGN_STATUS_SCHEDULED,
+				'queued'    => IG_ES_CAMPAIGN_STATUS_QUEUED,
+				'paused'    => IG_ES_CAMPAIGN_STATUS_PAUSED,
+				'finished'  => IG_ES_CAMPAIGN_STATUS_FINISHED,
+			);
+			$ig_es_js_data['campaigns_page_url'] = admin_url( 'admin.php?page=es_campaigns' );
 		}
 
 		wp_localize_script( $this->email_subscribers, 'ig_es_js_data', $ig_es_js_data );
@@ -273,7 +287,7 @@ class Email_Subscribers_Admin {
 
 		wp_enqueue_script( 'clipboard' );
 
-		if ( 'es_workflows' === $get_page ) {
+		if ( 'es_workflows' === $page ) {
 
 
 			if ( ! function_exists( 'ig_es_wp_js_editor_admin_scripts' ) ) {
@@ -289,7 +303,7 @@ class Email_Subscribers_Admin {
 			// Localize additional required data for workflow functionality
 			$workflows_data = ES_Workflow_Admin_Edit::get_workflow_data();
 			wp_localize_script( $this->email_subscribers, 'ig_es_workflows_data', $workflows_data );
-		} elseif ( 'es_subscribers' === $get_page ) {
+		} elseif ( 'es_subscribers' === $page ) {
 
 			$action = ig_es_get_request_data( 'action' );
 			if ( 'import' === $action ) {
@@ -311,7 +325,7 @@ class Email_Subscribers_Admin {
 			wp_enqueue_script( 'select2' );
 		}
 
-		if ( ! empty( $get_page ) && 'es_dashboard' === $get_page || 'es_reports' === $get_page ) {
+		if ( ! empty( $page ) && 'es_dashboard' === $page || 'es_reports' === $page ) {
 			wp_enqueue_script( 'frappe-js', plugin_dir_url( __FILE__ ) . 'js/frappe-charts.min.iife.js', array( 'jquery' ), '1.5.2', false );
 		}
 
@@ -378,13 +392,7 @@ class Email_Subscribers_Admin {
 			add_submenu_page( 'es_dashboard', __( 'Broadcast', 'email-subscribers' ), '<span id="ig-es-broadcast">' . __( 'Broadcast', 'email-subscribers' ) . '</span>', 'edit_posts', 'es_newsletters', array( $this, 'load_campaign_admin_page' ) );
 			add_submenu_page( null, __( 'Template Preview', 'email-subscribers' ), __( 'Template Preview', 'email-subscribers' ), 'edit_posts', 'es_template_preview', array( $this, 'load_preview' ) );
 
-		}
-
-		if ( in_array( 'gallery', $accessible_sub_menus ) ) {
 			add_submenu_page( 'es_dashboard', __( 'Gallery', 'email-subscribers' ), '<span id="ig-es-gallery-submenu">' . __( 'Gallery', 'email-subscribers' ) . '</span>', 'edit_posts', 'es_gallery', array( $this, 'load_gallery' ) );
-		}
-
-		if ( in_array( 'template', $accessible_sub_menus ) ) {
 			add_submenu_page( null, __( 'Template', 'email-subscribers' ), '<span id="ig-es-gallery-submenu">' . __( 'Templates', 'email-subscribers' ) . '</span>', 'edit_posts', 'es_template', array( $this, 'load_template' ) );
 		}
 
@@ -1731,6 +1739,29 @@ class Email_Subscribers_Admin {
 					</ul>
 				</div>
 			</div>
+<?php
+ $api_url = 'https://www.icegram.com/gallery/wp-json/wp/v2/release_notes';
+ $api_response = wp_remote_get($api_url);
+ $allowedtags = ig_es_allowed_html_tags_in_esc();
+		if (is_array($api_response) && !is_wp_error($api_response)) {
+			$api_response = json_decode( wp_remote_retrieve_body($api_response), true);
+
+			if (!empty($api_response[0]['content']['rendered'])) {
+				?>
+		<div class="border-t border-gray-200">
+		<p class="px-4 text-base font-medium leading-6 text-gray-600">
+		<span class="rounded-md bg-gray-200 px-2 py-0.5">
+					<?php echo esc_html__( 'Latest Updates from Icegram', 'email-subscribers' ); ?></span>
+		</p>
+		<div class="overflow-hidden pb-2">
+			 <?php echo wp_kses($api_response[0]['content']['rendered'], $allowedtags); ?>			
+		
+		</div>
+		</div>
+		<?php
+			} 
+		} 
+		?>
 		</div>
 			<?php
 	}

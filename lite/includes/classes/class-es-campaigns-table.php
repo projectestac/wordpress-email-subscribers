@@ -376,13 +376,37 @@ class ES_Campaigns_Table extends ES_List_Table {
 				break;
 			case 'categories':
 				if ( ! empty( $item[ $column_name ] ) ) {
-					$categories = ES_Common::convert_categories_string_to_array( $item[ $column_name ], false );
-					if ( strpos( $item[ $column_name ], '{a}All{a}' ) ) {
-						$categories = __( 'All', 'email-subscribers' );
-					} elseif ( strpos( $item[ $column_name ], '{a}None{a}' ) ) {
-						$categories = __( 'None', 'email-subscribers' );
+					$campaign_id = $item[ 'id' ];
+					if ( ES_Campaign_Controller::is_using_new_category_format( $campaign_id ) ) {
+						$categories = $item[ $column_name ];
+						$categories_str = trim( trim( $categories ), '##' );
+						$categories_array     = explode( '##', $categories_str );
+						foreach ( $categories_array as $category ) {
+							$cat_cpts = explode( '|', $category );
+							foreach ( $cat_cpts as $cat_cpt ) {
+								list( $post_type, $cats ) = explode( ':', $cat_cpt );
+								if ( 'post' === $post_type ) {
+									if ( 'all' === $cats ) {
+										$categories = __( 'All', 'email-subscribers' );
+									} elseif ( 'none' === $cats ) {
+										$categories = __( 'None', 'email-subscribers' );
+									} else {
+										$cats = explode( ',', $cats);
+										$categories = array_map( array( 'ES_Common', 'convert_id_to_name' ), $cats );
+										$categories = trim( trim( implode( ', ', $categories ) ), ',' );
+									}
+								}
+							}
+						}
 					} else {
-						$categories = trim( trim( implode( ', ', $categories ) ), ',' );
+						$categories = ES_Common::convert_categories_string_to_array( $item[ $column_name ], false );
+						if ( strpos( $item[ $column_name ], '{a}All{a}' ) ) {
+							$categories = __( 'All', 'email-subscribers' );
+						} elseif ( strpos( $item[ $column_name ], '{a}None{a}' ) ) {
+							$categories = __( 'None', 'email-subscribers' );
+						} else {
+							$categories = trim( trim( implode( ', ', $categories ) ), ',' );
+						}
 					}
 
 					return $categories;

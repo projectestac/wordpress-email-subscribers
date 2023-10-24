@@ -14,60 +14,87 @@ class Export_Subscribers {
 	 * Constructor
 	 */
 	public function __construct() {
-
 		$report = ig_es_get_request_data( 'report' );
 		$status = ig_es_get_request_data( 'status' );
-
+		$link_id = ig_es_get_request_data( 'link_id' );
+		$campaign_id = ig_es_get_request_data( 'campaign_id' );
 		$can_access = ES_Common::ig_es_can_access( 'audience' );
-
-		if ( $report && $status && $can_access ) {
-
-			$export_nonce = ig_es_get_request_data( 'export-nonce' );
-			// Verify nonce.
-			if ( wp_verify_nonce( $export_nonce, 'ig-es-subscriber-export-nonce' ) ) {
-				$status = trim( $status );
-
-				$selected_list_id = 0;
+		$can_access_campaign = ES_Common::ig_es_can_access( 'campaigns' );
+		$export_nonce = ig_es_get_request_data('export-nonce');
+		if (wp_verify_nonce($export_nonce, 'ig-es-subscriber-export-nonce')) {
+			if ($report && $status && $can_access) {
+			  $status = trim( $status );
+			  $selected_list_id = 0;
 
 				if ( 'select_list' === $status ) {
 					$selected_list_id = ig_es_get_request_data( 'list_id', 0 );
 
 					if ( 0 === $selected_list_id ) {
-						$message = __( 'Please select list', 'email-subscribers' );
-						ES_Common::show_message( $message, 'error' );
-						exit();
+						$this->show_error_message(__('Please select list', 'email-subscribers'));		
 					}
 				}
 
-				$csv = $this->generate_csv( $status, $selected_list_id );
+			  $csv = $this->generate_csv($status, $selected_list_id);
+			  $file_name = sprintf('%s-contacts.csv', strtolower($status));
+			  $this->output_CSV($csv, $file_name);
+		
+			} elseif ($report && $link_id && $campaign_id && $can_access_campaign) {
+		
+				$subscribers = ES()->actions_db->get_link_cliked_subscribers($campaign_id, $link_id);
+				if ( count( $subscribers ) > 0 ) {
+				$sub_headers = [
+					__('First Name', 'email-subscribers'),
+					__('Last Name', 'email-subscribers'),
+					__('Email', 'email-subscribers'),
+				];
 
-				/* translators: %s : csv filename in lowercase */
-				$file_name = sprintf( '%s-contacts.csv', strtolower( $status ) );
+				$csv = implode(',', $sub_headers);
+				$csv.="\n";
+					foreach ($subscribers as $subscriber) {
+				$data = [
+					'first_name' => $this->escape_and_trim_data($subscriber['first_name']),
+					'last_name' => $this->escape_and_trim_data($subscriber['last_name']),
+					'email' => $this->escape_and_trim_data($subscriber['email']),
+				];
 
-				if ( empty( $csv ) ) {
-					$message = __( 'No data available', 'email-subscribers' );
-					ES_Common::show_message( $message, 'error' );
-					exit();
-				} else {
-					header( 'Pragma: public' );
-					header( 'Expires: 0' );
-					header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
-					header( 'Cache-Control: private', false );
-					header( 'Content-Type: application/octet-stream' );
-					header( "Content-Disposition: attachment; filename={$file_name};" );
-					header( 'Content-Transfer-Encoding: binary' );
-
-					echo wp_kses_post( $csv );
-					exit;
+				$csv .= '"' . implode('","', $data) . "\"\n";
+					}
 				}
-			}
-		}
 
+				if (empty($csv)) {
+					$this->show_error_message(__('No data available', 'email-subscribers'));
+				}
+				$this->output_CSV($csv, 'subscriber-contacts.csv');
+			}
+		}	
 		add_filter( 'query_vars', array( $this, 'query_vars' ) );
 		add_action( 'parse_request', array( $this, 'parse_request' ) );
 		add_action( 'admin_menu', array( $this, 'plugin_menu' ) );
 	}
 
+	private function show_error_message( $message) {
+		ES_Common::show_message($message, 'error');
+		exit();
+	}
+	
+	private function escape_and_trim_data( $data) {
+		return trim(str_replace('"', '""', $this->escape_data($data)));
+	}
+	
+	private function output_CSV( $csv_content, $file_name) {
+		header('Pragma: public');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		header('Cache-Control: private', false);
+		header('Content-Type: application/octet-stream');
+		header("Content-Disposition: attachment; filename=$file_name");
+		header('Content-Transfer-Encoding: binary');
+	
+		echo wp_kses_post($csv_content);
+		exit();
+	}
+
+	
 	public function plugin_menu() {
 		add_submenu_page( null, 'Export Contacts', __( 'Export Contacts', 'email-subscribers' ), 'edit_posts', 'es_export_subscribers', array( $this, 'export_subscribers_page' ) );
 	}
@@ -317,7 +344,22 @@ class Export_Subscribers {
 
 			$contact_ids_str = implode( ',', $contact_ids );
 
-			$query = "SELECT `id`, `first_name`, `last_name`, `email`, `created_at` FROM {$wpbd->prefix}ig_contacts WHERE id IN ({$contact_ids_str})";
+			$select_columns = array(
+				'id',
+				'first_name',
+				'last_name',
+				'email',
+				'created_at',
+			);
+
+			$custom_fields = ES()->custom_fields_db->get_custom_fields();
+			if ( ! empty( $custom_fields ) ) {
+				foreach ( $custom_fields as $field ) {
+					$select_columns[] = $field['slug'];
+				}
+			}
+
+			$query = 'SELECT ' . implode( ',', $select_columns ) . " FROM {$wpbd->prefix}ig_contacts WHERE id IN ({$contact_ids_str})";
 
 			$subscribers = $wpbd->get_results( $query, ARRAY_A );
 		}
@@ -334,6 +376,12 @@ class Export_Subscribers {
 				__( 'Opt-In Type', 'email-subscribers' ),
 				__( 'Created On', 'email-subscribers' ),
 			);
+
+			if ( ! empty( $custom_fields ) ) {
+				foreach ( $custom_fields as $field ) {
+					$headers[] = $field['label'];
+				}
+			}
 
 			$lists_id_name_map = ES()->lists_db->get_list_id_name_map();
 			$csv_output       .= implode( ',', $headers );
@@ -352,6 +400,12 @@ class Export_Subscribers {
 						$data['status']     = ucfirst( $list_details['status'] );
 						$data['optin_type'] = ( 1 == $list_details['optin_type'] ) ? 'Single Opt-In' : 'Double Opt-In';
 						$data['created_at'] = $subscriber['created_at'];
+						if ( ! empty( $custom_fields ) ) {
+							foreach ( $custom_fields as $field ) {
+								$column_name = $field['slug'];
+								$data[ $column_name ] = $subscriber[ $column_name ];
+							}
+						}
 						$csv_output        .= "\n";
 						$csv_output        .= '"' . implode( '","', $data ) . '"';
 					}

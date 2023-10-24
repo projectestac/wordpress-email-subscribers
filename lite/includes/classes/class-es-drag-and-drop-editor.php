@@ -95,9 +95,14 @@ class ES_Drag_And_Drop_Editor {
 		if ( 'es_forms' === $current_page ) {
 
 			$lists = ES()->lists_db->get_lists();
+			
+			//Get the site tags for DND editor
+			$campaign_admin  = ES_Campaign_Admin::get_instance();
+			$site_tags       = $campaign_admin->get_dnd_site_tags();
 
 			$form_editor_data = array(
 				'site_url' => home_url(),
+				'siteTags'=>$site_tags,
 				'lists'    => $lists,
 				'i18n'     => array(
 					'no_list_selected_message' => __( 'Please select list(s) in which contact will be subscribed.', 'email-subscribers' ),
@@ -112,18 +117,17 @@ class ES_Drag_And_Drop_Editor {
 			$campaign_tags   = $campaign_admin->get_dnd_campaign_tags();
 			$subscriber_tags = $campaign_admin->get_dnd_subscriber_tags();
 			$site_tags       = $campaign_admin->get_dnd_site_tags();
-
 			$campaign_editor_data = array(
-				'campaignTags'    => $campaign_tags,
+				'campaignTags'    => $campaign_tags['post_notification'],
 				'subscriberTags'  => $subscriber_tags,
 				'siteTags'        => $site_tags,
 				'isPro'		      => ES()->is_pro(),
 				'plugin_url'      => ES_PLUGIN_URL,
 				'i18n'            => array(
-					'survey_block_heading_text' => __( 'Happy with our products and services?', 'email-subscribers' ),
+					'survey_block_heading_text'           => __( 'Happy with our products and services?', 'email-subscribers' ),
 					'survey_block_default_thank_you_text' => __( 'Thank you for your response! Your feedback is highly appreciated.', 'email-subscribers' ),
-					'survey_type_field_label' => __( 'Survey type', 'email-subscribers' ),
-					'survey_message_field_label' => __( 'Survey message', 'email-subscribers' ),
+					'survey_type_field_label'             => __( 'Survey type', 'email-subscribers' ),
+					'survey_message_field_label'          => __( 'Survey message', 'email-subscribers' ),
 				),
 			);
 

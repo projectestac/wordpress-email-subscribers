@@ -565,6 +565,9 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 												let selected_style_css = selected_style.css ? selected_style.css : '';
 												esVisualEditor.setStyle( commonCSS + selected_style_css );
 											});
+											var editor_type='DND_editor_form';
+											ig_es_add_dnd_rte_tags( editor_type );
+
 										});
 									});
 								</script>
@@ -665,7 +668,6 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 			$response = array();
 
 			$form_data = ig_es_get_request_data( 'form_data', array(), false );
-
 			$template_data            = array();
 			$template_data['content'] = ! empty( $form_data['body'] ) ? $form_data['body'] : '';
 			$template_data['form_id'] = ! empty( $form_data['id'] ) ? $form_data['id'] : 0;
@@ -674,13 +676,34 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 
 			$preview_html             = '<style>' . $editor_css . '</style>' . $form_body;
 			$response['preview_html'] = $preview_html;
-
+			$response = self::process_form_body( $response);
 			if ( ! empty( $response ) ) {
 				wp_send_json_success( $response );
 			} else {
 				wp_send_json_error();
 			}
 		}
+
+		//The code to replace the keywords in DND editor
+		public static function process_form_body( $content) {
+			if (!empty($content)) {
+				// Define the replacements as an associative array
+				$replacements = array(
+					'{{TOTAL-CONTACTS}}' => ES()->contacts_db->count_active_contacts_by_list_id(),
+					'{{site.total_contacts}}' => ES()->contacts_db->count_active_contacts_by_list_id(),
+					'{{SITENAME}}' => get_option('blogname'),
+					'{{site.name}}' => get_option('blogname'),
+					'{{SITEURL}}' => home_url('/'),
+					'{{site.url}}' => home_url('/'),
+				);
+		
+				// Perform the replacements
+				$content = str_replace(array_keys($replacements), array_values($replacements), $content);
+			}
+		
+			return $content;
+		}
+		
 
 		public static function get_styles_path() {
 			$form_styles_path = ES_PLUGIN_DIR . 'lite/admin/css/form-styles/';

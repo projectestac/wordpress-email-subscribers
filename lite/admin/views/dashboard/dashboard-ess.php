@@ -335,7 +335,7 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 
 		<section id="es-campaign-stats" class="pt-4 my-8 bg-white rounded-lg shadow md:flex md:items-start md:justify-between sm:px-4 sm:grid sm:grid-cols-2">
 			<div class="flex-auto min-w-0 es-w-65 px-2">
-				<p class="text-lg font-medium leading-6 text-gray-400">
+				<p class="px-2 text-lg font-medium leading-6 text-gray-400">
 					<?php
 						echo esc_html__( 'Recent campaigns', 'email-subscribers' );
 					?>

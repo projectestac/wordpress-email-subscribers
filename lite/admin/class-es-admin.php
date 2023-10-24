@@ -215,47 +215,6 @@ if ( ! class_exists( 'ES_Admin' ) ) {
 			return apply_filters( 'ig_es_site_tags', $site_tags );
 		}
 
-		public function show_merge_tags( $template_type ) {
-			$subscriber_tags = $this->get_subscriber_tags();
-			if ( ! empty( $subscriber_tags ) ) {
-				?>
-				<div id="ig-es-subscriber-tags">
-					<?php
-						$this->render_merge_tags( $subscriber_tags );
-					?>
-				</div>
-				<?php
-			}
-			$site_tags = $this->get_site_tags();
-			if ( ! empty( $site_tags ) ) {
-				?>
-				<div id="ig-es-site-tags">
-					<?php
-						$this->render_merge_tags( $site_tags );
-					?>
-				</div>
-				<?php
-			}
-			$template_tags = $this->get_campaign_tags();
-			if ( ! empty( $template_tags ) ) {
-				?>
-				<div id="ig-es-campaign-tags">
-				<?php foreach ($template_tags as $type => $tags ) : ?>
-					<?php
-						$class = $type !== $template_type ? 'hidden' : '';
-					?>
-					<div class="ig-es-campaign-tags <?php echo esc_attr( $type ); ?> <?php echo esc_attr( $class ); ?>">
-							<?php
-								
-								$this->render_merge_tags( $tags );
-							?>
-					</div>
-				<?php endforeach; ?>
-				</div>
-				<?php
-			}
-		}
-
 		public function render_merge_tags( $merge_tags = array() ) {
 			if ( empty( $merge_tags ) ) {
 				return;
@@ -451,7 +410,7 @@ if ( ! class_exists( 'ES_Admin' ) ) {
 															if ( '' !== editor_data ) {
 																let is_valid_json = ig_es_is_valid_json( editor_data );
 																if ( is_valid_json ) {
-																	editor_data = JSON.parse( editor_data );
+																	editor_data = JSON.parse( `${editor_data}` );
 																}
 																jQuery(document).on("es_drag_and_drop_editor_loaded",function (event) {
 																	window.esVisualEditor.importMjml(editor_data);
@@ -470,53 +429,6 @@ if ( ! class_exists( 'ES_Admin' ) ) {
 												}
 												?>
 											</div>
-											<script>
-												jQuery(document).ready(function($){
-													var clipboard = new ClipboardJS('.ig-es-merge-tag', {
-													text: function(trigger) {
-															let tag_text = $(trigger).data('tag-text');
-															if ( '' === tag_text ) {
-																tag_text = $(trigger).text();
-															}
-															return tag_text.trim();
-													}
-													});
-
-													clipboard.on('success', function(e) {
-														let sourceElem    = e.trigger;
-														let sourceID	  = $(sourceElem).closest('.merge-tags-wrapper').attr('id');
-														let targetID      = 'ig-es-add-tag-icon' === sourceID ? 'ig_es_campaign_subject': 'edit-es-campaign-body';
-														let clipBoardText = e.text;
-														let editorType    = $('#editor_type').val();
-														if ( 'classic' === editorType || 'ig_es_campaign_subject' === targetID ) {
-															var target        = document.getElementById(targetID);
-											
-															if (target.setRangeText) {
-																target.focus();
-																//if setRangeText function is supported by current browser
-																target.setRangeText(clipBoardText);
-															} else {
-																target.focus()
-																document.execCommand('insertText', false /*no UI*/, clipBoardText);
-															}
-															if ( 'edit-es-campaign-body' === targetID && 'undefined' !== typeof tinymce.activeEditor ) {
-																tinymce.activeEditor.execCommand('mceInsertContent', false, clipBoardText);
-															}
-														} else {
-															// Insert placeholders into DND editor
-															// var canvasDoc = window.esVisualEditor.Canvas.getBody().ownerDocument;
-															// // Insert text at the current pointer position
-															// canvasDoc.execCommand("insertText", false, 'Test');
-															let selectedComponent = window.esVisualEditor.getSelected();
-															let selectedContent   = selectedComponent.get('content');
-															selectedComponent.set({
-																content: selectedContent + clipBoardText
-															});
-															$("#ig-es-dnd-merge-tags-wrapper #ig-es-dnd-tags-dropdown").hide();
-														}
-													});
-												});
-											</script>
 											<?php do_action( 'ig_es_after_template_left_pan_settings', $template_data ); ?>
 										</div>
 										<div class="campaign_side_content ml-2 bg-gray-100 rounded-r-lg">

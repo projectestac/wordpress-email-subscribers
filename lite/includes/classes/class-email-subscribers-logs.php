@@ -35,7 +35,7 @@ if ( ! class_exists( 'ES_Logs' ) ) {
 				} else {
 					$message = __( 'Sorry, you are not allowed to view logs.', 'email-subscribers' );
 					ES_Common::show_message( $message, 'error' );
-					return;
+					exit();
 				}
 			}       
 			
@@ -66,13 +66,13 @@ if ( ! class_exists( 'ES_Logs' ) ) {
 							<span class="inline-block mr-1 ig-es-log-files-dropdown">
 								<select name="log_file" id="ig-es-log-files">
 									<?php
-										$i=0;
+									$i = 0;
 									foreach ( $reverse_log_files as $key => $file_name ) {
 										$files[$i] = $file_name;
 										?>
-												<option value="<?php echo esc_attr( $files[$i] ); ?>" <?php selected( $log_file_name, $file_name ); ?>><?php echo esc_html( $files[$i] ); ?></option>                            
-											<?php
-											$i++; 
+											<option value="<?php echo esc_attr( $files[$i] ); ?>" <?php selected( $log_file_name, $file_name ); ?>><?php echo esc_html( $files[$i] ); ?></option>                            
+										<?php
+										$i++; 
 									}
 									?>
 																	
@@ -87,7 +87,17 @@ if ( ! class_exists( 'ES_Logs' ) ) {
 				<div class="w-full bg-white rounded shadow">
 					<div class="px-6 py-4">
 						<p class="text-gray-700 text-base">
-							<pre id="ig_es_log_content"><?php echo esc_html__( file_get_contents( IG_LOG_DIR . $log_file_name ) ); ?></pre>
+							<?php  
+							if ( in_array( $log_file_name, $log_files, true ) ) {
+								?>
+								<pre id="ig_es_log_content"><?php echo esc_html__( file_get_contents( IG_LOG_DIR . $log_file_name ) ); ?></pre>
+								<?php
+							} else {
+								$message = __( 'Sorry, you are not allowed to view logs.', 'email-subscribers' );
+								ES_Common::show_message( $message, 'error' );
+								exit();
+							}
+							?>
 						</p>
 					</div>                
 				</div>

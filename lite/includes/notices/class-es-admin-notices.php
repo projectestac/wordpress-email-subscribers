@@ -48,7 +48,7 @@ class ES_Admin_Notices {
 	 * @return array
 	 */
 	public static function get_notices() {
-		return self::$notices;
+		return ! empty( self::$notices ) ? self::$notices : array();
 	}
 
 	/**

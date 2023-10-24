@@ -99,7 +99,7 @@ if ( ! class_exists( 'IG_ES_Premium_Services_UI' ) ) {
 			$editor_type = ! empty( $campaign_data['meta'][$editor_type_meta_key] ) ? $campaign_data['meta'][$editor_type_meta_key] : IG_ES_DRAG_AND_DROP_EDITOR;
 			if ( IG_ES_CLASSIC_EDITOR === $editor_type ) {
 				$custom_css            = ! empty( $campaign_data['meta']['es_custom_css'] ) ? $campaign_data['meta']['es_custom_css'] : '';
-				$custom_css_field_name = $is_campaign_page ? 'campaign_data[meta][es_custom_css]' : 'data[meta][es_custom_css]';
+				$custom_css_field_name = $is_campaign_page ? 'data[meta][es_custom_css]' : 'data[meta][es_custom_css]';
 				$is_trial_valid 	   = ES()->trial->is_trial_valid();
 				?>
 				<div class="w-full px-4 py-2">
@@ -345,7 +345,7 @@ if ( ! class_exists( 'IG_ES_Premium_Services_UI' ) ) {
 				<div>
 					<label for="enable_utm_tracking" class=" inline-flex items-center cursor-pointer">
 							<span class="relative">
-								<input id="enable_utm_tracking" name="campaign_data[meta][enable_utm_tracking]" type="checkbox" class="absolute es-check-toggle opacity-0 w-0 h-0" value="yes" <?php checked( $enable_utm_tracking, 'yes' ); ?>
+								<input id="enable_utm_tracking" name="data[meta][enable_utm_tracking]" type="checkbox" class="absolute es-check-toggle opacity-0 w-0 h-0" value="yes" <?php checked( $enable_utm_tracking, 'yes' ); ?>
 								/>
 								<span class="es-mail-toggle-line block w-8 h-5 bg-gray-300 rounded-full shadow-inner"></span>
 								<span class="es-mail-toggle-dot absolute transition-all duration-300 ease-in-out block w-3 h-3 mt-1 ml-1 bg-white rounded-full shadow inset-y-0 left-0 focus-within:shadow-outline"></span>
@@ -354,7 +354,7 @@ if ( ! class_exists( 'IG_ES_Premium_Services_UI' ) ) {
 				</div>
 			</div>
 			<div class="py-1 ig_es_utm_campaign_name_wrapper <?php echo 'no' === $enable_utm_tracking ? esc_attr( 'hidden' ) : ''; ?>">
-				<input name="campaign_data[meta][es_utm_campaign]" placeholder="<?php echo esc_html__( 'Campaign Name', 'email-subscribers' ); ?>" id="es_utm_campaign" class="form-input border-gray-400 text-sm relative rounded-md shadow-sm block w-2/4 sm:leading-5" value="<?php echo esc_attr( $campaign_name ); ?>">
+				<input name="data[meta][es_utm_campaign]" placeholder="<?php echo esc_html__( 'Campaign Name', 'email-subscribers' ); ?>" id="es_utm_campaign" class="form-input border-gray-400 text-sm relative rounded-md shadow-sm block w-2/4 sm:leading-5" value="<?php echo esc_attr( $campaign_name ); ?>">
 			</div>
 				<?php
 		}

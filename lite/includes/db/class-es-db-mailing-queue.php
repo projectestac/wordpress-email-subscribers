@@ -85,9 +85,15 @@ class ES_DB_Mailing_Queue {
 			);
 		} else {
 			$current_time = ig_get_current_date_time();
+			
 			$results      = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->prefix}ig_mailing_queue WHERE status IN ('Sending', 'In Queue') AND start_at <= %s ORDER BY start_at, id LIMIT 0, 1",
+					"SELECT * FROM {$wpdb->prefix}ig_mailing_queue WHERE status IN ('Sending', 'In Queue') AND start_at <= %s ORDER BY 
+					CASE 
+						WHEN start_at = '0000-00-00 00:00:00' THEN %s
+						ELSE start_at
+					END, id LIMIT 0, 1",
+					$current_time,
 					$current_time
 				),
 				ARRAY_A

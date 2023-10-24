@@ -156,6 +156,34 @@ class ES_DB_Contacts extends ES_DB {
 	}
 
 	/**
+	 * Retrieve the unsubscribe reason by $contact_id and $list_id.
+	 *
+	 * @param $contact_id,$list_id
+	 *
+	 * @return array|object|void|null
+	 */
+	public function get_unsubscriber_reason( $contact_id, $list_id) {
+		global $wpbd;
+	
+		if (empty($contact_id) || empty($list_id)) {
+			return '';
+		}
+	
+		$table_name = $wpbd->prefix . 'ig_unsubscribe_feedback';
+	
+		$unsubscriber_reason = $wpbd->get_var(
+			$wpbd->prepare(
+				"SELECT feedback_text FROM $table_name WHERE contact_id = %d AND list_id = %d",
+				$contact_id,
+				$list_id
+			)
+		);
+	
+		return $unsubscriber_reason ? $unsubscriber_reason : '';
+	}
+	
+
+	/**
 	 * Get contact email name map
 	 *
 	 * @param array $emails
@@ -562,7 +590,6 @@ class ES_DB_Contacts extends ES_DB {
 	public function get_details_by_ids( $contact_ids = array() ) {
 
 		$contacts = $this->get_contacts_by_ids( $contact_ids );
-
 		$results = array();
 		if ( ! empty( $contacts ) && count( $contacts ) > 0 ) {
 
@@ -922,7 +949,7 @@ class ES_DB_Contacts extends ES_DB {
 
 		$results = array_shift( $results );
 
-		return $results['total'];
+		return ! empty( $results['total'] ) ? $results['total'] : 0;
 	}
 
 
@@ -955,7 +982,7 @@ class ES_DB_Contacts extends ES_DB {
 
 		$results = array_shift( $results );
 
-		return $results['total'];
+		return ! empty( $results['total'] ) ? $results['total'] : 0;
 	}
 
 

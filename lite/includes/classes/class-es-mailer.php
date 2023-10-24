@@ -75,7 +75,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 * @since 4.3.2
 		 * @var bool
 		 */
-		public $add_tracking_pixel = true;
+		public $can_track_open_clicks = true;
 
 		/**
 		 * Added Logger Context
@@ -191,7 +191,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 				$content = $this->replace_admin_notification_merge_tags( $data, $content );
 
 				$this->add_unsubscribe_link = false;
-				$this->add_tracking_pixel   = false;
+				$this->can_track_open_clicks   = false;
 				$this->send( $subject, $content, $admin_emails, $data );
 
 				return true;
@@ -260,7 +260,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			$content = str_replace( '{{LINK}}', '{{SUBSCRIBE-LINK}}', $content );
 
 			$this->add_unsubscribe_link = false;
-			$this->add_tracking_pixel   = false;
+			$this->can_track_open_clicks   = false;
 
 			return $this->send( $subject, $content, $emails, $merge_tags );
 		}
@@ -332,7 +332,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 					$content = str_replace( '{{SUBJECT}}', $post_subject, $content );
 
 					$this->add_unsubscribe_link = false;
-					$this->add_tracking_pixel   = false;
+					$this->can_track_open_clicks   = false;
 
 					$this->send( $subject, $content, $admin_emails );
 				}
@@ -414,7 +414,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 
 			// Don't add Unsubscribe link. It should be there in content
 			$this->add_unsubscribe_link = false;
-			$this->add_tracking_pixel   = false;
+			$this->can_track_open_clicks   = false;
 			// Send Email
 			$this->send( $subject, $content, $email, $data );
 
@@ -491,8 +491,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 				$this->add_unsubscribe_link = false;
 			}
 
-			$this->add_tracking_pixel = false;
-
+			$this->can_track_open_clicks = false;
 			return $this->send( $subject, $content, $email, $merge_tags );
 		}
 
@@ -568,7 +567,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			$message_id       = ! empty( $merge_tags['message_id'] ) ? $merge_tags['message_id'] : 0;
 			$campaign_id      = ! empty( $merge_tags['campaign_id'] ) ? $merge_tags['campaign_id'] : 0;
 			$attachments      = ! empty( $merge_tags['attachments'] ) ? $merge_tags['attachments'] : array();
-
+			
 			$sender_data   = array();
 			$campaign_type = '';
 			if ( ! empty( $campaign_id ) ) {
@@ -585,9 +584,11 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 					}
 
 					$campaign_meta = maybe_unserialize( $campaign['meta'] );
-
+					
 					if ( ! empty( $campaign_meta['preheader'] ) ) {
 						$content = '<span class="preheader" style="display: none !important; visibility: hidden; opacity: 0; color: transparent; height: 0; width: 0;">' . $campaign_meta['preheader'] . '</span>' . $content;
+					} elseif ( ! empty( $merge_tags['preheader'] ) ) {
+						$content = '<span class="preheader" style="display: none !important; visibility: hidden; opacity: 0; color: transparent; height: 0; width: 0;">' . $merge_tags['preheader'] . '</span>' . $content;
 					}
 
 					if ( ! empty( $campaign_meta['attachments'] ) ) {
@@ -1526,9 +1527,11 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 * @since 4.3.2
 		 */
 		public function can_track_clicks( $contact_id = 0, $campaign_id = 0 ) {
-			$is_track_clicks = false;
-
-			return apply_filters( 'ig_es_track_clicks', $is_track_clicks, $contact_id, $campaign_id, $this->link_data );
+			if ( $this->can_track_open_clicks ) {
+				$is_track_clicks = false;
+				return apply_filters( 'ig_es_track_clicks', $is_track_clicks, $contact_id, $campaign_id, $this->link_data );
+			}
+			return false;
 		}
 
 		/**
@@ -1558,10 +1561,9 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 */
 		public function can_track_open( $contact_id = 0, $campaign_id = 0 ) {
 
-			if ( $this->add_tracking_pixel ) {
+			if ( $this->can_track_open_clicks ) {
 
 				$is_track_email_opens = get_option( 'ig_es_track_email_opens', 'yes' );
-
 				$is_track_email_opens = apply_filters( 'ig_es_track_open', $is_track_email_opens, $contact_id, $campaign_id, $this->link_data );
 
 				if ( 'yes' === $is_track_email_opens ) {
@@ -1914,14 +1916,14 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 * @since 5.6.0
 		 */
 		public function set_mailer() {
-			if ( ES_Service_Email_Sending::use_icegram_mailer() ) {
-				$mailer_class = 'ES_Icegram_Mailer';
-			} else {
-				$mailer_class = $this->get_current_mailer_class();
+			$mailer_class = $this->get_current_mailer_class();
+			 $mailer_obj = new $mailer_class();
+			if (ES_Service_Email_Sending::use_icegram_mailer()) {
+				$mailer_obj = new ES_Icegram_Mailer();
 			}
-
-			$this->mailer = new $mailer_class();
+			$this->mailer =$mailer_obj;
 		}
+		
 
 		public function get_current_mailer_account_url() {
 			$current_mailer_class = $this->get_current_mailer_class();

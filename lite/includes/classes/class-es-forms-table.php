@@ -504,7 +504,7 @@ class ES_Forms_Table extends ES_List_Table {
 	}
 
 	public static function prepare_form_data( $data ) {
-
+		
 		$form_data     = array();
 		$name          = ! empty( $data['name'] ) ? sanitize_text_field( $data['name'] ) : '';
 		$editor_type   = ! empty( $data['settings']['editor_type'] ) ? sanitize_text_field( $data['settings']['editor_type'] ) : '';
@@ -614,7 +614,8 @@ class ES_Forms_Table extends ES_List_Table {
 
 			$form_data['body'] = maybe_serialize( $body );
 		} else {
-			$form_data['body'] = $data['body'];
+			
+			$form_data['body'] = ES_Form_Admin::process_form_body($data['body']);
 			$settings          = $data['settings'];
 		}
 
@@ -960,7 +961,7 @@ class ES_Forms_Table extends ES_List_Table {
 	}
 
 	/** Text displayed when no list data is available */
-	public function no_items() {
+	public function no_items() {	
 		esc_html_e( 'No Forms avaliable.', 'email-subscribers' );
 	}
 }

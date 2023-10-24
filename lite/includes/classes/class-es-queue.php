@@ -649,7 +649,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 								} else {
 									// Enable unsubscribe link and tracking pixel
 									ES()->mailer->add_unsubscribe_link = true;
-									ES()->mailer->add_tracking_pixel   = true;
+									ES()->mailer->can_track_open_clicks   = true;
 									ES()->mailer->send( $subject, $content, $email, $merge_tags );
 								}
 

@@ -91,4 +91,6 @@ class ES_Data_Type_Subscriber extends ES_Workflow_Data_Type {
 
 		return $data;
 	}
+
+
 }
