@@ -1722,6 +1722,14 @@ class Email_Subscribers_Admin {
 					}
 					?>
 			</div>
+
+            <?php
+            // XTEC ************ AFEGIT - Removed posts from Icegram blog to all users but xtecadmin
+            // 2023.10.24 @aginard
+            if (is_xtec_super_admin()) {
+            // ************ Fi
+            ?>
+
 			<div class="border-t border-gray-200">
 				<p class="px-4 text-base font-medium leading-6 text-gray-600">
 					<span class="rounded-md bg-gray-200 px-2 py-0.5">
@@ -1774,6 +1782,14 @@ class Email_Subscribers_Admin {
 			} 
 		} 
 		?>
+
+        <?php
+        // XTEC ************ AFEGIT - BRemoved posts from Icegram blog to all users but xtecadmin
+        // 2023.10.24 @aginard
+        }
+        // ************ Fi
+        ?>
+
 		</div>
 			<?php
 	}
