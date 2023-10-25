@@ -531,6 +531,13 @@ class ES_Campaigns_Table extends ES_List_Table {
 			$actions['delete'] = '<a href="?page=' . esc_attr( 'es_campaigns' ) . '&action=delete&list=' . absint( $item['id'] ) . '&_wpnonce=' . $nonce . '" onclick="return checkDelete()">' . esc_html__( 'Delete', 'email-subscribers' ) . '</a>';
 		}
 
+        // XTEC ************ AFEGIT - In campaign list, hide edit button for workflow campaigns to all users except xtecadmin.
+        // 2023.10.25 @aginard
+        if ('workflow' === $type && !is_xtec_super_admin()) {
+            unset($actions['edit']);
+        }
+        // ************ Fi
+
 		$title .= $this->row_actions( $actions );
 
 		return $title;
