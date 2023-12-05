@@ -422,6 +422,12 @@ class ES_Shortcode {
 					// We are using attribute selector data-form-id to apply Form style and not form unique id since when using it, it overrides GrapeJs custom style changes done through GrapeJS style editor.
 					$editor_css = str_replace( '.es-form-field-container', 'form[data-form-id="' . $form_id . '"] .es-form-field-container', $editor_css );
 					$editor_css = str_replace( '* {', 'form.es_subscription_form[data-form-id="' . $form_id . '"] * {', $editor_css );
+
+                    // XTEC ************ AFEGIT - Removed style 'body {margin: 0;}' because moves home page content to the left.
+                    // 2023.12.05 @aginard
+                    $editor_css = str_replace( 'body {margin: 0;}', '', $editor_css );
+                    // ************ FI
+
 					$form_body  = '<style type="text/css">' . $editor_css . '</style>';
 				}
 				$form_body .= ! empty( $data['body'] ) ? do_shortcode( $data['body'] ) : '';
