@@ -56,5 +56,4 @@ class ES_Info {
 
 		return self::$instance;
 	}
-
 }

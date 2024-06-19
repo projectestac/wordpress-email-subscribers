@@ -147,13 +147,31 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 								$campaign['start_at'] = gmdate( 'Y-m-d H:i:s', $start_time );
 
 								$post_ids = array();
+								$has_matching_post = false;
 								if ( class_exists( 'ES_Post_Digest' ) ) {
+									$campaign_body          = $campaign['body'];
 									$ignore_stored_post_ids = true; // Set it to true so that we don't get same post ids which were set in the last run.
-									$post_ids               = ES_Post_Digest::get_matching_post_ids( $campaign_id, $ignore_stored_post_ids );
+									if ( ES_Common::contains_posts_block( $campaign_body ) ) {
+										$post_ids = ES_Post_Digest::get_post_block_matching_post_ids( $campaign_id, $ignore_stored_post_ids );
+										if ( ! empty( $post_ids ) ) {
+											foreach ( $post_ids as $block_index => $block_post_ids ) {
+												if ( ! empty( $block_post_ids ) ) {
+													// Set flag to true if we found matching posts for atleast one block.
+													$has_matching_post = true;
+													break;
+												}
+											}
+										}
+									} else {
+										$post_ids = ES_Post_Digest::get_matching_post_ids( $campaign_id, $ignore_stored_post_ids );
+										if ( ! empty( $post_ids ) ) {
+											$has_matching_post = true;
+										}
+									}
 								}
 
 								// Proceed only if we have posts for digest.
-								if ( ! empty( $post_ids ) ) {
+								if ( ! empty( $has_matching_post ) ) {
 									$list_id = $campaign['list_ids'];
 									if ( ! empty( $list_id ) ) {
 										$list_id = explode( ',', $list_id );
@@ -572,7 +590,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 				// ES()->logger->info( 'Process Queue:' );
 				// ES()->logger->info( 'SQL: ' . $sql );
-
+				// phpcs:disable
 				$notifications = $wpdb->get_results(
 					$wpdb->prepare(
 						"SELECT queue.campaign_id, queue.contact_id, queue.count AS _count, queue.requeued AS _requeued, queue.options AS _options, queue.tags AS _tags, queue.priority AS _priority
@@ -585,6 +603,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 					),
 					ARRAY_A
 				);
+				// phpcs:enable
 
 				$batch_start_time = time();
 

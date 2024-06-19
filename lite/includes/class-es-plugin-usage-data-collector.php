@@ -1,40 +1,42 @@
 <?php
 
 // Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
 	exit;
 }
 
-if ( ! class_exists( 'ES_Plugin_Usage_Data_Collector' ) ) {
+if (!class_exists('ES_Plugin_Usage_Data_Collector')) {
 	/**
 	 * Class ES_Plugin_Usage_Data_Collector.
 	 *
 	 * @since 5.6.15
 	 */
 	class ES_Plugin_Usage_Data_Collector {
-		
-		public static $instance;
 	
+
+		public static $instance;
+
 		public function __construct() {
 			$this->init();
 		}
-	
+
 		public static function get_instance() {
-			if ( ! isset( self::$instance ) ) {
+			if (!isset(self::$instance)) {
 				self::$instance = new self();
 			}
-	
+
 			return self::$instance;
 		}
-	
+
 		public function init() {
 			$this->register_hooks();
 		}
-	
+
 		public function register_hooks() {
-			add_filter( 'ig_es_tracking_data_params', array( __CLASS__, 'add_tracking_data' ) );
+			add_filter('ig_es_tracking_data_params', array(__CLASS__, 'add_tracking_data'));
+			add_filter('ig_es_activate_plugin', array(__CLASS__, 'add_plan_activation_dates'));
 		}
-	
+
 		/**
 		 * Method to add additional plugin usage tracking data specific to Icegram Express
 		 *
@@ -44,14 +46,27 @@ if ( ! class_exists( 'ES_Plugin_Usage_Data_Collector' ) ) {
 		 *
 		 * @since 4.7.7
 		 */
-		public static function add_tracking_data( $tracking_data = array() ) {
-	
+		public static function add_tracking_data( $tracking_data = array()) {
+
 			$tracking_data['plugin_meta_info'] = self::get_ig_es_meta_info();
-			$tracking_data['guid']             = ES()->cron->get_cron_guid();
-			
+			$tracking_data['guid'] = ES()->cron->get_cron_guid();
+
 			return $tracking_data;
 		}
-	
+
+		public static function add_plan_activation_dates() {
+			
+			$current_plan = ES()->get_plan();
+			$current_date = ig_get_current_date_time();
+			
+			$user_plan_activation_dates = get_option('ig_es_plan_activation_dates', array());
+			$user_plan_activation_dates[$current_plan] = $current_date;
+			update_option('ig_es_plan_activation_dates', $user_plan_activation_dates);
+			
+		}
+		
+		
+
 		/**
 		 * Get plugin meta info
 		 *
@@ -60,65 +75,74 @@ if ( ! class_exists( 'ES_Plugin_Usage_Data_Collector' ) ) {
 		 * @since 4.1.0
 		 */
 		public static function get_ig_es_meta_info() {
-	
-			$plan 						= ES()->get_plan();
-			$total_contacts             = ES()->contacts_db->count();
+
+			$plan = ES()->get_plan();
+			$total_contacts = ES()->contacts_db->count();
 			$total_unconfirmed_contacts = ES()->lists_contacts_db->get_unconfirmed_contacts_count();
-			$total_lists                = ES()->lists_db->count_lists();
-			$total_forms                = ES()->forms_db->count_forms();
-			$total_newsletters          = ES()->campaigns_db->get_total_newsletters();
-			$total_post_notifications   = ES()->campaigns_db->get_total_post_notifications();
-			$total_post_digests 		= ( 'pro' === $plan ) ? ES()->campaigns_db->get_total_post_digests() : 0;
-			$total_sequences            = ( 'pro' === $plan ) ? ES()->campaigns_db->get_total_sequences() : 0;
-			$active_workflows_count     = ES()->workflows_db->get_active_workflows_count();
-			$remote_gallery_items   	= get_option('ig_es_imported_remote_gallery_template_ids', array());
-			$editor_count_by_type		= ES()->campaigns_db->get_count_by_editor_type();
-			$workflows_count_by_type	= ES()->workflows_db->get_workflows_count_by_triggername();
-			$mailer_name 				= ES()->mailer->get_current_mailer_slug();
+			$total_lists = ES()->lists_db->count_lists();
+			$total_forms = ES()->forms_db->count_forms();
+			$total_newsletters = ES()->campaigns_db->get_total_newsletters();
+			$total_post_notifications = ES()->campaigns_db->get_total_post_notifications();
+			$total_post_digests = ( 'pro' === $plan ) ? ES()->campaigns_db->get_total_post_digests() : 0;
+			$total_sequences = ( 'pro' === $plan ) ? ES()->campaigns_db->get_total_sequences() : 0;
+			$active_workflows_count = ES()->workflows_db->get_active_workflows_count();
+			$remote_gallery_items = get_option('ig_es_imported_remote_gallery_template_ids', array());
+			$editor_count_by_type = ES()->campaigns_db->get_count_by_editor_type();
+			$workflows_count_by_type = ES()->workflows_db->get_workflows_count_by_triggername();
+			$mailer_name = ES()->mailer->get_current_mailer_slug();
 			$campaign_sending_frequency = ES_DB_Mailing_Queue::get_campaign_sending_frequency(10);
-	
-			$feedback_counts   = array();
+
+			$feedback_counts = array();
 			$custom_field_used = 'no';
-			if ( 'pro' === $plan ) {
-				$custom_fields     = ES()->custom_fields_db->get_custom_fields();
-				$custom_field_used = ! empty( $custom_fields ) ? 'yes' : 'no';
-				$number_of_days    = 180;
-				$feedback_counts   = IG_ES_DB_Unsubscribe_Feedback::get_feedback_counts( $number_of_days );
+			if ('pro' === $plan) {
+				$custom_fields = ES()->custom_fields_db->get_custom_fields();
+				$custom_field_used = !empty($custom_fields) ? 'yes' : 'no';
+				$number_of_days = 180;
+				$feedback_counts = IG_ES_DB_Unsubscribe_Feedback::get_feedback_counts($number_of_days);
 			}
-	
-			$form_stats         = self::get_form_stats();
-			$reports_stats      = self::get_campaign_wise_reports_stats();
+
+			$form_stats = self::get_form_stats();
+			$reports_stats = self::get_campaign_wise_reports_stats();
 			$survey_usage_stats = self::get_survey_usage_stats();
-	
+
+			$subscriber_source_stats = self::get_subscriber_source_stats();
+			$ess_email_sending_stats = self::get_ess_email_sending_stats();
+			$average_messages_per_sequence_campaign = self::get_average_messages_per_sequence_campaign();
+			$plan_change_stats = self::get_plan_change_stats();
+			  
 			return array(
-				'version'                    => ES_PLUGIN_VERSION,
-				'installed_on'               => get_option( 'ig_es_installed_on', '' ),
-				'is_premium'                 => ES()->is_premium() ? 'yes' : 'no',
-				'plan'                       => $plan,
-				'is_trial'                   => ES()->trial->is_trial() ? 'yes' : 'no',
-				'is_trial_expired'           => ES()->trial->is_trial_expired() ? 'yes' : 'no',
-				'trial_start_at'             => ES()->trial->get_trial_start_date(),
-				'total_contacts'             => $total_contacts,
-				'unconfirmed_contacts'	     => $total_unconfirmed_contacts,		// Added in 5.5.7
-				'total_lists'                => $total_lists,
-				'total_forms'                => $total_forms,
-				'total_newsletters'          => $total_newsletters,
-				'total_post_notifications'   => $total_post_notifications,
-				'total_post_digests'	     => $total_post_digests,				// Added in 5.5.7
-				'total_sequences'            => $total_sequences,
-				'editor_count_by_type'	     => $editor_count_by_type, 			// Added in 5.5.7
-				'active_workflows_count'     => $active_workflows_count, 			// Added in 5.5.7
+				'version' => ES_PLUGIN_VERSION,
+				'installed_on' => get_option('ig_es_installed_on', ''),
+				'is_premium' => ES()->is_premium() ? 'yes' : 'no',
+				'plan' => $plan,
+				'is_trial' => ES()->trial->is_trial() ? 'yes' : 'no',
+				'is_trial_expired' => ES()->trial->is_trial_expired() ? 'yes' : 'no',
+				'trial_start_at' => ES()->trial->get_trial_start_date(),
+				'total_contacts' => $total_contacts,
+				'unconfirmed_contacts' => $total_unconfirmed_contacts,		// Added in 5.5.7
+				'total_lists' => $total_lists,
+				'total_forms' => $total_forms,
+				'total_newsletters' => $total_newsletters,
+				'total_post_notifications' => $total_post_notifications,
+				'total_post_digests' => $total_post_digests,				// Added in 5.5.7
+				'total_sequences' => $total_sequences,
+				'editor_count_by_type' => $editor_count_by_type, 			// Added in 5.5.7
+				'active_workflows_count' => $active_workflows_count, 			// Added in 5.5.7
 				'campaign_sending_frequency' => $campaign_sending_frequency,	// Added in 5.5.7
-				'workflows_count_by_type'    => $workflows_count_by_type, 		// Added in 5.5.7
-				'mailer'				     => $mailer_name,						// Added in 5.5.7
-				'remote_gallery_items'	     => $remote_gallery_items, 			// Added in 5.5.7
-				'feedback_counts'            => $feedback_counts,               // Added in 5.6.15
-				'is_custom_field_used'       => $custom_field_used,             // Added in 5.6.15
-				'form_stats'                 => $form_stats,                    // Added in 5.6.15
-				'reports_stats'              => $reports_stats,                 // Added in 5.6.15
-				'survey_usage_stats'         => $survey_usage_stats,            // Added in 5.6.15
-				'is_rest_api_used'	         => self::is_rest_api_used(),		 	// Added in 5.5.7
-				'settings'                   => self::get_all_settings(),
+				'workflows_count_by_type' => $workflows_count_by_type, 		// Added in 5.5.7
+				'mailer' => $mailer_name,						// Added in 5.5.7
+				'remote_gallery_items' => $remote_gallery_items, 			// Added in 5.5.7
+				'feedback_counts' => $feedback_counts,               // Added in 5.6.15
+				'is_custom_field_used' => $custom_field_used,             // Added in 5.6.15
+				'form_stats' => $form_stats,                    // Added in 5.6.15
+				'reports_stats' => $reports_stats,                 // Added in 5.6.15
+				'survey_usage_stats' => $survey_usage_stats,            // Added in 5.6.15
+				'is_rest_api_used' => self::is_rest_api_used(),		 	// Added in 5.5.7
+				'settings' => self::get_all_settings(),
+				'subscriber_source_stats' => $subscriber_source_stats,
+				'ess_email_sending_stats' => $ess_email_sending_stats,
+				'average_messages_per_sequence_campaign' => $average_messages_per_sequence_campaign,
+				'plan_change_stats'=>$plan_change_stats,
 			);
 		}
 
@@ -134,18 +158,19 @@ if ( ! class_exists( 'ES_Plugin_Usage_Data_Collector' ) ) {
 			global $wpdb;
 
 			$option_name_like = 'ig_es_%';
-			$results          = $wpdb->get_results( $wpdb->prepare( "SELECT option_name, option_value FROM {$wpdb->prefix}options WHERE option_name LIKE %s  AND option_name != %s", $option_name_like, 'ig_es_managed_blocked_domains' ), ARRAY_A );
-
+			// phpcs:disable
+			$results = $wpdb->get_results($wpdb->prepare("SELECT option_name, option_value FROM {$wpdb->prefix}options WHERE option_name LIKE %s  AND option_name != %s", $option_name_like, 'ig_es_managed_blocked_domains'), ARRAY_A);
+			// phpcs:enable
 			$options_name_value_map = array();
-			if ( count( $results ) > 0 ) {
+			if (count($results) > 0) {
 				$restricted_settings = ES_Common::get_restricted_settings();
-				foreach ( $results as $result ) {
+				foreach ($results as $result) {
 
-					if ( in_array( $result['option_name'], $restricted_settings ) ) {
+					if (in_array($result['option_name'], $restricted_settings)) {
 						continue;
 					}
 
-					$options_name_value_map[ $result['option_name'] ] = $result['option_value'];
+					$options_name_value_map[$result['option_name']] = $result['option_value'];
 				}
 			}
 
@@ -160,37 +185,38 @@ if ( ! class_exists( 'ES_Plugin_Usage_Data_Collector' ) ) {
 		 * @return string yes|no
 		 */
 		public static function is_rest_api_used() {
-			
+
 			// Check if REST API settings option is enabled
 			$is_api_enabled = get_option('ig_es_allow_api', 'no');
 
-			if ( 'no' === $is_api_enabled ) {
+			if ('no' === $is_api_enabled) {
 				return 'no';
 			}
-
+			global $wpdb;
 			// Ensure there is atleast one users for whom REST API keys are generated
-			$rest_api_users_ids = get_users( array(
-				'meta_key' => 'ig_es_rest_api_keys',
-				'fields'   => 'ID'
-			) );
+			$rest_api_users_ids = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT user_id FROM $wpdb->usermeta WHERE meta_key = 'ig_es_rest_api_keys'"
+				)
+			);
 
-			if ( empty( $rest_api_users_ids ) ) {
+			if (empty($rest_api_users_ids)) {
 				return 'no';
 			}
-			
+
 			return 'yes';
 
 		}
-	
+
 		public static function get_form_stats() {
 			$forms = ES()->forms_db->get_all();
-			
-			$form_style_usage_counts = self::get_form_style_usage_counts( $forms );
-			$form_embed_usage_counts = self::get_form_embed_usage_counts( $forms );
-			$form_popup_usage_counts = self::get_form_popup_usage_counts( $forms );
+
+			$form_style_usage_counts = self::get_form_style_usage_counts($forms);
+			$form_embed_usage_counts = self::get_form_embed_usage_counts($forms);
+			$form_popup_usage_counts = self::get_form_popup_usage_counts($forms);
 
 			$form_stats = array(
-				'form_counts'             => count( $forms ),
+				'form_counts' => count($forms),
 				'form_style_usage_counts' => $form_style_usage_counts,
 				'form_embed_usage_counts' => $form_embed_usage_counts,
 				'form_popup_usage_counts' => $form_popup_usage_counts,
@@ -198,33 +224,120 @@ if ( ! class_exists( 'ES_Plugin_Usage_Data_Collector' ) ) {
 
 			return $form_stats;
 		}
-	
-		public static function get_form_style_usage_counts( $forms = array() ) {
+
+		public static function get_subscriber_source_stats() {
+			global $wpdb;
+
+			$subscriber_source_stats = $wpdb->get_results("SELECT source, COUNT(*) AS source_count,(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM {$wpdb->prefix}ig_contacts)) AS source_percentage FROM {$wpdb->prefix}ig_contacts GROUP BY source", ARRAY_A);
+
+			return $subscriber_source_stats;
+		}
+
+		public static function get_ess_email_sending_stats() {
+			$results = get_option('ig_es_ess_data', array());
+			if ( empty($results) || !isset( $results['used_limit'] )) {
+				return array();
+			}
+
+			$current_date = new DateTime();
+			$start_date = ( clone $current_date )->modify('first day of last month')->setTime(0, 0, 0)->format('Y-m-d H:i:s');
+			$end_date = ( clone $current_date )->modify('last day of last month')->setTime(23, 59, 59)->format('Y-m-d H:i:s');
+			$last_month_date = $current_date->modify('-1 month')->format('Y-m');
+
+			// Get the usage data for the previous month
+			$last_month_used_limit = array_key_exists($last_month_date, $results['used_limit']) ?
+				$results['used_limit'][$last_month_date] :
+				0;
+
+			$args = array(
+				'start_date' => $start_date,
+				'end_date'   => $end_date,
+				'types'      => [IG_MESSAGE_SENT],
+			);
+			$total_emails_sent = ES()->actions_db->get_actions_count($args);
+			if (empty( $total_emails_sent['sent'] )) {
+				return array();
+			}
+
+			$total_emails_sent = $total_emails_sent['sent'];
+			$percentage_ess_used = ( $total_emails_sent > 0 ) ? ( $last_month_used_limit / $total_emails_sent ) * 100 : 0;
+			$ess_email_sending_stats = array(
+				'total_emails_sent'   => $total_emails_sent,
+				'last_month_ess_used' => $last_month_used_limit,
+				'percentage_ess_used' => $percentage_ess_used,
+
+			);
+			return $ess_email_sending_stats;
+		}
+
+		public static function get_average_messages_per_sequence_campaign() {
+			global $wpdb;
+			$total_sequence_campaigns = ES()->campaigns_db->get_total_campaigns_by_type(IG_CAMPAIGN_TYPE_SEQUENCE);
+			if (0 == $total_sequence_campaigns) {
+				return 0;
+			}
+			$total_sequence_messages = ES()->campaigns_db->get_total_campaigns_by_type(IG_CAMPAIGN_TYPE_SEQUENCE_MESSAGE);
+			$average_messages_per_sequence_campaign = $total_sequence_messages / $total_sequence_campaigns;
+			return $average_messages_per_sequence_campaign;
+		}
+
+		public static function get_plan_change_stats() {
+
+			$current_plan = ES()->get_plan();
+			$previous_plan = '';
+			$user_plan_activation_dates = get_option('ig_es_plan_activation_dates', array());
+		
+			// Sort the plans by their activation dates
+			uksort($user_plan_activation_dates, function( $a, $b) use ( $user_plan_activation_dates) {
+				return strtotime($user_plan_activation_dates[$a]) - strtotime($user_plan_activation_dates[$b]);
+			});
+		
+			// Get the sorted plan keys
+			$sorted_plans = array_keys($user_plan_activation_dates);
+			$current_plan_index = array_search($current_plan, $sorted_plans);
+			$previous_plan_index = $current_plan_index > 0 ? $current_plan_index - 1 : null;
+		
+			if (is_null($previous_plan_index)) {
+				$previous_plan = '';
+			} else {
+				$previous_plan_key = $sorted_plans[$previous_plan_index];
+				$previous_plan = $user_plan_activation_dates[$previous_plan_key];
+			}
+		
+			$plugin_plan_info = array(
+				'previous_plan' => $previous_plan,
+				'current_plan'  => $current_plan,
+			);
+		
+			return $plugin_plan_info;
+		}
+
+		public static function get_form_style_usage_counts( $forms = array()) {
 			$form_style_usage_counts = array();
-			if ( ! empty( $forms ) ) {
-				foreach ( $forms as $form ) {
-					$form_setting = maybe_unserialize( $form['settings'] );
-					$editor_type  = ! empty( $form_setting['editor_type'] ) ? $form_setting['editor_type'] : IG_ES_CLASSIC_EDITOR;
-					if ( IG_ES_DRAG_AND_DROP_EDITOR !== $editor_type ) {
+			if (!empty($forms)) {
+				foreach ($forms as $form) {
+					$form_setting = maybe_unserialize($form['settings']);
+					$editor_type = !empty($form_setting['editor_type']) ? $form_setting['editor_type'] : IG_ES_CLASSIC_EDITOR;
+					if (IG_ES_DRAG_AND_DROP_EDITOR !== $editor_type) {
 						continue;
 					}
-					$form_style = ! empty( $form_setting['form_style'] ) ? $form_setting['form_style'] : 'theme-styling';
-					if ( ! isset( $form_style_usage_counts[ $form_style ] ) ) {
-						$form_style_usage_counts[ $form_style ] = 0;
+					$form_style = !empty($form_setting['form_style']) ? $form_setting['form_style'] : 'theme-styling';
+					if (!isset($form_style_usage_counts[$form_style])) {
+						$form_style_usage_counts[$form_style] = 0;
 					}
-					$form_style_usage_counts[ $form_style ]++;
+					$form_style_usage_counts[$form_style]++;
 				}
 			}
 			return $form_style_usage_counts;
 		}
-	
-		public static function get_form_embed_usage_counts( $forms = array() ) {
+
+		public static function get_form_embed_usage_counts( $forms = array()) {
 			$form_embed_counts = 0;
-			if ( ! empty( $forms ) ) {
-				foreach ( $forms as $form ) {
-					$form_setting          = maybe_unserialize( $form['settings'] );
-					$is_embed_form_enabled = ! empty( $form_setting['is_embed_form_enabled'] ) ? $form_setting['is_embed_form_enabled'] : 'no';
-					if ( 'yes' === $is_embed_form_enabled ) {
+			if (!empty($forms)) {
+				foreach ($forms as $form) {
+					$form_setting = maybe_unserialize($form['settings']);
+					$is_embed_form_enabled = !empty($form_setting['is_embed_form_enabled']) ? $form_setting['is_embed_form_enabled'] : 'no';
+					if ('yes' === $is_embed_form_enabled) {
 						$form_embed_counts++;
 					}
 				}
@@ -232,13 +345,13 @@ if ( ! class_exists( 'ES_Plugin_Usage_Data_Collector' ) ) {
 			return $form_embed_counts;
 		}
 
-		public static function get_form_popup_usage_counts( $forms = array() ) {
+		public static function get_form_popup_usage_counts( $forms = array()) {
 			$form_popup_counts = 0;
-			if ( ! empty( $forms ) ) {
-				foreach ( $forms as $form ) {
-					$form_setting  = maybe_unserialize( $form['settings'] );
-					$show_in_popup = ! empty( $form_setting['show_in_popup'] ) ? $form_setting['show_in_popup'] : 'no';
-					if ( 'yes' === $show_in_popup ) {
+			if (!empty($forms)) {
+				foreach ($forms as $form) {
+					$form_setting = maybe_unserialize($form['settings']);
+					$show_in_popup = !empty($form_setting['show_in_popup']) ? $form_setting['show_in_popup'] : 'no';
+					if ('yes' === $show_in_popup) {
 						$form_popup_counts++;
 					}
 				}
@@ -248,7 +361,7 @@ if ( ! class_exists( 'ES_Plugin_Usage_Data_Collector' ) ) {
 
 		public static function get_survey_usage_stats() {
 			global $wpbd;
-			$regex     = '[{][{] *campaign.survey([^}]*)[}][}]';
+			$regex = '[{][{] *campaign.survey([^}]*)[}][}]';
 			$raw_query = "SELECT
 			SUM(IF (type = %s,1, 0) ) AS %s, 
 			SUM(IF (type = %s,1, 0) ) AS %s,
@@ -257,7 +370,7 @@ if ( ! class_exists( 'ES_Plugin_Usage_Data_Collector' ) ) {
 
 			$survey_usage_stats = $wpbd->get_row(
 				$wpbd->prepare(
-					$raw_query, 
+					$raw_query,
 					array(
 						IG_CAMPAIGN_TYPE_NEWSLETTER,
 						IG_CAMPAIGN_TYPE_NEWSLETTER,
@@ -273,7 +386,7 @@ if ( ! class_exists( 'ES_Plugin_Usage_Data_Collector' ) ) {
 
 			return $survey_usage_stats;
 		}
-		
+
 		public static function get_campaign_wise_reports_stats() {
 			global $wpbd;
 			$raw_query = "SELECT
@@ -292,6 +405,6 @@ if ( ! class_exists( 'ES_Plugin_Usage_Data_Collector' ) ) {
 			return $reports_stats;
 		}
 	}
-	
+
 	ES_Plugin_Usage_Data_Collector::get_instance();
 }

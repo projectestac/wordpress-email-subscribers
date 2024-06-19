@@ -192,6 +192,21 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$autoload = false;
 			$step     = 2;
 			update_option( self::$onboarding_step_option, $step, $autoload );
+
+			/* List of ESS onbording tasks */
+			$ess_tasks_list = array (
+				'create_ess_account',
+				'set_sending_service_consent',
+				'send_test_email',
+				'confirm_email_delivery',
+				'complete_ess_onboarding',
+			);
+
+			/* This condition can merge ESS onboarding tasks to current tasks when user enable ESS */
+			if (ig_es_get_request_data('enable_ess', '') == 'yes') {
+				self::$all_onboarding_tasks['configuration_tasks'] = array_merge(self::$all_onboarding_tasks['configuration_tasks'], $ess_tasks_list);
+			}
+
 			return $this->perform_onboarding_tasks( 'configuration_tasks' );
 		}
 
@@ -319,46 +334,51 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 				foreach ( $current_tasks as $current_task ) {
 					if ( ! in_array( $current_task, $current_tasks_done, true ) ) {
 
-						if ( is_callable( array( $this, $current_task ) ) ) {
-							$logger->info( 'Doing Task:' . $current_task, self::$logger_context );
+						if ( $this->is_required_tasks_completed( $current_task ) ) {
+							if ( is_callable( array( $this, $current_task ) ) ) {
+								$logger->info( 'Doing Task:' . $current_task, self::$logger_context );
 
-							// Call callback function.
-							$task_response = call_user_func( array( $this, $current_task ) );
-							if ( 'success' === $task_response['status'] ) {
-								if ( ! empty( $task_response['tasks_data'] ) ) {
-									if ( ! isset( $onboarding_tasks_data[ $current_task ] ) ) {
-										$onboarding_tasks_data[ $current_task ] = array();
+								// Call callback function.
+								$task_response = call_user_func( array( $this, $current_task ) );
+								if ( 'success' === $task_response['status'] ) {
+									if ( ! empty( $task_response['tasks_data'] ) ) {
+										if ( ! isset( $onboarding_tasks_data[ $current_task ] ) ) {
+											$onboarding_tasks_data[ $current_task ] = array();
+										}
+										$onboarding_tasks_data[ $current_task ] = array_merge( $onboarding_tasks_data[ $current_task ], $task_response['tasks_data'] );
 									}
-									$onboarding_tasks_data[ $current_task ] = array_merge( $onboarding_tasks_data[ $current_task ], $task_response['tasks_data'] );
+									$logger->info( 'Task Done:' . $current_task, self::$logger_context );
+									// Set success status only if not already set else it can override error/skipped statuses set previously from other tasks.
+									if ( empty( $response['status'] ) ) {
+										$response['status'] = 'success';
+									}
+									$current_tasks_done[] = $current_task;
+								} elseif ( 'skipped' === $task_response['status'] ) {
+									$response['status']      = 'skipped';
+									$current_tasks_skipped[] = $current_task;
+								} else {
+									$logger->info( 'Task Failed:' . $current_task, self::$logger_context );
+									$response['status']     = 'error';
+									$current_tasks_failed[] = $current_task;
 								}
-								$logger->info( 'Task Done:' . $current_task, self::$logger_context );
-								// Set success status only if not already set else it can override error/skipped statuses set previously from other tasks.
-								if ( empty( $response['status'] ) ) {
-									$response['status'] = 'success';
-								}
-								$current_tasks_done[] = $current_task;
-							} elseif ( 'skipped' === $task_response['status'] ) {
-								$response['status']      = 'skipped';
-								$current_tasks_skipped[] = $current_task;
+
+								$response['tasks'][ $current_task ] = $task_response;
+
+								$onboarding_tasks_done[ $task_group ]    = $current_tasks_done;
+								$onboarding_tasks_failed[ $task_group ]  = $current_tasks_failed;
+								$onboarding_tasks_skipped[ $task_group ] = $current_tasks_skipped;
+
+								update_option( self::$onboarding_tasks_done_option, $onboarding_tasks_done );
+								update_option( self::$onboarding_tasks_failed_option, $onboarding_tasks_failed );
+								update_option( self::$onboarding_tasks_skipped_option, $onboarding_tasks_skipped );
+								update_option( self::$onboarding_tasks_data_option, $onboarding_tasks_data );
+								update_option( self::$onboarding_current_task_option, $current_task );
 							} else {
-								$logger->info( 'Task Failed:' . $current_task, self::$logger_context );
-								$response['status']     = 'error';
-								$current_tasks_failed[] = $current_task;
+								$logger->info( 'Missing Task:' . $current_task, self::$logger_context );
 							}
-
-							$response['tasks'][ $current_task ] = $task_response;
-
-							$onboarding_tasks_done[ $task_group ]    = $current_tasks_done;
-							$onboarding_tasks_failed[ $task_group ]  = $current_tasks_failed;
-							$onboarding_tasks_skipped[ $task_group ] = $current_tasks_skipped;
-
-							update_option( self::$onboarding_tasks_done_option, $onboarding_tasks_done );
-							update_option( self::$onboarding_tasks_failed_option, $onboarding_tasks_failed );
-							update_option( self::$onboarding_tasks_skipped_option, $onboarding_tasks_skipped );
-							update_option( self::$onboarding_tasks_data_option, $onboarding_tasks_data );
-							update_option( self::$onboarding_current_task_option, $current_task );
 						} else {
-							$logger->info( 'Missing Task:' . $current_task, self::$logger_context );
+							$response['status']      = 'skipped';
+							$current_tasks_skipped[] = $current_task;
 						}
 					} else {
 						$response['tasks'][ $current_task ] = array(
@@ -756,6 +776,41 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			return $response;
 		}
 
+		public function create_ess_account() {
+			$es_service_email_sending = ES_Service_Email_Sending::get_instance();
+			$response = $es_service_email_sending->create_ess_account();
+
+			return $response;
+		}
+
+		public function set_sending_service_consent() {
+			$es_service_email_sending = ES_Service_Email_Sending::get_instance();
+			$response = $es_service_email_sending->set_sending_service_consent();
+
+			return $response;
+		}
+
+		public function send_test_email() {
+			$es_service_email_sending = ES_Service_Email_Sending::get_instance();
+			$response = $es_service_email_sending->dispatch_emails_from_server();
+
+			return $response;
+		}
+
+		public function confirm_email_delivery() {
+			$es_service_email_sending = ES_Service_Email_Sending::get_instance();
+			$response = $es_service_email_sending->check_test_email_on_server();
+
+			return $response;
+		}
+
+		public function complete_ess_onboarding() {
+			$es_service_email_sending = ES_Service_Email_Sending::get_instance();
+			$response = $es_service_email_sending->ajax_complete_ess_onboarding();
+
+			return $response;
+		}
+
 		/**
 		 * Create and send default broadcast while onboarding
 		 *
@@ -1047,25 +1102,21 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$response                 = array(
 				'status' => 'error',
 			);
-			$create_post_notification = ig_es_get_request_data( 'create_post_notification', '' );
-			if ( 'no' === $create_post_notification ) {
-				$response['status'] = 'skipped';
-				return $response;
-			}
+			
+			
 
 			$from_name  = ES_Common::get_ig_option( 'from_name' );
 			$from_email = ES_Common::get_ig_option( 'from_email' );
 
-			$content  = "Hello {{NAME}},\r\n\r\n";
-			$content .= "We have published a new blog article on our website : {{POSTTITLE}}\r\n";
-			$content .= "{{POSTIMAGE}}\r\n\r\n";
-			$content .= 'You can view it from this link : ';
-			$content .= "{{POSTLINK}}\r\n\r\n";
-			$content .= "Thanks & Regards,\r\n";
-			$content .= "Admin\r\n\r\n";
-			$content .= 'You received this email because in the past you have provided us your email address : {{EMAIL}} to receive notifications when new updates are posted.';
+			$content  = "<p>Hello {{subscriber.name | fallback='there'}},</p>";
+			$content .= '<p>We have published a new blog article on our website: {{post.title}}</p>';
+			$content .= '{{post.image}}';
+			$content .= '<p>You can view it from this link : {{post.link}}</p>';
+			$content .= '<p>Thanks & Regards,<br/>';
+			$content .= 'Admin</p>';
+			$content .= '<p>You received this email because in the past you have provided us your email address : {{subscriber.email}} to receive notifications when new updates are posted.</p>';
 
-			$title = esc_html__( 'New Post Published - {{POSTTITLE}}', 'email-subscribers' );
+			$title = esc_html__( 'New Post Published - {{post.title}}', 'email-subscribers' );
 
 			$default_list = ES()->lists_db->get_list_by_name( IG_DEFAULT_LIST );
 
@@ -1098,9 +1149,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 					),
 				),
 			);
-
-			$categories_str = ES_Common::convert_categories_array_to_string( $categories );
-
+			$categories_str = ES_Common::onboarding_convert_category_value_to_string( $categories );
 			$data['slug']             = sanitize_title( $title );
 			$data['name']             = $title;
 			$data['subject']          = $title;
@@ -1114,9 +1163,10 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$data['list_ids']         = $list_id;
 			$data['status']           = 0;
 			$data['meta']             = maybe_serialize( $meta );
-
 			$post_notification_id = ES()->campaigns_db->save_campaign( $data );
+		
 			if ( $post_notification_id ) {
+				ES_Campaign_Controller::add_to_new_category_format_campaign_ids($post_notification_id);
 				$response['status']     = 'success';
 				$response['tasks_data'] = array(
 					'post_notification_id' => $post_notification_id,
@@ -1370,6 +1420,19 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			}
 
 			$required_tasks_mapping = array(
+				'set_sending_service_consent' => array(
+					'create_ess_account',
+				),
+				'send_test_email' => array(
+					'set_sending_service_consent',
+				),
+				'confirm_email_delivery' => array(
+					'send_test_email',
+				),
+				'complete_ess_onboarding' => array(
+					'confirm_email_delivery',
+				),
+
 				'check_test_email_on_server' => array(
 					'dispatch_emails_from_server',
 				),

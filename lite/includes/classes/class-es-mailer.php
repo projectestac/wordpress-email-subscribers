@@ -94,6 +94,14 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 * @var object|ES_Base_Mailer
 		 */
 		public $mailer;
+		
+		/**
+		 * Default mailer to be used When ESS limit is reached
+		 *
+		 * @since 4.3.2
+		 * @var object|ES_Base_Mailer
+		 */
+		public $default_mailer;
 
 		/**
 		 * ES_Mailer constructor.
@@ -564,6 +572,15 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			ignore_user_abort( true );
 
 			$this->time_start = time();
+
+			if ( ES_Service_Email_Sending::using_icegram_mailer() ) {
+				$remaining_limit = ES_Service_Email_Sending::get_remaining_limit();
+				if ( $remaining_limit > 0 ) {
+					$this->mailer->remaining_limit = $remaining_limit;
+				} else {
+					$this->switch_to_default_mailer();
+				}
+			}
 			$message_id       = ! empty( $merge_tags['message_id'] ) ? $merge_tags['message_id'] : 0;
 			$campaign_id      = ! empty( $merge_tags['campaign_id'] ) ? $merge_tags['campaign_id'] : 0;
 			$attachments      = ! empty( $merge_tags['attachments'] ) ? $merge_tags['attachments'] : array();
@@ -750,6 +767,11 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			}
 
 			foreach ( $emails as $email_counter => $email ) {
+				
+				// Break if we have reached Icegram mailer limit set by ESS
+				if ( ES_Service_Email_Sending::using_icegram_mailer()  && 0 === $this->mailer->remaining_limit ) {
+					break;
+				}
 
 				// Clean it.
 				$email = trim( $email );
@@ -1154,6 +1176,9 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 				if ( false !== strpos( $merge_tag_key, 'cf_' ) ) {
 					$merge_tag_key_parts = explode( '_', $merge_tag_key );
 					$merge_tag_key       = $merge_tag_key_parts[2];
+					if ( is_null( $merge_tag_value ) ) {
+						$merge_tag_value = '';
+					}
 					$custom_field_values[ 'subscriber.' . $merge_tag_key ] = $merge_tag_value;
 				}
 			}
@@ -1728,13 +1753,6 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 				$total_emails_can_send_now = $can_total_emails_send_at_once;
 			}
 
-			if ( ES_Service_Email_Sending::use_icegram_mailer() ) {
-				$remaining_limit = ES_Service_Email_Sending::get_remaining_limit();
-				if ( $total_emails_can_send_now > $remaining_limit ) {
-					$total_emails_can_send_now = $remaining_limit;
-				}
-			}
-
 			return $total_emails_can_send_now;
 		}
 
@@ -1919,11 +1937,15 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 			$mailer_class = $this->get_current_mailer_class();
 			 $mailer_obj = new $mailer_class();
 			if (ES_Service_Email_Sending::use_icegram_mailer()) {
+				$this->default_mailer = $mailer_obj;
 				$mailer_obj = new ES_Icegram_Mailer();
 			}
 			$this->mailer =$mailer_obj;
 		}
-		
+
+		public function switch_to_default_mailer() {
+			$this->mailer = $this->default_mailer;
+		}
 
 		public function get_current_mailer_account_url() {
 			$current_mailer_class = $this->get_current_mailer_class();

@@ -81,12 +81,12 @@ class ES_Import_Subscribers {
 			let wpUploaderInit = <?php echo wp_json_encode( $plupload_init ); ?>;
 		</script>
 		<div class="tool-box">
-			<div class="meta-box-sortables ui-sortable bg-white shadow-md mt-8 rounded-lg">
-				<div class="es-import-option bg-gray-50 rounded-lg">
+			<div class="meta-box-sortables ui-sortable bg-white rounded-lg">
+				<div class="es-import-option bg-white rounded-lg">
 					<div class="mx-auto flex justify-center pt-2">
-						<label class="inline-flex items-center cursor-pointer mr-3 h-22 w-48">
+						<label class="inline-flex items-center cursor-pointer mr-2 w-48">
 							<input type="radio" class="absolute w-0 h-0 opacity-0 es_mailer" name="es-import-subscribers" value="es-import-with-csv" checked />
-							<div class="mt-4 px-3 py-1 border border-gray-200 rounded-lg shadow-md es-mailer-logo es-importer-logo h-18 bg-white">
+							<div class="mt-6 px-3 py-1 border border-gray-200 rounded-lg shadow-md es-mailer-logo es-importer-logo bg-white">
 								<div class="border-0 es-logo-wrapper">
 									<svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
 								</div>
@@ -95,9 +95,9 @@ class ES_Import_Subscribers {
 								</p>
 							</div>
 						</label>
-						<label class="inline-flex items-center cursor-pointer w-56">
+						<label class="inline-flex items-center cursor-pointer w-48 mr-2">
 							<input type="radio" class="absolute w-0 h-0 opacity-0 es_mailer" name="es-import-subscribers" value="es-import-mailchimp-users" />
-							<div class="mt-4 px-1 mx-4 border border-gray-200 rounded-lg shadow-md es-mailer-logo es-importer-logo bg-white">
+							<div class="mt-6 px-1 mx-4 border border-gray-200 rounded-lg shadow-md es-mailer-logo es-importer-logo bg-white">
 								<div class="border-0 es-logo-wrapper">
 									<img class="h-full w-24" src="<?php echo esc_url( ES_PLUGIN_URL . 'lite/admin/images/mailchimp_logo.png' ); ?>" alt="Icegram.com" />
 								</div>
@@ -110,36 +110,36 @@ class ES_Import_Subscribers {
 							do_action( 'ig_es_subscriber_import_method_tab_heading' );
 						?>
 					</div>
-					<hr class="mx-10 border-gray-100 mt-6">
+					<hr class="mx-4 border-gray-100 mt-6">
 				</div>
-				<form class="ml-7 mr-4 text-left py-4 my-2 item-center" method="post" name="form_import_subscribers" id="form_import_subscribers" action="#" enctype="multipart/form-data">
+				<form class="ml-8 mr-4 text-left py-4 my-2 item-center" method="post" name="form_import_subscribers" id="form_import_subscribers" action="#" enctype="multipart/form-data">
 					<div class="es-import-step1 flex flex-row">
-						<div class="w-5/6 flex flex-row es-import-with-csv es-import">
-							<div class="es-import-processing flex w-1/4">
-								<div class="ml-6 pt-6">
+						<div class="w-full flex flex-row es-import-with-csv es-import">
+							<div class="es-import-processing flex es-w-25">
+								<div class="pt-6">
 									<label for="select_csv">
 										<span class="block pr-4 text-sm font-medium text-gray-600 pb-1">
 											<?php esc_html_e( 'Select CSV file', 'email-subscribers' ); ?>
 										</span>
-										<p class="mt-2 es_helper_text">
+										<p class="mt-2 italic text-xs text-gray-400">
 											<?php
 											/* translators: %s: Max upload size */
 											echo sprintf( esc_html__( 'File size should be less than %s', 'email-subscribers' ), esc_html( size_format( $max_upload_size ) ) );
 											?>
 										</p>
-										<p class="mt-2 es_helper_text">
+										<p class="mt-2 italic text-xs text-gray-400">
 											<?php esc_html_e( 'Check CSV structure', 'email-subscribers' ); ?>
-											<a class="font-medium hover:underline" target="_blank" href="<?php echo esc_attr( plugin_dir_url( __FILE__ ) ) . '../../admin/partials/sample.csv'; ?>"><?php esc_html_e( 'from here', 'email-subscribers' ); ?></a>
+											<a class="font-bold hover:underline text-indigo-600 font-sans" target="_blank" href="<?php echo esc_attr( plugin_dir_url( __FILE__ ) ) . '../../admin/partials/sample.csv'; ?>"><?php esc_html_e( 'from here', 'email-subscribers' ); ?></a>
 										</p>
-										<p class="mt-4 es_helper_text">
-											<a class="hover:underline text-sm font-medium" href="https://www.icegram.com/documentation/es-how-to-import-or-export-email-addresses/?utm_source=in_app&utm_medium=import_contacts&utm_campaign=es_doc" target="_blank">
+										<p class="mt-3">
+											<a class="hover:underline text-base font-bold italic text-sm text-indigo-600 font-sans" href="https://www.icegram.com/documentation/es-how-to-import-or-export-email-addresses/?utm_source=in_app&utm_medium=import_contacts&utm_campaign=es_doc" target="_blank">
 											<?php esc_html_e( 'How to import contacts using CSV?', 'email-subscribers' ); ?>&rarr;
 										</a>
 										</p>
 									</label>
 								</div>
 							</div>
-							<div class="w-3/4 ml-12 xl:ml-32 my-6 mr-4">
+							<div class="es-w-65 ml-12 mr-4">
 								<div class="es-import-step1-body">
 									<div class="upload-method">
 										<div id="media-upload-error"></div>
@@ -148,7 +148,7 @@ class ES_Import_Subscribers {
 												<div class="drag-drop-inside">
 													<p class="drag-drop-info"><?php esc_html_e( 'Drop your CSV here', 'email-subscribers' ); ?></p>
 													<p><?php echo esc_html_x( 'or', 'Uploader: Drop files here - or - Select Files', 'email-subscribers' ); ?></p>
-													<p class="drag-drop-buttons"><input id="plupload-browse-button" type="button" value="<?php esc_attr_e( 'Select File', 'email-subscribers' ); ?>" class="button" /></p>
+													<p class="drag-drop-buttons"><button id="plupload-browse-button" type="submit" class="primary"><?php esc_attr_e( 'Select File', 'email-subscribers' ); ?></button></p>
 												</div>
 											</div>
 										</div>
@@ -159,8 +159,8 @@ class ES_Import_Subscribers {
 							</div>
 						</div>
 
-						<div class="w-5/6 flex flex-row es-import-mailchimp-users es-import" style="display: none">
-							<div class="es-import-processing flex w-1/4">
+						<div class="w-full flex flex-row es-import-mailchimp-users es-import" style="display: none">
+							<div class="es-import-processing flex es-w-25">
 								<div class="ml-6 pt-6">
 									<label for="select_mailchimp_users">
 										<span class="block pr-4 text-sm font-medium text-gray-600 pb-1">
@@ -168,20 +168,20 @@ class ES_Import_Subscribers {
 										</span>
 										<p class="italic text-xs font-normal text-gray-400 mt-2 leading-snug" id="apikey-info-text"><?php esc_html_e( 'You need your API key from Mailchimp to import your data.', 'email-subscribers' ); ?>
 										</p>
-										<p class="italic text-xs font-normal text-gray-400 mt-2 leading-snug font-medium">
+										<p class="italic text-xs font-medium hover:underline text-indigo-600 font-sans mt-3">
 											 <a href="https://admin.mailchimp.com/account/api-key-popup/" onclick="window.open(this.href, 'email-subscribers', 'width=600,height=600');return false;"><?php esc_html_e( 'Click here to get it.', 'email-subscribers' ); ?>
 											 </a>
 										</p>
 									</label>
 								</div>
 							</div>
-							<div class="w-3/4 ml-12 xl:ml-32 my-6 mr-4">
+							<div class="es-w-65 ml-8 pt-6 mr-4">
 								<div>
 									<label><input name="apikey" type="text" id="api-key" class="form-input text-sm w-1/2" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus tabindex="1" placeholder="12345678901234567890123456789012-xx1" class=""></label>
 								</div>
 								<p class="es-api-import-status pt-4 text-sm font-medium text-gray-600 tracking-wide hidden">&nbsp;</p>
-								<div class="clearfix clear mt-10 -mb-4 ">
-									<button id="es_mailchimp_verify_api_key" class="ig-es-primary-button px-2 py-1" data-callback="verify_api_key">
+								<div class="clearfix clear mt-8 ">
+									<button id="es_mailchimp_verify_api_key" class="primary" data-callback="verify_api_key">
 										<?php echo esc_html__( 'Next', 'email-subscribers' ); ?>
 											&nbsp;
 										<svg style="display:none" class="es-import-loader mr-1 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -201,10 +201,10 @@ class ES_Import_Subscribers {
 
 					</div>
 
-					<div class="mailchimp_import_step_1 w-5/6" style="display: none">
-						<div class="flex flex-row pt-6 pb-4 border-b border-gray-100">
-							<div class="flex w-1/4">
-								<div class="ml-6">
+					<div class="mailchimp_import_step_1 w-full" style="display:none">
+						<div class="flex flex-row pt-6 pb-5 border-b">
+							<div class="flex es-w-25 pt-6">
+								<div>
 									<label for="select_mailchimp_list">
 										<span class="block pr-4 text-sm font-medium text-gray-600 pb-1">
 											<?php echo esc_html_e( 'Select list', 'email-subscribers' ); ?>
@@ -215,7 +215,7 @@ class ES_Import_Subscribers {
 								</div>
 							</div>
 
-							<div class="ml-6">
+							<div class="es-w-65 ml-8">
 								<ul class="es_mailchimp_lists_and_status_input mailchimp-lists">
 									<li class="hidden" data-error-counter="0">
 										<input type="checkbox" name="lists[]" class="form-checkbox" value="" id="">
@@ -232,7 +232,7 @@ class ES_Import_Subscribers {
 						</div>
 
 						<div class="flex flex-row">
-							<div class="flex w-1/4 pt-6">
+							<div class="flex es-w-25 pt-6">
 								<div class="ml-6">
 									<label for="select_mailchimp_list">
 										<span class="block pr-4 text-sm font-medium text-gray-600 pb-1"><?php esc_html_e( 'Select Status', 'email-subscribers' ); ?></span><span class="chevron"></span>
@@ -241,7 +241,7 @@ class ES_Import_Subscribers {
 									</label>
 								</div>
 							</div>
-							<div class="ml-6">
+							<div class="es-w-65 ml-8">
 								<div>
 									<ul class="es_mailchimp_lists_and_status_input pt-6">
 										<li>
@@ -277,9 +277,9 @@ class ES_Import_Subscribers {
 										</li>
 									</ul>
 								</div>
-								<div class="mt-10"> <span class="mailchimp_notice_nowindow_close text-sm font-medium text-yellow-600 tracking-wide"></span></div>
-								<div class="clearfix clear mt-10">
-									<button id="es_import_mailchimp_list_members" class="ig-es-primary-button px-2 py-1" data-callback="import_lists">
+								<div> <span class="mailchimp_notice_nowindow_close text-sm font-medium text-yellow-600 tracking-wide"></span></div>
+								<div class="clearfix clear mt-8">
+									<button id="es_import_mailchimp_list_members" class="primary" data-callback="import_lists">
 										<?php esc_html_e( 'Next', 'email-subscribers' ); ?> &nbsp;
 										<svg style="display:none" class="es-list-import-loader mr-1 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
 										  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -300,15 +300,15 @@ class ES_Import_Subscribers {
 					</div>
 					<div class="step2-status es-email-status-container">
 						<div class="step2-status flex flex-row border-b border-gray-100">
-							<div class="flex w-1/4">
-								<div class="ml-6 pt-6">
+							<div class="flex es-w-25">
+								<div class="ml-3 pt-5">
 									<label for="import_contact_list_status"><span class="block pr-4 text-sm font-medium text-gray-600 pb-2">
 										<?php esc_html_e( 'Select status', 'email-subscribers' ); ?> </span>
 									</label>
 								</div>
 							</div>
-							<div class="w-3/4 mb-6 mr-4 mt-4">
-								<select class="relative form-select shadow-sm border border-gray-400 sm:w-32 lg:w-48" name="es_email_status" id="es_email_status">
+							<div class="es-w-65 mb-6 mr-4 mt-3">
+								<select class="relative form-select shadow-sm border border-gray-400 w-32" name="es_email_status" id="es_email_status">
 									<?php
 									$statuses_dropdown = ES_Common::prepare_statuses_dropdown_options();
 									echo wp_kses( $statuses_dropdown, $allowedtags );
@@ -319,14 +319,14 @@ class ES_Import_Subscribers {
 					</div>
 					<div class="step2-list">
 						<div class="step2-list flex flex-row border-b border-gray-100">
-							<div class="flex w-1/4">
-								<div class="ml-6 pt-6">
+							<div class="flex es-w-25">
+								<div class="ml-3 pt-5">
 									<label for="tag-email-group"><span class="block pr-4 text-sm font-medium text-gray-600 pb-2">
 										<?php esc_html_e( 'Select list', 'email-subscribers' ); ?></span>
 									</label>
 								</div>
 							</div>
-							<div class="w-3/4 mb-6 mr-4 mt-4">
+							<div class="w-40 mb-6 mr-4 mt-3">
 								<?php
 								// Allow multiselect for lists field in the pro version by changing list field's class,name and adding multiple attribute.
 								if ( ES()->is_pro() ) {
@@ -340,7 +340,7 @@ class ES_Import_Subscribers {
 								}
 								?>
 								<div>
-									<select name="<?php echo esc_attr( $select_list_name ); ?>" id="list_id" class="relative shadow-sm border border-gray-400 sm:w-32 lg:w-48 <?php echo esc_attr( $select_list_class ); ?>" <?php echo esc_attr( $select_list_attr ); ?>>
+									<select name="<?php echo esc_attr( $select_list_name ); ?>" id="list_id" class="relative shadow-sm border border-gray-400 w-32 <?php echo esc_attr( $select_list_class ); ?>" <?php echo esc_attr( $select_list_attr ); ?>>
 										<?php
 										$lists_dropdown = ES_Common::prepare_list_dropdown_options();
 										echo wp_kses( $lists_dropdown, $allowedtags );
@@ -353,21 +353,20 @@ class ES_Import_Subscribers {
 					</div>
 					<div class="step2-send-optin-emails hidden">
 						<div class="step2-send-optin-emails flex flex-row border-b border-gray-100">
-							<div class="flex w-1/4">
-								<div class="ml-6 pt-6">
+							<div class="flex es-w-25">
+								<div class="ml-3 pt-5">
 									<label for="import_contact_list_status"><span class="block pr-4 text-sm font-medium text-gray-600 pb-2">
 										<?php esc_html_e( 'Send Confirmation/Welcome emails for this import?', 'email-subscribers' ); ?> </span>
 									</label>
 								</div>
 							</div>
-							<div class="w-3/4 mb-6 mr-4 mt-4">
+							<div class="w-40 mr-4 h-10 mt-3">
 								<label for="send_optin_emails"
 									   class="inline-flex items-center mt-4 mb-1 cursor-pointer">
 									<span class="relative">
 										<input id="send_optin_emails" type="checkbox" name="send_optin_emails"
-											   value="yes" class="absolute w-0 h-0 mt-6 opacity-0 es-check-toggle ">
-										<span class="es-mail-toggle-line"></span>
-										<span class="es-mail-toggle-dot"></span>
+											   value="yes" class="sr-only peer absolute es-check-toggle opacity-0 w-0 h-0 ">
+										<div class="w-11 h-6 bg-gray-200 rounded-full peer  dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
 									</span>
 								</label>
 							</div>
@@ -376,15 +375,15 @@ class ES_Import_Subscribers {
 
 					<div class="step2-update-existing-subscribers">
 						<div class="flex flex-row border-gray-100">
-							<div class="flex w-1/4">
-								<div class="ml-6 pt-6">
+							<div class="flex es-w-25">
+								<div class="ml-3 pt-5">
 									<label><span class="pr-4 text-sm font-medium text-gray-600 pb-2">
 										<?php esc_html_e( 'Update existing subscribers', 'email-subscribers' ); ?> </span>
 									</label>
 								</div>
 							</div>
 								
-							<div class="w-3/4 mb-6 mr-4 mt-4 pt-2">
+							<div class="w-auto mb-6 mr-4 mt-4 pt-2">
 								<div class="flex flex-row">
 									<div class="w-1/2">
 										<label class="mr-4">
@@ -404,13 +403,12 @@ class ES_Import_Subscribers {
 
 					<div class="wrapper-start-contacts-import" style="padding-top:10px;">
 							<?php wp_nonce_field( 'import-contacts', 'import_contacts' ); ?>
-							<input type="submit" name="submit" class="start-import cursor-pointer ig-es-primary-button px-4 py-2 ml-6 mr-2 my-4" value="<?php esc_html_e( 'Import', 'email-subscribers' ); ?>" />
+							<button type="submit" name="submit" class="primary"><?php esc_html_e( 'Import', 'email-subscribers' ); ?></button>
 					</div>
 				</form>
 			</div>
 			<div class="import-progress">
 			</div>
-			<!-- <div id="progress" class="progress hidden"><span class="bar" style="width:0%"><span></span></span></div> -->
 		</div>
 		<?php
 	}
@@ -428,33 +426,12 @@ class ES_Import_Subscribers {
 
 		?>
 
-		<div class="max-w-full -mt-3 font-sans">
-			<header class="wp-heading-inline">
-				<div class="flex">
-					<div>
-						<nav class="text-gray-400 my-0" aria-label="Breadcrumb">
-							<ol class="list-none p-0 inline-flex">
-								<li class="flex items-center text-sm tracking-wide">
-									<a class="hover:underline " href="admin.php?page=es_subscribers"><?php esc_html_e( 'Audience ', 'email-subscribers' ); ?></a>
-									<svg class="fill-current w-2.5 h-2.5 mx-2 mt-mx" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path></svg>
-								</li>
-							</ol>
-						</nav>
-						<h2 class="-mt-1.5 text-2xl font-medium text-gray-700 sm:leading-7 sm:truncate">
-							<?php esc_html_e( 'Import Contacts', 'email-subscribers' ); ?>
-						</h2>
-					</div>
-
-					<div class="mt-4 ml-2">
-						<?php
-						ES_Common::prepare_main_header_navigation( $audience_tab_main_navigation );
-						?>
-					</div>
-				</div>
-			</header>
-
-			<div><hr class="wp-header-end"></div>
-			<?php $this->import_callback(); ?>
+		<div class="max-w-full font-sans">
+			<?php
+			ES_Contacts_Table::render_header('import'); //Rendering Header
+			
+			$this->import_callback(); 
+			?>
 		</div>
 
 		<?php
@@ -597,7 +574,7 @@ class ES_Import_Subscribers {
 			}
 		} elseif ( 'wordpress_users' === $importing_from ) {
 			$roles = ig_es_get_request_data( 'selected_roles' );
-
+// phpcs:disable
 			$users = $wpdb->get_results(
 				"SELECT u.user_email, IF(meta_role.meta_value = 'a:0:{}',NULL,meta_role.meta_value) AS '_role', meta_firstname.meta_value AS 'firstname', meta_lastname.meta_value AS 'lastname', u.display_name, u.user_nicename
 				 FROM {$wpdb->users} AS u
@@ -606,7 +583,7 @@ class ES_Import_Subscribers {
 				 LEFT JOIN {$wpdb->usermeta} AS meta_lastname ON meta_lastname.user_id = u.id AND meta_lastname.meta_key = 'last_name'
 				 WHERE meta_role.user_id IS NOT NULL"
 			);
-
+// phpcs:enable
 			if ( ! empty( $users ) ) {
 				$raw_data             = '';
 				$seperator            = ';';
@@ -691,6 +668,7 @@ class ES_Import_Subscribers {
 			$response['identifier'] = $identifier;
 			$response['data']       = get_option( 'ig_es_bulk_import' );
 			// get first and last entry
+			// phpcs:disable
 			$entries = $wpdb->get_row(
 				$wpdb->prepare(
 					"SELECT
@@ -699,6 +677,7 @@ class ES_Import_Subscribers {
 					$identifier
 				)
 			);
+			// phpcs:enable
 
 			$first = unserialize( base64_decode( $entries->first ) );
 			$last  = unserialize( base64_decode( $entries->last ) );
@@ -722,7 +701,7 @@ class ES_Import_Subscribers {
 			$fields = apply_filters( 'es_import_show_more_fields_for_mapping', $fields );
 
 			$html      = '<div class="flex flex-row mb-6">
-			<div class="es-import-processing flex w-1/4">
+			<div class="es-import-processing flex es-w-25">
 			<div class="ml-6 mr-2 pt-6">
 			<label for="select_csv">
 			<span class="block pr-4 text-sm font-medium text-gray-600 pb-1">'
@@ -736,7 +715,7 @@ class ES_Import_Subscribers {
 			</label>
 			</div>
 			</div>';
-			$html     .= '<div class="w-3/4 mx-4 border-b border-gray-200 shadow rounded-lg"><table class="w-full bg-white rounded-lg shadow overflow-hidden ">';
+			$html     .= '<div class="es-w-65 mx-4 border-b border-gray-200 shadow rounded-lg"><table class="w-full bg-white rounded-lg shadow overflow-hidden ">';
 			$html     .= '<thead><tr class="border-b border-gray-200 bg-gray-50 text-left text-sm leading-4 font-medium text-gray-500 tracking-wider"><th class="pl-3 py-4" style="width:20px;">#</th>';
 			$phpmailer = ES()->mailer->get_phpmailer();
 			$headers   = array();
@@ -770,7 +749,7 @@ class ES_Import_Subscribers {
 			if ( ! empty( $headers ) ) {
 				$html .= '<tr class="border-b border-gray-200 text-left text-sm leading-4 font-medium text-gray-500 tracking-wider rounded-md"><th></th>';
 				foreach ( $headers as $header ) {
-					$html .= '<th class="pl-3 py-3 font-medium">' . $header . '</th>';
+					$html .= '<th class="pl-3 py-3 font-medium">' . esc_html ($header) . '</th>';
 				}
 				$html .= '</tr>';
 			}
@@ -782,7 +761,7 @@ class ES_Import_Subscribers {
 					if ( ! empty( $cell ) && is_email( $cell ) ) {
 						$cell = sanitize_email( strtolower( $cell ) );
 					}
-					$html .= '<td class="pl-3 py-3" title="' . strip_tags( $cell ) . '">' . ( $cell ) . '</td>';
+					$html .= '<td class="pl-3 py-3" title="' . strip_tags( $cell ) . '">' . ( esc_html ( $cell ) ) . '</td>';
 				}
 				$html .= '<tr>';
 			}
@@ -796,7 +775,7 @@ class ES_Import_Subscribers {
 				$data  = str_getcsv( array_pop( $last ), $response['data']['separator'], '"' );
 				$html .= '<tr class="border-b border-gray-200 text-left text-sm leading-4 text-gray-500 tracking-wider"><td class="pl-3 py-3">' . number_format_i18n( $contactcount ) . '</td>';
 				foreach ( $data as $cell ) {
-					$html .= '<td class="pl-3 py-3 " title="' . strip_tags( $cell ) . '">' . ( $cell ) . '</td>';
+					$html .= '<td class="pl-3 py-3 " title="' . strip_tags( $cell ) . '">' . ( esc_html ( $cell ) ) . '</td>';
 				}
 				$html .= '<tr>';
 			}
@@ -876,7 +855,7 @@ class ES_Import_Subscribers {
 			set_transient( 'ig_es_contact_import_is_running', 'yes' );
 			$batch_id            = (int) sanitize_text_field( $_POST['id'] );
 			$bulkdata['current'] = $batch_id;
-			
+			// phpcs:disable
 			$raw_list_data       = $wpdb->get_col(
 				$wpdb->prepare(
 					"SELECT data FROM {$wpdb->prefix}ig_temp_import 
@@ -886,6 +865,7 @@ class ES_Import_Subscribers {
 					$parts_at_once
 				)
 			);
+			// phpcs:enable
 			if ( $raw_list_data ) {
 
 				$contacts_data        = array();
@@ -1501,10 +1481,10 @@ class ES_Import_Subscribers {
 		for ( $i = 0; $i < $partcount; $i++ ) {
 
 			$part = $parts[ $i ];
-
 			$new_value = base64_encode( serialize( $part ) );
-
+		 // phpcs:disable
 			$wpdb->query( $wpdb->prepare( "INSERT INTO {$wpdb->prefix}ig_temp_import (data, identifier) VALUES (%s, %s)", $new_value, $identifier ) );
+		 // phpcs:enable
 		}
 
 		$bulk_import_data = get_option( 'ig_es_bulk_import', array() );
@@ -1533,5 +1513,5 @@ class ES_Import_Subscribers {
 		update_option( 'ig_es_bulk_import', $bulkimport, 'no' );
 
 		return $response;
-	}
+	}	
 }

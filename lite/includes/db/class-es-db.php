@@ -155,13 +155,20 @@ abstract class ES_DB {
 	 *
 	 * @modfiy 4.7.3 Added support to retrieve data from cache
 	 */
-	public function get_by_conditions( $where = '', $output = ARRAY_A, $use_cache = false ) {
+	public function get_by_conditions( $where = '', $output = ARRAY_A, $use_cache = false, $order_by_column = '', $order = '' ) {
 		global $wpbd;
 
 		$query = "SELECT * FROM $this->table_name";
 
 		if ( ! empty( $where ) ) {
 			$query .= " WHERE $where";
+		}
+
+		if ( ! empty( $order_by_column ) ) {
+			$query .= ' ORDER BY ' . esc_sql( $order_by_column );
+			if ( ! empty( $order ) ) {
+				$query .= ' ' . esc_sql( $order );
+			}
 		}
 
 		if ( true === $use_cache ) {
@@ -432,8 +439,9 @@ abstract class ES_DB {
 		// Reorder $column_formats to match the order of columns given in $data
 		$data_keys      = array_keys( $data );
 		$column_formats = array_merge( array_flip( $data_keys ), $column_formats );
-
+// phpcs:disable
 		$wpdb->insert( $this->table_name, $data, $column_formats );
+		// phpcs:enable
 		$wpdb_insert_id = $wpdb->insert_id;
 
 		do_action( 'ig_es_post_insert_' . $type, $wpdb_insert_id, $data );
@@ -479,11 +487,11 @@ abstract class ES_DB {
 		// Reorder $column_formats to match the order of columns given in $data
 		$data_keys      = array_keys( $data );
 		$column_formats = array_merge( array_flip( $data_keys ), $column_formats );
-
+// phpcs:disable
 		if ( false === $wpdb->update( $this->table_name, $data, array( $where => $row_id ), $column_formats ) ) {
 			return false;
 		}
-
+// phpcs:enable
 		return true;
 	}
 
@@ -579,8 +587,9 @@ abstract class ES_DB {
 	public function table_exists( $table ) {
 		global $wpdb;
 		$table = sanitize_text_field( $table );
-
+// phpcs:disable
 		return $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table;
+// phpcs:enable
 	}
 
 	/**

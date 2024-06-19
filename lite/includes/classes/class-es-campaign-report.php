@@ -125,6 +125,14 @@ class ES_Campaign_Report extends ES_List_Table {
 	 * @version 5.4.2
 	 */
 	public function view_report_description_lite( $notification, $report_kpi_statistics ) {
+		if ( ! empty( $notification['type'] ) ) {
+			$campaign_url = '';
+			if ( IG_CAMPAIGN_TYPE_SEQUENCE === $notification['type'] ) {
+				$campaign_url = '?page=es_sequence&action=edit&id=' . $notification['campaign_id'];
+			} else {
+				$campaign_url = '?page=es_campaigns#!/campaign/edit/' . $notification['campaign_id'];
+			}
+		}
 		?>
 		<div class="wrap max-w-7xl w-full">
 			<div class="wp-heading-inline flex items-center justify-between">
@@ -138,7 +146,9 @@ class ES_Campaign_Report extends ES_List_Table {
 				<div class="w-3/4">
 					<div class="flex pl-6 pt-4">
 						<div class="w-auto inline-block text-xl text-gray-600 font-medium leading-7 truncate">
-							<?php echo esc_html( $notification['subject'] ); ?>
+							<a href="<?php echo esc_url( $campaign_url ); ?>" target="_blank" title="<?php echo esc_attr__( 'Go to campaign', 'email-subscribers' ); ?>">
+								<?php echo esc_html( $notification['subject'] ); ?>
+							</a>
 						</div>
 						<div class="inline-block ml-2 font-semibold leading-5 tracking-wide text-xs">
 							<?php
@@ -760,17 +770,21 @@ class ES_Campaign_Report extends ES_List_Table {
 	public function es_view_activity_report_sort_and_filter() {
 		$hash        = ig_es_get_request_data( 'list', '' );
 		$campaign_id = ig_es_get_request_data( 'campaign_id', '' );
-
+	
+		// Escaping and sanitizing data
+		$hash        = esc_attr( $hash );
+		$campaign_id = absint( $campaign_id );
+	
 		?>
-
+	
 		<script type="text/javascript">
-
+	
 		(function ($) {
-
+	
 			$(document).ready(
-
+	
 				function () {
-
+	
 					$('#es_campaign_report').on('click', '.tablenav-pages a, .manage-column.sortable a, .manage-column.sorted a', function (e) {
 						e.preventDefault();
 						var query = this.search.substring(1);
@@ -781,19 +795,17 @@ class ES_Campaign_Report extends ES_List_Table {
 						$("input[name='orderby']").val(orderby);
 						$("input[name='paged']").val(paged);
 						check_filter_value();
-
 					});
-
+	
 					$('#campaign-report-search-submit').on('click', function (e) {
 						e.preventDefault();
 						$("input[name='paged']").val(1);
 						check_filter_value();
 					});
 				});
-
-
-				list = {
-
+	
+				var list = {
+	
 					/** AJAX call
 					 *
 					 * Send the call and replace table parts with updated version!
@@ -801,9 +813,9 @@ class ES_Campaign_Report extends ES_List_Table {
 					 * @param    object    data The data to pass through AJAX
 					 */
 					update: function (data) {
-
+	
 						$.ajax({
-
+	
 							url: ajaxurl,
 							data: $.extend(
 								{
@@ -825,15 +837,15 @@ class ES_Campaign_Report extends ES_List_Table {
 									$('.tablenav.bottom .tablenav-pages').html($(response.pagination.bottom).html());
 								if (response.pagination.top.length)
 									$('.tablenav.top .tablenav-pages').html($(response.pagination.top).html());
-								},
-								error: function (err) {
-
+							},
+							error: function (err) {
+	
 							}
 						}).always(function(){
 							$('#es_campaign_report table.wp-list-table.widefat.fixed.striped.table-view-list.reports tbody').removeClass('es-pulse-animation').css({'filter': 'blur(0px)', '-webkit-filter' : 'blur(0px)'});
 						});
 					},
-
+	
 					/**
 					 * Filter the URL Query to extract variables
 					 *
@@ -845,7 +857,7 @@ class ES_Campaign_Report extends ES_List_Table {
 					 * @return   string|boolean The variable value if available, false else.
 					 */
 					__query: function (query, variable) {
-
+	
 						var vars = query.split("&");
 						for (var i = 0; i < vars.length; i++) {
 							var pair = vars[i].split("=");
@@ -855,36 +867,37 @@ class ES_Campaign_Report extends ES_List_Table {
 						return false;
 					},
 				}
-
-
+	
+	
 				function check_filter_value( filter_value = '' ){
-						var search 	= $('#campaign-reports-search-input').val();
-						var country_code 			= $('#ig_es_filter_activity_report_by_country').val();
-						var report_activity_status 	= $('#ig_es_filter_activity_report_by_status').val();
-						var order 	= $("input[name='order']").val();
+						var search  = $('#campaign-reports-search-input').val();
+						var country_code             = $('#ig_es_filter_activity_report_by_country').val();
+						var report_activity_status   = $('#ig_es_filter_activity_report_by_status').val();
+						var order   = $("input[name='order']").val();
 						var orderby = $("input[name='orderby']").val();
-						var paged 	= $("input[name='paged']").val();
-
+						var paged   = $("input[name='paged']").val();
+	
 						data =
 						{
-							list : "<?php echo esc_html( $hash ); ?>",
-							campaign_id 	: <?php echo ( ! empty( $campaign_id ) ? esc_html( $campaign_id ) : 0 ); ?>,
-							order 			: order,
-							orderby 		: orderby,
-							paged 			: paged,
-							s     			: search,
-							country_code	: country_code,
-							status 			: report_activity_status
-
+							list : "<?php echo esc_js($hash); ?>",
+							campaign_id     : "<?php echo esc_js($campaign_id); ?>",
+							order           : order,
+							orderby         : orderby,
+							paged           : paged,
+							s               : search,
+							country_code    : country_code,
+							status          : report_activity_status
+	
 						};
-
+	
 						list.update(data);
 				}
 			})(jQuery);
-
+	
 		</script>
 		<?php
 	}
+	
 
 
 }

@@ -4,7 +4,7 @@ $admin_email = get_option( 'admin_email' );
 <div id="ig-es-trial-optin-section" class="hidden">
 	<form id="ig-es-trial-optin-form" method="post">
 		<?php wp_nonce_field( 'ig-es-trial-optin-nonce', 'ig_es_trial_optin_nonce' ); ?>
-		<h3 class="text-lg font-medium tracking-tight text-gray-900">
+		<h3 class="pb-3 text-lg font-medium leading-6 text-gray-400">
 			<?php echo esc_html__( 'Sign up now', 'email-subscribers' ); ?>
 		</h3>
 		<div class="pt-1 space-y-2 text-sm">
@@ -28,15 +28,15 @@ $admin_email = get_option( 'admin_email' );
 			</div>
 		</div>
 		<div class="pt-3 space-y-2 text-sm">
-			<button id="ig-es-trial-optin-btn" type="button" class="ig-es-primary-button ig-es-inline-loader inline-flex px-3 py-1 text-sm inline-block">
+			<button id="ig-es-trial-optin-btn" type="button" class="primary ig-es-inline-loader inline-flex mt-2 text-sm inline-block">
 				<span>
 					<?php echo esc_html__( 'Start trial', 'email-subscribers' ); ?>
 				</span>
-				<svg class="es-btn-loader animate-spin h-4 w-4 text-indigo"
+				<svg class="es-btn-loader"
 								xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-					<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+					<circle cx="12" cy="12" r="10" stroke="currentColor"
 							stroke-width="4"></circle>
-					<path class="opacity-75" fill="currentColor"
+					<path fill="currentColor"
 							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 				</svg>
 			</button>
@@ -105,7 +105,14 @@ $admin_email = get_option( 'admin_email' );
 					if (response.success) {
 						$('#ig-es-trial-optin-form,#ig-es-trial-optin-error-block').addClass('hidden');
 						$('#ig-es-trial-optin-success-block').removeClass('hidden');
-						$('#ig-es-trial-optin-block').removeClass('bg-white').addClass('bg-teal-100');
+
+						/*After 10 second of success block users will see trial-active block*/
+						setTimeout(function(){
+							$('#ig-es-trial-optin-success-block').addClass('hidden');
+							$('#ig-es-trial-active-block').removeClass('hidden');
+						}, 10000);
+
+						//$('#ig-es-trial-optin-block').removeClass('bg-white').addClass('bg-teal-100');
 					} else {
 						if ( response.data.message_text ) {
 							$('#error-message-text').text(response.data.message_text);

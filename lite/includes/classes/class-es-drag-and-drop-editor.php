@@ -25,27 +25,13 @@ class ES_Drag_And_Drop_Editor {
 			$edit_campaign_pages = array(
 				'es_notifications',
 				'es_newsletters',
+				'es_campaigns'
 			);
 	
 			$is_edit_campaign_page = in_array( $current_page, $edit_campaign_pages, true );
 	
 			if ( $is_edit_campaign_page ) {
-				$editor_type = ig_es_get_request_data( 'editor-type' );
-				if ( ! empty( $editor_type ) ) {
-					$is_dnd_editor_page = IG_ES_DRAG_AND_DROP_EDITOR === $editor_type;
-				} else {
-					$campaign_id = ig_es_get_request_data( 'list' );
-					if ( ! empty( $campaign_id ) ) {
-						$campaign = new ES_Campaign( $campaign_id );
-						if ( $campaign->exists ) {
-							$campaign_data = (array) $campaign;
-							if ( ! empty( $campaign_data['meta']['editor_type'] ) ) {
-								$editor_type        = $campaign_data['meta']['editor_type'];
-								$is_dnd_editor_page = IG_ES_DRAG_AND_DROP_EDITOR === $editor_type;
-							}
-						}
-					}
-				}
+				$is_dnd_editor_page = true;
 			} else {
 				if ( 'es_forms' === $current_page ) {
 					$action 	 = ig_es_get_request_data( 'action' );
@@ -89,8 +75,18 @@ class ES_Drag_And_Drop_Editor {
 		
 		$current_page = ig_es_get_request_data( 'page' );
 		//Only for development - this branch only
-		//wp_register_script( 'es_editor_js', 'http://localhost:9000/main.js', array(), time(), true );
-		wp_register_script( 'es_editor_js', ES_PLUGIN_URL . 'lite/admin/js/editor.js', array( ), ES_PLUGIN_VERSION, true );
+		if ( defined( 'IG_ES_DEV_MODE' ) && IG_ES_DEV_MODE ) {
+			wp_register_script( 'es_editor_js', 'http://localhost:9001/main.js', array(), time(), false );
+		} else {
+			$js_file_name = '';
+			if ( 'es_forms' === $current_page) {
+				//TODO: Change this when form UI is updated with new UI
+				$js_file_name = 'form-editor.js';
+			} else {
+				$js_file_name = 'editor.js';
+			}
+			wp_register_script( 'es_editor_js', ES_PLUGIN_URL . 'lite/admin/js/' . $js_file_name, array( ), ES_PLUGIN_VERSION, false );
+		}
 		
 		if ( 'es_forms' === $current_page ) {
 
@@ -118,7 +114,9 @@ class ES_Drag_And_Drop_Editor {
 			$subscriber_tags = $campaign_admin->get_dnd_subscriber_tags();
 			$site_tags       = $campaign_admin->get_dnd_site_tags();
 			$campaign_editor_data = array(
-				'campaignTags'    => $campaign_tags['post_notification'],
+				'classicEditor'   => IG_ES_CLASSIC_EDITOR,
+				'dndEditor'       => IG_ES_DRAG_AND_DROP_EDITOR,
+				'postTags'        => $campaign_tags['post_notification'],
 				'subscriberTags'  => $subscriber_tags,
 				'siteTags'        => $site_tags,
 				'isPro'		      => ES()->is_pro(),
@@ -151,8 +149,19 @@ class ES_Drag_And_Drop_Editor {
 			return;
 		}
 		
-		//wp_enqueue_style( 'es_editor_css', 'http://localhost:9000/main.css', array(), time(), 'all' );
-		wp_enqueue_style( 'es_editor_css', ES_PLUGIN_URL . 'lite/admin/css/editor.css', array(), ES_PLUGIN_VERSION, 'all' );
+		if ( defined( 'IG_ES_DEV_MODE' ) && IG_ES_DEV_MODE ) {
+			wp_enqueue_style( 'es_editor_css', 'http://localhost:9001/main.css', array(), time(), 'all' );
+		} else {
+			$css_file_name = '';
+			$current_page = ig_es_get_request_data('page');
+			if ( 'es_forms' === $current_page) {
+				//TODO: Change this when form UI is updated with new UI
+				$css_file_name = 'form-editor.css';
+			} else {
+				$css_file_name = 'editor.css';
+			}
+			wp_enqueue_style( 'es_editor_css', ES_PLUGIN_URL . 'lite/admin/css/' . $css_file_name, array(), ES_PLUGIN_VERSION, 'all' );
+		}
 	}
 
 	public function show_editor( $editor_args = array() ) {

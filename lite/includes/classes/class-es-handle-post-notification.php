@@ -129,7 +129,7 @@ class ES_Handle_Post_Notification {
 				foreach ( $notifications as $notification ) {
 					$notification_id      = $notification['id'];
 					$notification_body    = $notification['body'];
-					$notification_subject = $notification['name'];
+					$notification_subject = $notification['subject'];
 					if ( ! empty( $notification_subject ) && ! empty( $notification_body ) ) {
 						$list_id = $notification['list_ids'];
 						if ( ! empty( $list_id ) ) {
@@ -149,7 +149,12 @@ class ES_Handle_Post_Notification {
 							// Prepare subject
 							$post_subject = self::prepare_subject( $notification_subject, $post );
 
-							$post_content = self::prepare_body( $notification_body, $post_id, 0, $notification_id );
+							if ( ES_Common::contains_posts_block( $notification_body ) ) {
+								$post_content = ES_Common::replace_single_posts_block( $notification_body, array( $post_id ) );
+							} else {
+								$post_content = self::prepare_body( $notification_body, $post_id, 0, $notification_id );
+							}
+
 
 							$guid = ES_Common::generate_guid( 6 );
 
@@ -263,18 +268,7 @@ class ES_Handle_Post_Notification {
 		$post_thumbnail_url  = '';
 		if ( ( function_exists( 'has_post_thumbnail' ) ) && ( has_post_thumbnail( $post_id ) ) ) {
 			$es_post_image_size = get_option( 'ig_es_post_image_size', 'full' );
-			switch ( $es_post_image_size ) {
-				case 'full':
-					$post_thumbnail = get_the_post_thumbnail( $post_id, 'full' );
-					break;
-				case 'medium':
-					$post_thumbnail = get_the_post_thumbnail( $post_id, 'medium' );
-					break;
-				case 'thumbnail':
-				default:
-					$post_thumbnail = get_the_post_thumbnail( $post_id, 'thumbnail' );
-					break;
-			}
+			$post_thumbnail = get_the_post_thumbnail( $post_id, $es_post_image_size );
 		}
 
 		if ( '' != $post_thumbnail ) {
@@ -398,7 +392,7 @@ class ES_Handle_Post_Notification {
 		$template           = get_post( $template_id );
 		$campaign           = ES()->campaigns_db->get( $campaign_id );
 
-		$campaign_subject = $campaign['name'];
+		$campaign_subject = $campaign['subject'];
 		if ( ! empty( $campaign['body'] ) ) {
 			$template_content = $campaign['body'];
 		} else {
@@ -406,7 +400,11 @@ class ES_Handle_Post_Notification {
 		}
 
 		$content['subject'] = self::prepare_subject( $campaign_subject, $post );
-		$content['body']    = self::prepare_body( $template_content, $post_id, $template_id );
+		if ( ES_Common::contains_posts_block( $template_content ) ) {
+			$content['body'] = ES_Common::replace_single_posts_block( $template_content, array( $post_id ) );
+		} else {
+			$content['body'] = self::prepare_body( $template_content, $post_id, $template_id );
+		}
 
 		return $content;
 	}

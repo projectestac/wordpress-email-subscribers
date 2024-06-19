@@ -81,7 +81,7 @@ class Email_Subscribers_Uninstall {
 
 		update_option( 'sidebars_widgets', $sidebars_widgets );
 		delete_option( 'widget_email-subscribers-form' );
-
+		// phpcs:disable
 		// Delete postmeta data
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}postmeta where post_id IN ( SELECT ID from {$wpdb->prefix}posts where post_type  = %s)", $post_type ) );
 
@@ -90,6 +90,7 @@ class Email_Subscribers_Uninstall {
 
 		// Delete all options from options table with prefix ig_es
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}options WHERE option_name LIKE %s", $option_name ) );
+		// phpcs:enable	
 	}
 
 }

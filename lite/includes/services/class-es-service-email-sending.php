@@ -128,6 +128,15 @@ class ES_Service_Email_Sending extends ES_Services {
 		add_action( 'ig_es_campaign_failed', array( $this, 'update_sending_service_status' ) );
 	}
 
+	public static function get_instance() {
+		if ( ! isset( self::$instance ) ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+
 	/**
 	 * Register the JavaScript for ES gallery.
 	 */
@@ -196,19 +205,14 @@ class ES_Service_Email_Sending extends ES_Services {
 		$home_url   = home_url();
 		$parsed_url = parse_url( $home_url );
 		$domain     = ! empty( $parsed_url['host'] ) ? $parsed_url['host'] : '';
+		
 		if ( empty( $domain ) ) {
 			$response['message'] = __( 'Site url is not valid. Please check your site url.', 'email-subscribers' );
 			return $response;
 		}
 
-		$email = get_option( 'admin_email' );
-		$limit = 100;
-
-		if ( ES()->is_premium() ) {
-			$account_data = get_option( '_icegram_connector_data' );
-			$email        = ! empty( $account_data['email'] ) ? $account_data['email'] : $email;
-			$limit        = ! empty( $account_data['sending_limit'] ) ? $account_data['sending_limit'] : $limit;
-		}
+		$email = ES_Common::get_admin_email();
+		$limit = 3000;
 
 		$from_name = ES()->mailer->get_from_name();
 
@@ -228,7 +232,7 @@ class ES_Service_Email_Sending extends ES_Services {
 		);
 
 		$request_response = $this->send_request( $options, 'POST', false );
-		if ( ! empty( $request_response['account_id'] ) ) {
+		if ( ! is_wp_error( $request_response ) && ! empty( $request_response['account_id'] ) ) {
 			$account_id      = $request_response['account_id'];
 			$api_key         = $request_response['api_key'];
 			$allocated_limit = $request_response['allocated_limit'];
@@ -239,7 +243,7 @@ class ES_Service_Email_Sending extends ES_Services {
 			$ess_data = array(
 				'account_id'      => $account_id,
 				'allocated_limit' => $allocated_limit,
-				'interval'        => $internval,
+				'interval'        => 'month',
 				'api_key'         => $api_key,
 				'from_email'      => $from_email,
 				'plan'			  => $plan,
@@ -248,7 +252,7 @@ class ES_Service_Email_Sending extends ES_Services {
 			update_option( 'ig_es_ess_data', $ess_data );
 			$response['status'] = 'success';
 		} else {
-			$response['message'] = ! empty( $request_response['message'] ) ? $request_response['message'] : __( 'An error has occured while creating your account. Please try again later', 'email-subscribers' );
+			$response['message'] = ! empty( $request_response->get_error_message() ) ? $request_response->get_error_message() : __( 'An error has occured while creating your account. Please try again later', 'email-subscribers' );
 		}
 
 		return $response;
@@ -494,10 +498,10 @@ class ES_Service_Email_Sending extends ES_Services {
 	}
 
 	public static function get_account_overview_html() {
-		$current_date        = ig_es_get_current_date();
+		$current_month       = ig_es_get_current_month();
 		$service_status      = self::get_sending_service_status();
 		$ess_data            = get_option( 'ig_es_ess_data', array() );
-		$used_limit          = isset( $ess_data['used_limit'][$current_date] ) ? $ess_data['used_limit'][$current_date]: 0;
+		$used_limit          = isset( $ess_data['used_limit'][$current_month] ) ? $ess_data['used_limit'][$current_month]: 0;
 		$allocated_limit     = isset( $ess_data['allocated_limit'] ) ? $ess_data['allocated_limit']                    : 0;
 		$interval            = isset( $ess_data['interval'] ) ? $ess_data['interval']                                  : '';
 		$current_mailer_name = ES()->mailer->get_current_mailer_name();
@@ -746,30 +750,64 @@ class ES_Service_Email_Sending extends ES_Services {
 
 	public static function update_used_limit( $sent_count = 0 ) {
 		$ess_data     = get_option( 'ig_es_ess_data', array() );
-		$current_date = ig_es_get_current_date();
-		$used_limit   = ! empty( $ess_data['used_limit'][$current_date] ) ? $ess_data['used_limit'][$current_date] : 0;
+		$current_month = ig_es_get_current_month();
+		$used_limit   = ! empty( $ess_data['used_limit'][$current_month] ) ? $ess_data['used_limit'][$current_month] : 0;
 		$used_limit  += $sent_count;
-		
-		$ess_data['used_limit'][$current_date] = $used_limit;
+		if ( ! isset( $ess_data['used_limit'] ) || ! is_array( $ess_data['used_limit'] ) ) {
+			$ess_data['used_limit'] = array();
+		}
+		$ess_data['used_limit'][$current_month] = $used_limit;
 		update_option( 'ig_es_ess_data', $ess_data );
 	}
 
 	public static function get_remaining_limit() {
-		$ess_data        = get_option( 'ig_es_ess_data', array() );
-		$current_date    = ig_es_get_current_date();
+	
+		self::fetch_and_update_ess_limit();
+		$ess_data = get_option( 'ig_es_ess_data', array() );
+		$current_month = ig_es_get_current_month();
 		$allocated_limit = ! empty( $ess_data['allocated_limit'] ) ? $ess_data['allocated_limit'] : 0;
-		$used_limit      = ! empty( $ess_data['used_limit'][$current_date] ) ? $ess_data['used_limit'][$current_date] : 0;
+		$used_limit      = ! empty( $ess_data['used_limit'][$current_month] ) ? $ess_data['used_limit'][$current_month] : 0;
 		$remaining_limit = $allocated_limit - $used_limit;
 		return $remaining_limit;
+	}
+
+	public static function fetch_and_update_ess_limit() {
+		$admin_email = ES_Common::get_admin_email();
+		$data = array(
+			'admin_email'   => $admin_email,
+		);
+		$options = array(
+			'method'  => 'POST',
+			'body'    => json_encode($data),
+			'headers' => array(
+				'Content-Type'  => 'application/json',
+			),
+		);
+
+		$api_url = 'https://api.igeml.com/limit/check/';
+
+		$response = wp_remote_post( $api_url, $options );
+
+		if ( ! is_wp_error( $response ) ) {
+			$response_body = wp_remote_retrieve_body( $response );
+			$response_data = ( array ) json_decode( $response_body );
+			if ( 'success' === $response_data['status'] ) {
+				if ( ! empty( $response_data['account'] ) ) {
+					$current_month               = ig_es_get_current_month();
+					$account                     = (array) $response_data['account'];
+					$ess_data                    = get_option( 'ig_es_ess_data', array() );
+					$ess_data['allocated_limit'] = $account['allocated_limit'];
+					$ess_data['used_limit'][$current_month]      = $account['used_limit'];
+					update_option( 'ig_es_ess_data', $ess_data );
+				}
+			}
+		}
 	}
 
 	public static function use_icegram_mailer() {
 		$use_icegram_mailer = false;
 		if ( self::opted_for_sending_service() ) {
-			$remaining_limit = self::get_remaining_limit();
-			if ( $remaining_limit > 0 ) {
-				$use_icegram_mailer = true;
-			}
+			$use_icegram_mailer = true;
 		}
 		return $use_icegram_mailer;
 	}

@@ -31,7 +31,7 @@ class IG_ES_Variables {
 	 * 
 	 * @var array
 	 */
-	private static $included_variables = array('subscriber'=>array('email','name','first_name','last_name'));
+	private static $included_variables = array('subscriber'=>array('email','name','first_name','last_name','subscribe_link'));
 
 
 	/**

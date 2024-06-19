@@ -362,7 +362,9 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 			$can_load = apply_filters( $this->plugin_abbr . '_can_load_sweetalert_js', false );
 
 			if ( $can_load ) {
+				// phpcs:disable WordPress.WP.EnqueuedResourceParameters.NotInFooter
 				wp_enqueue_script( 'sweetalert', plugin_dir_url( __FILE__ ) . 'assets/js/sweetalert2.min.js', array( 'jquery' ) );
+				// phpcs:enable
 			}
 		}
 

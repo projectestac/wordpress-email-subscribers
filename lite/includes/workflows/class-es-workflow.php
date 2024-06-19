@@ -533,6 +533,23 @@ class ES_Workflow {
 	}
 
 	/**
+	 * Run workflow if validation passes
+	 * 
+	 * @since 5.7.14
+	 */
+	public function maybe_run( $data_layer = array() ) {
+		$this->setup( $data_layer );
+		if ( $this->is_missing_required_data() ) {
+			return;
+		}
+		if ( ! $this->validate_workflow() ) {
+			return;
+		}
+		$this->run();
+		$this->cleanup();
+	}
+
+	/**
 	 * Execute workflow actions.
 	 * 
 	 * @return bool
@@ -1116,15 +1133,18 @@ class ES_Workflow {
 	 */
 	public function get_action_from_action_fields( $field_data ) {
 		if ( ! is_array( $field_data ) || ! isset( $field_data['action_name'] ) ) {
+			// phpcs:disable
 			throw new Exception( __( 'Missing action_name key in array.', 'email-subscribers' ) );
+		   // phpcs:enable
 		}
 
 		$action_name = ES_Clean::string( $field_data['action_name'] );
 		$action      = ES_Workflow_Actions::get( $action_name );
+		// phpcs:disable
 		if ( ! $action ) {
 			throw new Exception( __( 'Could not retrieve the action.', 'email-subscribers' ) );
 		}
-
+	   // phpcs:enable
 		return $action;
 	}
 
@@ -1235,5 +1255,14 @@ class ES_Workflow {
 			return $last_ran_at;
 		}
 		return '';
+	}
+
+	/**
+	 * Check if workflow requires queuing
+	 * 
+	 * @since 5.7.14
+	 */
+	public function requires_queueing() {
+		return apply_filters( 'ig_es_workflow_requires_queueing', false );
 	}
 }

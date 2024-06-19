@@ -139,28 +139,25 @@
 								</div>
 							</div>
 						<?php } ?>
-
+						
+						<!-- ESS Checkbox -->
 						<div class="flex">
-						  <div class="pt-1">
-							<input
-							  id="es_post_notification_preference"
-							  type="checkbox"
-							  checked="checked"
-							  class="w-4 h-4 transition duration-150 ease-in-out form-checkbox"
-							/>
-						  </div>
+							  <div class="ess-checkbox-animate">
+								<input
+									  id="ig_es_enable_ess"
+									  type="checkbox"
+								/>
+								<span class="ess-input-check"></span>
+							  </div>
 						  <div class="pl-3">
-							<label for="es_post_notification_preference" class="text-sm">
-								<?php
-								echo esc_html__(
-									'I want to send email notifications when new blog posts are
-		                      published',
-									'email-subscribers'
-								);
-								?>
+							<label for="ig_es_enable_ess" class="text-sm animate-text-shadow">
+									<?php echo esc_html__( 'Opt-in to use the Icegram email sending service for improved email delivery', 'email-subscribers' ); ?>
+									<span class="ess-new-feature"><?php echo esc_html__( 'New!', 'email-subscribers' ); ?></span>
 							</label>
 						  </div>
 						</div>
+						<!-- End -->
+
 						<!-- End-IG-Code -->
 						<div class="flex">
 						  <div class="pt-1">
@@ -333,6 +330,52 @@
 							);
 							?>
 						  </p>
+						</li>
+						
+						<li id="ig-es-onboard-email-delivery" class="flex items-start space-x-3 group" style="display:none;">
+						  <div class="relative pt-1 flex items-center justify-center flex-shrink-0 w-5 h-5">
+							<span
+							  class="block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400"
+							></span>
+						  </div>
+
+							<div>
+								<p class="text-sm"><span class="ig-es-mark"><?php echo esc_html__( 'Setting up Icegram email sending service', 'email-subscribers' ); ?></span></p>
+								<ul class="mt-3 space-y-2 font-normal sm:space-y-3" id="ig-es-onboard-email-delivery-tasks-list">
+								<li id="ig-es-onboard-create_ess_account" class="flex items-start space-x-3 group">
+									<div
+									class="relative pt-1 flex items-center justify-center flex-shrink-0 w-5 h-5"
+									>
+									<span
+										class="block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400"
+									></span>
+									</div>
+									<p class="text-sm"><?php echo esc_html__( 'Creating your account', 'email-subscribers' ); ?></p>
+								</li>
+								<li id="ig-es-onboard-send_test_email" class="flex items-start space-x-3 group">
+									<div
+									class="relative pt-1 flex items-center justify-center flex-shrink-0 w-5 h-5"
+									>
+									<span
+										class="block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400"
+									></span>
+									</div>
+									<p class="text-sm"><?php echo esc_html__( 'Sending a test email', 'email-subscribers' ); ?></p>
+								</li>
+								<li id="ig-es-onboard-confirm_email_delivery" class="flex items-start space-x-3 group">
+									<div
+									class="relative pt-1 flex items-center justify-center flex-shrink-0 w-5 h-5"
+									>
+									<span
+										class="block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400"
+									></span>
+									</div>
+									<p class="text-sm">
+									<?php echo esc_html__( 'Confirming email delivery', 'email-subscribers' ); ?>
+									</p>
+								</li>
+								</ul>
+							</div>
 						</li>
 					</ul>
 					</div>

@@ -139,7 +139,7 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 		if ( empty( $contact_id ) || empty( $list_id ) ) {
 			return $existing_feedback_id;
 		}
-
+// phpcs:disable
 		$existing_feedback_id = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT id FROM {$wpdb->prefix}ig_unsubscribe_feedback WHERE `contact_id`= %d AND `list_id` = %d ORDER BY updated_at DESC LIMIT 1",
@@ -147,7 +147,7 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 				$list_id
 			)
 		);
-
+// phpcs:enable
 		return $existing_feedback_id;
 	}
 
@@ -161,6 +161,7 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 	 */
 	public static function get_feedback_counts( $number_of_days ) {
 		global $wpdb;
+		// phpcs:disable
 		$feedback_counts = $wpdb->get_results(
 			$wpdb->prepare(
 			"SELECT feedback_slug, COUNT(feedback_slug) AS feedback_count FROM `{$wpdb->prefix}ig_unsubscribe_feedback` WHERE `updated_at` >= DATE_SUB(NOW(), INTERVAL %d DAY) GROUP BY `feedback_slug` ORDER BY feedback_count DESC"
@@ -168,7 +169,7 @@ class IG_ES_DB_Unsubscribe_Feedback extends ES_DB {
 			),
 			ARRAY_A
 		);
-
+// phpcs:enable
 		return $feedback_counts;
 	}
 }

@@ -21,7 +21,7 @@ class ES_Newsletter_Summary_Automation {
 		add_action( 'ig_es_plugin_activate', array( $this, 'maybe_enable_newsletter_summary_automation' ) );
 		add_action( 'ig_es_enable_newsletter_summary_automation', array( $this, 'maybe_enable_newsletter_summary_automation' ) );
 		add_action( 'ig_es_plugin_deactivate', array( $this, 'clear_scheduled_automation' ) );
-		add_action( 'admin_init' , array( $this, 'maybe_disable_automation' ) );
+		add_action( 'init' , array( $this, 'maybe_disable_automation' ) );
 	}
 
 	/**
@@ -31,6 +31,7 @@ class ES_Newsletter_Summary_Automation {
 	 */
 	public function maybe_enable_newsletter_summary_automation() {
 		$is_automation_enabled = get_option( $this->option_name, 'yes' );
+
 		if ( 'yes' === $is_automation_enabled ) {
 			$this->schedule_summary_automation( true, false );
 		} else {
@@ -64,6 +65,7 @@ class ES_Newsletter_Summary_Automation {
 
 	public static function get_email_data() {
 		$admin_email = ES_Common::get_admin_email();
+		
 		if ( is_email( $admin_email ) ) {
 			$user       = get_user_by( 'email', $admin_email );
 			$admin_name = '';

@@ -41,9 +41,6 @@
 
         // add plugin code here
         var setup = function (editor, headState, footState) {
-          if ( 'edit-es-broadcast-body' !== editor.id ) {
-            return;
-          }
           
           editor.on('BeforeSetContent', function (event) {
             handleSetContent(editor, headState, footState, event);

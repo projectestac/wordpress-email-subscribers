@@ -222,6 +222,8 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 					$form_data = wp_unslash( $_POST );
 				}
 				$validate_response = $this->validate_data( $form_data );
+				$validate_response = apply_filters( 'ig_es_validate_subscription', $validate_response, $form_data );
+
 				if ( 'ERROR' === $validate_response['status'] ) {
 
 					// We want to pretend as "SUCCESS" for blocked emails.
@@ -354,6 +356,8 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 							if ( ! empty( $this->ip_address ) ) {
 								$data['ip_address'] = $this->ip_address;
 							}
+
+							$data = apply_filters( 'ig_es_add_custom_field_data' , $data, $form_data );
 
 							if ( ! empty( $data ) ) {
 								$data['updated_at'] = ig_get_current_date_time();

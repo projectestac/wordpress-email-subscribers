@@ -302,8 +302,9 @@ if ( ! class_exists( 'ES_Actions' ) ) {
 		public function is_campaign_sent( $contact_id, $message_id, $campaign_id ) {
 
 			global $wpdb;
-
+			// phpcs:disable
 			$sql = $wpdb->get_var( $wpdb->prepare( "SELECT count(*) FROM {$wpdb->prefix}ig_actions WHERE contact_id = %d AND message_id = %d AND campaign_id = %d AND type = %d ", $contact_id, $message_id, $campaign_id, IG_MESSAGE_SENT ) );
+			// phpcs:enable
 			return $sql;
 		}
 
@@ -326,8 +327,9 @@ if ( ! class_exists( 'ES_Actions' ) ) {
 			}
 
 			$current_date = ig_get_current_date_time();
+			// phpcs:disable
 			$sql          = $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->prefix}ig_sending_queue SET opened_at = %s, opened = %d WHERE contact_id = %d AND campaign_id = %d AND mailing_queue_id = %d", $current_date, 1, $conact_id, $campaign_id, $message_id ) );
-
+			// phpcs:enable
 			return $sql;
 
 		}

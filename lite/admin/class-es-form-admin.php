@@ -509,7 +509,7 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 											let formStylesHTML = `<div class="es-form-editor-options-sidebar">
 												<div class="pt-2 pb-4 mx-4">
 													<div class="flex w-full border-b border-gray-200 pb-2">
-														<div class="w-1/3 text-sm font-normal text-gray-600 leading-9">${__( 'Form style', 'email-subscribers' )}</div>
+														<div class="w-1/3 text-sm font-normal leading-9 font-bold" >${__( 'Form style', 'email-subscribers' )}</div>
 														<div class="w-2/3 text-right">
 															<span class="relative inline-block">
 																<button id="form-style-button" type="button" class="py-1 px-2 ig-es-title-button">
@@ -614,13 +614,15 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 												<div class="w-4/12">
 														<label for="tag-link">
 															<span class="block pr-4 text-sm font-medium text-gray-600 pb-2">
-																<?php esc_html_e( 'Lists', 'email-subscribers' ); ?>
+																<?php 
+																$lists_tooltip_text = ES_Common::get_tooltip_html('Select lists you want subscribers to signup through this form'); 
+																echo esc_html__( 'Lists ', 'email-subscribers' ) . wp_kses( $lists_tooltip_text, $allowedtags ); 
+																?>
 															</span>
 														</label>
 												</div>
 												<div class="w-8/12">
 													<?php
-													$allowedtags = ig_es_allowed_html_tags_in_esc();
 													if ( count( $lists ) > 0 ) {
 														$form_lists       = ! empty( $form_data['settings']['lists'] ) ? $form_data['settings']['lists'] : array();
 														$lists_checkboxes = ES_Shortcode::prepare_lists_checkboxes( $lists, array_keys( $lists ), 3, (array) $form_lists, '', '', 'form_data[settings][lists][]' );
@@ -641,6 +643,16 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 										<?php
 										 do_action( 'ig_es_additional_form_options', $form_data, $data );
 										?>
+											
+										<div class="pt-4 pb-8 mx-4 pb-2 border-b border-gray-200">						
+										<hr>
+										<p class="mt-4 es_helper_text">
+											<a class="hover:underline text-sm font-medium" href="https://www.icegram.com/docs/category/icegram-express/add-subscription-box-to-website?utm_source=es&utm_medium=in_app&utm_campaign=form_dashboard" target="_blank">
+											<?php esc_html_e( 'How to Add Subscription form to website', 'email-subscribers' ); ?>
+										</a>
+										</p>
+										</div>
+																		
 
 									</div>
 

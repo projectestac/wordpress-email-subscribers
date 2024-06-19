@@ -1,0 +1,1218 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-color: #5e19cf; /*brand color*/
+  --brand-color-2 : #7230DF; /*brand color 2*/
+  --secondary: #f9f6ff; /*CTA bg light gray*/
+  --light-gray: #f8f8f8; /*BG light gray*/
+  --lighter-gray: #ececec; /*border light gray*/
+  --tab-bg: #f7f6f8; /*tab bg*/
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/inter/Inter-Regular.woff2") format("woff2"),
+    url("./fonts/inter/Inter-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/inter/Inter-SemiBold.woff2") format("woff2"),
+    url("./fonts/inter/Inter-SemiBold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./fonts/inter/Inter-Bold.woff2") format("woff2"),
+    url("./fonts/inter/Inter-Bold.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/inter/Inter-Medium.woff2") format("woff2"),
+    url("./fonts/inter/Inter-Medium.woff") format("woff");
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+label,
+button,
+li,
+span,
+table td 
+{
+  font-family: "Inter", sans-serif;
+}
+
+@layer components {
+  h1 {
+    @apply font-semibold text-lg;
+  }
+  h2 {
+    @apply font-semibold text-sm;
+  }
+  p {
+    @apply text-sm;
+  }
+  header {
+    @apply bg-white;
+  }
+  nav {
+    @apply mx-auto flex max-w-full items-center justify-between gap-x-6 px-5 border-b-2 border-lighter-gray;
+    .brand-logo {
+      @apply flex lg:flex-1;
+      .divide {
+        @apply w-5 h-px rotate-90 border border-lighter-gray;
+      }
+      span {
+        @apply -m-1.5 p-1.5 flex items-center gap-2.5;
+        img {
+          @apply h-8 w-auto;
+        }
+      }
+    }
+    .links, .ig-es-nav-tabs {
+      @apply flex gap-x-5 md:gap-x-8 xl:gap-x-12;
+      a {
+        @apply text-sm leading-6 text-gray-900 py-5;
+      }
+    }
+    .links{
+      a.active {
+        @apply border-b-2 font-semibold py-5 border-primary;
+      }
+    }
+    .ig-es-nav-tabs{
+      @apply gap-x-8;
+      a{
+        @apply px-2;
+      }
+      a.active {
+        @apply bg-gray-100;
+      }
+    }
+    .cta {
+      @apply flex flex-1 items-center justify-end gap-x-2.5;
+    }
+  }
+  button,
+  .tab {
+    @apply rounded-md px-4 py-2 text-sm font-semibold focus:ring-[0.5px] focus:ring-tertiary;
+    &.primary {
+      @apply bg-primary text-white hover:bg-tertiary;
+    }
+    &.secondary {
+      @apply bg-secondary text-gray-900 hover:ring-[0.5px] hover:ring-tertiary;
+    }
+    &.cross {
+      @apply rounded-md bg-secondary px-0.5 text-gray-900 focus:ring-[0.5px] focus:ring-tertiary hover:ring-[0.5px] hover:ring-tertiary;
+    }
+    &.outline{
+      @apply bg-transparent text-white outline-none ring-[0.5px] ring-white focus:ring-[0.5px] focus:ring-tertiary hover:ring-[0.5px] hover:ring-tertiary;
+    }
+    &.white{
+      @apply bg-white hover:ring-[0.5px] hover:ring-tertiary;
+    }
+  }
+  select {
+    @apply py-1.5 px-3 text-sm bg-white border border-lighter-gray rounded-sm appearance-none truncate hover:border-light-gray focus:outline-none cursor-pointer focus:ring-[0.5px] focus:ring-tertiary hover:ring-[0.5px] hover:ring-tertiary !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 0.5rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5rem 1.5rem !important;
+    /* option{
+      @apply bg-white !important;
+    } */
+  }
+
+  input[type="time"]{
+    @apply cursor-pointer;
+  }
+  /* main {
+    @apply space-y-5;
+  } */
+  #dropdown {
+    @apply z-10 w-40 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700;
+    ul {
+      @apply py-2 text-sm text-gray-700 dark:text-gray-200;
+      li {
+        a {
+          @apply block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white;
+        }
+      }
+    }
+  }
+  .tabs {
+    @apply flex justify-between p-4 items-start;
+    ul {
+      @apply flex flex-row flex-wrap justify-start gap-3 items-start w-full;
+    }
+    .tab {
+      @apply font-normal text-xs border border-lighter-gray truncate;
+      background-color: var(--tab-bg);
+      &.active, &:hover {
+        @apply bg-white font-medium ring-[0.5px] ring-tertiary;
+      }
+    }
+  }
+  .templates {
+    @apply flex flex-row gap-5 px-5 pb-5 justify-start w-full flex-wrap;
+    .create-new{
+      @apply flex flex-col text-center items-center w-60 max-w-xs justify-center rounded-md outline-2 outline-dashed outline-lighter-gray p-5 space-y-8;
+      background-color: var(--tab-bg);
+    }
+    .ig-es-card {
+      @apply rounded-md w-60 max-w-xs border border-lighter-gray overflow-hidden;
+      height: 350px;
+      background-color: var(--tab-bg);
+      .card-head {
+        background-image: url('data:image/svg+xml,<svg width="240" height="131" viewBox="0 0 240 131" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.8" d="M73.3763 45.7677C168.735 42.6747 170.508 75.1248 176.424 93.7568C188.998 119.214 208.95 131.193 269.498 130.966L267.014 -5.53127L0.653799 -4.53028C-2.58553 22.7607 17.2441 46.8768 73.3763 45.7677Z" fill="%23EBE5F7"/></svg>');
+        @apply mx-auto py-1.5 w-full bg-no-repeat bg-right-top bg-contain opacity-80 relative h-2/3;
+        .group{
+          @apply w-full h-full;
+        }
+        img {
+          @apply mx-auto my-2 relative object-contain;
+          width:99%;
+          height:90%;
+        }
+        svg{
+         
+        }
+      }
+      .card-desc{
+        @apply py-5 px-3 space-y-4 bg-white h-1/3;
+        .title{
+          @apply flex flex-row justify-between items-center; 
+        }
+        ul.meta-tags{
+          @apply flex flex-row gap-2.5 justify-start items-center;
+          li{
+            @apply px-2 py-1 rounded-sm font-normal text-xs truncate;
+          }
+        }
+        .saved{
+          button{
+            @apply focus:ring-0 px-0;
+          }
+        }
+      }
+    }
+  }
+  .dropdown {
+    @apply relative inline-block text-left w-full;
+    button.dropdown-button {
+      @apply inline-flex w-full justify-between gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50;
+    }
+    .dropdown-menu {
+      @apply left-0 z-30 mt-2 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transition-transform transform duration-100;
+      p.heading {
+        @apply truncate text-sm px-4 py-2 bg-gray-100 text-gray-900;
+      }
+      a {
+        @apply text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 active:bg-gray-100 active:text-gray-900;
+      }
+    }
+  }
+  .template-editor {
+    @apply w-2/3 flex flex-col gap-5 border-r-2 border-lighter-gray overflow-y-auto;
+    &.dnd-editor {
+      @apply p-5 w-2/3;
+    }
+    .tags-list-hidden {
+      display: none !important;
+    }
+    .all-tags {
+      @apply flex justify-between items-start w-full rounded-sm p-3 bg-light-gray;
+      li {
+        @apply bg-white text-gray-600 py-2 px-3 rounded-sm;
+        span {
+          @apply font-medium text-xs;
+        }
+      }
+    }
+    .inline-editor {
+      @apply flex font-medium border-b border-t border-lighter-gray justify-between items-center flex-row text-sm p-5;
+      background-color: var(--light-gray);
+      .editor-cta:hover {
+        color: var(--brand-color);
+      }
+    }
+  }
+
+  .template-editor, 
+  .sidebar, 
+  .form-fields, #es-admin-contact-form, #es-admin-lists-form, #es-admin-custom-fields-form, #ig-es-trial-optin-form {
+    label {
+      @apply block text-sm font-medium leading-6 text-gray-900;
+    }
+    input:not([type="radio"]) {
+      @apply block w-full rounded-sm border-0 py-1.5 text-gray-900 shadow-sm ring-[0.5px] ring-inset ring-lighter-gray placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-tertiary sm:text-sm sm:leading-6;
+    }
+    input[type="radio"]:checked {
+      @apply bg-primary;
+    }
+    /*contact form input field padding effect*/
+    input.ig-es-contact-first-name, input.ig-es-contact-last-name {
+      @apply pl-10 pr-12;
+    }
+    textarea {
+      @apply block w-full rounded-sm border-0 py-1.5 text-gray-900 shadow-sm ring-[0.5px] ring-inset ring-lighter-gray placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-tertiary sm:text-sm sm:leading-6;
+    }
+  }
+
+
+  .sidebar {
+    @apply flex flex-col w-1/3 right-0 bg-light-gray;
+    .side-editor{
+      @apply w-full bg-white;
+    }
+    .switch {
+      @apply flex justify-between px-8 py-3 border-b-2 border-lighter-gray;
+    }
+    p {
+      @apply text-sm font-medium;
+    }
+    a {
+      @apply text-xs font-medium hover:underline hover:text-primary;
+    }
+    nav {
+      @apply bg-white;
+      .links {
+        @apply gap-0;
+        a {
+          @apply py-2.5;
+        }
+        a.active {
+          @apply py-2.5;
+        }
+      }
+    }
+    .nav-child {
+      @apply bg-white;
+    }
+    .ig-es-post-settings {
+      @apply px-8 pt-5;
+      background-color: var(--light-gray);
+    }
+    .ig-es-campaign-tags-list{
+        @apply bg-gray-50 border-b text-sm border-lighter-gray justify-between;
+    .campaign-tags-title{
+      @apply font-medium px-8 py-3 border-b border-lighter-gray cursor-pointer hover:bg-gray-100;
+  
+    }
+    }
+    .all-tags {
+      @apply flex justify-between text-xs bg-white items-start w-full rounded-sm p-3;
+      ul {
+        @apply flex flex-wrap gap-3;
+      }
+      li {
+        @apply text-gray-600 py-1 px-3 rounded-sm;
+        background-color: var(--light-gray);
+      }
+      svg {
+        @apply cursor-pointer -mt-1 ml-2 w-3.5 h-3.5 inline-flex;
+      }
+    }
+
+    a {
+      @apply text-xs font-medium hover:underline hover:text-primary;
+    }
+    .radio-section {
+      @apply p-3 rounded-sm;
+      background-color: white;
+    }
+    input[type="radio"] {
+      @apply -mt-1;
+    }
+    .ig-es-grid-division {
+      @apply text-center px-4 py-1 hover:bg-gray-100;
+    }
+  }
+
+  .overview {
+    @apply flex flex-col bg-white space-y-5 p-4 mt-5 ml-5 mr-5 border border-lighter-gray rounded-md;
+
+    .kpi {
+      @apply flex justify-between w-full px-3 py-2 items-center rounded-md bg-light-gray;
+      .stats {
+        @apply flex flex-col space-y-1.5;
+      }
+      .kpi-title {
+        @apply text-xs font-medium text-gray-500;
+      }
+      .kpi-stats {
+        @apply text-lg font-semibold;
+      }
+      .change {
+        @apply rounded-full flex flex-row space-x-0.5 px-1.5 py-0.5 items-center;
+        &.up {
+          @apply text-green-600 bg-green-600/20;
+        }
+        &.down {
+          @apply text-red-600 bg-red-600/20;
+        }
+        span.value {
+          @apply font-semibold text-xs;
+        }
+      }
+    }
+  }
+  .dot {
+    @apply w-1.5 h-1.5 rounded-full mr-1;
+  }
+  .search-icon {
+    @apply absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none;
+  }
+  .search {
+    @apply block w-full px-4 py-1.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-sm bg-white focus:ring-[0.5px] focus:ring-tertiary !important;
+  }
+  
+  .ig-es-list-table, .es-audience-view, .es-lists-table, .es-forms-table, .es-custom-field-table {
+    @apply flex flex-col bg-white space-y-5 p-4 mt-5;
+    h2{
+      @apply -mt-5;
+    }
+    .table, #post-body-content{
+      @apply -mx-4 sm:mx-0 sm:rounded-sm w-full;
+      table, .contacts, .lists, .forms, .customfields {
+        @apply min-w-full divide-y divide-lighter-gray w-full;
+      }
+      .contacts, .lists, .forms, .customfields {
+        @apply border-0 mt-5;
+        tbody {
+          tr{
+            @apply bg-white;
+          }
+        }
+      }
+      input.checkbox {
+        @apply absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 focus:ring-transparent text-primary;
+      }
+      thead {
+        @apply text-xs font-medium text-gray-600 bg-light-gray;
+
+        input#cb-select-all-1 {
+          @apply absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 focus:ring-transparent text-primary -ml-0;
+        }
+
+        th:first-of-type {
+          @apply relative px-7  sm:px-6;
+        }
+        th:nth-child(2) {
+          @apply py-2 pl-4 pr-3 text-left  sm:pl-6;
+        }
+        th {
+          @apply px-3 py-2 text-left lg:table-cell;
+        }
+        th:nth-child(6) {
+          @apply px-3 py-2 text-center lg:table-cell;
+        }
+        th:last-of-type {
+          @apply relative py-2 pl-3 pr-4 sm:pr-6 text-left;
+        }
+      }
+      tbody {
+        @apply divide-y divide-lighter-gray border-0;
+        
+        th:first-of-type {
+          @apply relative px-7  sm:px-6;
+          input.checkbox {
+            @apply -ml-0;
+          }
+        }
+        tr:first-of-type {
+          @apply border-0;
+        }
+        td:first-of-type {
+          @apply relative px-7 sm:w-12 sm:px-6;
+        }
+        td:nth-child(2) {
+          @apply relative py-4 pl-4 pr-3 text-sm sm:pl-6;
+        }
+        td {
+          @apply px-3 py-3.5 text-sm text-gray-800 lg:table-cell text-[15px];
+        }
+        td:nth-child(6) {
+          @apply px-3 py-3.5 text-sm text-center text-gray-500;
+        }
+        td:last-of-type {
+          @apply relative py-3.5 pl-3 pr-4 text-left text-sm font-medium sm:pr-6;
+        }
+
+        .list-item {
+          @apply flex flex-row space-x-2.5 items-center;
+          .avatar {
+            @apply bg-lighter-gray rounded-md p-4;
+            img {
+              @apply h-full w-full max-w-full overflow-hidden max-h-full object-contain;
+            }
+          }
+          .item-details {
+            @apply flex flex-col gap-1.5;
+            p {
+              @apply font-semibold text-[15px];
+            }
+            .item-meta {
+              @apply flex flex-col text-gray-400 text-[13px];
+            }
+          }
+        }
+        .status {
+          @apply flex flex-col gap-1.5 text-center mx-auto justify-center items-center;
+          p {
+            @apply font-semibold inline-flex items-center text-[15px];
+          }
+          .sub-text {
+            @apply text-gray-400 text-[13px];
+          }
+        }
+      }
+
+      tfoot {
+        @apply text-xs font-medium text-gray-600 bg-light-gray;
+
+        input#cb-select-all-2 {
+          @apply absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 focus:ring-transparent text-primary -ml-0;
+        }
+
+        th:first-of-type {
+          @apply relative px-7  sm:px-6;
+        }
+        th:nth-child(2) {
+          @apply py-2 pl-4 pr-3 text-left  sm:pl-6;
+        }
+        th {
+          @apply px-3 py-2 text-left lg:table-cell;
+        }
+        th:nth-child(6) {
+          @apply px-3 py-2 text-center lg:table-cell;
+        }
+        th:last-of-type {
+          @apply relative py-2 pl-3 pr-4 sm:pr-6 text-left;
+        }
+      }
+    }
+  }
+  .ig-es-popup-container{
+    @apply fixed inset-x-0 bottom-0 sm:inset-0 sm:flex sm:items-center sm:justify-center fixed inset-0 transition-opacity;
+    z-index: 999999;
+  }
+  .ig-es-popup-overlay{
+    @apply absolute inset-0 bg-gray-500 opacity-75;
+  }
+  .ig-es-popup{
+    @apply font-medium relative overflow-hidden rounded bg-white text-left shadow-xl sm:my-8 sm:max-w-3xl;
+    
+    .ig-es-popup-title{
+      @apply px-6 py-3;
+    }
+    .ig-es-popup-close-container{
+      @apply absolute right-3 top-3;
+
+      .cross{
+        @apply px-0.5 py-1 !important;
+      }
+    }
+    .ig-es-popup-close-cta{
+      @apply rounded text-gray-700 hover:text-gray-900 focus:outline-none bg-gray-100 p-0;
+    }
+    .ig-es-popup-cta-container{
+      @apply p-3 float-right;
+    }
+    .ig-es-new-campaign-type-tab{
+      @apply cursor-pointer p-6 text-center rounded bg-white hover:scale-105 hover:shadow-md;
+    } 
+    .ig-es-campaign-type-title{
+      @apply pt-4 text-sm font-medium;
+    }
+    h3.modal-headline{
+      @apply text-base font-semibold leading-6 text-gray-900;
+    }
+  }
+
+}
+
+/* Audience Import page tab option, this css apply on current tab */
+.es-import-option, #ig_es_mailer_settings-field-row, #icegram-mailer-info {
+  [type="radio"]:checked + .es-mailer-logo {
+    @apply transition-all duration-100 ease-in-out transform scale-110;
+    box-shadow: 0 0 3px 1px rgba(90, 103, 216);
+  }
+  
+  [type="radio"]:checked + .es-mailer-logo:hover {
+    @apply border border-gray-200;
+  }
+  
+  .border-0 {
+      border-width: 0px;
+  }
+}
+
+/* Audience Import page wordpress-users tab, checkbox CSS */
+#wordpress-users, #ig-es-wc-order-statuses-wrapper {
+  input.checkbox {
+    @apply -mt-2 h-4 w-4 rounded border-gray-300 focus:ring-transparent text-primary;
+  }
+}
+
+/* Audience page tooltip CSS */
+.icegram-express_page_es_subscribers .es-tooltip, .icegram-express_page_es_lists .es-tooltip, .icegram-express_page_es_forms .es-tooltip, .icegram-express_page_es_settings .es-tooltip {
+  @apply align-middle;
+  span.tooltip-text {
+    @apply bg-white w-64 p-3 py-2 shadow-lg rounded-sm;
+  }
+
+  svg.tooltip-arrow {
+    @apply fill-white;
+  }
+}
+
+/* Audience page advance filter CSS */
+.icegram-express_page_es_subscribers .es-collapsible {
+  .ig-es-conditions {
+    @apply py-6 mx-28;
+  }
+
+  .ig-es-condition-group {
+    @apply border border-gray-200 rounded-md pb-12 relative block rounded-lg;
+    .add-or-condition {
+      @apply bottom-5;
+    }
+  }
+}
+
+.progress,
+.importing-progress {
+  @apply w-full h-8 bg-gray-200 overflow-hidden relative text-right leading-4 mt-1.5 rounded;
+}
+
+.progress span.bar,
+.importing-progress span.bar {
+  @apply block absolute leading-10 py-1 top-0 bottom-0 left-0 rounded overflow-hidden bg-gradient-to-r from-indigo-800 to-indigo-500 bg-indigo-400;
+}
+
+/* Settings page CSS */
+
+#es-menu-tab-content{
+  input:not([type="radio"]) {
+    @apply block w-full rounded-sm border-0 py-1.5 text-gray-900 shadow-sm ring-[0.5px] ring-inset ring-lighter-gray placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-tertiary sm:text-sm sm:leading-6;
+  }
+  input[type="radio"]:checked {
+    @apply bg-primary;
+  }
+}
+
+/* Settings tab CSS */
+#es-settings-menu {
+  @apply w-1/5 pt-4 leading-normal text-gray-800 border-r border-gray-100;
+
+  .es-menu-list {
+    @apply z-20 my-2 mt-0 bg-white shadow-none lg:block lg:my-0 lg:border-transparent lg:shadow-none lg:bg-transparent;
+
+    ul {
+      @apply py-2 md:py-0;
+
+      li {
+        @apply h-10 py-1 mx-2 border border-transparent rounded md:my-2 hover:rounded hover:border-indigo-600;
+      }
+
+      a {
+        @apply block px-4 pt-1 text-base font-medium no-underline align-middle;
+      }
+
+      span {
+        @apply pl-0.5;
+      }
+    }
+  }
+}
+/* End */
+
+/* Setting tab content CSS */
+#es-menu-tab-content {
+  @apply w-4/5;
+
+  /* All tab content table CSS*/
+  #tabs-general, #tabs-email_sending, #tabs-security_settings, #tabs-rest_api_settings, #tabs-user_roles {
+    table {
+      @apply mt-4 mr-4 overflow-hidden bg-white rounded-lg lg:mx-5 xl:mx-7;
+  
+      tr {
+        @apply py-4 ml-4 border-b border-gray-200;
+
+        th {
+          @apply block pt-3 pb-8 pr-4 ml-6 text-left pt-7;
+  
+          span {
+            @apply pb-2 text-sm font-semibold text-gray-600;
+          }
+
+          p {
+            @apply mt-1 text-xs italic font-normal leading-snug text-gray-500;
+          }
+        }
+
+        td {
+          @apply w-4/6 py-2 pl-5 bg-white rounded-lg;
+
+          /* Upsell section CSS */
+          .settings_upsell_div {
+            .upsell_switcher {
+              @apply w-2/12;
+
+              label {
+                @apply inline-flex items-center mt-3 mb-1 cursor-pointer;
+              }
+            }
+
+            .upsell_box {
+              @apply w-full;
+            }
+          }
+          
+          .es_sub_headline {
+            @apply pt-4;
+          }
+
+          input.form-input, input.form-textarea, input[type="number"] {
+            @apply h-9 mt-2 mb-1 text-sm border-gray-400 w-3/5;
+          }
+
+          p.field-desciption {
+            @apply mb-2 text-xs italic font-normal leading-snug text-gray-500;
+          }
+
+          input.checkbox {
+            @apply h-4 w-4 rounded border-gray-300 focus:ring-transparent text-primary ring-offset-0;
+          }
+
+          /* House keeping section CSS */
+          #house_keeping_section {
+            label {
+              @apply inline-flex items-center mt-3 cursor-pointer;
+            }
+
+            p {
+              @apply mt-6 text-xs italic font-normal leading-snug text-gray-500;
+            }
+
+            input.checkbox {
+              @apply inline-block h-4 w-4 rounded border-gray-300 focus:ring-transparent text-primary;
+            }
+          
+            span {
+              @apply pl-1 pr-6 text-gray-500 text-sm font-normal;
+            }
+          }
+          /* End */
+
+          /* ESS upsell noticebox CSS */
+          #sending_service_info .ess-upsell-sec {
+            @apply inline-flex rounded-md shadow bg-teal-50 px-2 pt-1 my-2 w-4/5 font-sans;
+
+            .main-upsell-sec {
+              @apply px-2 pt-2 pb-2;
+
+              .ess-upsell-msg {
+                @apply ml-3;
+
+                h3 {
+                  @apply text-sm leading-5 font-medium text-blue-800;
+                }
+              }
+
+              .upsell-btn-sec {
+                @apply mt-2 ml-8 text-sm leading-5 text-teal-700;
+
+                .upsell-btn-div {
+                  @apply pt-6 text-left pb-2;
+                }
+              }
+            }
+          }
+          /* End */
+
+          #send_time_optimizer_section {
+            label.send_time_optimizer_label {
+              @apply inline-flex items-center mt-4 cursor-pointer;
+            }
+            p {
+              @apply mt-5;
+            }
+          }
+          
+          .send-email-div  {
+            button#es-send-test {
+              @apply mt-auto mb-auto;
+            }
+
+            span.es_spinner_image_admin img {
+              @apply mt-3;
+            }
+          }
+
+          /* Email sender section CSS */
+          .pepipost, .gmail, .Amazon_SES, .mailgun, .sendgrid, .sparkpost, .postmark, .sendinblue, .mailjet {
+            @apply mt-4;
+            .form-input {
+              @apply h-10 mt-2 mb-1 text-sm border-gray-400 w-3/5 bg-gray-100;
+
+              .webhook-url {
+                p {
+                  @apply truncate absolute w-80;
+                }
+              }
+
+              .webhook-url-copy {
+                @apply relative left-80;
+              }
+            }
+
+            ul li a {
+              @apply text-blue-600;
+            }
+          }
+          /* End */
+
+          /* Cron info & authentication table CSS */
+          table.cron-info, table#ig-es-settings-authentication-table, #ig-es-rest-api-section table {
+            @apply min-w-fit rounded-lg ml-0;
+
+            thead {
+              tr {
+                @apply bg-blue-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider;
+
+                th {
+                  @apply px-5 py-4 table-cell;
+                }
+              }
+            }
+
+            tbody {
+              tr {
+                @apply border-b border-gray-200;
+
+                td {
+                  @apply text-left rounded-none bg-blue-50 w-1/4;
+
+                  span#ig-es-verify-auth-message {
+                    @apply text-xs italic font-bold;
+                  }
+                }
+              }
+            }
+          }
+          /* End */
+
+          /* Sending service optin & Sending Service Info section CSS */
+          #sending_service_optin, #sending_service_info {
+            @apply pb-4;
+            label {
+              @apply inline-flex items-center mt-3 cursor-pointer;
+
+              span:nth-child(2) {
+                @apply pl-2 text-sm font-semibold text-gray-600;
+              }
+            }
+
+            p {
+              @apply pl-12 text-xs italic font-normal leading-snug text-gray-500;
+            }
+
+            #icegram-mailer-info p {
+              @apply mb-2 pl-0 inline-block;
+            }
+          }
+          /* End */
+
+          .user_role_upsell_box {
+            @apply text-center py-3 lg:px-4;
+            div {
+              @apply p-2 bg-indigo-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex mx-4 leading-normal;
+
+              span {
+                @apply font-semibold text-left flex-auto;
+              }
+
+              a {
+                @apply text-indigo-400;
+              }
+            }
+          }
+
+          /* User Roles table CSS */
+          table.user-roles-table {
+            @apply ml-0 min-w-fit rounded-lg;
+
+            thead {
+              tr {
+                @apply bg-gray-100 leading-4 text-gray-500;
+
+                th {
+                  @apply pl-10 py-4 text-left font-semibold text-sm table-cell;
+                }
+              }
+            }
+
+            tbody {
+              @apply bg-white;
+
+              tr {
+                
+                td:first-of-type {
+                  @apply pl-8 py-4;
+                }
+
+                span {
+                  @apply text-sm leading-5 font-medium text-center text-gray-800;
+                }
+
+                td {
+                  @apply pl-10;
+                }
+              }
+            }
+          }
+          /* End */
+
+        }
+      }
+
+      tr:last-of-type {
+        @apply border-0;
+      }
+    }
+  }
+  /* End */
+}
+/* End */
+
+/* Dashboard page CSS */
+/* There are still some inline clasess used in dashboard.php. The clasess which are already available tailwind.css. */
+.recent-campaigns, .audience-activity, .forms-lists {
+  table {
+    @apply mt-2 w-full bg-white rounded-md overflow-hidden mb-4;
+
+    tbody {
+      tr {
+        @apply border-b border-gray-200  text-sm leading-5;
+
+        td.short-desc {
+          @apply max-w-[50px] truncate;
+        }
+
+        td.avatar-column {
+          @apply py-3 text-gray-500 flex;
+
+          .avatar {
+            @apply pr-4;
+            .dash-avatar {
+              @apply rounded-md bg-[#ececec] p-1;
+            }
+          }
+        }
+
+        td {
+          .dash-recent-p {
+            @apply text-black mt-2;
+          }
+
+          .dash-status {
+            @apply inline-flex items-center text-sm font-semibold;
+
+            span.dashboard_dot {
+              @apply mr-1 h-1.5 w-1.5 rounded-full;
+            }
+          }
+
+          .es-code {
+            @apply text-xs;
+          }
+        }
+      }
+      tr:last-of-type {
+        @apply border-b-0;
+      }
+    }
+  }
+}
+.toplevel_page_es_dashboard {
+  nav {
+    @apply pt-10;
+  }
+}
+
+#ig-es-create-dropdown {
+  @apply absolute right-0 hidden w-56 mt-2 origin-top-right rounded-md shadow-lg;
+
+  a {
+    @apply block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900;
+  }
+}
+
+.es_helper_text {
+  @apply px-2 italic text-xs font-normal text-[#9fa6b2] leading-7;
+}
+
+.ig-dashboardcommon-section {
+  @apply flex flex-row;
+
+  #ig-es-trial-expired-block, #ig-es-trial-active-block, #ig-es-trial-optin-block {
+    @apply pr-6 pl-6 pt-4 w-full;
+
+    .sec-title {
+      @apply py-2 text-lg font-medium leading-6 text-gray-400;
+    }
+
+    #ig-es-trial-optin-btn {
+      svg {
+        @apply animate-spin h-4 w-4;
+
+        circle {
+          @apply opacity-25;
+        }
+
+        path {
+          @apply opacity-75;
+        }
+      }
+    }
+  }
+
+  #ig-ess-account-overview-block {
+    @apply relative pr-6 pl-6 w-full;
+    #subscribers-stats {
+      .stats-info {
+        @apply grid grid-cols-3 gap-4 py-4 text-gray-600 text-center;
+      }
+    }
+  }
+
+  #sending-service-benefits, #sending-service-onboarding-tasks-list {
+    .item-dots {
+      @apply relative pt-1 flex items-center justify-center flex-shrink-0 w-5 h-5;
+
+      span {
+        @apply block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400;
+      }
+    }
+
+    svg {
+      @apply mt-1 w-full h-full text-indigo-700 transition duration-150 ease-in-out group-hover:text-indigo-600 group-focus:text-indigo-600;
+    }
+  }
+}
+/* End */
+
+
+
+/* settings page radio button CSS */
+#send_time_optimizer_section, #ig_es_mailer_settings-field-row {
+  label {
+    @apply inline-block;
+  }
+}
+
+/* End */
+
+
+#timePickerDropdown {
+  top: 100%;
+}
+
+/* Custom Dropdown Arrow */
+#timePicker::after {
+  content: "▼";
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+}
+
+/* Responsive Breakpoints (optional) */
+@media (max-width: 640px) {
+  #timePickerDropdown {
+    width: 100%;
+    left: 0;
+  }
+}
+.select2-container {
+  @apply text-sm !important;
+  width: 100% !important;
+}
+.select2-container--default .select2-selection--multiple {
+  @apply text-black !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='color: rgb(156 163 175 /1)' viewBox='0 0 20 20' fill='currentColor' aria-hidden='true'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'%3E%3C/path%3E%3C/svg%3E");
+  background-size: 1.25rem;
+  background-position: calc(100% - 0.45rem);
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity)); 
+  background-repeat: no-repeat;
+  border: 1px solid var(--lighter-gray) !important;
+  border-radius: 0.125rem !important;
+  padding-left: 0.35rem !important;
+  padding-right: 0.75rem !important;
+}
+
+.select2-results__option {
+  @apply pr-5 align-middle;
+}
+.select2-container--default
+  .select2-results__option--highlighted.select2-results__option--selectable {
+  @apply text-gray-600 bg-white !important;
+}
+.select2-container--default
+  .select2-results__option--highlighted.select2-results__option--selectable:hover {
+  @apply text-gray-600 !important;
+  background-color: var(--light-gray);
+}
+.select2-container--default .select2-results__option--selected {
+  @apply bg-white !important;
+}
+.select2-results__option:before {
+  @apply inline-block relative bg-white h-5 w-5 ml-1 mr-3 rounded align-middle border-2 border-solid;
+  content: "";
+}
+.select2-results__option[aria-selected="true"]:before,
+.select2-container--default .select2-results__option--selected:before {
+  @apply text-white border-0 inline-block pr-0.5;
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  background-color: var(--brand-color);
+}
+.select2-container--default
+  .select2-selection--multiple
+  .select2-selection__choice {
+  @apply pl-1 border-0 text-sm !important;
+  background-color: var(--light-gray) !important;
+}
+
+.select2-selection__choice__remove {
+  @apply float-right border-0 relative !important;
+}
+
+.icegram-express_page_es_gallery, .icegram-express_page_es_campaigns, .icegram-express_page_es_subscribers, .icegram-express_page_es_lists, .icegram-express_page_es_forms, .icegram-express_page_es_custom_fields, .icegram-express_page_es_settings, .toplevel_page_es_dashboard {
+ #wpcontent{
+  padding-left: 0;
+  background-color: white;
+ } 
+}
+
+.wp-core-ui select {
+    background-image: url('data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e') !important;
+    background-position: right 0.5rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5rem 1.5rem !important;
+  }
+
+  .icegram-express_page_es_campaigns [data-placeholder]::after {
+    content: " ";
+    box-shadow: 0 0 50px 9px rgba(254,254,254);
+    position: absolute;
+    top: 0;
+    left: -100%;
+    height: 100%; 
+    animation: load 1s infinite;
+}
+@keyframes load {
+    0%{ left: -100%}
+    100%{ left: 150%}
+}
+
+/* Editor CSS by Kaushal START */
+.gjs-block:hover{
+ box-shadow: 0 1px 8px -1px var(--brand-color-2) , 0 1px 2px -1px rgb(0 0 0 / 0.1); 
+}
+.gjs-block-categories{
+  nav{
+    @apply mx-0;
+  .links{
+    @apply w-full;
+    a{
+      @apply w-full text-center;
+    }
+  }
+  }
+  .gjs-blocks-c.active{
+    @apply grid grid-cols-3 gap-4 p-5 bg-light-gray;
+    .gjs-block{
+      @apply w-full m-0 items-center space-y-3.5;
+    .gjs-block-media{
+      svg{
+        @apply w-6 h-6;
+      }
+    }
+    .gjs-block-label{
+      @apply text-[13px] font-medium font-inter;
+    }
+    }
+  }
+
+}
+.prev-sector-cta{
+  @apply bg-white -mx-4 px-4 py-1.5 flex justify-start gap-2 items-start;
+  a{
+    @apply p-1 rounded-md bg-secondary;
+  }
+  span{
+    @apply text-sm font-medium font-inter;
+  }
+}
+.ig-es-color-picker{
+  @apply flex w-auto items-center;
+  input{
+    @apply w-auto;
+  }
+  .ig-es-color-picker-input{
+    input{
+      @apply pr-1.5 py-0 h-8 w-8 !important;
+    }
+  }
+}
+.es-sidebar{
+  .gjs-field-composite{
+    @apply bg-light-gray !important;
+  }
+  .gjs-sm-sector{
+    @apply bg-light-gray;
+  }
+  .gjs-field input:not([type="radio"]), .gjs-field select, .gjs-field textarea, {
+    @apply block w-full rounded-sm bg-white border-0 py-1 text-gray-900 shadow-sm ring-[0.5px] ring-inset ring-lighter-gray placeholder:text-gray-400 focus:ring-[0.5px] focus:ring-inset focus:ring-tertiary sm:text-[13px] font-inter font-normal sm:leading-6;
+  }
+  .gjs-sm-properties{
+    @apply bg-light-gray px-0 border-b-2 border-lighter-gray;
+  }
+  .gjs-sm-title{
+    @apply text-sm font-semibold my-2;
+  }
+  .gjs-sm-label{
+    @apply mt-0.5 text-[13px] font-inter font-medium w-full justify-between items-start !important;
+  }
+  .gjs-label{
+    @apply text-xs font-medium font-inter;
+  }
+  .gjs-fields, .gjs-field{
+    @apply w-full;
+  }
+}
+
+
+/* Editor CSS by Kaushal END */

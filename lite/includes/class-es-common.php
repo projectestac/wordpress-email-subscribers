@@ -649,16 +649,16 @@ class ES_Common {
 	 * @since 4.0.0
 	 */
 	public static function get_templates( $type = '', $editor_type = '' ) {
-
+// phpcs:diable WordPressVIPMinimum.Performance.WPQueryParams.SuppressFilters_suppress_filters
 		$es_args = array(
 			'posts_per_page'   => - 1,
 			'post_type'        => 'es_template',
 			'orderby'          => 'date',
 			'order'            => 'DESC',
 			'post_status'      => 'publish',
-			'suppress_filters' => true,
+			'suppress_filters' => true, 
 		);
-
+// phpcs:enable
 		if ( ! empty( $type ) ) {
 			$es_args['meta_query'][] = array(
 				'key'     => 'es_template_type',
@@ -738,6 +738,23 @@ class ES_Common {
 		return $none_html . $all_html . $category_html;
 	}
 
+	public static function get_post_categories() {
+		$categories = get_terms(
+			array(
+				'taxonomy'   => 'category',
+				'hide_empty' => false,
+			)
+		);
+		if ( empty( $categories ) ) {
+			return array();
+		}
+		$post_categories = array();
+		foreach ( $categories as $category ) {
+			$post_categories[$category->term_id ] = $category->name;
+		}
+		return $post_categories;
+	}
+
 	/**
 	 * Get list of default post types
 	 *
@@ -783,6 +800,27 @@ class ES_Common {
 		$custom_post_types = get_post_types( $args );
 
 		return $custom_post_types;
+	}
+
+	public static function get_post_types_name() {
+		$default_post_types = self::get_default_post_types();
+		$custom_post_types  = self::get_custom_post_types();
+		$post_types         = array_merge( $default_post_types, $custom_post_types );
+		$post_type_names    = array();
+		if ( ! empty( $post_types ) ) {
+			foreach ( $post_types as $post_type ) {
+				$post_type_name                = self::get_post_type_name( $post_type );
+				$post_type_names[ $post_type ] = $post_type_name;
+			}
+		}
+
+		return $post_type_names;
+	}
+
+	public static function get_post_type_name( $post_type ) {
+		$post_type_object = get_post_type_object( $post_type );
+		$post_type_name   = $post_type_object->labels->singular_name;
+		return $post_type_name;
 	}
 
 	/**
@@ -857,13 +895,10 @@ class ES_Common {
 			if ( empty( $categories ) ) {
 				continue;
 			}
-
-			$taxonomy_categories = array();
+			
 			foreach ( $categories as $category ) {
-				$taxonomy_categories[ $category->term_id ] = $category->name;
+				$post_type_categories[ $category->term_id ] = $category->name;
 			}
-
-			$post_type_categories[ $taxonomy_slug ] = $taxonomy_categories;
 		}
 
 		return $post_type_categories;
@@ -927,22 +962,54 @@ class ES_Common {
 		return apply_filters( 'ig_es_get_railway_hrs_timings', $timings );
 	}
 
+
 	/**
-	 * Get Image sizes
+	 * Get registered image sizes
 	 *
 	 * @return array
 	 *
-	 * @since 4.0.0
+	 * @since 5.7.23
 	 */
-	public static function get_image_sizes() {
-		$sizes = array(
+	public static function get_registered_image_sizes() {
+		global $_wp_additional_image_sizes;
+	
+		// Get all default and custom image sizes
+		$sizes 		   = array();
+		$default_sizes = get_intermediate_image_sizes();
+	
+		foreach ( $default_sizes as $size ) {
+			// Check if the size is in the additional image sizes array
+			if ( isset( $_wp_additional_image_sizes[ $size ] ) ) {
+				$sizes[ $size ] = array(
+					'width'  => $_wp_additional_image_sizes[ $size ]['width'],
+					'height' => $_wp_additional_image_sizes[ $size ]['height'],
+					'crop'   => $_wp_additional_image_sizes[ $size ]['crop'],
+				);
+			} else {
+				// Get default sizes
+				$sizes[ $size ] = array(
+					'width'  => get_option( "{$size}_size_w" ),
+					'height' => get_option( "{$size}_size_h" ),
+					'crop'   => get_option( "{$size}_crop" ),
+				);
+			}
+		}
+	
+		// Create a formatted array with size names => labels
+		$formatted_sizes = array(
 			'full'      => __( 'Full Size', 'email-subscribers' ),
 			'medium'    => __( 'Medium Size', 'email-subscribers' ),
 			'thumbnail' => __( 'Thumbnail', 'email-subscribers' ),
 		);
 
-		return $sizes;
+		foreach ( $sizes as $name => $size ) {
+			$label 					  = ucfirst( str_replace( array( '-', '_' ), ' ', $name) );
+			$formatted_sizes[ $name ] = $label;
+		}
+	
+		return $formatted_sizes;
 	}
+	
 
 	/**
 	 * Get IG Option
@@ -1027,6 +1094,18 @@ class ES_Common {
 
 		return $categories_str;
 	}
+
+	public static function onboarding_convert_category_value_to_string( $category_value = array() ) {
+		$category_str = '';
+	
+		if (!empty($category_value) && is_array($category_value)) {
+			$category_str = '##post:' . $category_value[0] . '##';
+			$category_str = wp_specialchars_decode( $category_str, ENT_QUOTES );
+		}
+	
+		return $category_str;
+	}
+
 
 	/**
 	 * Convert categories string to array
@@ -1412,19 +1491,23 @@ class ES_Common {
 			$is_imp          = ! empty( $navigation['is_imp'] ) ? $navigation['is_imp'] : false;
 			?>
 
-			<a href="<?php echo esc_url( $url ); ?>" class="ig-es-title-button ml-2
+			<a href="<?php echo esc_url( $url ); ?>">
+				<button  class="
 								<?php
 								if ( $is_imp ) {
-									echo esc_attr( ' ig-es-imp-button' );
+									echo esc_attr( 'primary' );
+								} else {
+									echo esc_attr( 'secondary' );
 								}
 								?>
-			"><?php echo esc_html( $action_label ); ?>
+				"><?php echo esc_html( $action_label ); ?>
 				<?php if ( $show_indicator ) { ?>
 					<span class="ig-es-indicator <?php echo esc_attr( $indicator_class ); ?>">
 								<?php echo esc_html( $indicator_label ); ?>
 							</span>
 
 				<?php } ?>
+				</button>
 			</a>
 			<?php
 		}
@@ -1815,6 +1898,12 @@ class ES_Common {
 				'title' => __( '5 Simple Tricks to Improve Email Marketing Campaign Results', 'email-subscribers' ),
 				'link'  => 'https://www.icegram.com/email-marketing-campaign/',
 			),
+			array(
+				'title' => __( '<b>Icegram</b> recommends <b>Kloudbean hosting</b> for best performance of your website', 'email-subscribers' ),
+				'link'  => 'https://www.kloudbean.com/?aff=qkn6qxtvcvc4sb',
+				'label'       => __( 'Migrate Now', 'email-subscribers' ),
+				'label_class' => 'bg-green-100 text-green-800',
+			)
 		);
 
 		if ( $upsell ) {
@@ -2087,10 +2176,11 @@ class ES_Common {
 
 		$statuses = array(
 			'0' => __( 'Draft', 'email-subscribers' ),
-			'3' => __( 'Sending', 'email-subscribers' ),
-			'2' => __( 'Scheduled', 'email-subscribers' ),
-			'5' => __( 'Sent', 'email-subscribers' ),
 			'1' => __( 'Active', 'email-subscribers' ),
+			'2' => __( 'Scheduled', 'email-subscribers' ),
+			'3' => __( 'Sending', 'email-subscribers' ),
+			'4' => __( 'Paused', 'email-subscribers' ),
+			'5' => __( 'Sent', 'email-subscribers' ),
 		);
 
 		if ( $reverse ) {
@@ -2098,6 +2188,19 @@ class ES_Common {
 		}
 
 		return $statuses;
+	}
+
+	public static function get_campaign_status_code_map() {
+		$status_codes = array(
+			'draft'      => IG_ES_CAMPAIGN_STATUS_IN_ACTIVE,
+			'active'     => IG_ES_CAMPAIGN_STATUS_ACTIVE,
+			'scheduled'  => IG_ES_CAMPAIGN_STATUS_SCHEDULED,
+			'queued'     => IG_ES_CAMPAIGN_STATUS_QUEUED,
+			'paused'     => IG_ES_CAMPAIGN_STATUS_PAUSED,
+			'finished'   => IG_ES_CAMPAIGN_STATUS_FINISHED,
+		);
+
+		return $status_codes;
 	}
 
 	/**
@@ -2455,18 +2558,14 @@ class ES_Common {
 	 */
 	public static function override_tinymce_formatting_options( $init, $editor_id = '' ) {
 
-		if ( 'edit-es-campaign-body' === $editor_id ) {
+		$init['wpautop']      = false; // Disable stripping of p tags in Text mode.
+		$init['tadv_noautop'] = true; // Disable stripping of p tags in Text mode.
+		$init['indent']       = true;
 
-			$init['wpautop']      = false; // Disable stripping of p tags in Text mode.
-			$init['tadv_noautop'] = true; // Disable stripping of p tags in Text mode.
-			$init['indent']       = true;
-
-			// To disable stripping of some HTML elements like span when switching modes in wp editor from text-visual-text.
-			$opts                            = '*[*]';
-			$init['valid_elements']          = $opts;
-			$init['extended_valid_elements'] = $opts;
-
-		}
+		// To disable stripping of some HTML elements like span when switching modes in wp editor from text-visual-text.
+		$opts                            = '*[*]';
+		$init['valid_elements']          = $opts;
+		$init['extended_valid_elements'] = $opts;
 
 		return $init;
 	}
@@ -2696,9 +2795,9 @@ class ES_Common {
 	public static function prepare_datefilter_dropdown_options( $selected = '', $default_label = '' ) {
 
 		global $wpdb;
-
+	   // phpcs:disable
 		$results = $wpdb->get_results( "SELECT DISTINCT MONTHNAME(`start_at`), YEAR(`start_at`) FROM {$wpdb->prefix}ig_mailing_queue;", ARRAY_A );
-
+	   // phpcs:enable
 		$field_options = array(
 			'default' => $default_label
 		);
@@ -2962,4 +3061,159 @@ class ES_Common {
 			return null;
 		}
 	}
+
+	public static function replace_posts_blocks( $content, $post_ids ) {
+		foreach ( $post_ids as $single_block_post_ids ) {
+			$content = self::replace_single_posts_block( $content, $single_block_post_ids );
+		}
+		return $content;
+	}
+	
+	public static function replace_single_posts_block( $content, $single_block_post_ids ) {
+		$posts_block_inner_content = self::get_in_between_content( $content, '{{campaign.posts}}', '{{/campaign.posts}}' );
+		$search_start = '{{campaign.posts}}';
+		$search_end   = '{{/campaign.posts}}';
+		$start_pos    = strpos($content, $search_start);
+		if ( false !== $start_pos ) {
+			// Find the corresponding closing tag
+			$end_pos = strpos($content, $search_end, $start_pos + strlen($search_start));
+			$replace                   = '';	
+			if ( false !== $end_pos ) {
+				if ( ! empty( $single_block_post_ids ) ) {
+					foreach ( $single_block_post_ids as $post_id ) {
+						$replace .= ES_Handle_Post_Notification::prepare_body( $posts_block_inner_content, $post_id, 0 );
+					}
+				}
+				// Replace the entire block with the replacement content
+				$content = substr_replace($content, $replace, $start_pos, $end_pos + strlen($search_end) - $start_pos);
+			}
+		}
+		$content = ES_Handle_Post_Notification::prepare_body( $content, $post_id, 0 );
+		return $content;
+	}	
+	
+	public static function contains_posts_block( $content ) {
+		return strpos( $content, '{{campaign.posts}}' ) !== false;
+	}
+
+	public static function replace_post_digest_keyword_with_posts_keyword( $content ) {
+		$find = array( '{{post.digest}}', '{{/post.digest}}' );
+		$replace = array( '{{campaign.posts}}', '{{/campaign.posts}}' );
+		$content = str_replace( $find, $replace , $content );
+
+		$find = array( '{{POSTDIGEST}}', '{{/POSTDIGEST}}' );
+		$replace = array( '{{campaign.posts}}', '{{/campaign.posts}}' );
+		$content = str_replace( $find, $replace , $content );
+		return $content;
+	}
+
+	public static function wrap_post_keywords_between_campaign_posts_keyword( $text ) {
+		$pattern = '/(<[^>]*>\s*\{{(DATE|[Pp][^\{\}]*)}}\s*<\/[^>]*>)|(<[^>]*?({{(DATE|[Pp][^\{\}]*)}})[^>]*>.*?<\/\w+>)|(<[^>]*{{(DATE|[Pp][^\{\}]*)}}[^>]*>)|(\{\{[PpD][^\}]*\}\})/';
+		preg_match_all($pattern, $text, $matches);
+
+		if (!empty($matches[0])) {
+			if ( count( $matches[0] ) > 1 ) {
+				$firstKeyword = $matches[0][0];
+				$lastKeyword = $matches[0][count($matches[0]) - 1];
+		
+				$wrappedText = preg_replace('/(' . preg_quote($firstKeyword, '/') . '.*?' . preg_quote($lastKeyword, '/') . ')/s', '{{campaign.posts}}$1{{/campaign.posts}}', $text, 1);
+
+			} else {
+				$keyword = $matches[0][0];
+				$wrappedText = str_replace( $keyword, '{{campaign.posts}}' . $keyword . '{{/campaign.posts}}', $text );
+			}
+
+			return $wrappedText;
+		} else {
+			return $text;
+		}
+	}
+
+	public static function get_campaign_default_data( $campaign_type ) {
+		$default_content = apply_filters( 'ig_es_' . $campaign_type . '_default_content', '' );
+		$default_subject = apply_filters( 'ig_es_' . $campaign_type . '_default_subject', '' );
+		return array(
+			'subject' => $default_subject,
+			'content' => $default_content
+		);
+	}
+
+	public static function get_tags() {
+		$subscriber_tags = self::get_subscriber_tags();
+		$site_tags 		 = self::get_site_tags();
+		$campaign_tags   = self::get_campaign_tags();
+		return array(
+			'subscriber_tags' => $subscriber_tags,
+			'site_tags' => $site_tags,
+			'campaign_tags' => $campaign_tags,
+		);
+	}
+
+	public static function get_campaign_tags() {
+
+		$post_notification_tags = self::get_post_notification_tags();
+
+		$campaign_tags = array(
+			'post_notification' => $post_notification_tags,
+		);
+
+		return apply_filters( 'ig_es_campaign_tags', $campaign_tags );
+	}
+
+	public static function get_post_notification_tags() {
+		$post_notification_tags = array(
+			'{{post.date}}',
+			'{{post.title}}',
+			'{{post.image}}',
+			'{{post.excerpt}}',
+			'{{post.description}}',
+			'{{post.author}}',
+			'{{post.link}}',
+			'{{post.link_with_title}}',
+			'{{post.link_only}}',
+			'{{post.full}}',
+			'{{post.cats}}',
+			'{{post.more_tag}}',
+			'{{post.image_url}}'
+		);
+		return apply_filters( 'ig_es_post_notification_tags', $post_notification_tags );
+	}
+
+	public static function get_subscriber_tags() {
+		$subscriber_tags = array(
+			'{{subscriber.name}}',
+			'{{subscriber.first_name}}',
+			'{{subscriber.last_name}}',
+			'{{subscriber.email}}',
+		);
+		return apply_filters( 'ig_es_subscriber_tags', $subscriber_tags );
+	}
+
+	public static function get_site_tags() {
+		$site_tags = array(
+			'{{site.total_contacts}}',
+			'{{site.url}}',
+			'{{site.name}}',
+		);
+
+		return apply_filters( 'ig_es_site_tags', $site_tags );
+	}
+
+	public static function is_optimizer_enabled() {
+		$send_time_optimizer_enabled = get_option('ig_es_send_time_optimizer_enabled', 'no' );
+		return 'yes' === $send_time_optimizer_enabled;
+	}
+	public static function get_optimization_method() {
+		$optimization_method = get_option('ig_es_send_time_optimization_method', 'subscriber_timezone' );
+		return $optimization_method;
+	}
+
+	public static function get_optimization_details() {
+		if (self::is_optimizer_enabled()) {
+			$optimization_option = self::get_optimization_method();
+			return $optimization_option;
+		}
+		return '';
+	}
+
 }

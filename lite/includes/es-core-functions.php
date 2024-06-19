@@ -114,6 +114,19 @@ if ( ! function_exists( 'ig_es_get_current_date' ) ) {
 	}
 }
 
+if ( ! function_exists( 'ig_es_get_current_month' ) ) {
+	/**
+	 * Get current month
+	 *
+	 * @return false|string
+	 *
+	 * @since 4.1.15
+	 */
+	function ig_es_get_current_month() {
+		return gmdate( 'Y-m' );
+	}
+}
+
 if ( ! function_exists( 'ig_es_get_current_hour' ) ) {
 	/**
 	 * Get current hour
@@ -1076,4 +1089,24 @@ if ( ! function_exists( 'ig_es_is_arrays_are_equal' ) ) {
 		}
 		return true;
 	}
+}
+
+
+if ( ! function_exists( 'ig_es_maybe_unserialize' ) ) {
+
+	/**
+	 * The `ig_es_maybe_unserialize` function unserializes data if it's serialized, returning the unserialized data or an empty string.
+	 *
+	 * @param $string
+	 *
+	 * @return $array
+	 */
+
+	function ig_es_maybe_unserialize( $data) {
+		if (!empty($data) && is_serialized($data)) {
+			return @unserialize(trim( $data), ['allowed_classes' => false]);	
+		}
+		return $data;
+	}
+
 }

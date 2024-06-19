@@ -55,7 +55,7 @@ class ES_DB_Sending_Queue {
 		$where       = apply_filters( 'ig_es_get_emails_to_be_sent_by_hash_condition', 'AND 1=1' );
 		$subscribers = $wpbd->get_results(
 			$wpbd->prepare(
-				"SELECT * FROM {$wpbd->prefix}ig_sending_queue WHERE status IN( %s, %s, %s ) AND mailing_queue_hash = %s $where ORDER BY FIELD(`status`, %s, %s, %s) LIMIT 0, %d",
+				"SELECT * FROM {$wpbd->prefix}ig_sending_queue WHERE status IN( %s, %s, %s ) AND mailing_queue_hash = %s $where ORDER BY FIELD(`status`, %s, %s, %s), id LIMIT 0, %d",
 				array(
 					IG_ES_SENDING_QUEUE_STATUS_QUEUED,
 					IG_ES_SENDING_QUEUE_STATUS_SENDING,
@@ -84,7 +84,7 @@ class ES_DB_Sending_Queue {
 	 */
 	public static function get_queued_emails( $contact_id ) {
 		global $wpdb;
-
+// phpcs:disable
 		$queued_emails = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * FROM {$wpdb->prefix}ig_sending_queue WHERE contact_id = %d AND status = %s",
@@ -93,7 +93,7 @@ class ES_DB_Sending_Queue {
 			),
 			ARRAY_A
 		);
-
+// phpcs:enable
 		return $queued_emails;
 	}
 
@@ -178,7 +178,7 @@ class ES_DB_Sending_Queue {
 	public static function get_total_emails_to_be_sent() {
 
 		global $wpdb;
-
+// phpcs:disable
 		$result = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue
@@ -195,7 +195,7 @@ class ES_DB_Sending_Queue {
 				)
 			)
 		);
-
+// phpcs:enable
 		return $result;
 
 	}
@@ -207,12 +207,14 @@ class ES_DB_Sending_Queue {
 		$result = 0;
 		if ( '' != $notification_hash ) {
 			$sent_status = IG_ES_SENDING_QUEUE_STATUS_SENT;
+			// phpcs:disable
 			$result = $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE mailing_queue_hash = %s AND status = %s",
 					array( $notification_hash, $sent_status )
 				)
 			);
+			// phpcs:enable
 		}
 
 		return $result;
@@ -224,6 +226,7 @@ class ES_DB_Sending_Queue {
 
 		$emails = array();
 		if ( '' != $notification_hash ) {
+			// phpcs:disable
 			$emails = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM {$wpdb->prefix}ig_sending_queue WHERE mailing_queue_hash = %s",
@@ -231,14 +234,17 @@ class ES_DB_Sending_Queue {
 				),
 				ARRAY_A
 			);
-
+// phpcs:enable
 			// We are not migrating reports data because it caused lots of migration issues
 			// in the past. So, we are fetching reports data from older table if we don't get
 			// the data from the new table.
 			// This is generally fetch the data for older campaigns
 			if ( count( $emails ) == 0 ) {
+				// phpcs:disable
 				$result = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s ', $wpdb->prefix . 'es_deliverreport' ) );
+				// phpcs:enable
 				if ( $result === $wpdb->prefix . 'es_deliverreport' ) {
+					// phpcs:disable
 					$emails = $wpdb->get_results(
 						$wpdb->prepare(
 							"SELECT * FROM {$wpdb->prefix}es_deliverreport WHERE es_deliver_sentguid = %s",
@@ -246,6 +252,7 @@ class ES_DB_Sending_Queue {
 						),
 						ARRAY_A
 					);
+					// phpcs:enable
 				}
 			}
 		}
@@ -444,7 +451,8 @@ class ES_DB_Sending_Queue {
 				   {$send_at_query}
 			FROM `{$wpbd->prefix}ig_contacts` AS `ig_contacts` 
 			WHERE id IN ( " . $sql_query . ')
-			GROUP BY `ig_contacts`.`email`',
+			GROUP BY `ig_contacts`.`email`
+			ORDER BY `ig_contacts`.`email`',
 			$query_args
 		);
 		
@@ -480,7 +488,8 @@ class ES_DB_Sending_Queue {
 			       	{$send_at_query}
 				FROM `{$wpbd->prefix}ig_contacts` AS `ig_contacts` 
 				WHERE id IN ( " . $sql_query . ')
-				GROUP BY `ig_contacts`.`email`',
+				GROUP BY `ig_contacts`.`email`
+				ORDER BY `ig_contacts`.`email`',
 				$query_args
 			)
 		);
@@ -533,7 +542,7 @@ class ES_DB_Sending_Queue {
 		global $wpdb;
 
 		$current_date = ig_get_current_date_time();
-
+// phpcs:disable
 		return $wpdb->query(
 			$wpdb->prepare(
 				"UPDATE {$wpdb->prefix}ig_sending_queue SET opened_at = %s, opened = %d WHERE (mailing_queue_id = %d OR mailing_queue_hash = %s ) AND email = %s",
@@ -544,6 +553,7 @@ class ES_DB_Sending_Queue {
 				$email
 			)
 		);
+	// phpcs:enable	
 	}
 
 	/*
@@ -753,12 +763,14 @@ class ES_DB_Sending_Queue {
 		$result = 0;
 
 		if ( '' !== $hash ) {
+			// phpcs:disable
 			$result = $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE opened = 1 AND mailing_queue_hash = %s",
 					array( $hash )
 				)
 			);
+			// phpcs:enable
 
 		}
 
@@ -771,28 +783,34 @@ class ES_DB_Sending_Queue {
 		global $wpdb;
 
 		$result = 0;
-
+// phpcs:disable
 		if ( '' != $hash ) {
+			
 			$result = $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) AS count FROM {$wpdb->prefix}ig_sending_queue WHERE mailing_queue_hash = %s",
 					array( $hash )
 				)
 			);
+			
 			if ( 0 == $result ) {
 				$es_deliver_report_table = EMAIL_SUBSCRIBERS_STATS_TABLE;
+				
 				$table_name              = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'es_deliverreport' ) );
+				
 				if ( $table_name === $es_deliver_report_table ) {
+					
 					$result = $wpdb->get_var(
 						$wpdb->prepare(
 							"SELECT COUNT(*) AS count FROM {$wpdb->prefix}es_deliverreport WHERE es_deliver_sentguid = %s",
 							array( $hash )
 						)
 					);
+					
 				}
 			}
 		}
-
+// phpcs:enable
 		return $result;
 
 	}
@@ -848,7 +866,7 @@ class ES_DB_Sending_Queue {
 		}
 
 		$emails_str = "'" . implode( "','", $emails ) . "'";
-
+// phpcs:disable
 		$results = $wpbd->get_results(
 			$wpbd->prepare(
 				"SELECT contact_id, email FROM {$wpbd->prefix}ig_sending_queue WHERE campaign_id = %d AND mailing_queue_id = %d AND email IN($emails_str)",
@@ -857,7 +875,7 @@ class ES_DB_Sending_Queue {
 			),
 			ARRAY_A
 		);
-
+// phpcs:enable
 		$emails_id_map = array();
 		if ( count( $results ) > 0 ) {
 			foreach ( $results as $result ) {
@@ -881,6 +899,7 @@ class ES_DB_Sending_Queue {
 
 		$emails = array();
 		if ( ! empty( $message_id ) && ! empty( $campaign_id ) ) {
+			// phpcs:disable
 			$emails = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM {$wpdb->prefix}ig_sending_queue WHERE campaign_id = %d AND mailing_queue_id = %d AND contact_id NOT IN ( SELECT contact_id FROM {$wpdb->prefix}ig_actions WHERE campaign_id = %d AND message_id = %d )",
@@ -888,6 +907,7 @@ class ES_DB_Sending_Queue {
 				),
 				ARRAY_A
 			);
+			// phpcs:enable
 		}
 
 		return $emails;

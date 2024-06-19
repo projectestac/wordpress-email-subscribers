@@ -2,7 +2,7 @@
 /**
  * Functions for updating data, used by the background updater.
  */
-
+// phpcs:disable
 defined( 'ABSPATH' ) || exit;
 
 
@@ -1453,7 +1453,7 @@ function ig_es_migrate_4613_sequence_list_settings_into_campaign_rules() {
 		),
 	);
 
-	$sequence_campaigns = ES()->campaigns_db->get_all_campaigns( $args );
+	$sequence_campaigns = ES()->campaigns_db->get_campaigns( $args );
 	if ( ! empty( $sequence_campaigns ) ) {
 		foreach ( $sequence_campaigns as $campaign ) {
 			$campaign_id = $campaign['id'];
@@ -1779,7 +1779,7 @@ function ig_es_migrate_post_campaigns_list_settings_into_campaign_rules() {
 		),
 	);
 
-	$post_campaigns = ES()->campaigns_db->get_all_campaigns( $args );
+	$post_campaigns = ES()->campaigns_db->get_campaigns( $args );
 	if ( ! empty( $post_campaigns ) ) {
 		foreach ( $post_campaigns as $campaign ) {
 			
@@ -2047,3 +2047,211 @@ function ig_es_update_566_db_version() {
 }
 
 /* --------------------- ES 5.6.3(End)--------------------------- */
+
+/* --------------------- ES 5.6.4(Start)--------------------------- */
+
+/**
+ * Migrate customer timezone settings to send time optimzer setting
+ *
+ * @since 5.7.0
+ */
+function ig_es_migrate_post_campaigns_settings() {
+	global $wpdb;
+	$campaign_category_map = $wpdb->get_results( $wpdb->prepare( "SELECT id, type, body, categories, meta FROM {$wpdb->prefix}ig_campaigns where type IN( %s, %s )", IG_CAMPAIGN_TYPE_POST_NOTIFICATION, IG_CAMPAIGN_TYPE_POST_DIGEST ), ARRAY_A );
+
+	if ( ! empty( $campaign_category_map ) ) {
+		$migrated_campaigns = get_option( 'ig_es_new_category_format_migrated_campaigns', array() );
+		foreach ( $campaign_category_map as $campaign ) {
+			$campaign_id    =  (int) $campaign['id'];
+			if ( in_array( $campaign_id, $migrated_campaigns, true ) ) {
+				continue;
+			}
+			$campaign_type  = $campaign['type'];
+			$campaign_meta  = maybe_unserialize( $campaign['meta'] );
+			$campaign_body  = $campaign['body'];
+			$data_to_update = array();
+			if ( ! ES_Campaign_Controller::is_using_new_category_format( $campaign_id ) ) {
+				$categories_str = $campaign['categories'];
+				$categories       = ES_Common::convert_categories_string_to_array( $categories_str, true );
+				if ( ! empty( $categories ) ) {
+					$new_categories = array();
+					$include_all_post = false;
+					$include_no_post  = false;
+					$custom_post_types = array();
+					foreach ( $categories as $key => $category ) {
+						if ( false !== strpos( $category, '{T}' ) ) {
+							$custom_post_types[] = str_replace('{T}', '', $category);
+							if ( isset( $categories ) && isset( $categories[ $key ] ) ) {
+								unset( $categories[ $key ] );
+							}
+						}
+						
+						if ( 0 === $key ) {
+							if ( 'All' === $category ) {
+								$include_all_post = true;
+								unset( $categories );
+							} elseif ( 'None' === $category ) {
+								$include_no_post = true;
+								unset( $categories );
+							} 
+						}
+					}
+					if ( $include_all_post ) {
+						$new_categories[] = 'post:all';
+					} elseif ( $include_no_post ) {
+						$new_categories[] = 'post:none';
+					} elseif ( ! empty( $categories ) ) {
+						$new_categories[] = 'post:' . implode(',', $categories );
+					}
+					if ( ! empty( $custom_post_types ) ) {
+						$post_terms    = ! empty( $campaign_meta['post_terms'] ) ? $campaign_meta['post_terms'] : array();
+						foreach ( $custom_post_types as $custom_post_type ) {
+							if ( IG_CAMPAIGN_TYPE_POST_DIGEST === $campaign_type ) {
+								$new_categories[] = $custom_post_type . ':all'; // Since in post digest we didn't had custom categoriy support, we allowed all post in selected custom post type.
+							} else {
+								$current_cpt_terms = ! empty( $post_terms[ $custom_post_type ] ) ? $post_terms[ $custom_post_type ] : array();
+								if ( empty( $current_cpt_terms ) ) {
+									$new_categories[] = $custom_post_type . ':all';
+								} else {
+									$current_cpt_term_ids = [];
+									foreach ( $current_cpt_terms as $term_taxonomy => $term_ids ) {
+										$current_cpt_term_ids = array_merge( $current_cpt_term_ids, $term_ids );
+									}
+									if ( ! empty( $current_cpt_term_ids ) ) {
+										$new_categories[] = $custom_post_type . ':' . implode( ',', $current_cpt_term_ids );
+									} else {
+										$new_categories[] = $custom_post_type . ':all';
+									}
+								}
+							}
+						}
+					}
+					
+					if ( ! empty( $new_categories ) ) {
+						$new_categories_str = '##' . implode( '|', $new_categories ) . '##';
+						$data_to_update['categories'] = $new_categories_str;
+					}
+				}
+			}
+			if ( IG_CAMPAIGN_TYPE_POST_DIGEST === $campaign_type && ! empty( $campaign_meta['rules'] ) ) {
+				$rules       = $campaign_meta['rules'];
+				$no_of_posts = ! empty( $rules['no_of_posts'] ) ? $rules['no_of_posts'] : 1;
+				$campaign_meta['rules']['no_of_posts'] = array( $no_of_posts );
+				$campaign_meta['rules']['sorting_orders'] = array( 'descending' );
+				$campaign_body = ES_Common::replace_post_digest_keyword_with_posts_keyword( $campaign_body );
+				$data_to_update['body'] = $campaign_body;
+				if ( IG_ES_DRAG_AND_DROP_EDITOR === $campaign_meta['editor_type'] ) {
+					$dnd_editor_data = $campaign_meta['dnd_editor_data'];
+					$dnd_editor_data = ES_Common::replace_post_digest_keyword_with_posts_keyword( $dnd_editor_data );
+					$campaign_meta['dnd_editor_data'] = $dnd_editor_data;
+				}
+				$data_to_update['meta'] = maybe_serialize( $campaign_meta );
+			} else {
+				$campaign_body = ES_Common::wrap_post_keywords_between_campaign_posts_keyword( $campaign_body );
+				$data_to_update['body'] = $campaign_body;
+			}
+			if ( ! empty( $data_to_update ) ) {
+				$updated = ES()->campaigns_db->save_campaign( $data_to_update, $campaign_id );
+				if ( $updated ) {
+					$migrated_campaigns[] = $campaign_id;
+				}
+			}
+		}
+		if ( ! empty( $migrated_campaigns ) ) {
+			update_option( 'ig_es_new_category_format_migrated_campaigns', $migrated_campaigns, false );
+			$new_flow_campaign_ids     = get_option( 'ig_es_new_category_format_campaign_ids', array() );
+			$new_flow_campaign_ids  = array_merge( $new_flow_campaign_ids, $migrated_campaigns );
+			update_option( 'ig_es_new_category_format_campaign_ids', $new_flow_campaign_ids, false );
+		}
+	}
+}
+
+/**
+ * Update DB version
+ *
+ * @since 5.7.0
+ */
+function ig_es_update_570_db_version() {
+	ES_Install::update_db_version( '5.7.0' );
+}
+
+/* --------------------- ES 5.6.3(End)--------------------------- */
+
+/* --------------------- ES 5.6.4(Start)--------------------------- */
+
+/**
+ * Migrate customer timezone settings to send time optimzer setting
+ *
+ * @since 5.7.1
+ */
+function ig_es_migrate_ess_daily_limit_to_monthly_limits() {
+	$ess_daily_limit_migrated = get_option( 'ig_es_ess_daily_limit_migrated', 'no' );
+	if ( 'no' === $ess_daily_limit_migrated ) {
+		$ess_data = get_option( 'ig_es_ess_data', array() );
+		if ( ! empty( $ess_data['used_limit'] ) ) {
+			$current_month = ig_es_get_current_month();
+			$current_month_used_limit = 0;
+			foreach ( $ess_data['used_limit'] as $date => $used_limit ) {
+				if ( gmdate( 'Y-m', strtotime( $date ) ) === $current_month ) {
+					$current_month_used_limit += $used_limit;
+				}
+			}
+			$ess_data['used_limit'][$current_month] = $current_month_used_limit;
+			$ess_data['interval']                   = 'month';
+			$ess_data['allocated_limit']            = $ess_data['allocated_limit'] * 30;
+			update_option( 'ig_es_ess_data', $ess_data );
+			update_option( 'ig_es_ess_daily_limit_migrated', 'yes', false );
+		}
+	}
+
+}
+
+/**
+ * Update DB version
+ *
+ * @since 5.7.1
+ */
+function ig_es_update_571_db_version() {
+	ES_Install::update_db_version( '5.7.1' );
+}
+
+/* --------------------- ES 5.6.3(End)--------------------------- */
+
+/* --------------------- ES 5.7.13(Start)--------------------------- */
+
+/**
+ * Trial expires email for existing users
+ */
+
+function ig_es_trial_expires_email_for_existing_users() {
+
+	if ( ES()->is_premium() || ! ES()->trial->is_trial_valid() ) {
+		return;
+	}
+
+	$trial_started_at = get_option('ig_es_trial_started_at');
+
+	if (!empty($trial_started_at)) {
+		$trial_expires_at = $trial_started_at + ES()->trial->get_trial_period();
+		$trial_expires_before_one_day = strtotime(gmdate('Y-m-d', $trial_expires_at) . '-1 day');
+		$current_time = time();
+		// Don't schedule event if we already passed the trial email expiry sending window(1 day before trial expiry)
+		if ( $current_time > $trial_expires_before_one_day ) {
+			return;
+		}
+
+		wp_schedule_single_event( $trial_expires_before_one_day, 'ig_es_expires_email_send_action', array(), true );
+	}
+}
+
+
+ /**
+ * Update DB version
+ *
+ * @since 5.7.13
+ */
+function ig_es_update_5713_db_version() {
+	ES_Install::update_db_version( '5.7.13' );
+}
+// phpcs:enable
+/* --------------------- ES 5.7.13(End)--------------------------- */

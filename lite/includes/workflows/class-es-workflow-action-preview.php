@@ -85,11 +85,11 @@ class ES_Workflow_Action_Preview {
 		if ( in_array( 'wc_order', $required_items ) || in_array( 'order_item', $required_items ) ) {
 			$order       = self::get_preview_order();
 			$order_items = $order->get_items();
-
+// phpcs:disable
 			if ( empty( $order_items ) ) {
 				throw new Exception( __( 'A valid "Order items" must exist to generate the preview.', 'email-subscribers' ) );
 			}
-
+// phpcs:enable
 			$data_layer['wc_order']   = $order;
 			$data_layer['order_item'] = current( $order_items );
 		}
@@ -190,9 +190,11 @@ class ES_Workflow_Action_Preview {
 			);
 
 			$products = $product_query->posts;
+			// phpcs:disable
 			if ( empty( $products ) ) {
 				throw new Exception( __( 'A valid "Product" must exist to generate the preview.', 'email-subscribers' ) );
 			}
+			// phpcs:enable
 		}
 
 		return $products;
@@ -216,11 +218,11 @@ class ES_Workflow_Action_Preview {
 				'return' => 'ids',
 			]
 		);
-
+// phpcs:disable
 		if ( ! $orders ) {
 			throw new Exception( __( 'A valid "Order" must exist to generate the preview.', 'email-subscribers' ) );
 		}
-
+// phpcs:enable
 		$order = wc_get_order( $orders[0] );
 
 		// if the order has a blank email, it will cause issues

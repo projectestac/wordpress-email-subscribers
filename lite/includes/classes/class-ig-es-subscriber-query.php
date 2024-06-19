@@ -223,7 +223,7 @@ class IG_ES_Subscribers_Query {
 							if ( '_lists__in' === $field ) {
 
 								if ( $value ) {
-									$sub_cond[] = "lists_subscribers.contact_id IN ( SELECT contact_id FROM {$wpbd->prefix}ig_lists_contacts WHERE list_id IN (" . implode( ',', array_filter( $value, 'is_numeric' ) ) . ") AND status IN( 'subscribed', 'confirmed' ) )";
+									$sub_cond[] = "lists_subscribers.contact_id IN ( SELECT contact_id FROM {$wpbd->prefix}ig_lists_contacts WHERE list_id IN (" . implode( ',', array_filter( $value, 'is_numeric' ) ) . ") AND status IN( 'subscribed', 'confirmed' ) ) AND lists_subscribers.list_id IN (" . implode( ',', array_filter( $value, 'is_numeric' ) ) . ')';
 								}
 							} elseif ( '_lists__not_in' === $field ) {
 
@@ -295,6 +295,8 @@ class IG_ES_Subscribers_Query {
 										if ( is_numeric( $v ) ) {
 											$campaigns[] = $v;
 											unset( $value[ $k ] );
+										} else {
+											$value[ $k ] = esc_sql( $v );
 										}
 									}
 									$campaigns = array_filter( $campaigns );

@@ -21,8 +21,6 @@ class ES_Templates_Table {
 		add_filter( 'post_row_actions', array( &$this, 'add_template_action' ), 10, 2 );
 		add_action( 'admin_init', array( &$this, 'duplicate_template' ), 10, 1 );
 		add_action( 'admin_footer', array( $this, 'es_template_preview_callback' ), 10 );
-
-		add_action( 'parse_query', array( $this, 'exclude_dnd_templates' ) );
 	}
 
 	public function add_template_type() {
@@ -270,33 +268,6 @@ class ES_Templates_Table {
 		}
 
 		return $duplicate_id;
-	}
-
-	/**
-	 * Exclude DND Templates from template list
-	 * 
-	 * @since 4.5.3
-	 */
-	public static function exclude_dnd_templates( $wp_query ) {
-
-		global $pagenow;
-
-		if ( 'edit.php' !== $pagenow || empty( $wp_query->query_vars['post_type'] ) ||'es_template' !== $wp_query->query_vars['post_type'] ) {
-			return;
-		}
-		
-		$wp_query->query_vars['meta_query'] = array(
-			'relation' => 'OR',
-			array(
-				'key'     => 'es_editor_type',
-				'value'   => IG_ES_CLASSIC_EDITOR,
-				'compare' => '=',
-			),
-			array(
-				'key'     => 'es_editor_type',
-				'compare' => 'NOT EXISTS', // if key doesn't exists, then template is created using Classic editor
-			),
-		);
 	}
 
 	public static function get_instance() {

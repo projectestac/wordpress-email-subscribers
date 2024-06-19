@@ -91,7 +91,9 @@ if ( ! class_exists( 'ES_Icegram_Mailer' ) ) {
 		 * 
 		 * @since 5.6.0
 		 */
-		public $batch_limit = 30;
+		public $batch_limit = 100;
+
+		public $remaining_limit = null;
 
 		/**
 		 * ES_Icegram_Mailer constructor.
@@ -167,14 +169,20 @@ if ( ! class_exists( 'ES_Icegram_Mailer' ) ) {
 		 */
 		public function add_into_batch( $email, $merge_tags = array(), $message = null ) {
 			
-			$name        = ig_es_get_data( $merge_tags, 'name', '' );
-			$first_name  = ig_es_get_data( $merge_tags, 'first_name', '' );
-			$last_name   = ig_es_get_data( $merge_tags, 'last_name', '' );
-			$list_name   = ig_es_get_data( $merge_tags, 'list_name', '' );
-			$hash        = ig_es_get_data( $merge_tags, 'hash', '' );
-			$contact_id  = ig_es_get_data( $merge_tags, 'contact_id', 0 );
-			$campaign_id = ig_es_get_data( $merge_tags, 'campaign_id', 0 );
-			$message_id  = ig_es_get_data( $merge_tags, 'message_id', 0 );
+			$name       = ig_es_get_data( $merge_tags, 'name', '' );
+			$first_name = ig_es_get_data( $merge_tags, 'first_name', '' );
+			$last_name  = ig_es_get_data( $merge_tags, 'last_name', '' );
+			$list_name  = ig_es_get_data( $merge_tags, 'list_name', '' );
+			$hash       = ig_es_get_data( $merge_tags, 'hash', '' );
+
+			/**
+			 * Instead of numberic default values like 0, 
+			 * we need to use empty string value('') as a default value
+			 * because Sendgrid API throws bad request error when numeric data is present in json request
+			 */
+			$contact_id  = ig_es_get_data( $merge_tags, 'contact_id', '' );
+			$campaign_id = ig_es_get_data( $merge_tags, 'campaign_id', '' );
+			$message_id  = ig_es_get_data( $merge_tags, 'message_id', '' );
 			$list_ids    = ig_es_get_data( $merge_tags, 'list_ids', '' );
 
 			$link_data = array(
@@ -366,6 +374,11 @@ if ( ! class_exists( 'ES_Icegram_Mailer' ) ) {
 				if ( ! empty( $body ) ) {
 					$status = ! empty( $body['status'] ) ? $body['status'] : 'error';
 					if ( 'success' === $status ) {
+						if ( isset( $body['remaining_limit'] ) ) {
+							$this->remaining_limit = $body['remaining_limit'];
+						} else {
+							$this->remaining_limit -= $this->current_batch_size;
+						}
 						ES()->logger->info( 'Email Sent Successfully Using Icegram', $this->logger_context );
 						return $this->do_response( 'success' );
 					} else {
@@ -748,6 +761,11 @@ if ( ! class_exists( 'ES_Icegram_Mailer' ) ) {
 				if ( ! empty( $body ) ) {
 					$status = ! empty( $body['status'] ) ? $body['status'] : 'error';
 					if ( 'success' === $status ) {
+						if ( isset( $body['remaining_limit'] ) ) {
+							$this->remaining_limit = $body['remaining_limit'];
+						} else {
+							$this->remaining_limit -= $this->current_batch_size;
+						}
 						ES()->logger->info( 'Email Sent Successfully Using Icegram', $this->logger_context );
 						return $this->do_response( 'success' );
 					} else {
@@ -779,7 +797,7 @@ if ( ! class_exists( 'ES_Icegram_Mailer' ) ) {
 		 * @since 5.6.0
 		 */
 		public function is_batch_limit_reached() {
-			return $this->current_batch_size >= $this->batch_limit;
+			return $this->current_batch_size >= $this->batch_limit || $this->current_batch_size >= $this->remaining_limit;
 		}
 	}
 

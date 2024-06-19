@@ -214,7 +214,7 @@ function render_user_permissions_settings_fields_premium() {
 	ob_start();
 	?>
 
-	<div class="text-center py-3 lg:px-4">
+	<div class="text-center py-3 lg:px-4 user_role_upsell_box">
 		<div class="p-2 bg-indigo-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex mx-4 leading-normal" role="alert">
 			<span class="font-semibold text-left flex-auto">
 				<?php esc_html_e( 'Customize user roles permissions with ', 'email-subscribers' ); ?><a href="<?php echo esc_url( $url ); ?>" target="_blank" class="text-indigo-400"><?php esc_html_e( 'Icegram Express PRO', 'email-subscribers' ); ?></a>
@@ -223,7 +223,7 @@ function render_user_permissions_settings_fields_premium() {
 	</div>
 
 	<p class="py-2 text-sm font-normal text-gray-500"><?php echo esc_html__( 'You can allow different user roles access to different operations within Icegram Express plugin. Please select which roles should have what access below.', 'email-subscribers' ); ?> </p>
-	<table class="min-w-full rounded-lg">
+	<table class="min-w-full rounded-lg user-roles-table">
 		<thead>
 			<tr class="bg-gray-100 leading-4 text-gray-500 tracking-wider">
 				<th class="pl-10 py-4 text-left font-semibold text-sm"><?php esc_html_e( 'Roles', 'email-subscribers' ); ?></th>
@@ -248,22 +248,22 @@ function render_user_permissions_settings_fields_premium() {
 						</div>
 					</td>
 					<td class="whitespace-no-wrap text-center">
-						<input type="checkbox" name="" disabled <?php ! empty( $user_roles['audience'][ $key ] ) ? checked( 'yes', $user_roles['audience'][ $key ] ) : ''; ?> value="yes" class=" form-checkbox text-indigo-600">
+						<input type="checkbox" name="" disabled <?php ! empty( $user_roles['audience'][ $key ] ) ? checked( 'yes', $user_roles['audience'][ $key ] ) : ''; ?> value="yes" class=" checkbox text-indigo-600">
 					</td>
 					<td class="whitespace-no-wrap text-center">
-						<input type="checkbox" name="" disabled<?php ! empty( $user_roles['forms'][ $key ] ) ? checked( 'yes', $user_roles['forms'][ $key ] ) : ''; ?> value="yes" class=" form-checkbox text-indigo-600">
+						<input type="checkbox" name="" disabled<?php ! empty( $user_roles['forms'][ $key ] ) ? checked( 'yes', $user_roles['forms'][ $key ] ) : ''; ?> value="yes" class=" checkbox text-indigo-600">
 					</td>
 					<td class="whitespace-no-wrap text-center">
-						<input type="checkbox" name="" disabled <?php ! empty( $user_roles['campaigns'][ $key ] ) ? checked( 'yes', $user_roles['campaigns'][ $key ] ) : ''; ?> value="yes" class=" form-checkbox text-indigo-600">
+						<input type="checkbox" name="" disabled <?php ! empty( $user_roles['campaigns'][ $key ] ) ? checked( 'yes', $user_roles['campaigns'][ $key ] ) : ''; ?> value="yes" class=" checkbox text-indigo-600">
 					</td>
 					<td class="whitespace-no-wrap text-center">
-						<input type="checkbox" name="" disabled <?php ! empty( $user_roles['reports'][ $key ] ) ? checked( 'yes', $user_roles['reports'][ $key ] ) : ''; ?> value="yes" class=" form-checkbox text-indigo-600">
+						<input type="checkbox" name="" disabled <?php ! empty( $user_roles['reports'][ $key ] ) ? checked( 'yes', $user_roles['reports'][ $key ] ) : ''; ?> value="yes" class=" checkbox text-indigo-600">
 					</td>
 					<td class="whitespace-no-wrap text-center">
-						<input type="checkbox" name="" disabled <?php ! empty( $user_roles['sequences'][ $key ] ) ? checked( 'yes', $user_roles['sequences'][ $key ] ) : ''; ?> value="yes" class=" form-checkbox text-indigo-600">
+						<input type="checkbox" name="" disabled <?php ! empty( $user_roles['sequences'][ $key ] ) ? checked( 'yes', $user_roles['sequences'][ $key ] ) : ''; ?> value="yes" class=" checkbox text-indigo-600">
 					</td>
 					<td class="whitespace-no-wrap text-center">
-						<input type="checkbox" name="" disabled <?php ! empty( $user_roles['workflows'][ $key ] ) ? checked( 'yes', $user_roles['workflows'][ $key ] ) : ''; ?> value="yes" class=" form-checkbox text-indigo-600">
+						<input type="checkbox" name="" disabled <?php ! empty( $user_roles['workflows'][ $key ] ) ? checked( 'yes', $user_roles['workflows'][ $key ] ) : ''; ?> value="yes" class=" checkbox text-indigo-600">
 					</td>
 				</tr>
 				<?php
@@ -1845,7 +1845,7 @@ function ig_es_upsell_redirect_to_url() {
 		$pricing_url = ES_Common::get_utm_tracking_url( $utm_args );
 		?>
 		<a href="<?php echo esc_url( $pricing_url ); ?>" target="_blank">
-			<div class="block w-full mx-4 pb-8">
+			<div class="block w-full mx-4">
 				<div class="py-2">
 					<input type="radio" class="form-radio" id="redirect_to_url" />					
 					<label for="redirect_to_url"
@@ -1877,7 +1877,7 @@ function ig_es_upsell_pro_import_features() {
 		?>
 		<a href="<?php echo esc_url( $pricing_url ); ?>" target="_blank">
 			<label class="inline-flex items-center cursor-pointer w-56">
-				<div class="mt-4 px-1 mx-4 border border-gray-200 rounded-lg shadow-md es-mailer-logo es-importer-logo bg-white">
+				<div class="mt-6 px-1 mx-4 border border-gray-200 rounded-lg shadow-md es-mailer-logo es-importer-logo bg-white">
 					<div class="border-0 es-logo-wrapper">
 						<svg class="w-6 h-6 text-gray-500 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
 					</div>
@@ -1902,7 +1902,7 @@ function ig_es_upsell_pro_import_features() {
 			?>
 			<a href="<?php echo esc_url( $pricing_url ); ?>" target="_blank">
 				<label class="wc-importer-heading inline-flex items-center cursor-pointer w-56">
-					<div class="mt-4 px-1 mx-4 border border-gray-200 rounded-lg shadow-md es-mailer-logo es-importer-logo bg-white">
+					<div class="mt-6 px-1 mx-4 border border-gray-200 rounded-lg shadow-md es-mailer-logo es-importer-logo bg-white">
 						<div class="border-0 es-logo-wrapper">
 							<img src="<?php echo esc_url( ES_PLUGIN_URL . 'lite/admin/images/wc-logo.svg' ); ?>" />
 						</div>
@@ -2058,11 +2058,12 @@ function ig_es_upsell_cf_button() {
 		);
 		$url = ES_Common::get_utm_tracking_url($utm_args);
 		?>
-		<a href = "<?php echo esc_url( $url ); ?>" target = "_blank" class="inline-flex justify-center border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 transition duration-150 ease-in-out px-3 py-1 ml-2 leading-5 align-middle">
-			<?php esc_html_e( 'Manage Custom Fields', 'email-subscribers' ); ?>
+		<a href = "<?php echo esc_url( $url ); ?>" target = "_blank" class="es_custom_field_link">
+			<button type="button" class="secondary">
+				<?php esc_html_e( 'Manage Custom Fields', 'email-subscribers' ); ?>
+			</button>
+			<span class="premium-icon max"></span>
 		</a>
-		<span class="premium-icon max"></span>
-
 		<?php
 	}
 }
@@ -2142,7 +2143,7 @@ function ig_es_upsell_top_countries_stats( $days, $report_data = array() ) {
 			'AU' => 1200,
 			'ES' => 800,
 			'FR' => 650,
-			'RU' => 144,	
+			'RU' => 144,
 		);
 		ES_Admin::get_view(
 			'dashboard/top-countries',

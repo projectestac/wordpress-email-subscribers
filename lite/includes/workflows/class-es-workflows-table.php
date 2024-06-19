@@ -571,6 +571,8 @@ class ES_Workflows_Table extends ES_List_Table {
 		// If the delete bulk action is triggered.
 		if ( 'bulk_delete' === $action ) {
 
+			check_admin_referer( 'bulk-' . $this->_args['plural'] );
+
 			$ids = ig_es_get_request_data( 'workflows' );
 
 			if ( is_array( $ids ) && count( $ids ) > 0 ) {
@@ -585,6 +587,8 @@ class ES_Workflows_Table extends ES_List_Table {
 				ES_Common::show_message( $message, 'error' );
 			}
 		} elseif ( 'bulk_activate' === $action || 'bulk_deactivate' === $action ) {
+
+			check_admin_referer( 'bulk-' . $this->_args['plural'] );
 
 			$ids = ig_es_get_request_data( 'workflows' );
 

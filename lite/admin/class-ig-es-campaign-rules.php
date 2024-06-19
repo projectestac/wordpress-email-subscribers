@@ -154,7 +154,7 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 			if ( ! empty( $campaign_id ) ) {
 				$args['campaigns_not_in'] = array( $campaign_id );
 			}
-			$all_campaigns = ES()->campaigns_db->get_all_campaigns( $args );
+			$all_campaigns = ES()->campaigns_db->get_campaigns( $args );
 
 			$lists = ES()->lists_db->get_list_id_name_map();
 

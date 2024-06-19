@@ -53,7 +53,6 @@ if ( ! class_exists( 'ES_Admin' ) ) {
 
 			add_action( 'wp_ajax_ig_es_draft_campaign', array( $this, 'draft_campaign' ) );
 			add_action( 'wp_ajax_ig_es_get_template_preview', array( $this, 'get_template_preview' ) );
-			add_action( 'wp_ajax_ig_es_delete_template', array( $this, 'delete_template' ) );
 
 			//add_action( 'media_buttons', array( $this, 'add_tag_button' ) );
 		}
@@ -884,20 +883,6 @@ if ( ! class_exists( 'ES_Admin' ) ) {
 				}
 			}
 
-		}
-
-		public function delete_template() {
-			check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
-
-			$template_id = ig_es_get_request_data( 'template_id', 0, false );
-			if ( ! empty( $template_id ) ) {
-				$deleted = wp_delete_post( $template_id );
-				if ( $deleted ) {
-					wp_send_json_success();
-				}
-			}
-
-			wp_send_json_error();
 		}
 
 		/**

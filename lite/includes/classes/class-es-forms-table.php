@@ -84,7 +84,7 @@ class ES_Forms_Table extends ES_List_Table {
 
 		$action = ig_es_get_request_data( 'action' );
 		?>
-		<div class="wrap pt-4 font-sans">
+		<div class="font-sans">
 			<?php
 			if ( 'new' === $action ) {
 				$this->es_new_form_callback();
@@ -93,22 +93,68 @@ class ES_Forms_Table extends ES_List_Table {
 				echo wp_kses_post( $this->edit_form( absint( $form ) ) );
 			} else {
 				?>
-				<div class="flex">
-					<div>
-						<h2 class="wp-heading-inline text-3xl font-bold text-gray-700 sm:leading-9 sm:truncate pr-4">
-							<?php esc_html_e( 'Forms', 'email-subscribers' ); ?>
-						</h2>
-					</div>
-					<div class="mt-1">
-						<a href="admin.php?page=es_forms&action=new" class="ig-es-title-button ml-2 leading-5 align-middle">
-							<?php esc_html_e( 'Add New', 'email-subscribers' ); ?>
-						</a>
-						<?php 
-							do_action( 'ig_es_after_form_buttons' );
-						?>
+				<div class="sticky top-0 z-10">
+					<header>
+						<nav aria-label="Global" class="pb-5 w-full pt-2">
+							<div class="brand-logo">
+								<span>
+									<img src="<?php echo ES_PLUGIN_URL . 'lite/admin/images/new/brand-logo/IG LOGO 192X192.svg'; ?>" alt="brand logo" />
+									<div class="divide"></div>
+									<h1><?php esc_html_e( 'Forms ', 'email-subscribers' ); ?></h1>
+								</span>
+							</div>
+
+							<div class="cta">
+								<a href="https://www.icegram.com/docs/category/icegram-express/" target="_blank" title="Docs">
+									<button type="button" class="p-2 rounded-full secondary">
+										<svg stroke="currentColor" fill="none" viewBox="0 0 24 24" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+									</button>
+								</a>
+								<a href="admin.php?page=es_settings#ig_es_optin_type" target="_blank" title="Settings">
+									<button type="button" class="p-2 rounded-full secondary">
+										<svg stroke="currentColor" fill="none" viewBox="0 0 24 24" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+									</button>
+								</a>
+								<a href="admin.php?page=es_forms&action=new">
+									<button type="button" class="secondary">
+										<?php esc_html_e( 'Add New', 'email-subscribers' ); ?>
+									</button>
+								</a>
+								<?php 
+									do_action( 'ig_es_after_form_buttons' );
+								?>
+							</div>
+						</nav>
+					</header>
+				</div>
+				<!-- <div class="flex flex-col lg:items-center lg:flex-row lg:justify-between">
+					<div class="flex items-center">
+						<div class="flex-shrink-0">
+							<h2 class="wp-heading-inline text-3xl font-bold text-gray-700 sm:leading-9 sm:truncate pr-4">
+								<?php esc_html_e( 'Forms', 'email-subscribers' ); ?>
+							</h2>
+						</div>
+						<div class="ml-10 lg:ml-6 xl:ml-10 flex items-baseline">
+							<a href="admin.php?page=es_forms&action=new" class="ig-es-title-button ml-2 leading-5 align-middle">
+								<?php esc_html_e( 'Add New', 'email-subscribers' ); ?>
+							</a>
+							<?php 
+								do_action( 'ig_es_after_form_buttons' );
+							?>
+						</div>
+						<div class="flex items-center text-right" style="margin-left:auto;">
+							<div class="flex items-center ml-4 lg:ml-2">
+								<a href="https://www.icegram.com/docs/category/icegram-express/" target="_blank" title="Docs" class="p-1 ml-3 border-transparent text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:text-gray-500 transition duration-150 ease-in-out bg-white">
+									<svg stroke="currentColor" fill="none" viewBox="0 0 24 24" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+								</a>
+								<a href="admin.php?page=es_settings/#ig_es_optin_type" target="_blank" title="Settings" class="ml-3 p-1 border-transparent text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:text-gray-500 transition duration-150 ease-in-out bg-white">
+									<svg stroke="currentColor" fill="none" viewBox="0 0 24 24" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+								</a>
+							</div>
+						</div>
 					</div>
 				</div>
-				<div><hr class="wp-header-end"></div>
+				<div><hr class="wp-header-end"></div> -->
 				<?php
 				if ( 'form_created' === $action ) {
 					$message = __( 'Form added successfully!', 'email-subscribers' );
@@ -118,7 +164,7 @@ class ES_Forms_Table extends ES_List_Table {
 					ES_Common::show_message( $message, 'success' );
 				}
 				?>
-				<div id="poststuff" class="es-items-lists">
+				<div id="poststuff" class="es-items-lists es-forms-table">
 					<div id="post-body" class="metabox-holder column-1">
 						<div id="post-body-content">
 							<div class="meta-box-sortables ui-sortable">
@@ -434,6 +480,7 @@ class ES_Forms_Table extends ES_List_Table {
 	 * @since 5.6.1
 	 */
 	public function show_dnd_show_in_popup_settings( $form_data ) {
+		$allowedtags = ig_es_allowed_html_tags_in_esc();
 		$popup_field_name  = 'form_data[settings][show_in_popup]';
 		$popup_field_value = isset( $form_data['settings']['show_in_popup'] ) ? $form_data['settings']['show_in_popup'] : 'no';
 
@@ -443,7 +490,11 @@ class ES_Forms_Table extends ES_List_Table {
 		<div class="pt-2 pb-4 mx-4">
 			<div class="flex w-full">
 				<div class="w-11/12 text-sm font-normal text-gray-600">
-					<?php echo esc_html__( 'Show in popup', 'email-subscribers' ); ?>
+				<?php 
+				$show_in_popup_tooltip_text = ES_Common::get_tooltip_html('Enable to show this subscribe form inside a popup.'); 
+				echo esc_html__( 'Show in popup ', 'email-subscribers' ) . wp_kses( $show_in_popup_tooltip_text, $allowedtags ); 
+				?>
+					
 				</div>
 				<div>
 					<label for="show_in_popup" class="inline-flex items-center cursor-pointer">
@@ -495,10 +546,12 @@ class ES_Forms_Table extends ES_List_Table {
 
 			// We don't want to change the created_at date for update
 			unset( $form_data['created_at'] );
+			// phpcs:disable
 			$return = $wpdb->update( IG_FORMS_TABLE, $form_data, array( 'id' => $id ) );
 		} else {
 			$return = $wpdb->insert( IG_FORMS_TABLE, $form_data );
 		}
+		// phpcs:enable
 
 		return $return;
 	}
@@ -821,7 +874,7 @@ class ES_Forms_Table extends ES_List_Table {
 	 */
 	public function column_cb( $item ) {
 		return sprintf(
-			'<input type="checkbox" name="forms[]" value="%s" />',
+			'<input type="checkbox" name="forms[]" class="checkbox" value="%s" />',
 			$item['id']
 		);
 	}
@@ -857,13 +910,20 @@ class ES_Forms_Table extends ES_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
-		$columns = array(
-			'cb'                       => '<input type="checkbox" />',
-			'name'                     => __( 'Name', 'email-subscribers' ),
-			'shortcode'                => __( 'Shortcode', 'email-subscribers' ),
-			'total_active_subscribers' => __( 'Subscribers', 'email-subscribers' ),
-			'created_at'               => __( 'Created', 'email-subscribers' ),
-		);
+	 $shortcode_tooltip_text   = ES_Common::get_tooltip_html('Insert this shortcode anywhere on the page/post/widget'); 
+	 $subscribers_tooltip_text = ES_Common::get_tooltip_html('Count of subscribers you have got from a particular Form'); 
+			
+
+	 $columns = array(
+		'cb'                       => '<input type="checkbox" />',
+		'name'                     => __( 'Name', 'email-subscribers' ),
+		/* translators: %s Shortcode text */
+		'shortcode'                => sprintf( __( 'Shortcode %s', 'email-subscribers' ), $shortcode_tooltip_text ),
+		/* translators: %s Shortcode tooltip text */
+		'total_active_subscribers' => sprintf( __( 'Subscribers %s', 'email-subscribers' ), $subscribers_tooltip_text ),
+		'created_at'               => __( 'Created', 'email-subscribers' ),
+	);
+	
 
 		return $columns;
 	}
@@ -919,6 +979,8 @@ class ES_Forms_Table extends ES_List_Table {
 		// If the delete bulk action is triggered
 		if ( ( 'bulk_delete' === $action ) || ( 'bulk_delete' === $action2 ) ) {
 
+			check_admin_referer( 'bulk-' . $this->_args['plural'] );
+
 			$forms = ig_es_get_request_data( 'forms' );
 
 			if ( ! empty( $forms ) > 0 ) {
@@ -954,8 +1016,9 @@ class ES_Forms_Table extends ES_List_Table {
 
 		<p class="search-box">
 			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_attr( $text ); ?>:</label>
-			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>"/>
-			<?php submit_button( __( 'Search Forms', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
+			<input type="search" placeholder="Search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>"/>
+			<button type="submit" id="search-submit" class="secondary"><?php echo esc_html__( 'Search Forms', 'email-subscribers'); ?></button>
+
 		</p>
 		<?php
 	}

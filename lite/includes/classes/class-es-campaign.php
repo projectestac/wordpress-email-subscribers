@@ -453,7 +453,7 @@ if ( ! class_exists( 'ES_Campaign' ) ) {
 
 			$edit_url = add_query_arg(
 				array(
-					'list'   => $id,
+					'id'     => $id,
 					'action' => 'edit',
 				),
 				$edit_url

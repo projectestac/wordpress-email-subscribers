@@ -428,6 +428,14 @@ class ES_Shortcode {
 				$form = array( $form_header_html, $form_html, $form_data_html, $form_body );
 				$form_orig_html = implode( '', $form );
 				$form_data_html = $form_orig_html;
+				
+				if ( ! empty( $submitted_name ) ) {
+					$form_data_html = str_replace( 'name="esfpx_name"', 'name="esfpx_name" value="' . esc_attr( $submitted_name ) . '"', $form_data_html );
+				}
+
+				if ( ! empty( $submitted_email ) ) {
+					$form_data_html = str_replace( 'name="esfpx_email"', 'name="esfpx_email" value="' . esc_attr( $submitted_email ) . '"', $form_data_html );
+				}
 			}
 
 			$form_data_html .= '<span class="es_spinner_image" id="spinner-image"><img src="' . $spinner_image_path . '" alt="Loading"/></span></form>';

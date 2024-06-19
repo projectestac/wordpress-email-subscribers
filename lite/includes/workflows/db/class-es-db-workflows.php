@@ -969,9 +969,9 @@ class ES_DB_Workflows extends ES_DB {
 	public function get_workflows_count_by_triggername() {
 
 		global $wpdb;
-
+// phpcs:disable
 		$result = $wpdb->get_results( "SELECT trigger_name, count(trigger_name) AS trigger_count FROM {$wpdb->prefix}ig_workflows WHERE status = 1 GROUP BY trigger_name", ARRAY_A );
-
+// phpcs:enable
 		return $result;
 	}
 

@@ -24,6 +24,8 @@ class ES_Workflow_Loader {
 	 */
 	private static $instance = null;
 
+	public $admin;
+
 	/**
 	 * Constructor
 	 */

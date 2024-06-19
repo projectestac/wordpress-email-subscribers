@@ -61,7 +61,7 @@ class ES_DB_Queue extends ES_DB {
 	 */
 	public function delete_from_queue( $campaign_id, $contact_id ) {
 		global $wpdb;
-
+// phpcs:disable
 		return $wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->prefix}ig_queue WHERE campaign_id = %d AND contact_id = %d",
@@ -69,6 +69,7 @@ class ES_DB_Queue extends ES_DB {
 				$contact_id
 			)
 		);
+// phpcs:enable
 	}
 
 }

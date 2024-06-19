@@ -337,9 +337,9 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			if ( $show_offer ) {
 				$args['url']     = 'https://www.icegram.com/';
 				$args['include'] = ES_PLUGIN_DIR . 'lite/includes/notices/views/ig-es-bfcm-offer.php';
-				ES_Admin_Notices::add_custom_notice( 'bfcm_offer_2022', $args );
+				ES_Admin_Notices::add_custom_notice( 'bfcm_offer_2023', $args );
 			} else {
-				ES_Admin_Notices::remove_notice( 'bfcm_offer_2022' );
+				ES_Admin_Notices::remove_notice( 'bfcm_offer_2023' );
 			}
 
 			$screen_id = $this->get_current_screen_id();
@@ -974,7 +974,6 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/includes/workflows/queue/class-es-workflow-queue.php',
 				'lite/includes/workflows/queue/class-es-workflow-queue-factory.php',
 				'lite/includes/workflows/queue/class-es-workflow-queue-handler.php',
-				'lite/includes/workflows/queue/class-es-workflow-queue-runner.php',
 
 				// Workflow Loader
 				'lite/includes/workflows/class-es-workflow-loader.php',
@@ -987,6 +986,12 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 
 				// Subscribers Query
 				'lite/includes/classes/class-ig-es-subscriber-query.php',
+
+				// Recipient rules
+				'lite/includes/recipient-rules/rules/abstracts/class-es-recipient-rule.php',
+				'lite/includes/recipient-rules/rules/abstracts/class-es-recipient-rule-boolean.php',
+				'lite/includes/recipient-rules/rules/class-es-recipient-rule-list.php',
+				'lite/includes/recipient-rules/class-es-recipient-rules.php',
 
 				// Compatibilities
 				'lite/includes/compatibilities/elementor/class-ig-es-compatibility.php',
@@ -1004,6 +1009,9 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'lite/admin/class-es-rest-api-admin.php',
 				'lite/includes/classes/class-es-router.php',
 				'lite/includes/controllers/class-es-campaign-controller.php',
+				'lite/includes/controllers/class-es-campaigns-controller.php',
+				'lite/includes/controllers/class-es-gallery-controller.php',
+				'lite/includes/controllers/class-es-template-controller.php',
 
 				'starter/starter-class-email-subscribers.php',
 				'pro/pro-class-email-subscribers.php',
@@ -1052,7 +1060,6 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 
 			$this->loader->add_filter( 'set-screen-option', $plugin_admin, 'save_screen_options', 20, 3 );
 			$this->loader->add_action( 'wp_ajax_count_contacts_by_list', $plugin_admin, 'count_contacts_by_list' );
-			$this->loader->add_action( 'wp_ajax_get_template_content', $plugin_admin, 'get_template_content' );
 			$this->loader->add_action( 'admin_print_scripts', $plugin_admin, 'remove_other_admin_notices' );
 
 			// Start-IG-Code.
@@ -2091,8 +2098,8 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			$offer_start_time = 0;
 			$offer_end_time   = 0;
 			if ( 'bfcm' === $offer_name ) {
-				$offer_start_time = strtotime( '2022-11-23 12:30:00' ); // Offer start time in IST
-				$offer_end_time   = strtotime( '2022-11-30 12:30:00' ); // Offer end time in IST
+				$offer_start_time = strtotime( '2023-11-21 12:30:00' ); // Offer start time in IST
+				$offer_end_time   = strtotime( '2023-11-30 12:30:00' ); // Offer end time in IST
 			}
 
 			$is_offer_period = $current_ist_time >= $offer_start_time && $current_ist_time <= $offer_end_time;

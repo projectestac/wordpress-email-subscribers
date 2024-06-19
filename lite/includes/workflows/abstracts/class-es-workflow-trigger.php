@@ -314,28 +314,22 @@ abstract class ES_Workflow_Trigger {
 			return;
 		}
 
-		// Flag to check if we should start the workflow processing immediately.
-		$process_immediately = false;
-
+		$has_queued_workflows = false;
 		foreach ( $workflows as $workflow ) {
-			// First we need to schedule all the workflows.
-			$workflow->schedule( $data_layer );
 			$timing_type = $workflow->get_timing_type();
-
-			// Check if there are any workflows which needs to run immediately.
 			if ( 'immediately' === $timing_type ) {
-				$process_immediately = true;
+				if ( $workflow->requires_queueing() ) {
+					$workflow->schedule( $data_layer );
+					$has_queued_workflows = true;
+				} else {
+					$workflow->maybe_run( $data_layer );
+				}
+			} else {
+				$workflow->schedule( $data_layer );
 			}
 		}
 
-		if ( $process_immediately ) {
-
-			$request_args = array(
-				'action' => 'ig_es_trigger_workflow_queue_processing',
-			);
-
-			IG_ES_Background_Process_Helper::send_async_ajax_request( $request_args );
-		}
+		do_action( 'ig_es_after_workflow_trigger_processed', $this, $has_queued_workflows );
 	}
 
 

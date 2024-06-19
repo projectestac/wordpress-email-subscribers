@@ -47,14 +47,16 @@ class ES_Lists_Table extends ES_List_Table {
 	 */
 	public static function screen_options() {
 
-		$option = 'per_page';
-		$args   = array(
-			'label'   => __( 'Number of lists per page', 'email-subscribers' ),
-			'default' => 20,
-			'option'  => self::$option_per_page,
-		);
+		if ( empty( $action ) ) {
+			$option = 'per_page';
+			$args   = array(
+				'label'   => __( 'Number of lists per page', 'email-subscribers' ),
+				'default' => 20,
+				'option'  => self::$option_per_page,
+			);
 
-		add_screen_option( $option, $args );
+			add_screen_option( $option, $args );
+		}
 
 	}
 
@@ -63,7 +65,7 @@ class ES_Lists_Table extends ES_List_Table {
 		$action = ig_es_get_request_data( 'action' );
 
 		?>
-		<div class="wrap pt-4 font-sans">
+		<div class="font-sans">
 			<?php
 			if ( 'new' === $action ) {
 				$this->es_new_lists_callback();
@@ -72,50 +74,49 @@ class ES_Lists_Table extends ES_List_Table {
 				echo wp_kses_post( $this->edit_list( absint( $list ) ) );
 			} else {
 				?>
+				<div class="max-w-full font-sans">
+					<div class="sticky top-0 z-10">
+						<header>
+							<nav aria-label="Global" class="pb-5 w-full pt-2">
+								<div class="brand-logo">
+									<span>
+										<img src="<?php echo ES_PLUGIN_URL . 'lite/admin/images/new/brand-logo/IG LOGO 192X192.svg'; ?>" alt="brand logo" />
+										<div class="divide"></div>
+										<h1><?php esc_html_e( 'Lists ', 'email-subscribers' ); ?></h1>
+									</span>
+								</div>
 
-		<div class="max-w-full -mt-3 font-sans">
-			<header class="wp-heading-inline">
-				<div class="flex">
-					<div>
-						<nav class="text-gray-400 my-0" aria-label="Breadcrumb">
-							<ol class="list-none p-0 inline-flex">
-								<li class="flex items-center text-sm tracking-wide">
-								<a class="hover:underline " href="admin.php?page=es_subscribers"><?php esc_html_e( 'Audience ', 'email-subscribers' ); ?></a>
-								<svg class="fill-current w-2.5 h-2.5 mx-2 mt-mx" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path></svg>
-								</li>
-							</ol>
-						</nav>
-						<h2 class="-mt-1.5 text-2xl font-medium text-gray-700 sm:leading-7 sm:truncate"> <?php esc_html_e( 'Lists', 'email-subscribers' ); ?>
-						</h2>
+								<div class="mt-4 cta"> 
+									<a href="admin.php?page=es_subscribers"><button type="button" class="secondary"><?php esc_html_e( 'Audience ', 'email-subscribers' ); ?></button></a>
+									<a href="admin.php?page=es_lists&action=new"><button type="button" class="primary"><?php esc_html_e( 'Add New', 'email-subscribers' ); ?></button></a>
+								</div>
+							</nav>
+						</header>
 					</div>
-					<div class="mt-4"> <a href="admin.php?page=es_lists&action=new" class="ig-es-title-button ml-2"><?php esc_html_e( 'Add New', 'email-subscribers' ); ?></a>
-					</div>
-				</div>
-			</header>
-			<div><hr class="wp-header-end"></div>
-			<div id="poststuff" class="es-items-lists es-lists-table">
-				<div id="post-body" class="metabox-holder column-1">
-					<div id="post-body-content">
-						<div class="meta-box-sortables ui-sortable">
-							<form method="get">
-								<input type="hidden" name="page" value="es_lists" />
-								<?php
-								// Display search field and other available filter fields.
-								$this->prepare_items();
-								?>
-							</form>
-							<form method="post">
-								<?php
-								// Display bulk action fields, pagination and list items.
-								$this->display();
-								?>
-							</form>
+
+					<div id="poststuff" class="es-items-lists es-lists-table">
+						<div id="post-body" class="metabox-holder column-1">
+							<div id="post-body-content">
+								<div class="meta-box-sortables ui-sortable">
+									<form method="get">
+										<input type="hidden" name="page" value="es_lists" />
+										<?php
+										// Display search field and other available filter fields.
+										$this->prepare_items();
+										?>
+									</form>
+									<form method="post">
+										<?php
+										// Display bulk action fields, pagination and list items.
+										$this->display();
+										?>
+									</form>
+								</div>
+							</div>
 						</div>
+						<br class="clear">
 					</div>
 				</div>
-				<br class="clear">
-			</div>
-		</div>
 				<?php
 			}
 	}
@@ -275,88 +276,85 @@ class ES_Lists_Table extends ES_List_Table {
 		$list_name = isset( $data['list_name'] ) ? $data['list_name'] : '';
 		$list_desc = isset( $data['list_desc'] ) ? $data['list_desc'] : '';
 		$nonce = wp_create_nonce( 'es_list' );
-
 		?>
-
 		<div class="max-w-full -mt-3 font-sans">
-			<header class="wp-heading-inline">
-				<div class="md:flex md:items-center md:justify-between justify-center">
-					<div class="flex-1 min-w-0">
-						<nav class="text-gray-400 my-0" aria-label="Breadcrumb">
-							<ol class="list-none p-0 inline-flex">
-								<li class="flex items-center text-sm tracking-wide">
-								<a class="hover:underline " href="admin.php?page=es_subscribers"><?php esc_html_e( 'Audience ', 'email-subscribers' ); ?></a>
-								<svg class="fill-current w-2.5 h-2.5 mx-2 mt-mx" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path></svg>
+			<div class="sticky top-0 z-10">
+				<header>
+					<nav aria-label="Global" class="pb-5 w-full pt-2">
+						<div class="brand-logo">
+							<span>
+								<img src="<?php echo ES_PLUGIN_URL . 'lite/admin/images/new/brand-logo/IG LOGO 192X192.svg'; ?>" alt="brand logo" />
+								<div class="divide"></div>
+								<h1><?php esc_html_e( 'Lists ', 'email-subscribers' ); ?></h1>
+							</span>
+						</div>
 
-								<a class="hover:underline" href="admin.php?page=es_lists&action=manage-lists"><?php esc_html_e( ' Lists ', 'email-subscribers' ); ?></a> 
-								 <svg class="fill-current w-2.5 h-2.5 mx-2 mt-mx" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path></svg>
-								 </li>
-							</ol>
-						</nav>
-						<h2 class="-mt-1 text-2xl font-medium text-gray-700 sm:leading-7 sm:truncate">
-								<?php
-								if ( $is_new ) {
-									esc_html_e( 'Add New List', 'email-subscribers' );
-								} else {
-									esc_html_e( 'Edit List', 'email-subscribers' );
-								}
+						<div class="mt-4 cta"> 
+							<a href="admin.php?page=es_lists&action=manage-lists"><button type="button" class="secondary"><?php esc_html_e( 'All Lists', 'email-subscribers' ); ?></button></a>
+							<a href="admin.php?page=es_lists&action=new"><button type="button" class="primary"><?php esc_html_e( 'Add New', 'email-subscribers' ); ?></button></a>
+						</div>
+					</nav>
+				</header>
+			</div>
+			<div class="rounded max-w-full ">
+				<h2 class="pt-4 px-3 ml-8 text-2xl font-medium text-gray-700">
+						<?php
+						if ( $is_new ) {
+							esc_html_e( 'Add New List', 'email-subscribers' );
+						} else {
+							esc_html_e( 'Edit List', 'email-subscribers' );
+						}
 
-								?>
-						</h2>
-					</div>
-				</div>
-			</header>
-				<div><hr class="wp-header-end"></div>
-				<div class="rounded max-w-full ">
-					<div id="poststuff">
-						<div id="post-body" class="metabox-holder column-1 mt-0.5">
-							<div id="post-body-content">
-								<div class="bg-white shadow-md rounded-lg mt-5">
-									<form class="ml-5 mr-4 text-left pt-8 mt-2 item-center " method="post" action="admin.php?page=es_lists&action=<?php echo esc_attr( $action ); ?>&list=<?php echo esc_attr( $id ); ?>&_wpnonce=<?php echo esc_attr( $nonce ); ?>">
+						?>
+				</h2>
+				<div id="poststuff">
+					<div id="post-body" class="metabox-holder column-1 mt-0.5">
+						<div id="post-body-content">
+							<div class="bg-white shadow-md rounded-lg mt-5">
+								<form id="es-admin-lists-form" class="ml-8 mr-4 text-left py-5" method="post" action="admin.php?page=es_lists&action=<?php echo esc_attr( $action ); ?>&list=<?php echo esc_attr( $id ); ?>&_wpnonce=<?php echo esc_attr( $nonce ); ?>">
 
-										<div class="flex flex-row border-b border-gray-100">
-											<div class="flex w-1/5">
-												<div class="ml-4 pt-6 px-3	">
-													<label for="name" class="block text-sm leading-5 font-medium text-gray-600"><?php esc_html_e( 'List name', 'email-subscribers' ); ?></label>
-												</div>
+									<div class="flex flex-row border-b border-gray-100">
+										<div class="flex es-w-15">
+											<div class="ml-3 py-4">
+												<label for="name" class="block text-sm leading-5 font-medium text-gray-600"><?php esc_html_e( 'List name', 'email-subscribers' ); ?></label>
 											</div>
-											<div class="flex">
-												<div class="ml-16 mb-4 h-10 mr-4 mt-4">
-													<div class="h-10 relative">
-
-														<input class="form-input block border-gray-400 w-full pl-3 pr-12 focus:bg-gray-100 sm:text-sm sm:leading-5" placeholder="<?php echo esc_html__( 'Enter list name', 'email-subscribers' ); ?>" id="name" name="list_name" value="<?php echo esc_attr( $list_name ); ?>"/>
-													</div>
+										</div>
+										<div class="flex">
+											<div class="ml-16 mb-4 mr-4 mt-3">
+												<div class="h-10 relative">
+													<input class="form-input block border-gray-400 w-full pl-3 pr-12 focus:bg-gray-100 sm:text-sm sm:leading-5" placeholder="<?php echo esc_html__( 'Enter list name', 'email-subscribers' ); ?>" id="name" name="list_name" value="<?php echo esc_attr( $list_name ); ?>"/>
 												</div>
 											</div>
 										</div>
+									</div>
 
-										<div class="flex flex-row border-b border-gray-100">
-											<div class="flex w-1/5">
-												<div class="ml-4 pt-6 px-3	">
-													<label for="name" class="block text-sm leading-5 font-medium text-gray-600"><?php esc_html_e( 'Description', 'email-subscribers' ); ?></label>
-												</div>
+									<div class="flex flex-row <?php echo ( 'edit' === $action ) ? 'border-b border-gray-100' : ''; ?>">
+										<div class="flex es-w-15">
+											<div class="ml-3 py-4">
+												<label for="name" class="block text-sm leading-5 font-medium text-gray-600"><?php esc_html_e( 'Description', 'email-subscribers' ); ?></label>
 											</div>
-											<div class="flex">
-												<div class="ml-16 mb-4 mr-4 mt-4">
-													<div class="relative">
-														<textarea class="form-textarea text-sm" rows="2" cols="40" name="list_desc"><?php echo esc_html( $list_desc ); ?></textarea>
-														
-													</div>
+										</div>
+										<div class="flex">
+											<div class="ml-16 mr-4 h-10 mt-3 mb-8 z-50 ">
+												<div class="relative">
+													<textarea class="form-textarea text-sm" rows="2" cols="40" name="list_desc"><?php echo esc_html( $list_desc ); ?></textarea>
+													
 												</div>
 											</div>
 										</div>
+									</div>
 
-										<?php
-										if ( 'edit' === $action ) {
-											?>
-										<div class="flex flex-row border-b border-gray-100">
-											<div class="flex w-1/5">
-												<div class="ml-4 pt-4 px-3">
+									<?php
+									if ( 'edit' === $action ) {
+										?>
+										<div class="flex flex-row">
+											<div class="flex es-w-15">
+												<div class="ml-3 py-4">
 													<label for="name" class="block text-sm leading-5 font-medium text-gray-600">
-												   <?php 
-													   $allowedtags     = ig_es_allowed_html_tags_in_esc();
-													   $tooltip_html = ES_Common::get_tooltip_html( __( 'Unique hash key that can be used to subscribe users to the list from external sites.', 'email-subscribers' ) );
-													   esc_html_e( 'Hash', 'email-subscribers' ); 
+													<?php 
+														$allowedtags     = ig_es_allowed_html_tags_in_esc();
+														$tooltip_html = ES_Common::get_tooltip_html( __( 'Unique hash key that can be used to subscribe users to the list from external sites.', 'email-subscribers' ) );
+														esc_html_e( 'Hash', 'email-subscribers' ); 
 													?>
 													&nbsp;
 													<?php echo wp_kses( $tooltip_html, $allowedtags ); ?>
@@ -364,40 +362,40 @@ class ES_Lists_Table extends ES_List_Table {
 												</div>
 											</div>
 											<div class="flex">
-												<div class="ml-16 mb-4 mr-4 mt-4">
+												<div class="ml-16 mb-4 mr-4 py-4">
 													<div class="relative">
 														<code class="select-all p-1 text-md font-medium text-sm">
-														   <?php 
+															<?php 
 															$hash = isset( $data['hash'] ) ? $data['hash'] : '';
 															echo esc_html( $hash ); 
 															?>
-																
 														</code>
-														
 													</div>
 												</div>
 											</div>
 										</div>
 
 										<?php
-										}
-										$submit_button_text = $is_new ? __( 'Save List', 'email-subscribers' ) : __( 'Save Changes', 'email-subscribers' );
-										?>
-										<input type="hidden" name="submitted" value="submitted"/>
-										<p><input type="submit" name="submit" id="submit" class="cursor-pointer align-middle ig-es-primary-button px-4 py-2 my-4 ml-6 mr-2" value="<?php echo esc_attr( $submit_button_text ); ?>"/>
-										<a href="admin.php?page=es_lists&action=manage-lists" class="cursor-pointer align-middle rounded-md border border-indigo-600 hover:shadow-md focus:outline-none focus:shadow-outline-indigo text-sm leading-5 font-medium transition ease-in-out duration-150 px-4 my-2 py-2 mx-2 "><?php esc_html_e( 'Cancel', 'email-subscribers' ); ?></a></p>
-									</form>
-								</div>
+									}
+									$submit_button_text = $is_new ? __( 'Save List', 'email-subscribers' ) : __( 'Save Changes', 'email-subscribers' );
+									?>
+									<input type="hidden" name="submitted" value="submitted"/>
+									<p class="ml-3 mb-3 pt-6">
+										<button type="submit" name="submit" id="submit" class="primary mr-2"><?php echo esc_attr( $submit_button_text ); ?></button>
+
+										<a href="admin.php?page=es_lists&action=manage-lists"><button type="button" class="secondary"><?php esc_html_e( 'Cancel', 'email-subscribers' ); ?></button></a>
+									</p>
+								</form>
 							</div>
 						</div>
-
-						<br class="clear">
 					</div>
 
+					<br class="clear">
 				</div>
-		</div>				
-				<?php
 
+			</div>
+		</div>				
+		<?php
 	}
 
 	/**
@@ -592,7 +590,7 @@ class ES_Lists_Table extends ES_List_Table {
 	 */
 	public function column_cb( $item ) {
 		return sprintf(
-			'<input type="checkbox" name="lists[]" value="%s" />',
+			'<input type="checkbox" name="lists[]" class="checkbox" value="%s" />',
 			$item['id']
 		);
 	}
@@ -689,8 +687,8 @@ class ES_Lists_Table extends ES_List_Table {
 		?>
 		<p class="search-box">
 			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_attr( $text ); ?>:</label>
-			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>"/>
-			<?php submit_button( __( 'Search lists', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
+			<input type="search" placeholder="Search" class="es-w-15" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>"/>
+			<button type="submit" id="search-submit" class="secondary"><?php echo esc_html__( 'Search lists', 'email-subscribers'); ?></button>
 		</p>
 		<?php
 	}
@@ -762,6 +760,8 @@ class ES_Lists_Table extends ES_List_Table {
 		$action2 = ig_es_get_request_data( 'action2' );
 		// If the delete bulk action is triggered
 		if ( ( 'bulk_delete' === $action ) || ( 'bulk_delete' === $action2 ) ) {
+
+			check_admin_referer( 'bulk-' . $this->_args['plural'] );
 
 			$lists = ig_es_get_request_data( 'lists' );
 

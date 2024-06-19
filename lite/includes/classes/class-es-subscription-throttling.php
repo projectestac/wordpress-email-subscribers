@@ -25,7 +25,7 @@ class ES_Subscription_Throttling {
 				if ( is_array( $blacklist_ips ) && count( $blacklist_ips ) > 0 && in_array( $subscriber_ip, $blacklist_ips ) ) {
 					return MINUTE_IN_SECONDS * 10;
 				}
-
+			   // phpcs:disable
 				$subscribers = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT count(*) as count from {$wpdb->prefix}ig_contacts_ips WHERE ip = %s AND ( `created_on` >= NOW() - INTERVAL %s SECOND )",
@@ -33,10 +33,11 @@ class ES_Subscription_Throttling {
 						DAY_IN_SECONDS
 					)
 				);
+				// phpcs:enable
 
 				if ( $subscribers > 0 ) {
 					$timeout = MINUTE_IN_SECONDS * pow( 2, $subscribers - 1 );
-
+// phpcs:disable
 					$subscribers = $wpdb->get_var(
 						$wpdb->prepare(
 							"SELECT count(*) as count from {$wpdb->prefix}ig_contacts_ips WHERE ip = %s AND ( `created_on` >= NOW() - INTERVAL %s SECOND ) LIMIT 1",
@@ -44,12 +45,12 @@ class ES_Subscription_Throttling {
 							$timeout
 						)
 					);
-
+// phpcs:enable
 					if ( $subscribers > 0 ) {
 						return $timeout;
 					}
 				}
-
+// phpcs:disable
 				// Add IP Address.
 				$wpdb->query(
 					$wpdb->prepare(
@@ -65,6 +66,7 @@ class ES_Subscription_Throttling {
 						DAY_IN_SECONDS
 					)
 				);
+// phpcs:enable				
 			}
 		}
 

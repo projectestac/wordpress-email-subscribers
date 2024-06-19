@@ -99,6 +99,11 @@
 
                 qtInit.id = id;
                 tinyMCEPreInit.qtInit[ id ] = qtInit;
+                tmceInit['protect'] = [
+                    /\{\{campaign\.posts\}\}/g,
+                    /\{\{\/campaign\.posts\}\}/g
+                ]
+                
 
                 if ( $wrap.hasClass( 'tmce-active' ) || ! tinyMCEPreInit.qtInit.hasOwnProperty( id )  ) {
                     tinymce.init( tmceInit );

@@ -632,8 +632,8 @@ class ES_DB_Lists_Contacts extends ES_DB {
 		$query = '';
 		if ( 'subscribed' === $status ) {
 			if ( ! empty( $list_ids ) ) {
-
-				$list_ids_str = implode( ',', $list_ids );
+				
+				$list_ids_str = implode( ',', array_map( 'absint', $list_ids ) );
 				$result       = $wpbd->query(
 					$wpbd->prepare(
 						"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, subscribed_at = %s WHERE contact_id IN( {$ids_str} ) AND list_id IN( {$list_ids_str} )",
@@ -658,7 +658,7 @@ class ES_DB_Lists_Contacts extends ES_DB {
 		} elseif ( 'unsubscribed' === $status ) {
 			if ( ! empty( $list_ids ) ) {
 
-				$list_ids_str = implode( ',', $list_ids );
+				$list_ids_str = implode( ',', array_map( 'absint', $list_ids ) );
 
 				return $wpbd->query(
 					$wpbd->prepare(

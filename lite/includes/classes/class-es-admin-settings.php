@@ -29,6 +29,26 @@ class ES_Admin_Settings {
 		// End-IG-Code.
 	}
 
+	/**
+	 * Add Screen Option
+	 *
+	 * @since 4.8.4
+	 */
+	public static function screen_options() {
+
+		$action = ig_es_get_request_data( 'action' );
+
+		$option = 'per_page';
+		$args   = array(
+			'label'   => __( 'Number of seetings per page', 'email-subscribers' ),
+			'default' => 20,
+			//'option'  => self::$option_per_page,
+		);
+
+		add_screen_option( $option, $args );
+
+	}
+
 	public function es_settings_callback() {
 
 		$submitted     = ig_es_get_request_data( 'submitted' );
@@ -133,14 +153,21 @@ class ES_Admin_Settings {
 
 		?>
 
-		<div class="wrap pt-4 font-sans">
-			<span>
-				<h2 class="wp-heading-inline text-3xl font-bold leading-9 text-gray-700 sm:truncate pb-1"><?php esc_html_e( 'Settings', 'email-subscribers' ); ?></h2>
-			</span>
+		<div class="sticky top-0 z-10">
+			<header>
+				<nav aria-label="Global" class="pb-5 w-full pt-2">
+					<div class="brand-logo">
+						<span>
+							<img src="<?php echo ES_PLUGIN_URL . 'lite/admin/images/new/brand-logo/IG LOGO 192X192.svg'; ?>" alt="brand logo" />
+							<div class="divide"></div>
+							<h1><?php esc_html_e( 'Settings', 'email-subscribers' ); ?></h1>
+						</span>
+					</div>
+				</nav>
 			</header>
-		</span>
-		<div><hr class="wp-header-end"></div>
-		<form action="" method="post" id="email_tabs_form" class="sticky bg-white rounded-lg shadow">
+		</div>
+		
+		<form action="" method="post" id="email_tabs_form" class="overview bg-white rounded-lg shadow">
 			<div class="flex flex-wrap mt-7">
 				<?php
 				settings_fields( 'email_subscribers_settings' );
@@ -168,35 +195,34 @@ class ES_Admin_Settings {
 				}
 				$es_settings_tabs = apply_filters( 'ig_es_settings_tabs', $es_settings_tabs );
 				?>
-				<div id="es-settings-menu" class="w-1/5 pt-4 leading-normal text-gray-800 border-r border-gray-100">
-					<div class="z-20 my-2 mt-0 bg-white shadow es-menu-list lg:block lg:my-0 lg:border-transparent lg:shadow-none lg:bg-transparent" style="top:6em;" id="menu-content">
-						<ul id="menu-nav" class="py-2 list-reset md:py-0">
+				<div id="es-settings-menu" class="">
+					<div class="es-menu-list" id="menu-content">
+						<ul id="menu-nav" class="list-reset">
 							<?php
 							foreach ( $es_settings_tabs as $key => $value ) {
 								?>
-								<li id="menu-content" class="h-10 py-1 mx-2 border border-transparent rounded settings-menu-change md:my-2 hover:rounded-lg hover:border-gray-200">
-									<a href="#tabs-<?php echo esc_attr( $key ); ?>" id="menu-content-change" class="block px-4 pt-1 text-base font-medium text-gray-600 no-underline align-middle hover:text-gray-800"><?php echo wp_kses( $value['icon'], $allowedtags ); ?>&nbsp;<span class="pl-0.5"><?php echo esc_html( $value['name'] ); ?></span></a></li>
+								<li id="menu-content">
+									<a href="#tabs-<?php echo esc_attr( $key ); ?>" id="menu-content-change"><?php echo wp_kses( $value['icon'], $allowedtags ); ?>&nbsp;<span><?php echo esc_html( $value['name'] ); ?></span></a></li>
 									<?php
 							}
 							?>
-							</ul>
-						</div>
-					</div>
-
-					<div class="w-4/5" id="es-menu-tab-content">
-						<?php
-						$settings = self::get_registered_settings();
-						foreach ( $settings as $key => $value ) {
-							?>
-							<div id="tabs-<?php echo esc_attr( $key ); ?>" class="setting-content"><?php $this->render_settings_fields( $value ); ?></div>
-							<?php
-						}
-						?>
-
+						</ul>
 					</div>
 				</div>
-			</form>
-		</div>
+
+				<div class="w-4/5" id="es-menu-tab-content">
+					<?php
+					$settings = self::get_registered_settings();
+					foreach ( $settings as $key => $value ) {
+						?>
+						<div id="tabs-<?php echo esc_attr( $key ); ?>" class="setting-content"><?php $this->render_settings_fields( $value ); ?></div>
+						<?php
+					}
+					?>
+
+				</div>
+			</div>
+		</form>
 		<?php
 	}
 
@@ -271,7 +297,7 @@ class ES_Admin_Settings {
 				'name'    => __( 'Image size', 'email-subscribers' ),
 				'info'    => __( 'Image to use in Post Notification emails' ),
 				'type'    => 'select',
-				'options' => ES_Common::get_image_sizes(),
+				'options' => ES_Common::get_registered_image_sizes(),
 				/* translators: %s: Keyword */
 				'desc'    => sprintf( __( '%s keyword will use this image size. Use full size only if your template design needs it. Thumbnail should work well otherwise.', 'email-subscribers' ), '{{POSTIMAGE}}' ),
 				'default' => 'full',
@@ -432,7 +458,7 @@ class ES_Admin_Settings {
 			$cron_url_setting_desc = sprintf( __( "You need to visit this URL to send email notifications. Know <a href='%s' target='_blank'>how to run this in background</a>", 'email-subscribers' ), 'https://www.icegram.com/documentation/es-how-to-schedule-cron-emails-in-cpanel/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page' );
 		}
 
-		$cron_url_setting_desc .= '<div class="mt-2.5 ml-1"><a class="hover:underline text-sm font-medium" href=" ' . esc_url( 'https://www.icegram.com/documentation/how-to-configure-email-sending-in-email-subscribers?utm_source=in_app&utm_medium=setup_email_sending&utm_campaign=es_doc' ) . '" target="_blank">' . esc_html__( 'How to configure Email Sending', 'email-subscribers' ) . '→</a></div>';
+		$cron_url_setting_desc .= '<div class="mt-2.5 ml-1"><a class="hover:underline text-sm font-medium text-indigo-600" href=" ' . esc_url( 'https://www.icegram.com/documentation/how-to-configure-email-sending-in-email-subscribers?utm_source=in_app&utm_medium=setup_email_sending&utm_campaign=es_doc' ) . '" target="_blank">' . esc_html__( 'How to configure Email Sending', 'email-subscribers' ) . '→</a></div>';
 
 		$pepipost_api_key_defined = ES()->is_const_defined( 'pepipost', 'api_key' );
 
@@ -656,16 +682,15 @@ class ES_Admin_Settings {
 				break;
 
 			case 'checkbox':
-				$field_html = '<label for="' . $id_key . '" class="inline-flex items-center mt-4 mb-1 cursor-pointer">
+				$field_html = '<label for="' . $id_key . '" class="inline-flex items-center mt-3 mb-1 cursor-pointer">
 			<span class="relative">';
 
 				if ( ! $disabled ) {
-					$field_html .= '<input id="' . $id_key . '"  type="checkbox" name="' . $uid . '"  value="yes" ' . checked( $value, 'yes', false ) . ' class="absolute w-0 h-0 mt-6 opacity-0 es-check-toggle ' . $class . '" />';
+					$field_html .= '<input id="' . $id_key . '"  type="checkbox" name="' . $uid . '"  value="yes" ' . checked( $value, 'yes', false ) . ' class="sr-only peer absolute w-0 h-0 mt-6 opacity-0 es-check-toggle ' . $class . '" />';
 				}
 
 				$field_html .= $placeholder . '</input>
-			<span class="es-mail-toggle-line"></span>
-			<span class="es-mail-toggle-dot"></span>
+				<div class="w-11 h-6 bg-gray-200 rounded-full peer  dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
 			</span>
 			</label>';
 				break;
@@ -681,7 +706,7 @@ class ES_Admin_Settings {
 							$label
 						);
 					}
-					$field_html = sprintf( '<select name="%1$s" id="%2$s" class="%4$s form-select rounded-lg w-2/5 h-9 mt-2 mb-1 border-gray-400" %5$s>%3$s</select>', $uid, $id_key, $options_markup, $class, $disabled );
+					$field_html = sprintf( '<select name="%1$s" id="%2$s" class="%4$s form-select rounded-lg w-48 h-9 mt-2 mb-1 border-gray-400" %5$s>%3$s</select>', $uid, $id_key, $options_markup, $class, $disabled );
 				}
 				break;
 
@@ -694,7 +719,7 @@ class ES_Admin_Settings {
 		// If there is help text
 		if ( ! empty( $arguments['desc'] ) ) {
 			$helper      = $arguments['desc'];
-			$field_html .= sprintf( '<p class="field-desciption mb-2 text-xs italic font-normal leading-snug text-gray-500 helper %s"> %s</p>', $class, $helper ); // Show it
+			$field_html .= sprintf( '<p class="field-desciption helper %s"> %s</p>', $class, $helper ); // Show it
 		}
 
 		return $field_html;
@@ -709,11 +734,11 @@ class ES_Admin_Settings {
 	}
 
 	public function render_settings_fields( $fields ) {
-		$html  = "<table class='mt-4 mr-4 overflow-hidden bg-white rounded-lg lg:mx-5 xl:mx-7'>";
+		$html  = '<table>';
 		$html .= '<tbody>';
 		foreach ( $fields as $key => $field ) {
 			if ( ! empty( $field['name'] ) ) {
-				$html .= "<tr id='" . $field['id'] . "-field-row' class='py-4 ml-4 border-b border-gray-100 '><th scope='row' class='block pt-3 pb-8 pr-4 ml-6 text-left pt-7'><span class='pb-2 text-sm font-semibold text-gray-600'>";
+				$html .= "<tr id='" . $field['id'] . "-field-row'><th scope='row'><span>";
 				$html .= $field['name'];
 
 				if ( ! empty( $field['is_premium'] ) ) {
@@ -724,17 +749,17 @@ class ES_Admin_Settings {
 				// If there is help text
 				if ( ! empty( $field['info'] ) ) {
 					$helper = $field['info'];
-					$html  .= '<br />' . sprintf( '<p class="mt-1 text-xs italic font-normal leading-snug text-gray-500">%s</p>', $helper ); // Show it
+					$html  .= '<br />' . sprintf( '<p>%s</p>', $helper ); // Show it
 				}
 				$button_html = '<tr>';
 
 				$html .= '</th>';
 			}
 
-			$html .= "<td class='w-4/6 py-2 pl-5 bg-white rounded-lg '>";
+			$html .= '<td>';
 
 			if ( ! empty( $field['upgrade_desc'] ) ) {
-				$html .= "<div class='flex'><div class='flex-none w-2/5'>";
+				$html .= "<div class='flex settings_upsell_div'><div class='flex-none w-2/5 upsell_switcher'>";
 			}
 
 			if ( ! empty( $field['sub_fields'] ) ) {
@@ -769,7 +794,7 @@ class ES_Admin_Settings {
 					'upsell_message' => $field['upgrade_desc'],
 					'cta_html'       => false,
 				);
-				$html       .= '</div> <div class="w-3/5">';
+				$html       .= '</div> <div class="w-3/5 upsell_box">';
 				$html       .= ES_Common::upsell_description_message_box( $upsell_info, false );
 				$html       .= '</div>';
 			}
@@ -784,7 +809,7 @@ class ES_Admin_Settings {
 		$html       .= '<input type="hidden" name="submitted" value="submitted" />';
 		$html       .= '<input type="hidden" name="submit_action" value="ig-es-save-admin-settings" />';
 		$html       .= $nonce_field;
-		$html       .= '<input type="submit" name="submit" class="mx-6 my-2 cursor-pointer ig-es-primary-button" value="' . __( 'Save Settings', 'email-subscribers' ) . '">';
+		$html       .= '<button type="submit" name="submit" class="primary">' . __( 'Save Settings', 'email-subscribers' ) . '</button>';
 		$html       .= '</td></tr>';
 		$html       .= '</tbody>';
 		$html       .= '</table>';
@@ -851,7 +876,7 @@ class ES_Admin_Settings {
 				$html .= '<a href="' . $mailer['url'] . '" target="_blank">';
 			}
 
-			$html .= '<div class="mt-4 mr-4 border border-gray-200 rounded-lg shadow-md es-mailer-logo">
+			$html .= '<div class="mt-3 mr-4 border border-gray-200 rounded-lg shadow-md es-mailer-logo">
 			<div class="border-0 es-logo-wrapper">
 			<img src="' . $mailer['logo'] . '" alt="Default (none)">
 			</div><p class="mb-2 inline-block">'
@@ -883,46 +908,51 @@ class ES_Admin_Settings {
 		$html                      = '';
 		$opted_for_sending_service = get_option( 'ig_es_ess_opted_for_sending_service', 'no' );
 		$es_ess_data               = get_option( 'ig_es_ess_data', '' );
-		$current_date              = ig_es_get_current_date();
+		$current_month              = ig_es_get_current_month();
 		$allocated_limit           = isset( $es_ess_data['allocated_limit'] ) ? $es_ess_data['allocated_limit']: 0;
-		$used_limit                = isset( $es_ess_data['used_limit'][$current_date] ) ? $es_ess_data['used_limit'][$current_date] : 0;
+		$used_limit                = isset( $es_ess_data['used_limit'][$current_month] ) ? $es_ess_data['used_limit'][$current_month] : 0;
+		$remaining_limit		   = $allocated_limit - $used_limit;
+		if ( $allocated_limit > 0 ) {
+			$remaining_limit_percentage = number_format_i18n( ( ( $remaining_limit * 100 ) / $allocated_limit ), 2 );
+		} else {
+			$remaining_limit_percentage = 0;
+		}
+		$remaining_percentage_limit = 10;   //Set email remaining percentage limit, so upsell notice box will visible.
 		$plan                      = ES_Service_Email_Sending::get_plan();
 		$premium_plans             = array( 'pro', 'max' );
 		$is_premium_plan           = in_array( $plan, $premium_plans, true );
 		$is_ess_branding_enabled   = ES_Service_Email_Sending::is_ess_branding_enabled();
 		ob_start();
 		?>
-		<section id="sending_service_optin" class="pb-4">
-			<label for="ig_es_ess_opted_for_sending_service" class="inline-flex items-center mt-4 cursor-pointer">
+		<section id="sending_service_optin">
+			<label for="ig_es_ess_opted_for_sending_service">
 				<span class="relative">
-					<input id="ig_es_ess_opted_for_sending_service" type="checkbox" name="ig_es_ess_opted_for_sending_service" value="yes" <?php echo 'yes' === $opted_for_sending_service ? esc_attr( 'checked="checked"') : ''; ?> class="absolute w-0 h-0 mt-6 opacity-0 es-check-toggle ">
-					<span class="es-mail-toggle-line"></span>
-					<span class="es-mail-toggle-dot"></span>
+					<input id="ig_es_ess_opted_for_sending_service" type="checkbox" name="ig_es_ess_opted_for_sending_service" value="yes" <?php echo 'yes' === $opted_for_sending_service ? esc_attr( 'checked="checked"') : ''; ?> class="sr-only peer absolute w-0 h-0 mt-6 opacity-0 es-check-toggle ">
+					<div class="w-11 h-6 bg-gray-200 rounded-full peer  dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
 				</span>
-				<span class="pl-2 text-sm font-semibold text-gray-600">
+				<span>
 					<?php echo esc_html__( 'Enable Icegram email sending service', 'email-subscribers' ); ?>
 				</span>
 			</label>
-			<p class="pl-11 text-xs italic font-normal leading-snug text-gray-500">
+			<p>
 				<?php
 					/* translators: %s Break tag */
-					echo sprintf( esc_html__( 'Use this to get high speed & reliable email delivery via %sIcegram\'s own Email Sending Service at 100 free emails/day.', 'email-subscribers' ), '<br/>' );
+					echo sprintf( esc_html__( 'Use this to get high speed & reliable email delivery via %sIcegram\'s own Email Sending Service at 3000 free emails/ month.', 'email-subscribers' ), '<br/>' );
 				?>
 			</p>
 		</section>
-		<section id="sending_service_info" class="pb-4">
+		<section id="sending_service_info">
 			<?php if ( $is_premium_plan ) : ?>
-			<label for="ig_es_ess_branding_enabled" class="inline-flex items-center mt-4 cursor-pointer">
+			<label for="ig_es_ess_branding_enabled">
 				<span class="relative">
-					<input id="ig_es_ess_branding_enabled" type="checkbox" name="ig_es_ess_branding_enabled" value="yes" <?php echo $is_ess_branding_enabled ? esc_attr( 'checked="checked"') : ''; ?> class="absolute w-0 h-0 mt-6 opacity-0 es-check-toggle">
-					<span class="es-mail-toggle-line"></span>
-					<span class="es-mail-toggle-dot"></span>
+					<input id="ig_es_ess_branding_enabled" type="checkbox" name="ig_es_ess_branding_enabled" value="yes" <?php echo $is_ess_branding_enabled ? esc_attr( 'checked="checked"') : ''; ?> class="sr-only peer absolute w-0 h-0 mt-6 opacity-0 es-check-toggle">
+					<div class="w-11 h-6 bg-gray-200 rounded-full peer  dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
 				</span>
-				<span class="pl-2 text-sm font-semibold text-gray-600">
+				<span>
 					<?php echo esc_html__( 'Show "Sent by Icegram"', 'email-subscribers' ); ?>
 				</span>
 			</label>
-			<p class="pl-11 text-xs italic font-normal leading-snug text-gray-500">
+			<p>
 				<?php
 					/* translators: %s Break tag */
 					echo sprintf( esc_html__( 'Include "Sent by Icegram" link in the footer of your emails.', 'email-subscribers' ), '<br/>' );
@@ -935,7 +965,7 @@ class ES_Admin_Settings {
 					<div class="border-0 es-logo-wrapper">
 					<img src="<?php echo esc_url( ES_PLUGIN_URL . 'lite/admin/images/icegram-mailer.png' ); ?>" alt="Default (none)">
 					</div>
-					<p class="mb-2 inline-block" title="<?php echo esc_attr__( 'Icegram Email Sending Service', 'email-subscribers' ); ?>">
+					<p title="<?php echo esc_attr__( 'Icegram Email Sending Service', 'email-subscribers' ); ?>">
 						Icegram ESS
 					</p>
 				</div>
@@ -947,16 +977,49 @@ class ES_Admin_Settings {
 							<?php echo esc_html__( 'Allocated limit', 'email-subscribers' ); ?>: <b><?php echo esc_html( $allocated_limit ); ?></b>
 						</div>
 						<div>
-						<?php echo esc_html__( 'Used limit', 'email-subscribers' ); ?>: <b><?php echo esc_html( $used_limit ); ?></b>
+						<?php echo esc_html__( 'Used limit', 'email-subscribers' ); ?>: <b><?php echo esc_html( $used_limit ) . ' (' . esc_html( number_format_i18n( ( ( $used_limit * 100 ) / $allocated_limit ), 2 ) ) . '%)'; ?></b>
 						</div>
 						<div>
-						<?php echo esc_html__( 'Remaining limit', 'email-subscribers' ); ?>: <b><?php echo esc_html( $allocated_limit - $used_limit ); ?></b>
+						<?php echo esc_html__( 'Remaining limit', 'email-subscribers' ); ?>: <b style="<?php echo ( $remaining_limit_percentage <= $remaining_percentage_limit ) ? 'color:orange' : ''; ?>"><?php echo esc_html( $remaining_limit ) . ' (' . esc_html( $remaining_limit_percentage ) . '%)'; ?></b>
 						</div>
 					</div>
 					<?php
 				}
 				?>
 			</label>
+			<?php
+			if ( 'yes' === $opted_for_sending_service && $remaining_limit_percentage <= $remaining_percentage_limit && $allocated_limit != 30000) {
+				?>
+				<div class="ess-upsell-sec">
+					<div class="main-upsell-sec">
+						<div class="flex">
+							<div class="flex-shrink-0">
+								<svg class='h-5 w-5 text-teal-400' fill='currentColor' viewBox='0 0 20 20'>
+									<path fill-rule='evenodd'
+										d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z'
+										clip-rule='evenodd'/>
+								</svg>
+							</div>
+							<div class="ess-upsell-msg">
+								<h3>
+									<?php 
+										echo esc_html__( 'You are about to exhaust your monthly email sending limit. Upgrade now to continue sending emails through our Icegram email sending service.', 'email-subscribers' );
+									?>
+								</h3>
+							</div>
+						</div>
+						<div class="upsell-btn-sec">
+							<a href="https://www.icegram.com/email-sending-service/?utm_source=in_app&utm_medium=ess_setting&utm_campaign=ess_upsell" target="_blank">
+								<button class="primary" type="button">
+									<?php esc_html_e( 'Upgrade', 'email-subscribers'); ?>
+								</button>
+							</a>
+						</div>
+					</div>
+				</div>
+				<?php
+			}
+			?>
 		</section>
 		<?php
 		$html = ob_get_clean();
@@ -966,7 +1029,7 @@ class ES_Admin_Settings {
 	public static function get_test_send_email_html( $test_email ) {
 
 		/* translators: %s: Spinner image path */
-		$html = sprintf( '<input id="es-test-email" type="email" value=%s class="mt-3 mb-1 border-gray-400 form-input h-9"/><input type="submit" name="submit" id="es-send-test" class="ig-es-primary-button" value="Send Email"><span class="es_spinner_image_admin" id="spinner-image" style="display:none"><img src="%s" alt="Loading..."/></span>', $test_email, ES_PLUGIN_URL . 'lite/public/images/spinner.gif' );
+		$html = sprintf( '<div class="send-email-div flex"><input id="es-test-email" type="email" value=%s class="form-input"/><button type="submit" name="submit" id="es-send-test" class="primary">Send Email</button><span class="es_spinner_image_admin" id="spinner-image" style="display:none"><img src="%s" alt="Loading..."/></span></div>', $test_email, ES_PLUGIN_URL . 'lite/public/images/spinner.gif' );
 		return $html;
 	}
 
@@ -1089,15 +1152,15 @@ class ES_Admin_Settings {
 		if ( ! empty( $es_crons_data ) ) {
 			ob_start();
 			?>
-			<table class="min-w-full rounded-lg">
+			<table class="cron-info">
 				<thead>
-				<tr class="bg-blue-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-					<th class="px-5 py-4"><?php echo esc_html__( 'Event', 'email-subscribers' ); ?></th>
-					<th class="px-2 py-4 text-center"><?php echo esc_html__( 'Interval', 'email-subscribers' ); ?></th>
-					<th class="px-2 py-4 text-center"><?php echo esc_html__( 'Next Execution', 'email-subscribers' ); ?></th>
+				<tr>
+					<th><?php echo esc_html__( 'Event', 'email-subscribers' ); ?></th>
+					<th><?php echo esc_html__( 'Interval', 'email-subscribers' ); ?></th>
+					<th><?php echo esc_html__( 'Next Execution', 'email-subscribers' ); ?></th>
 				</tr>
 				</thead>
-				<tbody class="bg-blue-50">
+				<tbody>
 				<?php
 				foreach ( $es_cron_events as $cron_event ) {
 					$cron_interval       = '';
@@ -1125,20 +1188,20 @@ class ES_Admin_Settings {
 						continue;
 					}
 					?>
-					<tr class="border-b border-gray-200">
-						<td class="pl-8 py-4 ">
+					<tr>
+						<td>
 							<div class="flex items-center">
 								<div class="flex-shrink-0">
-									<span class="text-sm leading-5 font-medium text-center text-gray-800"><?php echo esc_html( $cron_event ); ?></span>
+									<b><?php echo esc_html( $cron_event ); ?></b>
 								</div>
 							</div>
 						</td>
-						<td class="whitespace-no-wrap text-center">
+						<td>
 							<?php
 								echo esc_html( ig_es_get_human_interval( $cron_interval ) );
 							?>
 						</td>
-						<td class="whitespace-no-wrap text-center">
+						<td>
 							<?php /* translators: %s: Next scheduled time */ ?>
 							<b><?php echo esc_html( sprintf( __( 'In %s', 'email-subscribers' ), human_time_diff( time(), $next_scheduled_time ) ) ); ?></b><br>
 							<span title="<?php echo esc_attr( 'UTC: ' . date_i18n( $date_format . ' ' . $time_format, $next_scheduled_time ) ); ?>">
@@ -1220,90 +1283,82 @@ class ES_Admin_Settings {
 
 	public static function render_rest_api_keys_section() {
 		ob_start();
-		$rest_api_keys = get_option( 'ig_es_rest_api_keys', array() );
-
-		$rest_api_users_ids = get_users( array(
-			'meta_key' => 'ig_es_rest_api_keys',
-			'fields'   => 'ID'
-		) );
+		$rest_api_keys = get_option('ig_es_rest_api_keys', array());
+	
+		
+		$admin_users = get_users(array(
+			'role'   => 'administrator',
+			'fields' => array('ID', 'user_email', 'user_login'),
+		));
 		?>
 		<div id="ig-es-rest-api-section">
 			<table class="min-w-full rounded-lg">
 				<thead>
 				<tr class="bg-blue-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-					<th class="px-5 py-4"><?php echo esc_html__( 'Key', 'email-subscribers' ); ?></th>
-					<th class="px-2 py-4 text-center"><?php echo esc_html__( 'Username', 'email-subscribers' ); ?></th>
-					<th class="px-2 py-4 text-center"><?php echo esc_html__( 'Actions', 'email-subscribers' ); ?></th>
+					<th class="px-5 py-4"><?php echo esc_html__('Key', 'email-subscribers'); ?></th>
+					<th class="px-2 py-4 text-center"><?php echo esc_html__('Username', 'email-subscribers'); ?></th>
+					<th class="px-2 py-4 text-center"><?php echo esc_html__('Actions', 'email-subscribers'); ?></th>
 				</tr>
 				</thead>
 				<tbody class="bg-blue-50">
-					<?php
-					if ( ! empty( $rest_api_users_ids ) ) {
-						foreach ( $rest_api_users_ids as $user_id ) {
-							$user = get_userdata( $user_id );
-							if ( ! $user ) {
-								continue;
-							}
-							$rest_api_keys = get_user_meta( $user_id, 'ig_es_rest_api_keys', true );
-							if ( ! empty( $rest_api_keys ) ) {
-								foreach ( $rest_api_keys as $index => $rest_api_key ) {
-									$key_start = substr( $rest_api_key, 0, 4 );
-									$key_end   = substr( $rest_api_key, strlen( $rest_api_key ) - 4, 4 );
-									?>
-								<tr class="ig-es-rest-api-row border-b border-gray-200 text-xs leading-4 font-medium" data-user-id="<?php echo esc_attr( $user_id ); ?>" data-api-index="<?php echo esc_attr( $index ); ?>">
-									<td class="px-5 py-4 text-center"><?php echo esc_html( $key_start ); ?>***********<?php echo esc_html( $key_end ); ?></td>
-									<td class="px-2 py-4 text-center"><?php echo esc_html( $user->data->user_login ); ?></td>
+				<?php
+				if (!empty($admin_users)) {
+					foreach ($admin_users as $user) {
+						$rest_api_keys = get_user_meta($user->ID, 'ig_es_rest_api_keys', true);
+						if (!empty($rest_api_keys)) {
+							foreach ($rest_api_keys as $index => $rest_api_key) {
+								$key_start = substr($rest_api_key, 0, 4);
+								$key_end = substr($rest_api_key, -4);
+								?>
+								<tr class="ig-es-rest-api-row border-b border-gray-200 text-xs leading-4 font-medium"
+									data-user-id="<?php echo esc_attr($user->ID); ?>"
+									data-api-index="<?php echo esc_attr($index); ?>">
+									<td class="px-5 py-4 text-center"><?php echo esc_html($key_start); ?>***********<?php echo esc_html($key_end); ?></td>
+									<td class="px-2 py-4 text-center"><?php echo esc_html($user->user_login); ?></td>
 									<td class="px-2 py-4 text-center">
-											<a class="ig-es-delete-rest-api-key inline-block" href="#">
-												<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-													<path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-												</svg>
-											</a>
+										<a class="ig-es-delete-rest-api-key inline-block" href="#">
+											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+												 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+												<path stroke-linecap="round" stroke-linejoin="round"
+													  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+											</svg>
+										</a>
 									</td>
 								</tr>
 								<?php
-								}
 							}
-							?>
-							<?php
 						}
 					}
-					?>
-					<tr id="ig-es-no-api-keys-message" class="border-b border-gray-200 text-xs leading-4 font-medium">
-						<td colspan="3" class="px-5 py-4 text-center">
-							<?php echo esc_html__( 'No API keys found.', 'email-subscribers' ); ?>
-						</td>
-					</tr>
+				}
+				?>
+				<tr id="ig-es-no-api-keys-message" class="border-b border-gray-200 text-xs leading-4 font-medium">
+					<td colspan="3" class="px-5 py-4 text-center">
+						<?php echo esc_html__('No API keys found.', 'email-subscribers'); ?>
+					</td>
+				</tr>
 				</tbody>
 			</table>
 			<div id="ig-es-create-new-rest-api-container" class="mt-2">
-				<?php
-					$admin_users = get_users(
-						array(
-							'role' => 'administrator'
-						)
-					);
-				?>
 				<select id="ig-es-rest-api-user-id">
-					<option value=""><?php echo esc_html__( 'Please select a user', 'email-subscribers' ); ?></option>
+					<option value=""><?php echo esc_html__('Please select a user', 'email-subscribers'); ?></option>
 					<?php
-					foreach ( $admin_users as $user ) {
+					foreach ($admin_users as $user) {
 						?>
-						<option value="<?php echo esc_attr( $user->ID ); ?>"><?php echo esc_html( $user->data->user_email ); ?></option>
+						<option value="<?php echo esc_attr($user->ID); ?>"><?php echo esc_html($user->user_email); ?></option>
 						<?php
 					}
 					?>
 				</select>
-				<button type="button" id="ig-es-generate-rest-api-key" class="ig-es-title-button ml-2 align-middle ig-es-inline-loader">
+				<button type="button" id="ig-es-generate-rest-api-key" class="ig-es-title-button ml-2 align-middle ig-es-inline-loader secondary">
 					<span>
-						<?php echo esc_html__( 'Generate API key', 'email-subscribers' ); ?>
+						<?php echo esc_html__('Generate API key', 'email-subscribers'); ?>
 					</span>
 					<svg class="es-btn-loader animate-spin h-4 w-4 text-indigo"
-									xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
 						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
 								stroke-width="4"></circle>
 						<path class="opacity-75" fill="currentColor"
-								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+							  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 					</svg>
 				</button>
 				<div id="response-messages" class="p-2 mt-2 hidden">

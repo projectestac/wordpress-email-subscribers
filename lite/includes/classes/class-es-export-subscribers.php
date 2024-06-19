@@ -69,7 +69,6 @@ class Export_Subscribers {
 		}	
 		add_filter( 'query_vars', array( $this, 'query_vars' ) );
 		add_action( 'parse_request', array( $this, 'parse_request' ) );
-		add_action( 'admin_menu', array( $this, 'plugin_menu' ) );
 	}
 
 	private function show_error_message( $message) {
@@ -94,20 +93,15 @@ class Export_Subscribers {
 		exit();
 	}
 
-	
-	public function plugin_menu() {
-		add_submenu_page( null, 'Export Contacts', __( 'Export Contacts', 'email-subscribers' ), 'edit_posts', 'es_export_subscribers', array( $this, 'export_subscribers_page' ) );
-	}
-
 	public function prepare_header_footer_row() {
 
 		?>
 
-		<tr class="bg-gray-100 text-sm text-left leading-4 text-gray-500 tracking-wider border-b border-t border-gray-200 ">
-			<th class="w-1/12 pl-8 py-4 font-medium" scope="col"><?php esc_html_e( 'No.', 'email-subscribers' ); ?></th>
-			<th class="w-2/12 pl-4 py-4 font-medium" scope="col"><?php esc_html_e( 'Contacts', 'email-subscribers' ); ?></th>
-			<th class="w-2/12 pl-8 py-4 font-medium" scope="col"><?php esc_html_e( 'Total contacts', 'email-subscribers' ); ?></th>
-			<th class="w-2/12 pl-16 py-4 font-medium" scope="col"><?php esc_html_e( 'Export', 'email-subscribers' ); ?></th>
+		<tr class="bg-light-gray">
+			<th scope="col"><lable for="No."><?php esc_html_e( 'NO.', 'email-subscribers' ); ?></lable></th>
+			<th scope="col"><lable for="Contacts"><?php esc_html_e( 'CONTACTS', 'email-subscribers' ); ?></lable></th>
+			<th scope="col"><lable for="Total Contacts"><?php esc_html_e( 'TOTAL CONTACTS', 'email-subscribers' ); ?></lable></th>
+			<th scope="col"><lable for="Export"><?php esc_html_e( 'EXPORT', 'email-subscribers' ); ?></lable></th>
 		</tr>
 
 		<?php
@@ -115,7 +109,7 @@ class Export_Subscribers {
 
 	public function prepare_body() {
 
-		$list_dropdown_html  = "<select class='form-select sm:w-32 lg:w-40' name='list_id' id='ig_es_export_list_dropdown'>";
+		$list_dropdown_html  = "<select class='form-select w-32 text-sm' name='list_id' id='ig_es_export_list_dropdown'>";
 		$list_dropdown_html .= ES_Common::prepare_list_dropdown_options();
 		$list_dropdown_html .= '</select>';
 
@@ -135,15 +129,21 @@ class Export_Subscribers {
 			?>
 
 			<tr class="border-b text-sm font-normal text-gray-700 border-gray-200" id="ig_es_export_<?php echo esc_attr( $key ); ?>">
-				<td class="py-2 pl-10 w-1/12"><?php echo esc_html( $i ); ?></td>
-				<td class="py-2 pl-4 w-2/12">
-					<?php
-						$allowedtags = ig_es_allowed_html_tags_in_esc();
-						echo wp_kses( $export_list, $allowedtags );
-					?>
+				<td><?php echo esc_html( $i ); ?></td>
+				<td>
+					<div class="list-item">
+						<div class="item-details">
+							<p>
+								<?php
+								$allowedtags = ig_es_allowed_html_tags_in_esc();
+								echo wp_kses( $export_list, $allowedtags );
+								?>
+							</p>
+						</div>
+					</div>
 				</td>
-				<td class="py-2 pl-8  w-2/12 font-medium ig_es_total_contacts"><?php echo esc_html( $this->count_subscribers( $key ) ); ?></td>
-				<td class="py-2 pl-8 w-2/12">
+				<td class="ig_es_total_contacts"><?php echo esc_html( $this->count_subscribers( $key ) ); ?></td>
+				<td>
 					<div class="inline-flex  pl-10"><a href="<?php echo esc_url( $url ); ?>" id="ig_es_export_link_<?php echo esc_attr( $key ); ?>">
 						<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-8 h-8 text-indigo-600 hover:text-indigo-500 active:text-indigo-600"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 						</svg>
@@ -159,51 +159,27 @@ class Export_Subscribers {
 	}
 
 	public function export_subscribers_page() {
-
-		$audience_tab_main_navigation = array();
-		$active_tab                   = 'export';
-		$audience_tab_main_navigation = apply_filters( 'ig_es_audience_tab_main_navigation', $active_tab, $audience_tab_main_navigation );
-
 		?>
 	
 		<div class="max-w-full -mt-3 font-sans">
-			<header class="wp-heading-inline">
-				<div class="flex">
-					<div>
-						<nav class="text-gray-400 my-0" aria-label="Breadcrumb">
-							<ol class="list-none p-0 inline-flex">
-								<li class="flex items-center text-sm tracking-wide">
-								<a class="hover:underline " href="admin.php?page=es_subscribers"><?php esc_html_e( 'Audience ', 'email-subscribers' ); ?></a>
-								<svg class="fill-current w-2.5 h-2.5 mx-2 mt-mx" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path></svg>
-								</li>
-							</ol>
-						</nav>
-						<h2 class="-mt-1.5 text-2xl font-medium text-gray-700 sm:leading-7 sm:truncate"> <?php esc_html_e( 'Export Contacts', 'email-subscribers' ); ?>
-						</h2>
+			<?php ES_Contacts_Table::render_header('export'); ?>
+			<div class="overflow-hidden ig-es-list-table">
+				<h2 class="mx-4 text-2xl font-medium text-gray-700 sm:leading-7 sm:truncate"> <?php esc_html_e( 'Export Contacts', 'email-subscribers' ); ?></h2>
+				<form name="frm_es_subscriberexport" method="post">
+					<div class="overflow-x-auto mx-4">
+						<div class="table">
+							<table class="min-w-full" id="straymanage">
+								<thead>
+									<?php $this->prepare_header_footer_row(); ?>
+								</thead>
+								<tbody class="bg-white">
+									<?php $this->prepare_body(); ?>
+								</tbody>
+							</table>
+						</div>
 					</div>
-
-					<div class="mt-4 ml-2">
-					<?php
-					ES_Common::prepare_main_header_navigation( $audience_tab_main_navigation );
-					?>
-					</div>
-				</div>
-			</header>
-		<div><hr class="wp-header-end"></div>
-		<div class="mt-8 shadow rounded-lg overflow-hidden">
-			<form name="frm_es_subscriberexport" method="post">
-				<table class="min-w-full" id="straymanage">
-					<thead>
-						<?php $this->prepare_header_footer_row(); ?>
-					</thead>
-					<tbody class="bg-white">
-						<?php $this->prepare_body(); ?>
-					</tbody>
-					<tfoot>
-						<?php $this->prepare_header_footer_row(); ?>
-					</tfoot>
-				</table>
-			</form>
+				</form>
+			</div>
 		</div>
 		<?php
 	}

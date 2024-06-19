@@ -30,8 +30,8 @@ class ES_Post_Notifications_Table {
 		add_action( 'ig_es_' . IG_CAMPAIGN_TYPE_POST_DIGEST . '_content_settings', array( $this, 'show_post_notification_content_settings' ) );
 		add_action( 'ig_es_show_' . IG_CAMPAIGN_TYPE_POST_NOTIFICATION . '_campaign_summary_action_buttons', array( $this, 'show_summary_actions_buttons' ) );
 		add_action( 'ig_es_show_' . IG_CAMPAIGN_TYPE_POST_DIGEST . '_campaign_summary_action_buttons', array( $this, 'show_summary_actions_buttons' ) );
-		add_action( 'ig_es_' . IG_CAMPAIGN_TYPE_POST_NOTIFICATION . '_default_subject', array( $this, 'get_post_notification_default_subject' ), 10, 2 );
-		add_action( 'ig_es_' . IG_CAMPAIGN_TYPE_POST_NOTIFICATION . '_default_content', array( $this, 'get_post_notification_default_content' ), 10, 2 );
+		add_action( 'ig_es_' . IG_CAMPAIGN_TYPE_POST_NOTIFICATION . '_default_subject', array( $this, 'get_post_notification_default_subject' ) );
+		add_action( 'ig_es_' . IG_CAMPAIGN_TYPE_POST_NOTIFICATION . '_default_content', array( $this, 'get_post_notification_default_content' ) );
 	}
 
 	public function es_notifications_callback() {
@@ -138,8 +138,9 @@ class ES_Post_Notifications_Table {
 			'base_template_id' => ig_es_get_request_data( 'template_id' ),
 			'status'           => 'active',
 		);
+		// phpcs:disable
 		$wpdb->update( IG_CAMPAIGNS_TABLE, $data, array( 'id' => $id ) );
-
+	   // phpcs:enable
 	}
 
 	public function save_list( $data, $id = null ) {
@@ -665,9 +666,9 @@ class ES_Post_Notifications_Table {
 						}
 					}
 
-					$custom_post_types = ES_Common::get_custom_post_types();
+					$custom_post_types  = ES_Common::get_custom_post_types();
 					$default_post_types = ES_Common::get_default_post_types();
-					$post_types = array_merge( $custom_post_types, $default_post_types );
+					$post_types         = array_merge( $custom_post_types, $default_post_types );
 					if ( ! empty( $post_types ) ) {
 						foreach ( $post_types as $post_type ) {
 							$is_cpt_selected = in_array( $post_type, $selected_post_types, true );
@@ -737,34 +738,31 @@ class ES_Post_Notifications_Table {
 	 *
 	 * @since 5.3.2
 	 */
-	public function get_post_notification_default_subject( $subject, $campaign_data ) {
+	public function get_post_notification_default_subject( $subject ) {
 		if ( empty( $subject ) ) {
 			$subject = __( 'New Post Published - {{post.title}}', 'email-subscribers' );
 		}
 		return $subject;
 	}
 
-	public function get_post_notification_default_content( $content, $campaign_data ) {
+	public function get_post_notification_default_content( $content_data ) {
 
-		if ( empty( $content ) ) {
-			$editor_type   = ! empty( $campaign_data['meta']['editor_type'] ) ? $campaign_data['meta']['editor_type'] : IG_ES_DRAG_AND_DROP_EDITOR;
-			$is_dnd_editor = IG_ES_DRAG_AND_DROP_EDITOR === $editor_type;
-
-			if ( $is_dnd_editor ) {
-				$content = $this->get_dnd_editor_default_content();
-			} else {
-				$content = $this->get_classic_editor_default_content();
-			}
+		if ( empty( $content_data ) ) {
+			$dnd_editor_content     =  $this->get_dnd_editor_default_content();
+			$classic_editor_content =  wpautop( $this->get_classic_editor_default_content() );
+			$content_data           =  array(
+				IG_ES_CLASSIC_EDITOR       => $classic_editor_content,
+				IG_ES_DRAG_AND_DROP_EDITOR => $dnd_editor_content
+			);
 		}
-
-		return $content;
+		return $content_data;
 	}
 
 	public function get_classic_editor_default_content() {
 		$default_content  = __( "Hello {{subscriber.name | fallback='there'}},", 'email-subscribers' ) . "\r\n\r\n";
-		$default_content .= __( 'We have published a new blog article on our website', 'email-subscribers' ) . " : {{post.title}}\r\n";
-		$default_content .= "{{post.image}}\r\n\r\n";
-		$default_content .= __( 'You can view it from this link', 'email-subscribers' ) . " : {{post.link}}\r\n\r\n";
+		$default_content .= __( 'We have published a new blog article on our website.', 'email-subscribers' ) . "\r\n";
+		$default_content .= "{{campaign.posts}}\r\n{{post.title}}\r\n {{post.image}}\r\n\r\n";
+		$default_content .= "{{post.link}}\r\n{{/campaign.posts}}\r\n\r\n";
 		$default_content .= __( 'Thanks & Regards', 'email-subscribers' ) . ",\r\n";
 		$default_content .= __( 'Admin', 'email-subscribers' ) . "\r\n\r\n";
 		$default_content .= __( 'You received this email because in the past you have provided us your email address : {{subscriber.email}} to receive notifications when new updates are posted.', 'email-subscribers' );
@@ -784,9 +782,30 @@ class ES_Post_Notifications_Table {
 				<mj-section background-color="#FFFFFF">
 					<mj-column width="100%">
 						<mj-text line-height="26px">' . __( "Hello {{subscriber.name | fallback='there'}},", 'email-subscribers' ) . '</mj-text>
-						<mj-text line-height="26px">' . __( 'We have published a new blog article on our website', 'email-subscribers' ) . ' : {{post.title}}</mj-text>
-						<mj-text line-height="26px">{{post.image}}</mj-text>
-						<mj-text line-height="26px">' . __( 'You can view it from this link', 'email-subscribers' ) . ' : {{post.link}}</mj-text>
+						<mj-text line-height="26px">' . __( 'We have published a new post on our site.', 'email-subscribers' ) . '</mj-text>
+					</mj-column>
+				</mj-section>
+				<mj-section background-color="#FFFFFF">
+					<mj-column width="100%">
+						<div class="es-posts">
+							<span style="visibility:hidden;font-size:3px">{{campaign.posts}}</span>
+							<mj-section class="post-format-content" background-color="#ffffff" padding-top="0px" padding-bottom="0px">
+								<mj-group>
+									<mj-column width="100%">
+									<mj-text line-height="26px">
+										<font size="4">{{post.title}}</font>
+									</mj-text>
+									<mj-text line-height="26px" font-size="14px">
+										{{post.excerpt}}
+									</mj-text>
+									<mj-button border-radius="5px 5px 5px 5px" align="left" href="{{post.link_only}}" container-background-color="#ffffff" background-color="#e69626" id="ikaqh">
+										Read More
+									</mj-button>
+									</mj-column>
+								</mj-group>
+							</mj-section>
+							<span style="visibility:hidden;font-size:3px">{{/campaign.posts}}</span>
+						</div>
 					</mj-column>
 				</mj-section>
 				<mj-section background-color="#f3f3f3">

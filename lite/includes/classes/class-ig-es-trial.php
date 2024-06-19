@@ -25,6 +25,7 @@ class IG_ES_Trial {
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'show_trial_notices' ) );
 		add_action( 'wp_ajax_ig_es_trial_optin', array( $this, 'handle_trial_optin' ) );
+		add_action('ig_es_expires_email_send_action', array( $this,  'send_trial_expires_email'));  
 	}
 
 	/**
@@ -50,6 +51,7 @@ class IG_ES_Trial {
 	 */
 	public function is_trial() {
 		$is_trial = get_option( 'ig_es_is_trial', '' );
+		
 		if ( 'yes' === $is_trial ) {
 			return true;
 		} else {
@@ -92,11 +94,81 @@ class IG_ES_Trial {
 				// Check if current time is greater than expiry time.
 				if ( $current_time > $trial_expires_at ) {
 					$is_trial_expired = true;
+					
 				}
 			}
 		}
 
-		return $is_trial_expired;
+		return $is_trial_expired; 
+	}
+
+
+	/**
+	 * Method to send notification before trial plan will expire.
+	 *
+	 * @return bool
+	 *
+	 * @since 4.6.1
+	 */
+	public function send_trial_expires_email() {
+		$admin_email = ES_Common::get_admin_email();
+
+		if ( is_email( $admin_email ) && $this->is_trial_valid() && !ES()->is_premium()) {
+			$data = array(
+				'logo_url'           => ES_PLUGIN_URL . 'lite/admin/images/es-logo-64x64.png'
+			);
+			$content = self::get_content( $data );
+			$email_expires_data = array(
+				'subject' => __( ' [Limited Time Offer - LIVE] Save 25%', 'email-subscribers' ),
+				'email'   => $admin_email,
+				'content' => $content , 
+			);
+			
+			if (!empty($email_expires_data)) {
+				ES()->mailer->can_track_open_clicks   = false;
+				ES()->mailer->add_unsubscribe_link = false;
+				return ES()->mailer->send( $email_expires_data['subject'], $email_expires_data['content'], $email_expires_data['email'] );
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the HTML content required for email
+	 *
+	 * @param array $data
+	 *
+	 * @return false|string
+	 */
+	public static function get_content( $data ) {
+		ob_start();
+		ES_Admin::get_view(
+			'es-trial-expiry',
+			$data
+		);
+		$content = ob_get_clean();
+		return $content;
+	}
+
+	/**
+	 * Cron method for send when trial will expires.
+	 *
+	 */
+	public function trial_expires_email_single_cron( $trial_started_at) {
+		/*SINGLE CRON FOR EXPIRES EMAIL*/
+		if (!empty($trial_started_at)) {
+			$trial_expires_at = $trial_started_at + ES()->trial->get_trial_period();
+			$trial_expires_before_one_day = strtotime(gmdate('Y-m-d', $trial_expires_at) . '-1 day');
+
+			$cron_response = wp_schedule_single_event( $trial_expires_before_one_day, 'ig_es_expires_email_send_action', array(), true );
+			
+			if ( $cron_response instanceof WP_Error ) {
+				wp_send_json_error( $cron_response );
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -234,7 +306,6 @@ class IG_ES_Trial {
 	 * @since 4.6.2
 	 */
 	public function show_trial_notices() {
-
 		// Don't show trial notices untill onboarding is completed.
 		if ( ! IG_ES_Onboarding::is_onboarding_completed() ) {
 			return;
@@ -339,7 +410,9 @@ class IG_ES_Trial {
 			$is_trial         = 'yes';
 			$trial_started_at = time();
 			$this->add_trial_data( $is_trial, $trial_started_at );
+			$this->trial_expires_email_single_cron($trial_started_at);
 			wp_send_json_success( $response );
+
 		} else {
 			wp_send_json_error( $response );
 		}
@@ -387,8 +460,12 @@ class IG_ES_Trial {
 			$ig_es_url = 'https://www.icegram.com/';
 			$ig_es_url = add_query_arg( $url_params, $ig_es_url );
 
+			$request_args = array(
+				'timeout' => 15
+			);
+
 			// Make a get request.
-			$api_response = wp_remote_get( $ig_es_url );
+			$api_response = wp_remote_get( $ig_es_url, $request_args );
 			if ( ! is_wp_error( $api_response ) ) {
 				$body = ! empty( $api_response['body'] ) && ES_Common::is_valid_json( $api_response['body'] ) ? json_decode( $api_response['body'], true ) : '';
 				if ( ! empty( $body ) ) {

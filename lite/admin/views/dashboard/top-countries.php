@@ -1,17 +1,23 @@
 <table id="top-countries" class="mt-2 w-full bg-white rounded-md overflow-hidden" style="<?php echo ! empty( $upsell ) ? 'filter:blur(1px);' : ''; ?>">
 	<thead>
-		<tr>
-			<th class="w-1/3 px-4 py-3 font-bold text-center" colspan="2">
-				<span class="font-">
-					<?php echo esc_html__( 'Country', 'email-subscribers' ); ?>
-				</span>
-			</th>
-			<th class="w-1/3 px-1 py-3 font-bold text-right">
-				<span>
-					<?php echo esc_html__( 'Subscribers', 'email-subscribers' ); ?>
-				</span>
-			</th>
-		</tr>
+		<?php
+		if ( ! empty( $top_countries ) ) {
+			?>
+			<tr>
+				<th class="w-1/3 px-4 py-3 font-bold text-center" colspan="2">
+					<span class="font-">
+						<?php echo esc_html__( 'Country', 'email-subscribers' ); ?>
+					</span>
+				</th>
+				<th class="w-1/3 px-1 py-3 font-bold text-right">
+					<span>
+						<?php echo esc_html__( 'Subscribers', 'email-subscribers' ); ?>
+					</span>
+				</th>
+			</tr>
+			<?php
+		}
+		?>
 	</thead>
 	<tbody>
 		<?php
@@ -46,7 +52,7 @@
 			<tr>
 				<td colspan="3">
 					<span>
-						<?php echo esc_html__( 'No country data found.', 'email-subscribers' ); ?>
+						<?php echo esc_html__( 'There is no country data to show.', 'email-subscribers' ); ?>
 					</span>
 				</td>
 			</tr>

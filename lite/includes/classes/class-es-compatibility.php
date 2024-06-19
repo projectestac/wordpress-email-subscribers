@@ -20,6 +20,7 @@ if ( ! class_exists( 'ES_Compatibility' ) ) {
 		 */
 		public function __construct() {
 			add_filter( 'wp_mail_smtp_providers_mailer_get_body', array( $this, 'wp_mail_smtp_modify_header' ), 10, 2 );
+			add_filter( 'duplicate_post_excludelist_filter', array( $this, 'add_post_notified_meta_key_to_excluded_list' ) );
 		}
 
 		/**
@@ -46,6 +47,22 @@ if ( ! class_exists( 'ES_Compatibility' ) ) {
 			}
 
 			return $body;
+		}
+
+		/**
+		 * Add 'ig_es_is_post_notified' post meta key to Yoast Duplicate Post's plugin exclusion list
+		 * 
+		 * When meta key is in the exclusion list, Yoast Duplicate Post plugin won't copy when duplicating the post
+		 * 
+		 * @param $meta_excludelist array
+		 * 
+		 * @param $meta_excludelist array
+		 * 
+		 * @since 5.7.9
+		 */
+		public function add_post_notified_meta_key_to_excluded_list( $meta_excludelist = array() ) {
+			$meta_excludelist[] = 'ig_es_is_post_notified';
+			return $meta_excludelist;
 		}
 	}
 }

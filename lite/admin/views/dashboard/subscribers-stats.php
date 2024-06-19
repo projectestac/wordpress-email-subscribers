@@ -30,59 +30,83 @@ $last_period_start_date   = gmdate( $convert_date_format, strtotime( '-' . ( 2 *
 $last_period_end_date     = gmdate( $convert_date_format, strtotime( '-' . $days . ' days' ) );
 ?>
 <div id="subscribers-stats" class="clear-both">
-	<div class="grid grid-cols-3 gap-4 pt-4 text-gray-600 text-center">
+	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full ml-0">
 	
-		<div class="p-1">
-			<span class="text-2xl font-bold leading-none text-indigo-600">
-				<?php echo esc_html( $total_subscribed ); ?>
+		<div class="kpi">
+			<span class="stats">
+				<p class="kpi-title">
+					<?php echo esc_html__( 'New subscribers', 'email-subscribers' ); ?>
+				</p>
+				<span class="kpi-stats"><?php echo esc_html( $total_subscribed ); ?></span>
 			</span>
-			<div class="inline-block es-new-subscriber-growth-percentage es-tooltip relative align-middle cursor-pointer text-left">
-				<?php
-				if ( 0 !== $growth_percentage ) {
-					$text_color_class = '';
-					$arraw_html       = '';
-					if ( $growth_percentage < 0 ) {
-						$text_color_class = 'text-red-600';
-						$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>';
-					} else {
-						$text_color_class = 'text-green-600';
-						$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>';
+			<?php
+			if (!empty($growth_percentage)) {
+				?>
+				<div class="change down inline-block es-new-subscriber-growth-percentage es-tooltip relative align-middle cursor-pointer text-left">
+					<?php
+					if ( 0 !== $growth_percentage ) {
+						$text_color_class = '';
+						$arraw_html       = '';
+						if ( $growth_percentage < 0 ) {
+							$text_color_class = 'text-red-600';
+							$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>';
+						} else {
+							$text_color_class = 'text-green-600';
+							$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>';
+						}
+						?>
+						<span class="value">
+							<?php echo esc_html( number_format_i18n( $growth_percentage, 2 ) ); ?>%
+							<?php echo wp_kses( $arraw_html, $allowed_html_tags ); ?>
+						</span>
+						<?php
 					}
 					?>
-					<span class="text-sm mr-0.5 <?php echo esc_attr( $text_color_class ); ?>">
-						<?php echo esc_html( number_format_i18n( $growth_percentage, 2 ) ); ?>%
-						<?php echo wp_kses( $arraw_html, $allowed_html_tags ); ?>
-					</span>
-					<?php
-				}
-				?>
-				<span class="break-words invisible h-auto lg:w-48 xl:w-64 tracking-wide absolute z-70 tooltip-text bg-black text-gray-300 text-xs rounded p-3 py-2">
-					<div class="text-white-100">
-						<div>
-							<span class="text-lg text-base">
-								<?php echo esc_html__( 'New subscribers', 'email-subscribers' ); ?>:
-								<?php echo esc_html( number_format_i18n( $last_subscribed_contacts ) ); ?>
-							</span>
+					<span class="break-words invisible shadow-lg h-auto w-48 tracking-wide absolute z-70 tooltip-text bg-white text-xs rounded p-2 ">
+						<div class="text-black">
+							<div>
+								<span class="text-lg text-base">
+									<?php echo esc_html__( 'New subscribers', 'email-subscribers' ); ?>:
+									<?php echo esc_html( number_format_i18n( $last_subscribed_contacts ) ); ?>
+								</span>
+							</div>
 						</div>
-					</div>
-					<div class="text-xs mt-1 pt-1 text-gray-100 border-t border-gray-100">
-						<?php
-							/* translators: 1. Start date 2. End date */
-							echo esc_html__( sprintf( '%1$s to %2$s', $last_period_start_date, $last_period_end_date ), 'email-subscribers' );
-						?>
-					</div>
-					<svg class="tooltip-arrow absolute mt-2 text-black text-opacity-100 h-2.5 left-0" viewBox="0 0 255 255">
-						<polygon class="fill-current" points="0,0 127.5,127.5 255,0"></polygon>
-					</svg>
-				</span>
-			</div>
-			<p class="mt-1 font-medium leading-6 text-gray-500">
-				<?php echo esc_html__( 'New subscribers', 'email-subscribers' ); ?>
-			</p>
+						<hr>
+						<div class="text-xs mt-1 pt-1 text-gray-100 text-black">
+							<?php
+								/* translators: 1. Start date 2. End date */
+								echo esc_html__( sprintf( '%1$s to %2$s', $last_period_start_date, $last_period_end_date ), 'email-subscribers' );
+							?>
+						</div>
+						<svg class="tooltip-arrow absolute mt-2 text-opacity-100 h-2 left-0" viewBox="0 0 255 255">
+							<polygon class="fill-current text-white" style="fill:white" points="0,0 127.5,127.5 255,0"></polygon>
+						</svg>
+					</span>
+				</div>
+				<?php
+			}
+			?>
+			
 		</div>
-		<div class="pt-1 pr-1 pl-1">
-			<span class="text-2xl font-bold leading-none text-indigo-600">
-				<?php echo esc_html( $total_unsubscribed ); ?>
+		<div class="kpi">
+			<span class="stats">
+				<span class="kpi-title">
+					<?php
+					if ( ES()->is_pro() ) {
+						?>
+						
+							<?php echo esc_html__( 'Unsubscribed', 'email-subscribers' ); ?>
+						
+						<?php
+					} else {
+						?>
+						<?php echo esc_html__( 'Unsubscribed', 'email-subscribers' ); ?>
+						<?php
+					}
+					?>
+				</span>
+				<?php do_action( 'ig_es_show_unsubscribe_feedback_reasons_stats', $days, $total_unsubscribed ); ?>
+				<span class="kpi-stats"><?php echo esc_html( $total_unsubscribed ); ?></span>
 			</span>
 			<div class="inline-block es-tooltip relative align-middle cursor-pointer  text-left">
 				<?php
@@ -104,8 +128,8 @@ $last_period_end_date     = gmdate( $convert_date_format, strtotime( '-' . $days
 					<?php
 				}
 				?>
-				<span class="break-words invisible h-auto lg:w-48 xl:w-64 tracking-wide absolute z-70 tooltip-text bg-black text-gray-300 text-xs rounded p-3 py-2">
-					<div class="text-white-100">
+				<span class="break-words invisible shadow-lg h-auto w-48 tracking-wide absolute z-70 tooltip-text bg-white text-xs rounded p-2 ">
+					<div class="text-black">
 						<div>
 							<span class="text-lg text-base">
 								<?php echo esc_html__( 'Unsubscribes', 'email-subscribers' ); ?>:
@@ -113,90 +137,91 @@ $last_period_end_date     = gmdate( $convert_date_format, strtotime( '-' . $days
 							</span>
 						</div>
 					</div>
-					<div class="text-xs mt-1 pt-1 text-gray-100 border-t border-gray-100">
+					<hr>
+					<div class="text-xs mt-1 pt-1 text-gray-100 text-black">
 						<?php
 							/* translators: 1. Start date 2. End date */
 							echo esc_html__( sprintf( '%1$s to %2$s', $last_period_start_date, $last_period_end_date ), 'email-subscribers' );
 						?>
 					</div>
-					<svg class="tooltip-arrow absolute mt-2 text-black text-opacity-100 h-2.5 left-0" viewBox="0 0 255 255">
-						<polygon class="fill-current" points="0,0 127.5,127.5 255,0"></polygon>
+					<svg class="tooltip-arrow absolute mt-2 text-white text-opacity-100 h-2 left-0" viewBox="0 0 255 255">
+						<polygon class="fill-current" style="fill:white" points="0,0 127.5,127.5 255,0"></polygon>
 					</svg>
 				</span>
 			</div>
-			<p class="mt-1 font-medium leading-6 text-gray-500">
-				<?php
-				if ( ES()->is_pro() ) {
-					?>
-					<a id="view_unsubscribe_feedback_button" class="pb-2 pl-1 leading-5" style="cursor: pointer;" href="#">
-						<?php echo esc_html__( 'Unsubscribed', 'email-subscribers' ); ?>
-					</a>
-					<?php
-				} else {
-					?>
-					<?php echo esc_html__( 'Unsubscribed', 'email-subscribers' ); ?>
-					<?php
-				}
-				?>
-			</p>
-			<?php do_action( 'ig_es_show_unsubscribe_feedback_reasons_stats', $days, $total_unsubscribed ); ?>
+			
 		</div>
-		<div class="p-1">
+
+		<div class="kpi">
 			<?php
 				do_action( 'ig_es_show_bounced_contacts_stats', $days, $reports_data );
 			?>
 		</div>
-		<div class="p-1">
-			<span class="text-2xl font-bold leading-none text-indigo-600">
-				<?php echo esc_html( $total_message_sent ); ?>
+		<div class="kpi">
+			<span class="stats">
+				<p class="kpi-title">
+					<?php echo esc_html__( 'Sent', 'email-subscribers' ); ?>
+				</p>
+				<span class="kpi-stats">
+					<?php echo esc_html( $total_message_sent ); ?>
+				</span>
 			</span>
-			<div class="inline-block es-tooltip relative align-middle cursor-pointer text-left">
-				<?php
-				if ( 0 !== $sent_percentage_growth ) {
-					$text_color_class = '';
-					$arraw_html       = '';
-					if ( $sent_percentage_growth < 0 ) {
-						$text_color_class = 'text-red-600';
-						$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>';
-					} else {
-						$text_color_class = 'text-green-600';
-						$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>';
+			<?php
+			if (!empty($sent_percentage_growth)) {
+				?>
+				<div class="change down inline-block es-tooltip relative align-middle cursor-pointer text-left">
+					<?php
+					if ( 0 !== $sent_percentage_growth ) {
+						$text_color_class = '';
+						$arraw_html       = '';
+						if ( $sent_percentage_growth < 0 ) {
+							$text_color_class = 'text-red-600';
+							$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>';
+						} else {
+							$text_color_class = 'text-green-600';
+							$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>';
+						}
+						?>
+						<span class="text-sm mr-0.5 <?php echo esc_attr( $text_color_class ); ?> value">
+							<?php echo esc_html( $sent_percentage_growth ); ?>%
+							<?php echo wp_kses( $arraw_html, $allowed_html_tags ); ?>
+						</span>
+						<?php
 					}
 					?>
-					<span class="text-sm mr-0.5 <?php echo esc_attr( $text_color_class ); ?>">
-						<?php echo esc_html( $sent_percentage_growth ); ?>%
-						<?php echo wp_kses( $arraw_html, $allowed_html_tags ); ?>
-					</span>
-					<?php
-				}
-				?>
-				<span class="break-words invisible h-auto lg:w-48 xl:w-64 tracking-wide absolute z-70 tooltip-text bg-black text-gray-300 text-xs rounded p-3 py-2">
-					<div class="text-white-100">
-						<div>
-							<span class="text-lg text-base">
-								<?php echo esc_html__( 'Sent', 'email-subscribers' ); ?>:
-								<?php echo esc_html( $sent_before_two_months ); ?>
-							</span>
+					<span class="break-words invisible shadow-lg h-auto w-48 tracking-wide absolute z-70 tooltip-text bg-white text-xs rounded p-2 ">
+						<div class="text-black">
+							<div>
+								<span class="text-lg text-base">
+									<?php echo esc_html__( 'Sent', 'email-subscribers' ); ?>:
+									<?php echo esc_html( $sent_before_two_months ); ?>
+								</span>
+							</div>
 						</div>
-					</div>
-					<div class="text-xs mt-1 pt-1 text-gray-100 border-t border-gray-100">
-						<?php
-							/* translators: 1. Start date 2. End date */
-							echo esc_html__( sprintf( '%1$s to %2$s', $last_period_start_date, $last_period_end_date ), 'email-subscribers' );
-						?>
-					</div>
-					<svg class="tooltip-arrow absolute mt-2 text-black text-opacity-100 h-2.5 left-0" viewBox="0 0 255 255">
-						<polygon class="fill-current" points="0,0 127.5,127.5 255,0"></polygon>
-					</svg>
-				</span>
-			</div>
-			<p class="mt-1 font-medium leading-6 text-gray-500">
-				<?php echo esc_html__( 'Sent', 'email-subscribers' ); ?>
-			</p>
+						<hr>
+						<div class="text-xs mt-1 pt-1 text-gray-100 text-black">
+							<?php
+								/* translators: 1. Start date 2. End date */
+								echo esc_html__( sprintf( '%1$s to %2$s', $last_period_start_date, $last_period_end_date ), 'email-subscribers' );
+							?>
+						</div>
+						<svg class="tooltip-arrow absolute mt-2 text-black text-opacity-100 h-2 left-0" viewBox="0 0 255 255">
+							<polygon class="fill-current" style="fill:white" points="0,0 127.5,127.5 255,0"></polygon>
+						</svg>
+					</span>
+				</div>
+				<?php
+			}
+			?>
 		</div>
-		<div class="p-1">
-			<span class="text-2xl font-bold leading-none text-indigo-600">
-				<?php echo esc_html( $total_email_opens ); ?>
+		<div class="kpi">
+			<span class="stats">
+				<span class="kpi-title">
+					<?php echo esc_html__( 'Opens', 'email-subscribers' ); ?>
+				</span>
+				<span class="kpi-stats">
+					<?php echo esc_html( $total_email_opens ); ?>
+				</span>
 			</span>
 			<div class="inline-block es-tooltip relative align-middle cursor-pointer text-left">
 				<?php
@@ -218,8 +243,8 @@ $last_period_end_date     = gmdate( $convert_date_format, strtotime( '-' . $days
 					<?php
 				}
 				?>
-				<span class="break-words invisible h-auto lg:w-48 xl:w-64 tracking-wide absolute z-70 tooltip-text bg-black text-gray-300 text-xs rounded p-3 py-2">
-					<div class="text-white-100">
+				<span class="break-words invisible shadow-lg h-auto w-48 tracking-wide absolute z-70 tooltip-text bg-white text-xs rounded p-2 ">
+					<div class="text-black">
 						<div>
 							<span class="text-lg text-base">
 								<?php echo esc_html__( 'Opens', 'email-subscribers' ); ?>:
@@ -227,69 +252,21 @@ $last_period_end_date     = gmdate( $convert_date_format, strtotime( '-' . $days
 							</span>
 						</div>
 					</div>
-					<div class="text-xs mt-1 pt-1 text-gray-100 border-t border-gray-100">
+					<div class="text-xs mt-1 pt-1 text-gray-100">
 						<?php
 							/* translators: 1. Start date 2. End date */
 							echo esc_html__( sprintf( '%1$s to %2$s', $last_period_start_date, $last_period_end_date ), 'email-subscribers' );
 						?>
 					</div>
-					<svg class="tooltip-arrow absolute mt-2 text-black text-opacity-100 h-2.5 left-0" viewBox="0 0 255 255">
-						<polygon class="fill-current" points="0,0 127.5,127.5 255,0"></polygon>
+					<svg class="tooltip-arrow absolute mt-2 text-black text-opacity-100 h-2 left-0" viewBox="0 0 255 255">
+						<polygon class="fill-current" style="fill:white" points="0,0 127.5,127.5 255,0"></polygon>
 					</svg>
 				</span>
 			</div>
-			<span class="es-open-percentage-growth text-2xl font-bold leading-none text-indigo-600">
-				<p class="mt-1 font-medium leading-6 text-gray-500">
-					<?php echo esc_html__( 'Opens', 'email-subscribers' ); ?>
-				</p>
-			</span>
 		</div>
-		<div class="p-1">
-			<div id="es-dashboard-click-stats">
-				<span class="text-2xl font-bold leading-none text-indigo-600">
-					<?php echo esc_html(  $total_links_clicks ); ?>
-				</span>
-				<div class="inline-block es-tooltip relative align-middle cursor-pointer text-left">
-					<?php
-					if ( 0 !== $click_percentage_growth ) {
-						$text_color_class = '';
-						$arraw_html       = '';
-						if ( $click_percentage_growth < 0 ) {
-							$text_color_class = 'text-red-600';
-							$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>';
-						} else {
-							$text_color_class = 'text-green-600';
-							$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>';
-						}
-						?>
-						<span class="text-sm mr-0.5 <?php echo esc_attr( $text_color_class ); ?>">
-							<?php echo esc_html( $click_percentage_growth ); ?>%
-							<?php echo wp_kses( $arraw_html, $allowed_html_tags ); ?>
-						</span>
-						<?php
-					}
-					?>
-					<span class="break-words invisible h-auto lg:w-48 xl:w-64 tracking-wide absolute z-70 tooltip-text bg-black text-gray-300 text-xs rounded p-3 py-2">
-						<div class="text-white-100">
-							<div>
-								<span class="text-lg text-base">
-									<?php echo esc_html__( 'Clicks', 'email-subscribers' ); ?>:
-									<?php echo esc_html( $click_before_two_months ); ?>
-								</span>
-							</div>
-						</div>
-						<div class="text-xs mt-1 pt-1 text-gray-100 border-t border-gray-100">
-							<?php
-								/* translators: 1. Start date 2. End date */
-								echo esc_html__( sprintf( '%1$s to %2$s', $last_period_start_date, $last_period_end_date ), 'email-subscribers' );
-							?>
-						</div>
-						<svg class="tooltip-arrow absolute mt-2 text-black text-opacity-100 h-2.5 left-0" viewBox="0 0 255 255">
-							<polygon class="fill-current" points="0,0 127.5,127.5 255,0"></polygon>
-						</svg>
-					</span>
-				</div>
-				<p class="mt-1 font-medium leading-6 text-gray-500">
+		<div class="kpi">
+			<span class="stats">
+				<p class="kpi-title">
 					<?php echo esc_html__( 'Clicks', 'email-subscribers' ); ?>
 					<?php
 					if ( ! ES()->is_pro() ) {
@@ -297,7 +274,7 @@ $last_period_end_date     = gmdate( $convert_date_format, strtotime( '-' . $days
 							'utm_medium' => 'dashboard-click-stat',
 							'url'		 => 'https://www.icegram.com/documentation/what-analytics-does-email-subscribers-track/'
 						);
-	
+
 						$pricing_url = ES_Common::get_utm_tracking_url( $utm_args );
 						?>
 						<a  target="_blank" href="<?php echo esc_url( $pricing_url ); ?>">
@@ -306,7 +283,50 @@ $last_period_end_date     = gmdate( $convert_date_format, strtotime( '-' . $days
 						<?php
 					}
 					?>
-													</p>
+				</p>
+				<span class="kpi-stats">
+					<?php echo esc_html(  $total_links_clicks ); ?>
+				</span>
+			</span>
+			<div class="inline-block es-tooltip relative align-middle cursor-pointer text-left">
+				<?php
+				if ( 0 !== $click_percentage_growth ) {
+					$text_color_class = '';
+					$arraw_html       = '';
+					if ( $click_percentage_growth < 0 ) {
+						$text_color_class = 'text-red-600';
+						$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>';
+					} else {
+						$text_color_class = 'text-green-600';
+						$arraw_html       = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="inline-block" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>';
+					}
+					?>
+					<span class="text-sm mr-0.5 <?php echo esc_attr( $text_color_class ); ?>">
+						<?php echo esc_html( $click_percentage_growth ); ?>%
+						<?php echo wp_kses( $arraw_html, $allowed_html_tags ); ?>
+					</span>
+					<?php
+				}
+				?>
+				<span class="break-words invisible shadow-lg h-auto w-48 tracking-wide absolute z-70 tooltip-text bg-white text-xs rounded p-2 ">
+					<div class="text-black">
+						<div>
+							<span class="text-lg text-base">
+								<?php echo esc_html__( 'Clicks', 'email-subscribers' ); ?>:
+								<?php echo esc_html( $click_before_two_months ); ?>
+							</span>
+						</div>
+					</div>
+					<div class="text-xs mt-1 pt-1 text-gray-100">
+						<?php
+							/* translators: 1. Start date 2. End date */
+							echo esc_html__( sprintf( '%1$s to %2$s', $last_period_start_date, $last_period_end_date ), 'email-subscribers' );
+						?>
+					</div>
+					<svg class="tooltip-arrow absolute mt-2 text-black text-opacity-100 h-2 left-0" viewBox="0 0 255 255">
+						<polygon class="fill-current" style="fill:white" points="0,0 127.5,127.5 255,0"></polygon>
+					</svg>
+				</span>
 			</div>
 		</div>
 	</div>

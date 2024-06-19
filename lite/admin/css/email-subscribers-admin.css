@@ -11,11 +11,15 @@
 }
 
 ul#menu-nav li.active {
-	background-color: #5a67d8;
+	background-color: var(--brand-color);
 }
 
 #menu-nav li a.active {
 	color: #FFF;
+}
+
+ul#menu-nav li:hover {
+	border: 1px solid var(--brand-color-2);
 }
 
 .es-lists-table .column-created_at{
@@ -870,6 +874,10 @@ h5.es-badge {
 	margin: 0.2em 0;
 }
 
+.es-w-15 {
+	width: 15%;
+}
+
 .es-w-25 {
 	width: 25%;
 }
@@ -929,6 +937,14 @@ table#top-countries tbody tr:last-child:not(first-child) td, table#recent-subscr
 #es-dashboard-stats .premium-icon {
     position: relative;
     top: -3px;
+}
+
+.es-ellipsis-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 220px;
+    white-space: nowrap;
+    display: inline-block;
 }
 /**** Dashboard : end ***/
 
@@ -1836,6 +1852,7 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
 
 .wp-core-ui #poststuff select,  .wp-core-ui .search-box input[name="s"], .wp-core-ui #bulk-action-selector-top, .wp-core-ui #filter-by-date {
 	border-color: #a0aec0;
+	width: 8rem;
 }
 
 .wp-core-ui #search-submit, .wp-core-ui #doaction, .wp-core-ui #doaction2, .wp-core-ui #post-query-submit{
@@ -2099,7 +2116,7 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
 
 
 .tablenav {
-	padding-top: 0px !important;
+	padding-top: 5px !important;
 	clear: none !important;
 }
 
@@ -2366,7 +2383,7 @@ body[class*="es_reports"] .recipient-text {
 	bottom: 25px;
     transform: translate(-50%,0%);
     left: 50%;
-	opacity: 0.9;
+	/*opacity: 0.9;*/
 	z-index: 9999;
 }
 
@@ -2464,6 +2481,40 @@ body[class*="page_es_subscribers"] .wp-list-table.contacts th#last_opened_at {
 	background-size: 100% 100%;
 	background-position: 50%;
 	background-repeat: no-repeat
+}
+
+#ig-es-post-settings-section input.es_custom_post_type[type="checkbox"] {
+    display: inline-block;
+    /* appearance: none;
+    width: auto; */
+	width:20px;
+	height:20px;
+	background-color: #5e19cf;
+	margin-left: 4px;
+	border-radius: 4px;
+}
+
+#ig-es-post-settings-section input.es_custom_post_type + label {
+    display: inline-block;
+    width: auto
+}
+
+#gj-settings-container .checkbox-section {
+    display: block;
+}
+
+#gj-settings-container .checkbox-section input[type="checkbox"] {
+    display: inline-block;
+    width: auto;
+}
+
+#gj-settings-container .checkbox-section input[type="checkbox"] + label {
+    display: inline-block;
+    width: auto
+}
+
+body.icegram-express_page_es_campaigns #wpfooter {
+    position: static;
 }
 
 /** Editor CSS - END **/
@@ -2715,7 +2766,7 @@ span.feedback_reason_dot {
 }
 
 .es-items-lists table.contacts #engagement_score {
-    width: 70px;
+    width: 110px;
 }
 
 /* Rating item */
@@ -2820,7 +2871,7 @@ span.feedback_reason_dot {
 
 .es-items-lists table.contacts #es_email_status,
 .dashboard-engagement-score-stat  #es_email_status {
-    width: 120px;
+    width: 130px;
 }
 
 .ig_es_contacts_table {
@@ -2928,3 +2979,212 @@ top: 50%;}
 #ig_es_ess_promotion_message p {
     margin: 0;
 }
+
+.icegram-express_page_es_campaigns [data-placeholder]::after {
+    content: " ";
+    box-shadow: 0 0 50px 9px rgba(254,254,254);
+    position: absolute;
+    top: 0;
+    left: -100%;
+    height: 100%; 
+    animation: load 1s infinite;
+}
+@keyframes load {
+    0%{ left: -100%}
+    100%{ left: 150%}
+}
+
+/* Campaign UI  */
+#qt_es-campaign-body_toolbar .ed_button {
+    width: auto;
+    display: inline-block;
+}
+
+body.icegram-express_page_es_campaigns #wpcontent {
+    padding-left: 0;
+}
+
+body.icegram-express_page_es_subscribers #wpcontent {
+    padding-left: 0;
+}
+
+body.icegram-express_page_es_lists #wpcontent {
+    padding-left: 0;
+}
+
+body.icegram-express_page_es_forms #wpcontent {
+    padding-left: 0;
+}
+
+/* Contacts Table UI */
+.contacts-report-table tr td {
+	vertical-align: top;
+}
+
+.total-contact-count-text {
+	font-size: 1.875rem;
+}
+
+.total-countries-count-text {
+	font-size: 1.875rem;
+}
+
+.subscriber-right-border-width {
+	border-right-width: 1px;
+}
+
+/* Bulk action button css */
+.icegram-express_page_es_subscribers #doaction, .icegram-express_page_es_lists #doaction, .icegram-express_page_es_lists #doaction2, .icegram-express_page_es_forms #doaction, .icegram-express_page_es_forms #doaction2 {
+    background-color: var(--secondary);
+    --tw-text-opacity: 1;
+    color: rgb(22 30 46 / var(--tw-text-opacity));
+	border-color: transparent !important;
+	border-radius: 0.375rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+}
+
+.icegram-express_page_es_subscribers #doaction:hover, .icegram-express_page_es_lists #doaction:hover, .icegram-express_page_es_lists #doaction2:hover, .icegram-express_page_es_forms #doaction:hover, .icegram-express_page_es_forms #doaction2:hover {
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0.5px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    -webkit-box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+    --tw-ring-color: var(--brand-color-2);
+}
+
+
+/* Forms Custom field pro & max button icon */
+.icegram-express_page_es_forms .es_custom_field_link .premium-icon {
+	position: absolute;
+    right: 10px;
+    bottom: 52px;
+}
+
+/* mark tag CSS */
+.ig-es-mark {
+    background-image: linear-gradient(-100deg, hsla(58, 92%, 75%, .4), hsla(58, 92%, 75%, .8) 95%, hsla(58, 92%, 75%, .2));
+    border-radius: 1em 0 1em 0;
+}
+
+#gj-settings-container .checkbox-section input[type="checkbox"] {
+	width:20px;
+	height:20px;
+	background-color: #5e19cf;
+	margin-left: 4px;
+	border-radius: 4px;
+}
+
+#gj-settings-container .checkbox-section input[type=checkbox]:checked::before,
+#ig-es-post-settings-section input[type=checkbox]:checked::before {
+    content: '' !important;
+	margin: -.1875rem 0 0 -.25rem;
+    height: 1.3125rem;
+    width: 1.3125rem;
+}
+
+#gj-settings-container .gjs-field{
+	border: 0px !important;
+}
+
+/* ESS enable checkbox & new tag CSS*/
+.ess-checkbox-animate {
+	position: relative;
+	cursor: pointer;
+}
+.ess-checkbox-animate input {
+	opacity: 0;
+	position: absolute;
+	left: 0;
+	top: 6px;
+	z-index: 1;
+}
+.ess-input-check {
+	display: inline-block;
+	width: 1rem;
+	height: 1rem;
+	border-radius: 4px;
+	border: 2px solid #ccc;
+	position: relative;
+	top: 6px;
+	transition: 0.4s;
+	margin-right: 0.2rem;
+}
+
+.ess-input-check::before {
+	content: '';
+	display: inline-block;
+	width: 8px;
+	height: 5px;
+	border-bottom: 3px solid #fff;
+	border-left: 3px solid #fff;
+	transform: scale(0) rotate(-45deg);
+	position: absolute;
+	top: 3px;
+	left: 2px;
+	transition: 0.4s;
+}
+
+.ess-checkbox-animate input:checked ~ .ess-input-check {
+	background-color: rgba(88,80,236,var(--text-opacity));
+	border-color: rgba(88,80,236,var(--text-opacity));
+	animation-name: ess-input-animate;
+	animation-duration: 0.7s;
+}
+
+.ess-checkbox-animate input:checked ~ .ess-input-check::before {
+	transform: scale(1) rotate(-45deg);
+	animation-name: ess-input-check;
+	animation-duration: 0.2s;
+	animation-delay: 0.3s;
+}
+
+@keyframes ess-input-animate {
+	0% {
+		transform: scale(1);
+	}
+	40%{
+		transform: scale(1.3,0.7);
+	}
+	55% {
+		transform: scale(1);
+	}
+	70% {
+		transform: scale(1.2,0.8);
+	}
+	80% {
+		transform: scale(1);
+	}
+	90% {
+		transform: scale(1.1,0.9);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+@keyframes ess-input-check {
+	0% {
+		transform: scale(0) rotate(-45deg);
+	}
+	100% {
+		transform: scale(1) rotate(-45deg);
+	}
+}
+
+.ess-new-feature {
+	font-size: 10px;
+	padding: 5px 10px;
+	display: inline-block;
+	position: relative;
+	top: -9px;
+	right: 10px;
+	font-weight: 800;
+	color: #5850ec;
+	letter-spacing: 1px
+}
+/* End */

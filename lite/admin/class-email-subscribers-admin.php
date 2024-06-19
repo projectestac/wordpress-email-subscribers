@@ -158,9 +158,25 @@ class Email_Subscribers_Admin {
 			wp_enqueue_style( 'select2' );
 		}
 
-		wp_enqueue_style( 'ig-es-style', plugin_dir_url( __FILE__ ) . 'dist/main.css', array(), $this->version, 'all' );
-
 		$current_page          = ig_es_get_request_data( 'page' );
+		$current_action 	   = ig_es_get_request_data( 'action' );
+		
+		//This below condition will helping to apply main.css file on forms add & update DND editor page.
+		$es_forms = ( 'es_forms' == $current_page && ( isset($current_action) && ( 'new' == $current_action || 'edit' == $current_action ) ) ) ? '' : 'es_forms';
+
+		//This below condition will helping to apply main.css file on dashboard onboarding process.
+		$es_dashboard = ( get_option( 'ig_es_onboarding_complete', 'no' ) !== 'yes' ) ? '' : 'es_dashboard';
+		
+		$enqueue_tailwind 	   = in_array( $current_page, array( 'es_gallery', 'es_campaigns', 'es_subscribers', 'es_lists', $es_forms, 'es_custom_fields', 'es_settings', $es_dashboard ), true );
+		
+		if ( ! $enqueue_tailwind ) {
+			wp_enqueue_style( 'ig-es-style', plugin_dir_url( __FILE__ ) . 'dist/main.css', array(), $this->version, 'all' );
+		}
+		
+		if ( $enqueue_tailwind ) {
+			wp_enqueue_style( 'ig-es-tw-style', plugin_dir_url( __FILE__ ) . 'dist/tailwind.css', array(), $this->version, 'all' );
+		}
+
 		$enqueue_flag_icon_css = in_array( $current_page, array( 'es_dashboard', 'es_subscribers', 'es_reports' ), true );
 		if ( $enqueue_flag_icon_css ) {
 			wp_enqueue_style( 'flag-icon-css', 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css', array(), $this->version, 'all' );
@@ -312,6 +328,33 @@ class Email_Subscribers_Admin {
 			}
 		}
 
+		if ( 'es_campaigns' === $page ) {
+			wp_register_script( 'mithril', plugins_url( '/js/mithril.min.js', __FILE__ ), array(), '2.0.4', true );
+			wp_enqueue_script( 'mithril' );
+			
+			wp_register_script( 'ig-es-main-js', plugins_url( '/dist/index.js', __FILE__ ), array( 'mithril' ), '2.0.4', true );
+				// wp_register_script( 'ig-es-main-js', plugins_url( '/dist/main.js', __FILE__ ), array( 'mithril' ), '2.0.4', true );
+			wp_enqueue_script( 'ig-es-main-js' );
+
+			if ( ! function_exists( 'ig_es_wp_js_editor_admin_scripts' ) ) {
+				/**
+				 * Include WP JS Editor library's main file. This file contains required functions to enqueue required js file which being used to create WordPress editor dynamcially.
+				 */
+				require_once ES_PLUGIN_DIR . 'lite/includes/libraries/wp-js-editor/wp-js-editor.php';
+			}
+
+			add_filter( 'tiny_mce_before_init', array( 'ES_Common', 'override_tinymce_formatting_options' ), 10, 2 );
+			add_filter( 'mce_external_plugins', array( 'ES_Common', 'add_mce_external_plugins' ) );
+
+			// Load required html/js for dynamic WordPress editor.
+			ig_es_wp_js_editor_admin_scripts();
+		} elseif ( 'es_sequence' === $page ) {
+			add_filter( 'tiny_mce_before_init', array( 'ES_Common', 'override_tinymce_formatting_options' ), 10, 2 );
+			add_filter( 'mce_external_plugins', array( 'ES_Common', 'add_mce_external_plugins' ) );
+		}
+
+
+
 		// timepicker
 		wp_register_script( $this->email_subscribers . '-timepicker', plugin_dir_url( __FILE__ ) . 'js/jquery.timepicker.js', array( 'jquery' ), ES_PLUGIN_VERSION, true );
 		wp_enqueue_script( $this->email_subscribers . '-timepicker' );
@@ -325,7 +368,7 @@ class Email_Subscribers_Admin {
 			wp_enqueue_script( 'select2' );
 		}
 
-		if ( ! empty( $page ) && 'es_dashboard' === $page || 'es_reports' === $page ) {
+		if ( ! empty( $page ) && 'es_dashboard' === $page || 'es_reports' === $page || 'es_subscribers' === $page ) {
 			wp_enqueue_script( 'frappe-js', plugin_dir_url( __FILE__ ) . 'js/frappe-charts.min.iife.js', array( 'jquery' ), '1.5.2', false );
 		}
 
@@ -372,28 +415,26 @@ class Email_Subscribers_Admin {
 
 			// Add Lists Submenu
 			$hook = add_submenu_page( 'es_dashboard', __( 'Lists', 'email-subscribers' ), '<span id="ig-es-lists">' . __( 'Lists', 'email-subscribers' ) . '</span>', 'edit_posts', 'es_lists', array( $this, 'render_lists' ) );
-			// add_action( "load-$hook", array( 'ES_Lists_Table', 'screen_options' ) );
+			add_action( "load-$hook", array( 'ES_Lists_Table', 'screen_options' ) );
 		}
 
 		if ( in_array( 'forms', $accessible_sub_menus ) ) {
 			// Add Forms Submenu
 			$hook = add_submenu_page( 'es_dashboard', __( 'Forms', 'email-subscribers' ), __( 'Forms', 'email-subscribers' ), 'edit_posts', 'es_forms', array( $this, 'render_forms' ) );
-			// add_action( "load-$hook", array( 'ES_Forms_Table', 'screen_options' ) );
+			add_action( "load-$hook", array( 'ES_Forms_Table', 'screen_options' ) );
 		}
 
 		if ( in_array( 'campaigns', $accessible_sub_menus ) ) {
 			// Add Campaigns Submenu
 			$hook = add_submenu_page( 'es_dashboard', __( 'Campaigns', 'email-subscribers' ), __( 'Campaigns', 'email-subscribers' ), 'edit_posts', 'es_campaigns', array( $this, 'render_campaigns' ) );
-			// add_action( "load-$hook", array( 'ES_Campaigns_Table', 'screen_options' ) );
+			add_action( "load-$hook", array( 'ES_Campaigns_Table', 'screen_options' ) );
 
 			// Start-IG-Code.
 			add_submenu_page( 'es_dashboard', __( 'Post Notifications', 'email-subscribers' ), '<span id="ig-es-post-notifications">' . __( 'Post Notifications', 'email-subscribers' ) . '</span>', 'edit_posts', 'es_notifications', array( $this, 'load_campaign_admin_page' ) );
 			// End-IG-Code.
 			add_submenu_page( 'es_dashboard', __( 'Broadcast', 'email-subscribers' ), '<span id="ig-es-broadcast">' . __( 'Broadcast', 'email-subscribers' ) . '</span>', 'edit_posts', 'es_newsletters', array( $this, 'load_campaign_admin_page' ) );
-			add_submenu_page( null, __( 'Template Preview', 'email-subscribers' ), __( 'Template Preview', 'email-subscribers' ), 'edit_posts', 'es_template_preview', array( $this, 'load_preview' ) );
 
-			add_submenu_page( 'es_dashboard', __( 'Gallery', 'email-subscribers' ), '<span id="ig-es-gallery-submenu">' . __( 'Gallery', 'email-subscribers' ) . '</span>', 'edit_posts', 'es_gallery', array( $this, 'load_gallery' ) );
-			add_submenu_page( null, __( 'Template', 'email-subscribers' ), '<span id="ig-es-gallery-submenu">' . __( 'Templates', 'email-subscribers' ) . '</span>', 'edit_posts', 'es_template', array( $this, 'load_template' ) );
+			// add_submenu_page( null, __( 'Template', 'email-subscribers' ), '<span id="ig-es-gallery-submenu">' . __( 'Templates', 'email-subscribers' ) . '</span>', 'edit_posts', 'es_template', array( $this, 'load_template' ) );
 		}
 
 		if ( in_array( 'workflows', $accessible_sub_menus ) ) {
@@ -416,14 +457,9 @@ class Email_Subscribers_Admin {
 		}
 
 		if ( in_array( 'settings', $accessible_sub_menus ) ) {
-			add_submenu_page( 'es_dashboard', __( 'Settings', 'email-subscribers' ), __( 'Settings', 'email-subscribers' ), 'manage_options', 'es_settings', array( $this, 'load_settings' ) );
+			$hook = add_submenu_page( 'es_dashboard', __( 'Settings', 'email-subscribers' ), __( 'Settings', 'email-subscribers' ), 'manage_options', 'es_settings', array( $this, 'load_settings' ) );
+			add_action( "load-$hook", array( 'ES_Admin_Settings', 'screen_options' ) );
 		}
-
-		// Start-IG-Code.
-		if ( in_array( 'ig_redirect', $accessible_sub_menus ) ) {
-			add_submenu_page( null, __( 'Go To Icegram', 'email-subscribers' ), '<span id="ig-es-onsite-campaign">' . __( 'Go To Icegram', 'email-subscribers' ) . '</span>', 'edit_posts', 'go_to_icegram', array( $this, 'go_to_icegram' ) );
-		}
-		// End-IG-Code.
 
 		/**
 		 * Add Other Submenu Pages
@@ -582,16 +618,6 @@ class Email_Subscribers_Admin {
 		$campaign_admin = ES_Campaign_Admin::get_instance();
 		$campaign_admin->setup();
 		$campaign_admin->render();
-	}
-
-	/**
-	 * Load template gallery
-	 *
-	 * @return void
-	 */
-	public function load_gallery() {
-		$gallery = ES_Gallery::get_instance();
-		$gallery->render();
 	}
 
 	/**
@@ -829,26 +855,6 @@ class Email_Subscribers_Admin {
 		die( json_encode( $response_data ) );
 	}
 
-	public function get_template_content() {
-		global $ig_es_tracker;
-
-		$template_id = (int) ig_es_get_request_data( 'template_id', 0 );
-		if ( 0 == $template_id ) {
-			return 0;
-		}
-		$post_temp_arr     = get_post( $template_id );
-		$result['subject'] = ! empty( $post_temp_arr->post_title ) ? $post_temp_arr->post_title : '';
-		$result['body']    = ! empty( $post_temp_arr->post_content ) ? $post_temp_arr->post_content : '';
-		// get meta data of template
-		// $active_plugins = $ig_es_tracker::get_active_plugins();
-		if ( ES()->is_starter() ) {
-			$result['inline_css']      = get_post_meta( $template_id, 'es_custom_css', true );
-			$result['es_utm_campaign'] = get_post_meta( $template_id, 'es_utm_campaign', true );
-		}
-
-		die( json_encode( $result ) );
-	}
-
 	/**
 	 * Get Icegram Express' screen options
 	 *
@@ -1006,32 +1012,6 @@ class Email_Subscribers_Admin {
 			}
 		}
 
-	}
-
-	/**
-	 * Method to handle campaign status change
-	 *
-	 * @return string JSON response of the request
-	 *
-	 * @since 4.4.4
-	 */
-	public function toggle_campaign_status() {
-
-		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
-
-		$campaign_id         = ig_es_get_request_data( 'campaign_id' );
-		$new_campaign_status = ig_es_get_request_data( 'new_campaign_status' );
-
-		if ( ! empty( $campaign_id ) ) {
-
-			$status_updated = ES()->campaigns_db->update_status( $campaign_id, $new_campaign_status );
-
-			if ( $status_updated ) {
-				wp_send_json_success();
-			} else {
-				wp_send_json_error();
-			}
-		}
 	}
 
 	/**
@@ -1451,14 +1431,18 @@ class Email_Subscribers_Admin {
 			return;
 		}
 
+		
 		$completed = false;
 		$errortype = false;
 		
 		$contacts_table = new ES_Contacts_Table();
+		
 		$current_action = $contacts_table->current_action();
 		if ( empty( $current_action ) ) {
 			return;
 		}
+		
+		check_admin_referer( 'bulk-' . $contacts_table->_args['plural'] );
 
 		$current_page = $contacts_table->get_pagenum();
 		$per_page     = $contacts_table->get_items_per_page( $contacts_table::$option_per_page, 200 );
@@ -1779,8 +1763,8 @@ class Email_Subscribers_Admin {
 		$gallery_type = ig_es_get_request_data( 'gallery_type' );
 
 		if ( 'remote' === $gallery_type ) {
-			$gallery  = ES_Gallery::get_instance();
-			$template = $gallery->get_remote_gallery_item( $template_id );
+			$gallery_controller  = ES_Gallery_Controller::get_instance();
+			$template = $gallery_controller::get_remote_gallery_item( $template_id );
 			
 			$es_template_body = $template->content->rendered;
 			$es_template_type = $template->es_template_type;

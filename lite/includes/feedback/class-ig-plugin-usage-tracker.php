@@ -83,6 +83,14 @@ if ( ! class_exists( 'IG_Plugin_Usage_Tracker_V_1_0_0' ) ) {
 		 */
 		public $allowed_by_default;
 
+		
+		/**
+		 * Text domain.
+		 *
+		 * @var string
+		 */
+		public $text_domain;
+
 		/**
 		 * Primary class constructor.
 		 *
@@ -105,7 +113,7 @@ if ( ! class_exists( 'IG_Plugin_Usage_Tracker_V_1_0_0' ) ) {
 			$this->plugin_plan        = $plugin_plan;
 			$this->tracker_class      = $tracker_class;
 			$this->allowed_by_default = $allowed_by_default;
-
+			
 			// Don't run usage tracker on dev environment if not enabled.
 			if ( $tracker_class::is_dev_environment() && ! $enable_on_dev ) {
 				return;

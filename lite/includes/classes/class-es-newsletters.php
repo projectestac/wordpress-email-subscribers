@@ -39,6 +39,9 @@ class ES_Newsletters {
 		add_filter( 'ig_es_track_open', array( $this, 'is_open_tracking_enabled' ), 10, 4 );
 
 		add_action( 'ig_es_show_' . IG_CAMPAIGN_TYPE_NEWSLETTER . '_campaign_summary_action_buttons', array( $this, 'show_summary_actions_buttons' ) );
+
+		//add_action( 'ig_es_' . IG_CAMPAIGN_TYPE_NEWSLETTER . '_default_subject', array( $this, 'get_post_notification_default_subject' ) );
+		add_action( 'ig_es_' . IG_CAMPAIGN_TYPE_NEWSLETTER . '_default_content', array( $this, 'get_newsletter_default_content' ) );
 	}
 
 	public static function set_screen( $status, $option, $value ) {
@@ -959,5 +962,57 @@ class ES_Newsletters {
 			</button>
 			<?php
 		}
+	}
+
+	public function get_newsletter_default_content( $content_data ) {
+		if ( ! is_array( $content_data ) ) {
+			$content_data = array();
+		}
+		$content_data[IG_ES_CLASSIC_EDITOR] = wpautop($this->get_classic_editor_default_content());
+		$content_data[IG_ES_DRAG_AND_DROP_EDITOR] = $this->get_dnd_editor_default_content();
+		return $content_data;
+	}
+
+	public function get_classic_editor_default_content() {
+		$default_content  = __( "Hello {{subscriber.name | fallback='there'}},", 'email-subscribers' ) . "\r\n\r\n";
+		$default_content .= __( 'Your content...', 'email-subscribers' ) . "\r\n\r\n";
+		$default_content .= __( 'Thanks & Regards', 'email-subscribers' ) . ",\r\n";
+		$default_content .= __( 'Admin', 'email-subscribers' ) . "\r\n\r\n";
+		$default_content .= __( 'You received this email because in the past you have provided us your email address : {{subscriber.email}} to receive notifications when new updates are posted.', 'email-subscribers' );
+		return $default_content;
+	}
+
+	public function get_dnd_editor_default_content() {
+
+		$default_content = '<mjml>
+			<mj-body>
+				<mj-section background-color="#FFFFFF">
+					<mj-column width="100%">
+						<mj-image src="https://webstockreview.net/images/sample-png-images-14.png" height="70px"
+								width="140px"/>
+					</mj-column>
+				</mj-section>
+				<mj-section background-color="#FFFFFF">
+					<mj-column width="100%">
+						<mj-text line-height="26px">' . __( "Hello {{subscriber.name | fallback='there'}},", 'email-subscribers' ) . '</mj-text>
+					</mj-column>
+				</mj-section>
+				<mj-section background-color="#FFFFFF">
+					<mj-column width="100%">
+						<mj-text line-height="26px">Your content...</mj-text>
+					</mj-column>
+				</mj-section>
+				<mj-section background-color="#f3f3f3">
+					<mj-column width="100%">
+						<mj-text align="center" line-height="26px">@2023, ' . __( 'Your Brand Name.', 'email-subscribers' ) . '</mj-text>
+						<mj-text align="center" line-height="26px">You are receiving this email because you have visited our site or asked
+							about our regular newsletter. If you wish to unsubscribe from our newsletter, click <a data-gjs-type="link" href="{{UNSUBSCRIBE-LINK}}" >here </a>
+						</mj-text>
+					</mj-column>
+				</mj-section>
+			</mj-body>
+		</mjml> ';
+
+		return $default_content;
 	}
 }
