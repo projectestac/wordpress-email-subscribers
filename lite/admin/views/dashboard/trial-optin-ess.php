@@ -103,6 +103,12 @@ require_once 'trial-optin-form.php';
 
 foreach ( $trial_block as $feature => $data ) {
 	$is_trial_block = strpos( $feature, 'trial' ) !== false;
+
+	// XTEC ************ AFEGIT - Removed trial/broadcast/autoresponder,etc
+	// 2023.06.22 @Guillemduno
+	if (is_xtec_super_admin()) {
+	// *********** Fi
+
 	?>
 	<div id="ig-es-<?php echo esc_attr( $feature ); ?>-block">
 	  
@@ -195,4 +201,10 @@ foreach ( $trial_block as $feature => $data ) {
 		</div>
 	</div>
 	<?php
+
+	// XTEC ************ AFEGIT - Removed trial/broadcast/autoresponder
+	// 2023.06.22 @Guillemduno
+	}
+	// *********** Fi
+
 }?>

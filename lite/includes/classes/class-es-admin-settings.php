@@ -185,6 +185,12 @@ class ES_Admin_Settings {
 						'name' => __( 'Security', 'email-subscribers' ),
 					),
 				);
+
+				// XTEC ************ AFEGIT - Remove API submenu
+                // 2023.06.28 @Guillemduno
+                if (is_xtec_super_admin()) {
+				// ************ Fi
+
 				if ( ES_Common::is_rest_api_supported() ) {
 					$es_settings_tabs['rest_api_settings'] = array(
 						'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 inline -mt-1.5" style="stroke-width:2">
@@ -193,6 +199,12 @@ class ES_Admin_Settings {
 						'name' => __( 'API', 'email-subscribers' ),
 					);
 				}
+
+				// XTEC ************ AFEGIT - Remove API submenu
+                // 2023.06.28 @Guillemduno
+				}
+				// ************ Fi
+
 				$es_settings_tabs = apply_filters( 'ig_es_settings_tabs', $es_settings_tabs );
 				?>
 				<div id="es-settings-menu" class="">
@@ -425,6 +437,13 @@ class ES_Admin_Settings {
 			
 		);
 
+		// XTEC ************ AFEGIT - Remove option 'Delete plugin data on uninstall'
+        // 2023.06.28 @Guillemduno
+        if (!is_xtec_super_admin()) {
+            unset($general_settings['ig_es_delete_plugin_data']);
+        }
+        // ************ Fi
+
 		$general_settings = apply_filters( 'ig_es_registered_general_settings', $general_settings );
 
 		$signup_confirmation_settings = array(
@@ -458,7 +477,17 @@ class ES_Admin_Settings {
 			$cron_url_setting_desc = sprintf( __( "You need to visit this URL to send email notifications. Know <a href='%s' target='_blank'>how to run this in background</a>", 'email-subscribers' ), 'https://www.icegram.com/documentation/es-how-to-schedule-cron-emails-in-cpanel/?utm_source=es&utm_medium=in_app&utm_campaign=view_docs_help_page' );
 		}
 
+		// XTEC ************ AFEGIT - Allow access only to xtecadmin
+        // 2023.07.12 @aginard
+        if (is_xtec_super_admin()) {
+		// ************ Fi
+
 		$cron_url_setting_desc .= '<div class="mt-2.5 ml-1"><a class="hover:underline text-sm font-medium text-indigo-600" href=" ' . esc_url( 'https://www.icegram.com/documentation/how-to-configure-email-sending-in-email-subscribers?utm_source=in_app&utm_medium=setup_email_sending&utm_campaign=es_doc' ) . '" target="_blank">' . esc_html__( 'How to configure Email Sending', 'email-subscribers' ) . '→</a></div>';
+
+		// XTEC ************ AFEGIT - Allow access only to xtecadmin
+        // 2023.07.12 @aginard
+		}
+		// ************ Fi
 
 		$pepipost_api_key_defined = ES()->is_const_defined( 'pepipost', 'api_key' );
 
@@ -478,6 +507,10 @@ class ES_Admin_Settings {
 				'name'         => __( 'Cron URL', 'email-subscribers' ),
 				'desc'         => $cron_url_setting_desc,
 			),
+
+			// XTEC ************ ELIMINAT - Hidden option to Disable WordPress Cron to all users
+            // 2021.01.20 @aginard
+			/*
 			'ig_es_disable_wp_cron'         => array(
 				'type'         => 'checkbox',
 				'placeholder'  => '',
@@ -487,6 +520,9 @@ class ES_Admin_Settings {
 				'name'         => __( 'Disable Wordpress Cron', 'email-subscribers' ),
 				'info'         => __( 'Enable this option if you do not want Icegram Express to use WP Cron to send emails.', 'email-subscribers' ),
 			),
+			*/
+			// ********* Fi
+
 			'ig_es_cron_interval'           => array(
 				'id'      => 'ig_es_cron_interval',
 				'name'    => __( 'Send emails at most every', 'email-subscribers' ),
@@ -528,6 +564,10 @@ class ES_Admin_Settings {
 				'desc'         => __( 'Enter email address to send test email.', 'email-subscribers' ),
 			),
 
+			// XTEC ************ ELIMINAT - Hidden option to Select Mailer to all users
+            // 2021.01.20 @aginard
+            /*
+
 			'ig_es_mailer_settings'         => array(
 				'type'         => 'html',
 				'sub_fields'   => array(
@@ -565,6 +605,10 @@ class ES_Admin_Settings {
 				'name'         => __( 'Email Sender', 'email-subscribers' ),
 				'info'         => '',
 			),
+
+			*/
+			// ********* Fi
+
 		);
 
 		$email_sending_settings = apply_filters( 'ig_es_registered_email_sending_settings', $email_sending_settings );
@@ -1069,6 +1113,12 @@ class ES_Admin_Settings {
 	 * @since 4.4.9
 	 */
 	public function show_cron_info( $email_sending_settings ) {
+
+		// XTEC ************ AFEGIT - Hidden workflows to all users
+        // 2021.01.20 @aginard
+        return $email_sending_settings;
+        // ************ Fi
+
 		$es_cron_enabled = ES()->cron->is_wp_cron_enable();
 		if ( $es_cron_enabled ) {
 			$es_cron_info           = array(
@@ -1244,6 +1294,13 @@ class ES_Admin_Settings {
 					'info'    => __( 'Help us to improve Icegram Express by opting in to share non-sensitive plugin usage data.', 'email-subscribers' ),
 				),
 			);
+
+			// XTEC ************ AFEGIT - Remove option 'Plugin usage tracking'
+            // 2023.07.12 @aginard
+            if (!is_xtec_super_admin()) {
+                $allow_tracking = [];
+            }
+            // ************ Fi
 
 			$general_fields = $es_settings['general'];
 

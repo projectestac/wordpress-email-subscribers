@@ -57,6 +57,14 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 										<a href="<?php echo esc_url( $new_broadcast_url ); ?>"><?php echo esc_html__( 'New Broadcast', 'email-subscribers' ); ?></a>
 										<!-- Start-IG-Code -->
 										<a href="<?php echo esc_url( $new_post_notification_url ); ?>"><?php echo esc_html__( 'New Post Notification', 'email-subscribers' ); ?></a>
+
+										<?php
+										// XTEC ************ AFEGIT - Removed new sequence
+										// 2023.06.22 @Guillemduno
+										if (is_xtec_super_admin()) {
+										// ************ Fi
+										?>
+
 										<!-- End-IG-Code -->
 										<?php if ( ES()->is_pro() ) { ?>
 											<a href="<?php echo esc_url( $new_sequence_url ); ?>"><?php echo esc_html__( 'New Sequence', 'email-subscribers' ); ?></a>
@@ -64,6 +72,14 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 											<a href="<?php echo esc_url( $icegram_pricing_url ); ?>" target="_blank"><?php echo esc_html__( 'New Sequence', 'email-subscribers' ); ?>
 											<span class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full"><?php echo esc_html__( 'Premium', 'email-subscribers' ); ?></span></a>
 										<?php } ?>
+
+										<?php
+										// XTEC ************ AFEGIT - Removed new sequence
+										// 2023.06.22 @Guillemduno
+										}
+										// ************ Fi
+										?>
+
 									</div>
 									<div class="border-b border-gray-100"></div>
 									<div class="py-1">
@@ -163,6 +179,13 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 					?>
 			</div>
 			
+			<?php
+            // XTEC ************ AFEGIT - Removed top countries and recent activities
+            // 2023.06.22 @Guillemduno
+            if (is_xtec_super_admin()) {
+            // ************ Fi
+            ?>
+
 			<!-- Email sending service section -->
 			<div class="flex-auto min-w-0 es-w-35 pr-3">
 				<?php
@@ -200,6 +223,20 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 				?>
 			</div>
 			
+			<?php
+            // XTEC ************ AFEGIT - Removed top countries and recent activities
+            // 2023.06.22 @Guillemduno
+            }
+            // ************ Fi
+            ?>
+
+			<?php
+            // XTEC ************ AFEGIT - Removed tips & tricks
+            // 2023.06.22 @Guillemduno
+            if (is_xtec_super_admin()) {
+            //*********** Fi
+            ?>
+
 			<!--Tips and Trick section -->
 			<div class="flex-auto min-w-0 es-w-35 pr-2">
 				<p class="text-lg font-medium leading-6 text-gray-400">
@@ -218,6 +255,14 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 					);
 					?>
 			</div>
+
+			<?php
+            // XTEC ************ AFEGIT - Removed tips & tricks
+            // 2023.06.22 @Guillemduno
+            }
+            // *********** Fi
+            ?>
+
 		</section>
 	</main>
 </div>
