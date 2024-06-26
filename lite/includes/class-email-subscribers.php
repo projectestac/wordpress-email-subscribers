@@ -1413,16 +1413,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 
 				// Start-IG-Code.
 
-				// 2021.04.30 @aginard
-                if (is_xtec_super_admin()) {
-				// ************ Fi
-
 				require_once plugin_dir_path( __FILE__ ) . 'libraries/action-scheduler/action-scheduler.php';
-
-				// XTEC ************ AFEGIT - Blocked access to action scheduler to all users but xtecadmin
-                // 2021.04.30 @aginard
-				}
-				// ************ Fi
 
 				// End-IG-Code.
 
