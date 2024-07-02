@@ -134,28 +134,35 @@ class ES_Campaign_Report extends ES_List_Table {
 			}
 		}
 		?>
-		<div class="wrap max-w-7xl w-full">
-			<div class="wp-heading-inline flex items-center justify-between">
-				<div class="flex-shrink-0 break-words">
-					<h2 class="text-2xl font-medium leading-7 tracking-wide text-gray-900 pt-1">
-						<?php echo esc_html__( 'Report', 'email-subscribers' ); ?>
-					</h2>
-				</div>
+		<div class="font-san">
+			<div class="sticky top-0 z-10">
+				<header>
+					<nav aria-label="Global" class="pb-5 w-full pt-2">
+						<div class="brand-logo">
+							<span>
+								<img src="<?php echo ES_PLUGIN_URL . 'lite/admin/images/new/brand-logo/IG LOGO 192X192.svg'; ?>" alt="brand logo" />
+								<div class="divide"></div>
+								<h1><?php echo esc_html__( 'Report', 'email-subscribers' ); ?></h1>
+							</span>
+						</div>
+					</nav>
+				</header>
 			</div>
-			<div class="mt-3 pb-2 w-full bg-white rounded-md shadow flex">
-				<div class="w-3/4">
-					<div class="flex pl-6 pt-4">
-						<div class="w-auto inline-block text-xl text-gray-600 font-medium leading-7 truncate">
+
+			<div class="overview reports-statistic">
+				<div class="campaign-info">
+					<div class="campaign-title">
+						<div class="title">
 							<a href="<?php echo esc_url( $campaign_url ); ?>" target="_blank" title="<?php echo esc_attr__( 'Go to campaign', 'email-subscribers' ); ?>">
 								<?php echo esc_html( $notification['subject'] ); ?>
 							</a>
 						</div>
-						<div class="inline-block ml-2 font-semibold leading-5 tracking-wide text-xs">
+						<div class="campaign-sent-status">
 							<?php
 							switch ( $notification['status'] ) {
 								case 'Sent':
 									?>
-									<svg class="inline-block mt-1.5 ml-1 h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+									<svg class="sent" fill="currentColor" viewBox="0 0 20 20">
 										<title><?php echo esc_attr__( 'Sent', 'email-subscribers' ); ?></title>
 										<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
 									</svg>
@@ -163,7 +170,7 @@ class ES_Campaign_Report extends ES_List_Table {
 									break;
 								case 'In Queue':
 									?>
-								<svg class="inline-block mt-1.5 ml-1 h-5 w-5 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+								<svg class="queue" fill="currentColor" viewBox="0 0 20 20">
 									<title><?php echo esc_attr__( 'In Queue', 'email-subscribers' ); ?></title>
 									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
 								</svg>
@@ -171,7 +178,7 @@ class ES_Campaign_Report extends ES_List_Table {
 									break;
 								case 'Sending':
 									?>
-								<svg class="inline-block mt-1.5 ml-1 h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+								<svg class="sending" fill="currentColor" viewBox="0 0 20 20">
 									<title><?php echo esc_attr__( 'Sending', 'email-subscribers' ); ?></title>
 									<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/>
 								</svg>
@@ -179,25 +186,25 @@ class ES_Campaign_Report extends ES_List_Table {
 									break;
 								case '1':
 									?>
-								<span class="inline-flex px-2 text-green-800 bg-green-100 rounded-full"><?php echo esc_html__('Active', 'email-subscribers'); ?></span>
+								<span class="active"><?php echo esc_html__('Active', 'email-subscribers'); ?></span>
 							<?php
 									break;
 								case '':
 									?>
-									 <span class="inline-flex px-2 text-red-800 bg-red-100 rounded-full"><?php echo esc_html__('Inactive', 'email-subscribers'); ?></span>
+									 <span class="inactive"><?php echo esc_html__('Inactive', 'email-subscribers'); ?></span>
 						<?php } ?>
 						</div>
 					</div>
-					<div class="w-full text-gray-600 italic font-medium pt-4 text-sm leading-5 overflow-hidden">
-						<p class="pl-6 truncate"><?php echo esc_html__( 'Type: ', 'email-subscribers' ); ?>
-							<span class="pl-1 font-normal not-italic text-gray-900"><?php echo esc_html( $notification['type'] ); ?></span>
+					<div class="campaign-other-info">
+						<p class="type"><?php echo esc_html__( 'Type: ', 'email-subscribers' ); ?>
+							<span><?php echo esc_html( $notification['type'] ); ?></span>
 						</p>
-						<p class="pl-6 pt-2 truncate"><?php echo esc_html__( 'From: ', 'email-subscribers' ); ?>
-							<span class="pl-1 font-normal not-italic text-gray-900"><?php echo esc_html( $notification['from_email'] ); ?></span>
+						<p class="from"><?php echo esc_html__( 'From: ', 'email-subscribers' ); ?>
+							<span><?php echo esc_html( $notification['from_email'] ); ?></span>
 						</p>
-						<div class="pl-6 pt-2 inline-block truncate relative w-full">
+						<div class="recipient">
 						<span class="recipient-text"><?php echo esc_html__( 'Recipient(s): ', 'email-subscribers' ); ?></span>
-							<div class="pl-1 font-normal not-italic text-gray-900 inline-block truncate w-11/12" style="padding-left: 80px;">
+							<div class="recipient-info">
 								<?php
 								if ( ! empty( $notification['list_name'] ) ) {
 									echo esc_html( $notification['list_name'] );
@@ -210,39 +217,39 @@ class ES_Campaign_Report extends ES_List_Table {
 							</div>
 						</div>
 						<?php if ( ! in_array( $notification['type'], array( 'Sequence Message', 'Workflow Email' ), true ) ) { ?>
-						<p class="pl-6 pt-2 text-gray-600 "><?php echo esc_html__( 'Date: ', 'email-subscribers' ); ?>
-							<span class="pl-1 font-normal not-italic text-gray-900"><?php echo wp_kses_post( ig_es_format_date_time( $notification['start_at'] ) ); ?></span>
+						<p class="date"><?php echo esc_html__( 'Date: ', 'email-subscribers' ); ?>
+							<span><?php echo wp_kses_post( ig_es_format_date_time( $notification['start_at'] ) ); ?></span>
 						</p>
 					<?php } ?>
 					</div>
 				</div>
-				<div class="w-1/2">
-					<div class="flex-1 min-w-0">
-						<p class="pt-4 pl-8 text-lg font-medium leading-6 text-gray-400">
+				<div class="statistic-info">
+					<div class="stat-sec">
+						<p class="title">
 							<?php echo esc_html__( 'Statistics', 'email-subscribers' ); ?>
 						</p>
-						<div class="sm:grid sm:grid-cols-2 ml-6 mr-8">
+						<div class="stat-grid-sec">
 
 							<div class="p-2">
-								<span class = "text-2xl font-bold leading-none text-indigo-600">
+								<span class = "email_viewed_count">
 									<?php	echo esc_html( $report_kpi_statistics['email_viewed_count']); ?>
 								</span>
 
-								<span class = "text-xl font-bold leading-none text-indigo-600">
+								<span class = "open_rate">
 									<?php	echo esc_html( ' (' . $report_kpi_statistics['avg_open_rate'] . '%)'); ?>
 								</span>
 
-								<p class="mt-1 font-medium leading-6 text-gray-500">
+								<p class="opened">
 									<?php echo esc_html__( 'Opened', 'email-subscribers' ); ?>
 								</p>
 							</div>
 
 							<div class="p-2">
-								<span class = "text-2xl font-bold leading-none text-indigo-600">
+								<span class = "click_count">
 									<?php	echo esc_html( '0' ); ?>
 								</span>
 
-								<span class = "text-xl font-bold leading-none text-indigo-600">
+								<span class = "click_rate">
 									<?php	echo esc_html( '(0.00%)'); ?>
 								</span>
 								<?php
@@ -253,7 +260,7 @@ class ES_Campaign_Report extends ES_List_Table {
 						
 								$pricing_url = ES_Common::get_utm_tracking_url( $utm_args );
 								?>
-								<p class="mt-1 font-medium leading-6 text-gray-500">
+								<p class="clicked">
 									<?php echo esc_html__( 'Clicked', 'email-subscribers' ); ?>
 									<a target="_blank" href="<?php echo esc_url( $pricing_url ); ?>">
 										<span class="premium-icon max ml-2 mb-1"></span>
@@ -262,23 +269,23 @@ class ES_Campaign_Report extends ES_List_Table {
 							</div>
 
 							<div class="p-2">
-								<span class="text-2xl font-bold leading-none text-indigo-600">
+								<span class="total_email_sent">
 									<?php echo esc_html( $report_kpi_statistics['total_email_sent'] ); ?>
 								</span>
-								<p class="mt-1 font-medium leading-6 text-gray-500">
+								<p class="emailsent">
 									<?php echo esc_html__( 'Sent', 'email-subscribers' ); ?>
 								</p>
 							</div>
 
 							<div class="p-2">
-								<span class = "text-2xl font-bold leading-none text-indigo-600">
+								<span class = "email_unsubscribed_count">
 									<?php	echo esc_html( '0' ); ?>
 								</span>
 								<span class = "text-xl font-bold leading-none text-indigo-600">
 									<?php	echo esc_html( '(0.00%)' ); ?>
 								</span>
 
-								<p class="mt-1 font-medium leading-6 text-gray-500">
+								<p class="email_unsubscribed">
 									<?php echo esc_html__( 'Unsubscribed', 'email-subscribers' ); ?>
 									<a target="_blank" href="<?php echo esc_url( $pricing_url ); ?>">
 										<span class="premium-icon max ml-2 mb-1"></span>
@@ -521,7 +528,7 @@ class ES_Campaign_Report extends ES_List_Table {
 				break;
 			case 'Failed':
 				?>
-				<svg xmlns="http://www.w3.org/2000/svg" class="text-red-500" width="28" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+				<svg xmlns="http://www.w3.org/2000/svg" class="text-red-600" width="28" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 					<title><?php echo esc_html__( 'Failed', 'email-subscribers' ); ?></title>
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 				</svg>
@@ -748,10 +755,10 @@ class ES_Campaign_Report extends ES_List_Table {
 			}
 			?>
 
-			<div class="wrap">
+			<div>
 				<?php if ( ! ES()->is_pro() && ! $insight ) { ?>
 					<?php do_action( 'ig_es_view_report_data_lite', $hash ); ?>
-					<a href="?page=es_reports&action=view&list=<?php echo esc_attr( $hash ); ?>&_wpnonce=<?php echo esc_attr( $_wpnonce ); ?>&insight=true" class="float-right top-10 relative ig-es-title-button px-2 py-2 mx-2 -mt-2 ig-es-imp-button cursor-pointer"><?php esc_html_e( 'Campaign Analytics', 'email-subscribers' ); ?></a>
+					<a href="?page=es_reports&action=view&list=<?php echo esc_attr( $hash ); ?>&_wpnonce=<?php echo esc_attr( $_wpnonce ); ?>&insight=true" class="campaign-analitics-btn"><button type="button" class="primary"><?php esc_html_e( 'Campaign Analytics', 'email-subscribers' ); ?></button></a>
 				<?php } ?>
 			</div>
 			<div class="mt-2 mb-2 inline-block relative es-activity-viewed-count">

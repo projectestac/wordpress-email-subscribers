@@ -6,7 +6,7 @@ Tags: email marketing, email subscribers, newsletters, autoresponders, email aut
 Requires at least: 3.9
 Tested up to: 6.5.2
 Requires PHP: 7.0
-Stable tag: 5.7.24
+Stable tag: 5.7.26
 License: GPLv3
 
 License URI: http://www.gnu.org/licenses
@@ -438,23 +438,36 @@ Refer [here](https://www.icegram.com/documentation/es-faq/).
 
 == Upgrade Notice ==
 
-= 5.7.24 =
+= 5.7.26 =
 
-* Fix: SQL Injection vulnerability during subscription - CVE-2024-5756 [Thanks to Wordfence team]
-* Update: Improved dashboard UI
+* Fix: Broken UI when previewing campaign on Reports page in some cases
+* Fix: SQL injection vulnerability during unsubscription - CVE-2024-6172 [Thanks to Wordfence & Patchstack teams]
+* Fix: Fatal error when activating plugin from plugins' search page
 
 == Changelog ==
 
+**5.7.26 (26.06.2024)**
+
+* Fix: Broken UI when previewing campaign on Reports page in some cases
+* Fix: SQL injection vulnerability during unsubscription - CVE-2024-6172 [Thanks to Wordfence & Patchstack teams]
+* Fix: Fatal error when activating plugin from plugins' search page
+
+**5.7.25 (20.06.2024)**
+
+* Update: Improved campaign reports UI
+* Fix: Broken Dashboard UI
+* Fix: Sequence emails not triggering for imported users in some cases [MAX]
+
 **5.7.24 (12.06.2024)**
 
-* Fix: SQL Injection vulnerability during subscription - CVE-2024-5756 [Thanks to Wordfence team]
+* Fix: SQL injection vulnerability during subscription - CVE-2024-5756 [Thanks to Wordfence team]
 * Update: Improved dashboard UI
 
 **5.7.23 (06.06.2024)**
 
 * Fix: "Post image size" setting field was not displaying all registered image sizes
 * Fix: Paused campaign was getting sent to all subscribers while saving in some cases [PRO]
-* Fix: SQL Injection vulnerability during contact import - CVE-2024-4845 [Thanks to Wordfence team]
+* Fix: SQL injection vulnerability during contact import - CVE-2024-4845 [Thanks to Wordfence team]
 
 **5.7.22 (29.05.2024)**
 
@@ -468,7 +481,7 @@ Refer [here](https://www.icegram.com/documentation/es-faq/).
 **5.7.21 (22.05.2024)**
 
 * Improvements: New WordPress filter 'ig_es_validate_subscription' to enable custom subscription validation
-* Fix: Unauthenticated SQL Injection vulnerability - CVE-2024-4295 [Thanks to Wordfence team]
+* Fix: Unauthenticated SQL injection vulnerability - CVE-2024-4295 [Thanks to Wordfence team]
 * Fix: Campaign title getting used in email subject for post notification campaigns
 * Fix: Issue while editing campaign title
 * Fix: Style issues with custom fields [MAX]

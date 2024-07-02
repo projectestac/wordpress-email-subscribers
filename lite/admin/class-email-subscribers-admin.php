@@ -162,12 +162,12 @@ class Email_Subscribers_Admin {
 		$current_action 	   = ig_es_get_request_data( 'action' );
 		
 		//This below condition will helping to apply main.css file on forms add & update DND editor page.
-		$es_forms = ( 'es_forms' == $current_page && ( isset($current_action) && ( 'new' == $current_action || 'edit' == $current_action ) ) ) ? '' : 'es_forms';
+		$es_forms = ( $current_page == 'es_forms' && ( isset($current_action) && ( $current_action == 'new' || $current_action == 'edit' ) ) ) ? '' : 'es_forms';
 
 		//This below condition will helping to apply main.css file on dashboard onboarding process.
-		$es_dashboard = ( get_option( 'ig_es_onboarding_complete', 'no' ) !== 'yes' ) ? '' : 'es_dashboard';
+		$es_dashboard = ( IG_ES_Onboarding::is_onboarding_completed() ) ? 'es_dashboard' : '';
 		
-		$enqueue_tailwind 	   = in_array( $current_page, array( 'es_gallery', 'es_campaigns', 'es_subscribers', 'es_lists', $es_forms, 'es_custom_fields', 'es_settings', $es_dashboard ), true );
+		$enqueue_tailwind 	   = in_array( $current_page, array( 'es_gallery', 'es_campaigns', 'es_subscribers', 'es_lists', $es_forms, 'es_custom_fields', 'es_settings', $es_dashboard, 'es_reports' ), true );
 		
 		if ( ! $enqueue_tailwind ) {
 			wp_enqueue_style( 'ig-es-style', plugin_dir_url( __FILE__ ) . 'dist/main.css', array(), $this->version, 'all' );

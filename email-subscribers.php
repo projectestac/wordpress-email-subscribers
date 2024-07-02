@@ -3,7 +3,7 @@
  * Plugin Name: Icegram Express - Email Subscribers, Newsletters and Marketing Automation Plugin
  * Plugin URI: https://www.icegram.com/
  * Description: Add subscription forms on website, send HTML newsletters & automatically notify subscribers about new blog posts once it is published.
- * Version: 5.7.24
+ * Version: 5.7.26
  * Author: Icegram
  * Author URI: https://www.icegram.com/
  * Requires at least: 3.9
@@ -187,7 +187,7 @@ if ( 'premium' === $ig_es_plan ) {
 /* ***************************** Initial Compatibility Work (End) ******************* */
 
 if ( ! defined( 'ES_PLUGIN_VERSION' ) ) {
-	define( 'ES_PLUGIN_VERSION', '5.7.24' );
+	define( 'ES_PLUGIN_VERSION', '5.7.26' );
 }
 
 // Plugin Folder Path.

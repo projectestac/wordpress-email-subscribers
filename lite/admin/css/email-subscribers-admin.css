@@ -1837,8 +1837,8 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
 }
 
 .es-activity-viewed-count{
-	top: 2.1rem;
-	left: 7.5rem;
+	top: 3.3rem;
+	left: 8.5rem;
 }
 
 @media only screen and (max-width: 1080px) and (min-width: 768px) {
@@ -1852,7 +1852,7 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
 
 .wp-core-ui #poststuff select,  .wp-core-ui .search-box input[name="s"], .wp-core-ui #bulk-action-selector-top, .wp-core-ui #filter-by-date {
 	border-color: #a0aec0;
-	width: 8rem;
+	width: 10rem;
 }
 
 .wp-core-ui #search-submit, .wp-core-ui #doaction, .wp-core-ui #doaction2, .wp-core-ui #post-query-submit{
@@ -1979,7 +1979,7 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
 }
 
 #es_country_flag, .es_campaign_report #country_flag{
-	width:3em !important;
+	width:7em !important;
 }
 
 .es_campaign_report:not( .es_campaign_premium ) #email{
@@ -1992,7 +1992,7 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
 }
 
 .es_campaign_report #status {
-	width: 6em !important;
+	width: 8em !important;
 }
 
 .es_campaign_report #os{
@@ -3034,7 +3034,7 @@ body.icegram-express_page_es_forms #wpcontent {
 }
 
 /* Bulk action button css */
-.icegram-express_page_es_subscribers #doaction, .icegram-express_page_es_lists #doaction, .icegram-express_page_es_lists #doaction2, .icegram-express_page_es_forms #doaction, .icegram-express_page_es_forms #doaction2 {
+.icegram-express_page_es_subscribers #doaction, .icegram-express_page_es_lists #doaction, .icegram-express_page_es_lists #doaction2, .icegram-express_page_es_forms #doaction, .icegram-express_page_es_forms #doaction2, .icegram-express_page_es_reports #doaction, .icegram-express_page_es_reports #doaction2  {
     background-color: var(--secondary);
     --tw-text-opacity: 1;
     color: rgb(22 30 46 / var(--tw-text-opacity));
@@ -3049,7 +3049,7 @@ body.icegram-express_page_es_forms #wpcontent {
     font-weight: 600;
 }
 
-.icegram-express_page_es_subscribers #doaction:hover, .icegram-express_page_es_lists #doaction:hover, .icegram-express_page_es_lists #doaction2:hover, .icegram-express_page_es_forms #doaction:hover, .icegram-express_page_es_forms #doaction2:hover {
+.icegram-express_page_es_subscribers #doaction:hover, .icegram-express_page_es_lists #doaction:hover, .icegram-express_page_es_lists #doaction2:hover, .icegram-express_page_es_forms #doaction:hover, .icegram-express_page_es_forms #doaction2:hover, .icegram-express_page_es_reports #doaction:hover, .icegram-express_page_es_reports #doaction2:hover {
     --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
     --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0.5px + var(--tw-ring-offset-width)) var(--tw-ring-color);
     -webkit-box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);

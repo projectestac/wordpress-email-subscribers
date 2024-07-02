@@ -2244,7 +2244,7 @@ input[type="time"] {
           box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
   --tw-ring-color: var(--brand-color-2) !important;
 }
-.ig-es-list-table, .es-audience-view, .es-lists-table, .es-forms-table, .es-custom-field-table {
+.ig-es-list-table, .es-audience-view, .es-lists-table, .es-forms-table, .es-custom-field-table, .es-reports-view, .es-campaign-reports-table {
   margin-top: 1.25rem;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2254,54 +2254,54 @@ input[type="time"] {
       -ms-flex-direction: column;
           flex-direction: column;
 }
-.ig-es-list-table > :not([hidden]) ~ :not([hidden]), .es-audience-view > :not([hidden]) ~ :not([hidden]), .es-lists-table > :not([hidden]) ~ :not([hidden]), .es-forms-table > :not([hidden]) ~ :not([hidden]), .es-custom-field-table > :not([hidden]) ~ :not([hidden]) {
+.ig-es-list-table > :not([hidden]) ~ :not([hidden]), .es-audience-view > :not([hidden]) ~ :not([hidden]), .es-lists-table > :not([hidden]) ~ :not([hidden]), .es-forms-table > :not([hidden]) ~ :not([hidden]), .es-custom-field-table > :not([hidden]) ~ :not([hidden]), .es-reports-view > :not([hidden]) ~ :not([hidden]), .es-campaign-reports-table > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1.25rem * var(--tw-space-y-reverse));
 }
-.ig-es-list-table, .es-audience-view, .es-lists-table, .es-forms-table, .es-custom-field-table {
+.ig-es-list-table, .es-audience-view, .es-lists-table, .es-forms-table, .es-custom-field-table, .es-reports-view, .es-campaign-reports-table {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
   padding: 1rem;
 }
-.ig-es-list-table h2,.es-audience-view h2,.es-lists-table h2,.es-forms-table h2,.es-custom-field-table h2 {
+.ig-es-list-table h2,.es-audience-view h2,.es-lists-table h2,.es-forms-table h2,.es-custom-field-table h2,.es-reports-view h2,.es-campaign-reports-table h2 {
   margin-top: -1.25rem;
 }
-.ig-es-list-table .table, .es-audience-view .table, .es-lists-table .table, .es-forms-table .table, .es-custom-field-table .table, .ig-es-list-table #post-body-content, .es-audience-view #post-body-content, .es-lists-table #post-body-content, .es-forms-table #post-body-content, .es-custom-field-table #post-body-content {
+.ig-es-list-table .table, .es-audience-view .table, .es-lists-table .table, .es-forms-table .table, .es-custom-field-table .table, .es-reports-view .table, .es-campaign-reports-table .table, .ig-es-list-table #post-body-content, .es-audience-view #post-body-content, .es-lists-table #post-body-content, .es-forms-table #post-body-content, .es-custom-field-table #post-body-content, .es-reports-view #post-body-content, .es-campaign-reports-table #post-body-content {
   margin-left: -1rem;
   margin-right: -1rem;
   width: 100%;
 }
 @media (min-width: 640px) {
 
-  .ig-es-list-table .table, .es-audience-view .table, .es-lists-table .table, .es-forms-table .table, .es-custom-field-table .table, .ig-es-list-table #post-body-content, .es-audience-view #post-body-content, .es-lists-table #post-body-content, .es-forms-table #post-body-content, .es-custom-field-table #post-body-content {
+  .ig-es-list-table .table, .es-audience-view .table, .es-lists-table .table, .es-forms-table .table, .es-custom-field-table .table, .es-reports-view .table, .es-campaign-reports-table .table, .ig-es-list-table #post-body-content, .es-audience-view #post-body-content, .es-lists-table #post-body-content, .es-forms-table #post-body-content, .es-custom-field-table #post-body-content, .es-reports-view #post-body-content, .es-campaign-reports-table #post-body-content {
     margin-left: 0;
     margin-right: 0;
     border-radius: 0.125rem;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) table, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .contacts, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .lists, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .forms, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .customfields {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) table, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .contacts, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .lists, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .forms, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .customfields, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .reports {
   width: 100%;
   min-width: 100%;
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) table > :not([hidden]) ~ :not([hidden]), :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .contacts > :not([hidden]) ~ :not([hidden]), :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .lists > :not([hidden]) ~ :not([hidden]), :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .forms > :not([hidden]) ~ :not([hidden]), :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .customfields > :not([hidden]) ~ :not([hidden]) {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) table > :not([hidden]) ~ :not([hidden]), :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .contacts > :not([hidden]) ~ :not([hidden]), :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .lists > :not([hidden]) ~ :not([hidden]), :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .forms > :not([hidden]) ~ :not([hidden]), :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .customfields > :not([hidden]) ~ :not([hidden]), :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .reports > :not([hidden]) ~ :not([hidden]) {
   --tw-divide-y-reverse: 0;
   border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
   border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
   border-color: var(--lighter-gray);
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .contacts, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .lists, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .forms, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .customfields {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .contacts, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .lists, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .forms, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .customfields, :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .reports {
   margin-top: 1.25rem;
   border-width: 0px;
 }
-:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info) :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .contacts,:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info)  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .lists,:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info)  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .forms,:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info)  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .customfields {
+:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info) :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .contacts,:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info)  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .lists,:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info)  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .forms,:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info)  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .customfields,:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info)  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .reports {
       border-width: 0px;
   }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .contacts tbody tr,:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .lists tbody tr,:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .forms tbody tr,:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) .customfields tbody tr {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .contacts tbody tr,:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .lists tbody tr,:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .forms tbody tr,:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .customfields tbody tr,:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) .reports tbody tr {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) input.checkbox {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) input.checkbox {
   position: absolute;
   left: 1rem;
   top: 50%;
@@ -2313,10 +2313,10 @@ input[type="time"] {
   border-color: rgb(210 214 220 / var(--tw-border-opacity));
   color: var(--brand-color);
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) input.checkbox:focus {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) input.checkbox:focus {
   --tw-ring-color: transparent;
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead {
   background-color: var(--light-gray);
   font-size: 0.75rem;
   line-height: 1rem;
@@ -2324,7 +2324,7 @@ input[type="time"] {
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity));
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead input#cb-select-all-1 {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead input#cb-select-all-1 {
   position: absolute;
   left: 1rem;
   top: 50%;
@@ -2337,22 +2337,22 @@ input[type="time"] {
   border-color: rgb(210 214 220 / var(--tw-border-opacity));
   color: var(--brand-color);
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead input#cb-select-all-1:focus {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead input#cb-select-all-1:focus {
   --tw-ring-color: transparent;
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead th:first-of-type {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead th:first-of-type {
   position: relative;
   padding-left: 1.75rem;
   padding-right: 1.75rem;
 }
 @media (min-width: 640px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead th:first-of-type {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead th:first-of-type {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead th:nth-child(2) {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead th:nth-child(2) {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-left: 1rem;
@@ -2361,11 +2361,11 @@ input[type="time"] {
 }
 @media (min-width: 640px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead th:nth-child(2) {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead th:nth-child(2) {
     padding-left: 1.5rem;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead th {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead th {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   padding-top: 0.5rem;
@@ -2374,11 +2374,11 @@ input[type="time"] {
 }
 @media (min-width: 1024px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead th {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead th {
     display: table-cell;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead th:nth-child(6) {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead th:nth-child(6) {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   padding-top: 0.5rem;
@@ -2387,11 +2387,11 @@ input[type="time"] {
 }
 @media (min-width: 1024px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead th:nth-child(6) {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead th:nth-child(6) {
     display: table-cell;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead th:last-of-type {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead th:last-of-type {
   position: relative;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -2401,57 +2401,60 @@ input[type="time"] {
 }
 @media (min-width: 640px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) thead th:last-of-type {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead th:last-of-type {
     padding-right: 1.5rem;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody > :not([hidden]) ~ :not([hidden]) {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) thead th#subject {
+  width: 16.666667%;
+}
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody > :not([hidden]) ~ :not([hidden]) {
   --tw-divide-y-reverse: 0;
   border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
   border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
   border-color: var(--lighter-gray);
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody {
   border-width: 0px;
 }
-:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info) :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody {
+:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info) :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody {
       border-width: 0px;
   }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody th:first-of-type {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody th:first-of-type {
   position: relative;
   padding-left: 1.75rem;
   padding-right: 1.75rem;
 }
 @media (min-width: 640px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody th:first-of-type {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody th:first-of-type {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody th:first-of-type input.checkbox {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody th:first-of-type input.checkbox {
   margin-left: 0;
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody tr:first-of-type {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody tr:first-of-type {
   border-width: 0px;
 }
-:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info) :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody tr:first-of-type {
+:is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info) :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody tr:first-of-type {
       border-width: 0px;
   }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody td:first-of-type {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td:first-of-type {
   position: relative;
   padding-left: 1.75rem;
   padding-right: 1.75rem;
 }
 @media (min-width: 640px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody td:first-of-type {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td:first-of-type {
     width: 3rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody td:nth-child(2) {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td:nth-child(2) {
   position: relative;
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -2462,11 +2465,11 @@ input[type="time"] {
 }
 @media (min-width: 640px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody td:nth-child(2) {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td:nth-child(2) {
     padding-left: 1.5rem;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody td {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   padding-top: 0.875rem;
@@ -2479,11 +2482,11 @@ input[type="time"] {
 }
 @media (min-width: 1024px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody td {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td {
     display: table-cell;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody td:nth-child(6) {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td:nth-child(6) {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   padding-top: 0.875rem;
@@ -2494,7 +2497,7 @@ input[type="time"] {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody td:last-of-type {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td:last-of-type {
   position: relative;
   padding-top: 0.875rem;
   padding-bottom: 0.875rem;
@@ -2507,11 +2510,67 @@ input[type="time"] {
 }
 @media (min-width: 640px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody td:last-of-type {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td:last-of-type {
     padding-right: 1.5rem;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody .list-item {
+/* reports table column */
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td.status .status-sent {
+  height: 1.5rem;
+  width: 1.5rem;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+  --tw-text-opacity: 1;
+  color: rgb(49 196 141 / var(--tw-text-opacity));
+}
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td.status .status-sending {
+  display: inline;
+  height: 1.5rem;
+  width: 1.5rem;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+  --tw-text-opacity: 1;
+  color: rgb(227 160 8 / var(--tw-text-opacity));
+}
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td.status .status-paused {
+  display: inline;
+  height: 1.5rem;
+  width: 1.5rem;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td.status .status-queued {
+  display: inline;
+  height: 1.5rem;
+  width: 1.5rem;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+  --tw-text-opacity: 1;
+  color: rgb(255 138 76 / var(--tw-text-opacity));
+}
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td.status .status-failed {
+  display: inline;
+  height: 1.5rem;
+  width: 1.5rem;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+  --tw-text-opacity: 1;
+  color: rgb(240 82 82 / var(--tw-text-opacity));
+}
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td.status .status-send-now {
+  display: inline;
+  height: 1.5rem;
+  width: 1.5rem;
+  --tw-text-opacity: 1;
+  color: rgb(227 160 8 / var(--tw-text-opacity));
+}
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody td.column-finish_at {
+  text-align: left;
+}
+/* End */
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody .list-item {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2523,17 +2582,17 @@ input[type="time"] {
       -ms-flex-align: center;
           align-items: center;
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody .list-item > :not([hidden]) ~ :not([hidden]) {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody .list-item > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 0;
   margin-right: calc(0.625rem * var(--tw-space-x-reverse));
   margin-left: calc(0.625rem * calc(1 - var(--tw-space-x-reverse)));
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody .list-item .avatar {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody .list-item .avatar {
   border-radius: 0.375rem;
   background-color: var(--lighter-gray);
   padding: 1rem;
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody .list-item .avatar img {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody .list-item .avatar img {
   height: 100%;
   max-height: 100%;
   width: 100%;
@@ -2542,7 +2601,7 @@ input[type="time"] {
   -o-object-fit: contain;
      object-fit: contain;
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody .list-item .item-details {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody .list-item .item-details {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2552,11 +2611,11 @@ input[type="time"] {
           flex-direction: column;
   gap: 0.375rem;
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody .list-item .item-details p {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody .list-item .item-details p {
   font-size: 15px;
   font-weight: 600;
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody .list-item .item-details .item-meta {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tbody .list-item .item-details .item-meta {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2568,41 +2627,7 @@ input[type="time"] {
   --tw-text-opacity: 1;
   color: rgb(159 166 178 / var(--tw-text-opacity));
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody .status {
-  margin-left: auto;
-  margin-right: auto;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  gap: 0.375rem;
-  text-align: center;
-}
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody .status p {
-  display: -webkit-inline-box;
-  display: -ms-inline-flexbox;
-  display: inline-flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  font-size: 15px;
-  font-weight: 600;
-}
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tbody .status .sub-text {
-  font-size: 13px;
-  --tw-text-opacity: 1;
-  color: rgb(159 166 178 / var(--tw-text-opacity));
-}
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot {
   background-color: var(--light-gray);
   font-size: 0.75rem;
   line-height: 1rem;
@@ -2610,7 +2635,7 @@ input[type="time"] {
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity));
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot input#cb-select-all-2 {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot input#cb-select-all-2 {
   position: absolute;
   left: 1rem;
   top: 50%;
@@ -2623,22 +2648,22 @@ input[type="time"] {
   border-color: rgb(210 214 220 / var(--tw-border-opacity));
   color: var(--brand-color);
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot input#cb-select-all-2:focus {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot input#cb-select-all-2:focus {
   --tw-ring-color: transparent;
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot th:first-of-type {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot th:first-of-type {
   position: relative;
   padding-left: 1.75rem;
   padding-right: 1.75rem;
 }
 @media (min-width: 640px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot th:first-of-type {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot th:first-of-type {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot th:nth-child(2) {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot th:nth-child(2) {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-left: 1rem;
@@ -2647,11 +2672,11 @@ input[type="time"] {
 }
 @media (min-width: 640px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot th:nth-child(2) {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot th:nth-child(2) {
     padding-left: 1.5rem;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot th {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot th {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   padding-top: 0.5rem;
@@ -2660,11 +2685,11 @@ input[type="time"] {
 }
 @media (min-width: 1024px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot th {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot th {
     display: table-cell;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot th:nth-child(6) {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot th:nth-child(6) {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   padding-top: 0.5rem;
@@ -2673,11 +2698,11 @@ input[type="time"] {
 }
 @media (min-width: 1024px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot th:nth-child(6) {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot th:nth-child(6) {
     display: table-cell;
   }
 }
-:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot th:last-of-type {
+:is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot th:last-of-type {
   position: relative;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -2687,7 +2712,7 @@ input[type="time"] {
 }
 @media (min-width: 640px) {
 
-  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content) tfoot th:last-of-type {
+  :is(.ig-es-list-table .table,.es-audience-view .table,.es-lists-table .table,.es-forms-table .table,.es-custom-field-table .table,.es-reports-view .table,.es-campaign-reports-table .table,.ig-es-list-table #post-body-content,.es-audience-view #post-body-content,.es-lists-table #post-body-content,.es-forms-table #post-body-content,.es-custom-field-table #post-body-content,.es-reports-view #post-body-content,.es-campaign-reports-table #post-body-content) tfoot th:last-of-type {
     padding-right: 1.5rem;
   }
 }
@@ -4727,6 +4752,483 @@ table td
   color: rgb(88 80 236 / var(--tw-text-opacity));
 }
 /* End */
+/* Reports dashboard CSS */
+.reports-statistic {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+.reports-statistic .campaign-info {
+  width: 75%;
+}
+.reports-statistic .campaign-info .campaign-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding-left: 1.5rem;
+  padding-top: 1rem;
+}
+.reports-statistic .campaign-info .campaign-title .title {
+  display: inline-block;
+  width: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.75rem;
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+.reports-statistic .campaign-info .campaign-title .campaign-sent-status {
+  margin-left: 0.5rem;
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  letter-spacing: 0.025em;
+}
+.reports-statistic .campaign-info .campaign-title .campaign-sent-status .sent {
+  margin-top: 0.375rem;
+  margin-left: 0.25rem;
+  display: inline-block;
+  height: 1.25rem;
+  width: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(49 196 141 / var(--tw-text-opacity));
+}
+.reports-statistic .campaign-info .campaign-title .campaign-sent-status .queue {
+  margin-top: 0.375rem;
+  margin-left: 0.25rem;
+  display: inline-block;
+  height: 1.25rem;
+  width: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(255 138 76 / var(--tw-text-opacity));
+}
+.reports-statistic .campaign-info .campaign-title .campaign-sent-status .sending {
+  margin-top: 0.375rem;
+  margin-left: 0.25rem;
+  display: inline-block;
+  height: 1.25rem;
+  width: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(227 160 8 / var(--tw-text-opacity));
+}
+.reports-statistic .campaign-info .campaign-title .campaign-sent-status .active {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  border-radius: 9999px;
+  --tw-bg-opacity: 1;
+  background-color: rgb(222 247 236 / var(--tw-bg-opacity));
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  --tw-text-opacity: 1;
+  color: rgb(3 84 63 / var(--tw-text-opacity));
+}
+.reports-statistic .campaign-info .campaign-title .campaign-sent-status .inactive {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  border-radius: 9999px;
+  --tw-bg-opacity: 1;
+  background-color: rgb(253 232 232 / var(--tw-bg-opacity));
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  --tw-text-opacity: 1;
+  color: rgb(155 28 28 / var(--tw-text-opacity));
+}
+.reports-statistic .campaign-info .campaign-other-info {
+  width: 100%;
+  overflow: hidden;
+  padding-top: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+.reports-statistic .campaign-info .campaign-other-info .type {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-left: 1.5rem;
+}
+.reports-statistic .campaign-info .campaign-other-info .type span {
+  padding-left: 0.25rem;
+  font-weight: 400;
+  font-style: normal;
+  --tw-text-opacity: 1;
+  color: rgb(22 30 46 / var(--tw-text-opacity));
+}
+.reports-statistic .campaign-info .campaign-other-info .from {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-left: 1.5rem;
+  padding-top: 0.5rem;
+}
+.reports-statistic .campaign-info .campaign-other-info .from span {
+  padding-left: 0.25rem;
+  font-weight: 400;
+  font-style: normal;
+  --tw-text-opacity: 1;
+  color: rgb(22 30 46 / var(--tw-text-opacity));
+}
+.reports-statistic .campaign-info .campaign-other-info .recipient {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-left: 1.5rem;
+  padding-top: 0.5rem;
+}
+.reports-statistic .campaign-info .campaign-other-info .recipient .recipient-info {
+  display: inline-block;
+  width: 91.666667%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-left: 6rem;
+  font-weight: 400;
+  font-style: normal;
+  --tw-text-opacity: 1;
+  color: rgb(22 30 46 / var(--tw-text-opacity));
+}
+.reports-statistic .campaign-info .campaign-other-info .date {
+  padding-left: 1.5rem;
+  padding-top: 0.5rem;
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+.reports-statistic .campaign-info .campaign-other-info .date span {
+  padding-left: 0.25rem;
+  font-weight: 400;
+  font-style: normal;
+  --tw-text-opacity: 1;
+  color: rgb(22 30 46 / var(--tw-text-opacity));
+}
+.reports-statistic .statistic-info {
+  width: 50%;
+}
+.reports-statistic .statistic-info .stat-sec {
+  min-width: 0;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 0%;
+          flex: 1 1 0%;
+}
+.reports-statistic .statistic-info .stat-sec .title {
+  padding-left: 2rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  --tw-text-opacity: 1;
+  color: rgb(159 166 178 / var(--tw-text-opacity));
+}
+.reports-statistic .statistic-info .stat-sec .stat-grid-sec {
+  margin-left: 1.5rem;
+  margin-right: 2rem;
+}
+@media (min-width: 640px) {
+
+  .reports-statistic .statistic-info .stat-sec .stat-grid-sec {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.reports-statistic .statistic-info .stat-sec .stat-grid-sec {
+
+        /* .email_sent, .email_unsubscribed {
+          @apply mt-1 font-medium leading-6 text-gray-500";
+        } */
+      }
+.reports-statistic .statistic-info .stat-sec .stat-grid-sec .email_viewed_count {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  --tw-text-opacity: 1;
+  color: rgb(88 80 236 / var(--tw-text-opacity));
+}
+.reports-statistic .statistic-info .stat-sec .stat-grid-sec .open_rate {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  --tw-text-opacity: 1;
+  color: rgb(88 80 236 / var(--tw-text-opacity));
+}
+.reports-statistic .statistic-info .stat-sec .stat-grid-sec .opened {
+  margin-top: 0.25rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+.reports-statistic .statistic-info .stat-sec .stat-grid-sec .click_count {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  --tw-text-opacity: 1;
+  color: rgb(88 80 236 / var(--tw-text-opacity));
+}
+.reports-statistic .statistic-info .stat-sec .stat-grid-sec .click_rate {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  --tw-text-opacity: 1;
+  color: rgb(88 80 236 / var(--tw-text-opacity));
+}
+.reports-statistic .statistic-info .stat-sec .stat-grid-sec .clicked {
+  margin-top: 0.25rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+.reports-statistic .statistic-info .stat-sec .stat-grid-sec .total_email_sent, .reports-statistic .statistic-info .stat-sec .stat-grid-sec .email_unsubscribed_count {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  --tw-text-opacity: 1;
+  color: rgb(88 80 236 / var(--tw-text-opacity));
+}
+.reports-statistic .empty_country_data {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+.system_info {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+  padding: 1rem;
+}
+.system_info p {
+  padding-top: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.75rem;
+  letter-spacing: 0.025em;
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+.system_info .info {
+  position: relative;
+  margin-top: 0.5rem;
+  border-radius: 0.375rem;
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+  -webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+          box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.system_info .no-info {
+  margin-top: 0.5rem;
+  border-radius: 0.375rem;
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  letter-spacing: 0.025em;
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
+  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+  -webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+          box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.campaign-analitics-btn {
+  position: relative;
+  top: 2.5rem;
+  float: right;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  margin-top: -0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.campaign-msg-box {
+  position: sticky;
+  z-index: 40;
+  height: 0;
+}
+@media (min-width: 1024px) {
+
+  .campaign-msg-box {
+    width: 60%;
+  }
+}
+@media (min-width: 1280px) {
+
+  .campaign-msg-box {
+    width: 40%;
+  }
+}
+.icegram-express_page_es_reports nav {
+  padding-top: 2.5rem;
+}
+/* Report preview template css*/
+#report_preview_template .report_template_div {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+#report_preview_template .report_template_div .template-abs-div {
+  position: absolute;
+  margin-left: 4rem;
+  margin-right: 1rem;
+  height: auto;
+  border-radius: 0.25rem;
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  padding: 1rem;
+  text-align: left;
+  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  -webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+          box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+@media (min-width: 768px) {
+
+  #report_preview_template .report_template_div .template-abs-div {
+    max-width: 64rem;
+    padding: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+
+  #report_preview_template .report_template_div .template-abs-div {
+    padding: 2rem;
+  }
+}
+#report_preview_template .report_template_div .template-abs-div a {
+  --tw-text-opacity: 1;
+  color: rgb(88 80 236 / var(--tw-text-opacity));
+}
+#report_preview_template .report_template_div .template-abs-div h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+#report_preview_template .report_template_div .template-abs-div p.sub-heading {
+  margin: 1rem;
+  text-align: center;
+}
+#report_preview_template .report_template_div .template-abs-div .report_preview_container {
+  margin: 1rem;
+}
+#report_preview_template .report_template_div .template-abs-div .temp-btn-div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+#report_preview_template .report_template_div .template-abs-div .temp-btn-div #es_close_preview {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  border-radius: 0.25rem;
+  border-width: 1px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+#report_preview_template .report_template_div .template-abs-div .temp-btn-div #es_close_preview:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(249 128 128 / var(--tw-border-opacity));
+}
+#report_preview_template .report_template_div .template-abs-div .temp-btn-div #es_close_preview:focus {
+  --tw-shadow: 0 0 0 3px rgba(248, 180, 180, 0.45);
+  --tw-shadow-colored: 0 0 0 3px var(--tw-shadow-color);
+  -webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+          box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+#report_preview_template .report_template_div .template-abs-div .temp-btn-div #es_close_preview:active {
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  -webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+          box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+/* End */
+/* process queue */
+.ig-es-process-queue .queue_text {
+  padding-left: 2.5rem;
+}
+/* End */
+/* Link activity table css */
+.link-activty .link-heading {
+  margin-top: 1.5rem;
+  padding-top: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.75rem;
+  letter-spacing: 0.025em;
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+.link-activty #es_reports_link_activity {
+  width: 100%;
+  table-layout: fixed;
+}
+.link-activty #es_reports_link_activity tbody tr:last-of-type {
+  border-bottom-width: 0px;
+}
+/* End */
+.country-info-table table tbody tr:last-of-type {
+  border-bottom-width: 0px;
+}
+.mail-client-info table tbody tr:last-of-type {
+  border-bottom-width: 0px;
+}
+/* End */
 /* settings page radio button CSS */
 #send_time_optimizer_section label, #ig_es_mailer_settings-field-row label {
   display: inline-block;
@@ -4848,7 +5350,7 @@ table td
 :is(.es-import-option,#ig_es_mailer_settings-field-row,#icegram-mailer-info) .select2-selection__choice__remove {
       border-width: 0px !important;
   }
-.icegram-express_page_es_gallery #wpcontent,.icegram-express_page_es_campaigns #wpcontent,.icegram-express_page_es_subscribers #wpcontent,.icegram-express_page_es_lists #wpcontent,.icegram-express_page_es_forms #wpcontent,.icegram-express_page_es_custom_fields #wpcontent,.icegram-express_page_es_settings #wpcontent,.toplevel_page_es_dashboard #wpcontent{
+.icegram-express_page_es_gallery #wpcontent,.icegram-express_page_es_campaigns #wpcontent,.icegram-express_page_es_subscribers #wpcontent,.icegram-express_page_es_lists #wpcontent,.icegram-express_page_es_forms #wpcontent,.icegram-express_page_es_custom_fields #wpcontent,.icegram-express_page_es_settings #wpcontent,.toplevel_page_es_dashboard #wpcontent,.icegram-express_page_es_reports #wpcontent{
   padding-left: 0;
   background-color: white;
  }

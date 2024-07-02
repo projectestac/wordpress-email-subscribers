@@ -387,17 +387,17 @@ table td
     @apply block w-full px-4 py-1.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-sm bg-white focus:ring-[0.5px] focus:ring-tertiary !important;
   }
   
-  .ig-es-list-table, .es-audience-view, .es-lists-table, .es-forms-table, .es-custom-field-table {
+  .ig-es-list-table, .es-audience-view, .es-lists-table, .es-forms-table, .es-custom-field-table, .es-reports-view, .es-campaign-reports-table {
     @apply flex flex-col bg-white space-y-5 p-4 mt-5;
     h2{
       @apply -mt-5;
     }
     .table, #post-body-content{
       @apply -mx-4 sm:mx-0 sm:rounded-sm w-full;
-      table, .contacts, .lists, .forms, .customfields {
+      table, .contacts, .lists, .forms, .customfields, .reports {
         @apply min-w-full divide-y divide-lighter-gray w-full;
       }
-      .contacts, .lists, .forms, .customfields {
+      .contacts, .lists, .forms, .customfields, .reports {
         @apply border-0 mt-5;
         tbody {
           tr{
@@ -416,7 +416,7 @@ table td
         }
 
         th:first-of-type {
-          @apply relative px-7  sm:px-6;
+          @apply relative px-7 sm:px-6;
         }
         th:nth-child(2) {
           @apply py-2 pl-4 pr-3 text-left  sm:pl-6;
@@ -429,6 +429,10 @@ table td
         }
         th:last-of-type {
           @apply relative py-2 pl-3 pr-4 sm:pr-6 text-left;
+        }
+        
+        th#subject {
+          @apply w-2/12;
         }
       }
       tbody {
@@ -459,6 +463,38 @@ table td
           @apply relative py-3.5 pl-3 pr-4 text-left text-sm font-medium sm:pr-6;
         }
 
+        /* reports table column */
+        td.status {
+          .status-sent {
+            @apply flex-shrink-0 h-6 w-6 text-green-400;
+          }
+        
+          .status-sending {
+            @apply flex-shrink-0 h-6 w-6 text-yellow-400 inline;
+          }
+        
+          .status-paused {
+            @apply flex-shrink-0 h-6 w-6 inline text-gray-500;
+          }
+        
+          .status-queued {
+            @apply flex-shrink-0 h-6 w-6 inline text-orange-400;
+          }
+        
+          .status-failed {
+            @apply flex-shrink-0 h-6 w-6 inline text-red-500;
+          }
+        
+          .status-send-now {
+            @apply h-6 w-6 inline text-yellow-400;
+          }
+        }
+
+        td.column-finish_at {
+          @apply text-left;
+        }
+        /* End */
+
         .list-item {
           @apply flex flex-row space-x-2.5 items-center;
           .avatar {
@@ -475,15 +511,6 @@ table td
             .item-meta {
               @apply flex flex-col text-gray-400 text-[13px];
             }
-          }
-        }
-        .status {
-          @apply flex flex-col gap-1.5 text-center mx-auto justify-center items-center;
-          p {
-            @apply font-semibold inline-flex items-center text-[15px];
-          }
-          .sub-text {
-            @apply text-gray-400 text-[13px];
           }
         }
       }
@@ -1024,6 +1051,248 @@ table td
 }
 /* End */
 
+/* Reports dashboard CSS */
+.reports-statistic {
+  @apply flex-row;
+
+  .campaign-info {
+    @apply w-3/4;
+
+    .campaign-title {
+      @apply flex pl-6 pt-4;
+
+      .title {
+        @apply w-auto inline-block text-xl text-gray-600 font-medium leading-7 truncate;
+      }
+
+      .campaign-sent-status {
+        @apply inline-block ml-2 font-semibold leading-5 tracking-wide text-xs;
+
+        .sent {
+          @apply inline-block mt-1.5 ml-1 h-5 w-5 text-green-400;
+        }
+
+        .queue {
+          @apply inline-block mt-1.5 ml-1 h-5 w-5 text-orange-400;
+        }
+
+        .sending {
+          @apply inline-block mt-1.5 ml-1 h-5 w-5 text-yellow-400;
+        }
+
+        .active {
+          @apply inline-flex px-2 text-green-800 bg-green-100 rounded-full;
+        }
+
+        .inactive {
+          @apply inline-flex px-2 text-red-800 bg-red-100 rounded-full;
+        }
+      }
+    }
+
+    .campaign-other-info {
+      @apply w-full text-gray-600 italic font-medium pt-4 text-sm leading-5 overflow-hidden;
+
+      .type {
+        @apply pl-6 truncate;
+
+        span {
+          @apply pl-1 font-normal not-italic text-gray-900;
+        }
+      }
+
+      .from {
+        @apply pl-6 pt-2 truncate;
+
+        span {
+          @apply pl-1 font-normal not-italic text-gray-900;
+        }
+      }
+
+      .recipient {
+        @apply pl-6 pt-2 inline-block truncate relative w-full;
+
+        .recipient-info {
+          @apply pl-1 font-normal not-italic text-gray-900 inline-block truncate w-11/12 pl-24;
+        }
+      }
+
+      .date {
+        @apply pl-6 pt-2 text-gray-600;
+
+        span {
+          @apply pl-1 font-normal not-italic text-gray-900;
+        }
+      }
+    }
+  }
+
+  .statistic-info {
+    @apply w-1/2;
+
+    .stat-sec {
+      @apply flex-1 min-w-0;
+
+      .title {
+        @apply pl-8 text-lg font-medium leading-6 text-gray-400;
+      }
+
+      .stat-grid-sec {
+        @apply sm:grid sm:grid-cols-2 ml-6 mr-8;
+
+        .email_viewed_count {
+          @apply text-2xl font-bold leading-none text-indigo-600;
+        }
+
+        .open_rate {
+          @apply text-xl font-bold leading-none text-indigo-600;
+        }
+
+        .opened {
+          @apply mt-1 font-medium leading-6 text-gray-500;
+        }
+
+        .click_count {
+          @apply text-2xl font-bold leading-none text-indigo-600;
+        }
+
+        .click_rate {
+          @apply text-xl font-bold leading-none text-indigo-600;
+        }
+
+        .clicked {
+          @apply mt-1 font-medium leading-6 text-gray-500;
+        }
+
+        .total_email_sent, .email_unsubscribed_count {
+          @apply text-2xl font-bold leading-none text-indigo-600;
+        }
+
+        /* .email_sent, .email_unsubscribed {
+          @apply mt-1 font-medium leading-6 text-gray-500";
+        } */
+      }
+    }
+  }
+
+  .empty_country_data {
+    @apply px-6 py-3 text-sm leading-5 text-gray-500;
+  }
+}
+
+.system_info {
+  @apply mt-6 mb-4 p-4 grid w-full gap-8 grid-cols-3;
+
+  p {
+    @apply pt-3 text-lg font-medium leading-7 tracking-wide text-gray-600;
+  }
+
+  .info {
+    @apply relative bg-white mt-2 rounded-md shadow;
+  }
+
+  .no-info {
+    @apply mt-2 bg-white text-sm text-gray-500 rounded-md shadow py-3 px-6 tracking-wide;
+  }
+}
+
+.campaign-analitics-btn {
+  @apply float-right top-10 relative px-2 py-2 mx-2 -mt-2;
+}
+
+.campaign-msg-box {
+  @apply lg:w-3/5 xl:w-2/5 h-0 z-40 sticky;
+}
+
+.icegram-express_page_es_reports {
+  nav {
+    @apply pt-10;
+  }
+}
+
+/* Report preview template css*/
+#report_preview_template {
+  .report_template_div {
+    @apply fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full;
+
+    .template-abs-div {
+      @apply absolute h-auto p-4 ml-16 mr-4 text-left bg-white rounded shadow-xl md:max-w-5xl md:p-6 lg:p-8;
+
+      a {
+        @apply text-indigo-600;
+      }
+
+      h3 {
+        @apply text-2xl text-center;
+      }
+
+      p.sub-heading {
+        @apply m-4 text-center;
+      }
+      
+      .report_preview_container {
+        @apply m-4;
+      }
+
+      .temp-btn-div {
+        @apply flex justify-center;
+
+        #es_close_preview {
+          @apply px-4 py-2 text-sm font-medium tracking-wide text-gray-700 border rounded select-none focus:outline-none focus:shadow-outline-red hover:border-red-400 active:shadow-lg;
+        }
+      }
+    }
+  }
+}
+/* End */
+
+/* process queue */
+.ig-es-process-queue {
+  .queue_text {
+    @apply pl-10;
+  }
+}
+/* End */
+
+/* Link activity table css */
+.link-activty {
+  .link-heading {
+    @apply mt-6 pt-3 text-lg font-medium leading-7 tracking-wide text-gray-600;
+  }
+
+  #es_reports_link_activity {
+    @apply w-full table-fixed;
+
+    tbody {
+      tr:last-of-type {
+        @apply border-b-0;
+      }
+    }
+  }
+}
+/* End */
+
+.country-info-table {
+  table{
+    tbody {
+      tr:last-of-type {
+        @apply border-b-0;
+      }
+    }
+  }
+}
+
+.mail-client-info {
+  table{
+    tbody {
+      tr:last-of-type {
+        @apply border-b-0;
+      }
+    }
+  }
+}
+
+/* End */
 
 
 /* settings page radio button CSS */
@@ -1109,7 +1378,7 @@ table td
   @apply float-right border-0 relative !important;
 }
 
-.icegram-express_page_es_gallery, .icegram-express_page_es_campaigns, .icegram-express_page_es_subscribers, .icegram-express_page_es_lists, .icegram-express_page_es_forms, .icegram-express_page_es_custom_fields, .icegram-express_page_es_settings, .toplevel_page_es_dashboard {
+.icegram-express_page_es_gallery, .icegram-express_page_es_campaigns, .icegram-express_page_es_subscribers, .icegram-express_page_es_lists, .icegram-express_page_es_forms, .icegram-express_page_es_custom_fields, .icegram-express_page_es_settings, .toplevel_page_es_dashboard, .icegram-express_page_es_reports {
  #wpcontent{
   padding-left: 0;
   background-color: white;

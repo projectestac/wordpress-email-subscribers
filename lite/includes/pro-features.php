@@ -1322,54 +1322,65 @@ function ig_es_view_additional_reports_data() {
 			 'cta_html'       => true,
 		 );
 			?>
-<div>
-	<div class="campaign_open_overlay lg:w-3/5 xl:w-2/5 h-0 z-40 sticky">
-			<div class="tracking-wide campaign-report">
-				<?php ES_Common::upsell_description_message_box( $upsell_info ); ?>
-			</div>
-		</div>
-	<div class="wrap max-w-7xl cursor-default campaign_open_blur font-sans">
-			<div class="flex items-center justify-between">
-				<div class="flex-shrink-0">
-				   <span class="text-xl font-medium leading-7 tracking-wide text-gray-600"><?php esc_html_e( 'Report', 'email-subscribers' ); ?><svg class="ml-3 align-middle w-5 h-5 text-indigo-600 inline-block" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></span>
+		<div>
+
+			<div class="campaign_open_overlay campaign-msg-box ">
+				<div class="tracking-wide campaign-report">
+					<?php ES_Common::upsell_description_message_box( $upsell_info ); ?>
 				</div>
 			</div>
-			<div class="mt-3 pb-2 w-full bg-white rounded-md shadow flex">
-					<div class="w-3/4">
-						<div class="flex pl-6 pt-4">
-							<div class="w-auto inline-block text-xl text-gray-600 font-medium leading-7 truncate"><?php esc_html_e( 'Take a look into Icegram' ); ?>
+
+			<div class="max-w-7xl cursor-default campaign_open_blur font-sans">
+				<div class="sticky top-0 z-10">
+					<header>
+						<nav aria-label="Global" class="pb-5 w-full pt-2">
+							<div class="brand-logo">
+								<span>
+									<img src="<?php echo ES_PLUGIN_URL . 'lite/admin/images/new/brand-logo/IG LOGO 192X192.svg'; ?>" alt="brand logo" />
+									<div class="divide"></div>
+									<h1><?php echo esc_html__( 'Report', 'email-subscribers' ); ?></h1>
+								</span>
+							</div>
+						</nav>
+					</header>
+				</div>
+				<div class="overview reports-statistic">
+					<div class="campaign-info">
+						<div class="campaign-title">
+							<div class="title">
+								<?php esc_html_e( 'Take a look into Icegram' ); ?>
 								<svg class="inline-block mt-1 ml-1 h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
 									<title><?php echo esc_attr_e( 'Sent', 'email-subscribers' ); ?></title>
 								<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
 								</svg>
 							</div>
 						</div>
-					<div class="w-full text-gray-600 italic font-medium pt-4 text-sm leading-5 overflow-hidden">
-						<p class="pl-6 truncate"><?php esc_html_e( 'Type: ', 'email-subscribers' ); ?>
-							  <span class="pl-1 font-normal not-italic text-gray-900"><?php esc_html_e( 'Broadcast', 'email-subscribers' ); ?></span>
-						   </p>
-						<p class="pl-6 pt-2 truncate"><?php esc_html_e( 'From: ', 'email-subscribers' ); ?>
-							   <span class="pl-1 font-normal not-italic text-gray-900"><?php echo esc_html( 'hello@icegram.com', 'email-subscribers' ); ?>,</span>
-						</p>
-						<p class="pl-6 pt-2 truncate"><?php esc_html_e( 'List(s): ', 'email-subscribers' ); ?>
-							<span class="pl-1 font-normal not-italic text-gray-900 "><?php esc_html_e( 'Test, Main ', 'email-subscribers' ); ?></span>
-						</p>
-						 <p class="pl-6 pt-2 text-gray-600 "><?php esc_html_e( 'Date: ', 'email-subscribers' ); ?>
-							   <span class="pl-1 font-normal not-italic text-gray-900"><?php esc_html_e( 'July 1, 2020 10:00 AM', 'email-subscribers' ); ?></span>
+						<div class="wcampaign-sent-status">
+							<p class="type"><?php esc_html_e( 'Type: ', 'email-subscribers' ); ?>
+								<span><?php esc_html_e( 'Broadcast', 'email-subscribers' ); ?></span>
 							</p>
+							<p class="from"><?php esc_html_e( 'From: ', 'email-subscribers' ); ?>
+								<span><?php echo esc_html( 'hello@icegram.com', 'email-subscribers' ); ?>,</span>
+							</p>
+							<p class="pl-6 pt-2 truncate"><?php esc_html_e( 'List(s): ', 'email-subscribers' ); ?>
+								<span class="pl-1 font-normal not-italic text-gray-900 "><?php esc_html_e( 'Test, Main ', 'email-subscribers' ); ?></span>
+							</p>
+							<p class="date "><?php esc_html_e( 'Date: ', 'email-subscribers' ); ?>
+								<span><?php esc_html_e( 'July 1, 2020 10:00 AM', 'email-subscribers' ); ?></span>
+								</p>
+						</div>
 					</div>
-				</div>
-				 <div class="w-1/2">
-						<div class="flex-1 min-w-0">
-							<p class="pt-4 pl-8 text-lg font-medium leading-6 text-gray-400">
+					 <div class="statistic-info">
+						<div class="stat-sec">
+							<p class="title">
 								<?php esc_html_e( 'Statistics', 'email-subscribers' ); ?>
 							</p>
-							<div class="sm:grid sm:grid-cols-2 ml-6 mr-8">
+							<div class="stat-grid-sec">
 								<div class="p-2">
-									<p class="text-2xl font-bold leading-none text-indigo-600">
+									<p class="email_viewed_count">
 										4,294
 									</p>
-									<p class="mt-1 font-medium leading-6 text-gray-500">
+									<p class="opened">
 										<?php esc_html_e( 'Opened', 'email-subscribers' ); ?>
 									</p>
 								</div>
@@ -1402,173 +1413,176 @@ function ig_es_view_additional_reports_data() {
 					</div>
 				</div>
 
-				<div class="mt-6 mb-4">
+				<div class="overview">
 					<div class="pt-3">
 						<span class="text-left text-lg font-medium leading-7 tracking-wide text-gray-600"><?php esc_html_e( 'Open and click activity', 'email-subscribers' ); ?></span>
 					</div>
 					<div class="bg-white mt-2 w-full rounded-md">
 						<img style="display: block;" class="mx-auto" src="<?php echo esc_url( ES_PLUGIN_URL ); ?>lite/public/images/link-activity-graph.png"/>
 					</div>
-
 				</div>
-				<div class="mt-6 mb-2 flex ">
-					<div class="w-1/2 pt-3">
-						<span class="text-left text-lg font-medium leading-7 tracking-wide text-gray-600"><?php esc_html_e( 'Country Opens', 'email-subscribers' ); ?></span>
-					</div>
-					<div class="pt-3 pl-4">
-						<span class="text-left text-lg font-medium leading-7 tracking-wide text-gray-600"><?php esc_html_e( 'Mail Client Info', 'email-subscribers' ); ?></span>
-					</div>
-				</div>
-				<?php
-				$country_opens = array(
-					array(
-						'code'    => 'US',
-						'country' => 'United States',
-						'open'    => 1500,
-					),
-					array(
-						'code'    => 'AU',
-						'country' => 'Australia',
-						'open'    => 1200,
-					),
-					array(
-						'code'    => 'ES',
-						'country' => 'Spain',
-						'open'    => 800,
-					),
-					array(
-						'code'    => 'FR',
-						'country' => 'France',
-						'open'    => 650,
-					),
-					array(
-						'code'    => 'RU',
-						'country' => 'Russia',
-						'open'    => 144,
-					),
-				);
-				?>
-				<div class="mt-2 mb-4 flex">
-					<div class="flex mb-4 mr-4 w-1/2 bg-white shadow rounded-md">
-						<table class="w-full table-fixed">
-							<thead>
-								<tr class="border-b border-gray-200 bg-gray-200 text-xs leading-4 text-gray-500 uppercase tracking-wider text-left">
-										<th width="10%"></th>
-										<th class="w-1/3 px-4 py-3 font-medium ">
-											<?php esc_html_e( 'Country', 'email-subscribers' ); ?>
-										</th>
-										<th class="w-1/3 px-6 py-3 font-medium">
-											<?php esc_html_e( 'Opens', 'email-subscribers' ); ?>
-										</th>
-								</tr>
-							</thead>
-							<tbody>
-							<?php
-							foreach ( $country_opens as $country_data ) {
-								?>
-								<tr class="border-b border-gray-200 text-sm leading-5">
-									<td class="mx-4 my-3 px-6 py-1 flag-icon flag-icon-<?php echo esc_html( strtolower( $country_data['code'] ) ); ?>">
-									</td>
-									<td class="pl-4 py-3 text-gray-500">
-										<?php echo esc_html( $country_data['country'] ); ?>
-									</td>
-									<td class="px-6 py-3  border-b border-gray-200 text-sm leading-5 text-gray-600">
-										<?php echo esc_html( $country_data['open'] ); ?>
-									</td>
-								</tr>
-							<?php } ?>
-							</tbody>
-						</table>
 
-					</div>
-					<?php
-					$mail_clients = array(
-						'Gmail'               => 2294,
-						'Gmail App (Android)' => 1500,
-						'Thunderbird'         => 500,
-					);
-					?>
-					<div class=" flex ml-4 w-1/2 bg-white shadow rounded-md self-start">
-						<table class="w-full table-fixed">
-							<thead>
-						<tr>
-							<th class="w-2/3 px-6 py-3 border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-								<?php esc_html_e( 'Mail Client', 'email-subscribers' ); ?>
-							</th>
-							<th class="w-1/3 px-6 py-3 border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-								<?php esc_html_e( 'Opens', 'email-subscribers' ); ?>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php
-						foreach ( $mail_clients as $mail_client => $opens ) {
-							?>
-						<tr>
-							<td class="pl-8 py-3 border-b border-gray-200 text-sm leading-5 text-gray-500">
-								<?php echo esc_html( $mail_client ); ?>
-							</td>
-							<td class="px-6 py-3  border-b border-gray-200 text-sm leading-5 text-gray-600">
-								<?php echo esc_html( $opens ); ?>
-							</td>
-						</tr>
-						<?php } ?>
-
-					</tbody>
-				</table>
-
-				</div>
-			</div>
-			<?php
-			$graph_open_data = array(
-				array(
-					'title'     => __( 'Device Info', 'email-subscribers' ),
-					'graph_img' => 'lite/public/images/device_opens.png',
-				),
-
-				array(
-					'title'     => __( 'Browser Info', 'email-subscribers' ),
-					'graph_img' => 'lite/public/images/browser_opens.png',
-				),
-
-				array(
-					'title'     => __( 'OS Info', 'email-subscribers' ),
-					'graph_img' => 'lite/public/images/os_opens.png',
-				),
-			);
-			?>
-
-				<div class="mt-6 mb-4 grid w-full gap-8 grid-cols-3">
-					<?php foreach ( $graph_open_data as $data ) { ?>
-						<div class="w-full">
-						<p class="pt-3 text-lg font-medium leading-7 tracking-wide text-gray-600"><?php echo esc_html( $data['title'] ); ?></p>
-						<div class="relative mt-2">
-							<img class=" w-full rounded-md overflow-hidden" src="<?php echo esc_url( ES_PLUGIN_URL ) . esc_attr( $data['graph_img'] ); ?>"/>
+				<div class="overview">
+					<div class="mt-6 mb-2 flex ">
+						<div class="w-1/2 pt-3">
+							<span class="text-left text-lg font-medium leading-7 tracking-wide text-gray-600"><?php esc_html_e( 'Country Opens', 'email-subscribers' ); ?></span>
+						</div>
+						<div class="pt-3 pl-4">
+							<span class="text-left text-lg font-medium leading-7 tracking-wide text-gray-600"><?php esc_html_e( 'Mail Client Info', 'email-subscribers' ); ?></span>
 						</div>
 					</div>
-				<?php } ?>
+					<?php
+					$country_opens = array(
+						array(
+							'code'    => 'US',
+							'country' => 'United States',
+							'open'    => 1500,
+						),
+						array(
+							'code'    => 'AU',
+							'country' => 'Australia',
+							'open'    => 1200,
+						),
+						array(
+							'code'    => 'ES',
+							'country' => 'Spain',
+							'open'    => 800,
+						),
+						array(
+							'code'    => 'FR',
+							'country' => 'France',
+							'open'    => 650,
+						),
+						array(
+							'code'    => 'RU',
+							'country' => 'Russia',
+							'open'    => 144,
+						),
+					);
+					?>
+					<div class="mt-2 mb-4 flex">
+						<div class="flex mb-4 mr-4 w-1/2 bg-white shadow rounded-md">
+							<table class="w-full table-fixed">
+								<thead>
+									<tr class="border-b border-gray-200 bg-gray-200 text-xs leading-4 text-gray-500 uppercase tracking-wider text-left">
+											<th width="10%"></th>
+											<th class="w-1/3 px-4 py-3 font-medium ">
+												<?php esc_html_e( 'Country', 'email-subscribers' ); ?>
+											</th>
+											<th class="w-1/3 px-6 py-3 font-medium">
+												<?php esc_html_e( 'Opens', 'email-subscribers' ); ?>
+											</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+								foreach ( $country_opens as $country_data ) {
+									?>
+									<tr class="border-b border-gray-200 text-sm leading-5">
+										<td class="mx-4 my-3 px-6 py-1 flag-icon flag-icon-<?php echo esc_html( strtolower( $country_data['code'] ) ); ?>">
+										</td>
+										<td class="pl-4 py-3 text-gray-500">
+											<?php echo esc_html( $country_data['country'] ); ?>
+										</td>
+										<td class="px-6 py-3  border-b border-gray-200 text-sm leading-5 text-gray-600">
+											<?php echo esc_html( $country_data['open'] ); ?>
+										</td>
+									</tr>
+								<?php } ?>
+								</tbody>
+							</table>
+
+						</div>
+						<?php
+						$mail_clients = array(
+							'Gmail'               => 2294,
+							'Gmail App (Android)' => 1500,
+							'Thunderbird'         => 500,
+						);
+						?>
+						<div class=" flex ml-4 w-1/2 bg-white shadow rounded-md self-start">
+							<table class="w-full table-fixed">
+								<thead>
+									<tr>
+										<th class="w-2/3 px-6 py-3 border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+											<?php esc_html_e( 'Mail Client', 'email-subscribers' ); ?>
+										</th>
+										<th class="w-1/3 px-6 py-3 border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+											<?php esc_html_e( 'Opens', 'email-subscribers' ); ?>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php
+									foreach ( $mail_clients as $mail_client => $opens ) {
+										?>
+									<tr>
+										<td class="pl-8 py-3 border-b border-gray-200 text-sm leading-5 text-gray-500">
+											<?php echo esc_html( $mail_client ); ?>
+										</td>
+										<td class="px-6 py-3  border-b border-gray-200 text-sm leading-5 text-gray-600">
+											<?php echo esc_html( $opens ); ?>
+										</td>
+									</tr>
+									<?php } ?>
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="overview">
+					<?php
+					$graph_open_data = array(
+						array(
+							'title'     => __( 'Device Info', 'email-subscribers' ),
+							'graph_img' => 'lite/public/images/device_opens.png',
+						),
+
+						array(
+							'title'     => __( 'Browser Info', 'email-subscribers' ),
+							'graph_img' => 'lite/public/images/browser_opens.png',
+						),
+
+						array(
+							'title'     => __( 'OS Info', 'email-subscribers' ),
+							'graph_img' => 'lite/public/images/os_opens.png',
+						),
+					);
+					?>
+
+					<div class="mt-6 mb-4 grid w-full gap-8 grid-cols-3">
+						<?php foreach ( $graph_open_data as $data ) { ?>
+							<div class="w-full">
+							<p class="pt-3 text-lg font-medium leading-7 tracking-wide text-gray-600"><?php echo esc_html( $data['title'] ); ?></p>
+							<div class="relative mt-2">
+								<img class=" w-full rounded-md overflow-hidden" src="<?php echo esc_url( ES_PLUGIN_URL ) . esc_attr( $data['graph_img'] ); ?>"/>
+							</div>
+						</div>
+						<?php } ?>
+					</div>
 				</div>
 
-
-				<div class="mt-6 mb-2">
+				<div class="overview">
+					<div class="mt-6 mb-2">
 						<span class="text-left text-lg font-medium leading-7 tracking-wide text-gray-600"><?php esc_html_e( 'Link Activity', 'email-subscribers' ); ?></span>
 					</div>
-				<div class="mt-2 mb-4 flex">
-			<div class="flex w-full bg-white shadow rounded-md break-words self-start">
-				<table class="w-full table-fixed">
-					<thead>
-						<tr>
-							<th class="w-3/5 px-6 py-3 border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"><?php echo esc_html__( 'Link (URL)', 'email-subscribers' ); ?>
-							</th>
-							<th class=" w-1/5 px-6 py-3 border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"><?php echo esc_html__( 'Unique Clicks', 'email-subscribers' ); ?>
-							</th>
-							<th class=" w-1/5 px-6 py-3 border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"><?php echo esc_html__( 'Total Clicks', 'email-subscribers' ); ?>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td class="px-6 py-3 border-b border-gray-200 text-sm leading-5 text-gray-900">
+					<div class="mt-2 mb-4 flex">
+						<div class="flex w-full bg-white shadow rounded-md break-words self-start">
+							<table class="w-full table-fixed">
+								<thead>
+									<tr>
+										<th class="w-3/5 px-6 py-3 border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"><?php echo esc_html__( 'Link (URL)', 'email-subscribers' ); ?>
+										</th>
+										<th class=" w-1/5 px-6 py-3 border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"><?php echo esc_html__( 'Unique Clicks', 'email-subscribers' ); ?>
+										</th>
+										<th class=" w-1/5 px-6 py-3 border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"><?php echo esc_html__( 'Total Clicks', 'email-subscribers' ); ?>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="px-6 py-3 border-b border-gray-200 text-sm leading-5 text-gray-900">
 											<?php
 												echo esc_html( 'https://www.icegram.com/automate-workflow-and-reduce-chaos/', 'email-subscribers' );
 											?>
@@ -1581,7 +1595,7 @@ function ig_es_view_additional_reports_data() {
 										</td>
 									</tr>
 									<tr>
-								<td class="px-6 py-3 border-b border-gray-200 text-sm leading-5 text-gray-900">
+										<td class="px-6 py-3 border-b border-gray-200 text-sm leading-5 text-gray-900">
 											<?php
 												echo esc_html( 'https://www.icegram.com/how-to-keep-email-out-of-spam-folder/', 'email-subscribers' );
 											?>
@@ -1594,7 +1608,7 @@ function ig_es_view_additional_reports_data() {
 										</td>
 									</tr>
 									<tr>
-								<td class="px-6 py-3 border-b border-gray-200 text-sm leading-5 text-gray-900">
+										<td class="px-6 py-3 border-b border-gray-200 text-sm leading-5 text-gray-900">
 											<?php
 												echo esc_html( 'https://www.icegram.com/8-effective-tips-to-grow-your-open-rates/' );
 											?>
@@ -1606,8 +1620,9 @@ function ig_es_view_additional_reports_data() {
 											1000
 										</td>
 									</tr>
-							</tbody>
-						</table>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 				<?php
@@ -1695,100 +1710,102 @@ function ig_es_view_additional_reports_data() {
 
 				);
 				?>
-				<div class="mt-8 mb-2">
-					<span class="text-left text-lg font-medium leading-7 tracking-wide text-gray-600"><?php esc_html_e( 'Last 10 Open Activity', 'email-subscribers' ); ?></span>
-				</div>
-				<div class="mt-2 mb-2 flex">
-					<div class="flex w-full bg-white shadow rounded-md break-all">
-						<table class="w-full table-fixed">
-							<thead>
-								<tr class="border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 text-gray-500 uppercase tracking-wider">
-									<th width="6%"></th>
-									<th width="16%" class="pl-4 py-3 font-medium"><?php esc_html_e( 'Country', 'email-subscribers' ); ?></th>
-									<th width="26%" class="pl-6 py-3 font-medium"><?php esc_html_e( 'Email', 'email-subscribers' ); ?></th>
-									<th width="10%" class="pl-3 py-3 font-medium"><?php esc_html_e( 'Device', 'email-subscribers' ); ?></th>
-									<th class="pl-3 py-3 font-medium"><?php esc_html_e( 'Mail Client', 'email-subscribers' ); ?></th>
-									<th class="pl-3 py-3 font-medium"><?php esc_html_e( 'OS', 'email-subscribers' ); ?></th>
-								</tr>
-							</thead>
-							<tbody class="bg-white">
-								<?php
-								foreach ( $last_open_activity as $activity ) {
-									?>
-									<tr class="border-b border-gray-200 text-sm leading-5 text-gray-500">
-											<td class="mx-4 my-3 px-6 py-1 flag-icon flag-icon-<?php echo esc_attr( strtolower( $activity['code'] ) ); ?> ">
-											</td>
-											<td class="pl-4 pr-2 py-3 truncate">
-												<?php
-												echo esc_html( $activity['country'] );
-												?>
-											</td>
-											<td class="pl-6 pr-2 py-3 truncate">
-												<?php
-												echo esc_html( $activity['email'] );
-												?>
-											</td>
-											<td class="pl-3 py-3 font-medium ">
-												<span class="pl-2 inline-flex text-xs leading-5 font-semibold text-gray-500">
+				<div class="overview">
+					<div class="mt-8 mb-2">
+						<span class="text-left text-lg font-medium leading-7 tracking-wide text-gray-600"><?php esc_html_e( 'Last 10 Open Activity', 'email-subscribers' ); ?></span>
+					</div>
+					<div class="mt-2 mb-2 flex">
+						<div class="flex w-full bg-white shadow rounded-md break-all">
+							<table class="w-full table-fixed">
+								<thead>
+									<tr class="border-b border-gray-200 bg-gray-200 text-left text-xs leading-4 text-gray-500 uppercase tracking-wider">
+										<th width="6%"></th>
+										<th width="16%" class="pl-4 py-3 font-medium"><?php esc_html_e( 'Country', 'email-subscribers' ); ?></th>
+										<th width="26%" class="pl-6 py-3 font-medium"><?php esc_html_e( 'Email', 'email-subscribers' ); ?></th>
+										<th width="10%" class="pl-3 py-3 font-medium"><?php esc_html_e( 'Device', 'email-subscribers' ); ?></th>
+										<th class="pl-3 py-3 font-medium"><?php esc_html_e( 'Mail Client', 'email-subscribers' ); ?></th>
+										<th class="pl-3 py-3 font-medium"><?php esc_html_e( 'OS', 'email-subscribers' ); ?></th>
+									</tr>
+								</thead>
+								<tbody class="bg-white">
+									<?php
+									foreach ( $last_open_activity as $activity ) {
+										?>
+										<tr class="border-b border-gray-200 text-sm leading-5 text-gray-500">
+												<td class="mx-4 my-3 px-6 py-1 flag-icon flag-icon-<?php echo esc_attr( strtolower( $activity['code'] ) ); ?> ">
+												</td>
+												<td class="pl-4 pr-2 py-3 truncate">
 													<?php
-													switch ( $activity['device'] ) {
-														case 'desktop':
-															?>
-															<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-																<title><?php echo esc_html__( 'Desktop', 'email-subscribers' ); ?></title>
-																<path fill="currentColor"
-																	  d="M19,2H5A3,3,0,0,0,2,5V15a3,3,0,0,0,3,3H7.64l-.58,1a2,2,0,0,0,0,2,2,2,0,0,0,1.75,1h6.46A2,2,0,0,0,17,21a2,2,0,0,0,0-2l-.59-1H19a3,3,0,0,0,3-3V5A3,3,0,0,0,19,2ZM8.77,20,10,18H14l1.2,2ZM20,15a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V14H20Zm0-3H4V5A1,1,0,0,1,5,4H19a1,1,0,0,1,1,1Z"></path>
-															</svg>
-															<?php
-															break;
-														case 'tablet':
-															?>
-															<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 512 512" xml:space="preserve">
-																<title><?php echo esc_html__( 'Tablet', 'email-subscribers' ); ?></title>
-																<path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"
-																	  d="M416,0H96C78.313,0,64,14.328,64,32v448c0,17.688,14.313,32,32,32  h320c17.688,0,32-14.313,32-32V32C448,14.328,433.688,0,416,0z M256,496c-13.25,0-24-10.75-24-24s10.75-24,24-24s24,10.75,24,24  S269.25,496,256,496z M400,432H112V48h288V432z"></path>
-															</svg>
-															<?php
-															break;
-														case 'mobile':
-															?>
-															<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-																<title><?php echo esc_html__( 'Mobile', 'email-subscribers' ); ?></title>
-																<path fill="currentColor" d="M16,2H8A3,3,0,0,0,5,5V19a3,3,0,0,0,3,3h8a3,3,0,0,0,3-3V5A3,3,0,0,0,16,2Zm1,17a1,1,0,0,1-1,1H8a1,1,0,0,1-1-1V18H17Zm0-3H7V5A1,1,0,0,1,8,4h8a1,1,0,0,1,1,1Z"></path>
-															</svg>
-															<?php
-															break;
-														default:
-															?>
-															<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-																<path fill="currentColor"
-																	  d="M19,2H5A3,3,0,0,0,2,5V15a3,3,0,0,0,3,3H7.64l-.58,1a2,2,0,0,0,0,2,2,2,0,0,0,1.75,1h6.46A2,2,0,0,0,17,21a2,2,0,0,0,0-2l-.59-1H19a3,3,0,0,0,3-3V5A3,3,0,0,0,19,2ZM8.77,20,10,18H14l1.2,2ZM20,15a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V14H20Zm0-3H4V5A1,1,0,0,1,5,4H19a1,1,0,0,1,1,1Z"></path>
-															</svg>
-															<?php
-													}
+													echo esc_html( $activity['country'] );
 													?>
-												</span>
-											</td>
+												</td>
+												<td class="pl-6 pr-2 py-3 truncate">
+													<?php
+													echo esc_html( $activity['email'] );
+													?>
+												</td>
+												<td class="pl-3 py-3 font-medium ">
+													<span class="pl-2 inline-flex text-xs leading-5 font-semibold text-gray-500">
+														<?php
+														switch ( $activity['device'] ) {
+															case 'desktop':
+																?>
+																<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+																	<title><?php echo esc_html__( 'Desktop', 'email-subscribers' ); ?></title>
+																	<path fill="currentColor"
+																			d="M19,2H5A3,3,0,0,0,2,5V15a3,3,0,0,0,3,3H7.64l-.58,1a2,2,0,0,0,0,2,2,2,0,0,0,1.75,1h6.46A2,2,0,0,0,17,21a2,2,0,0,0,0-2l-.59-1H19a3,3,0,0,0,3-3V5A3,3,0,0,0,19,2ZM8.77,20,10,18H14l1.2,2ZM20,15a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V14H20Zm0-3H4V5A1,1,0,0,1,5,4H19a1,1,0,0,1,1,1Z"></path>
+																</svg>
+																<?php
+																break;
+															case 'tablet':
+																?>
+																<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 512 512" xml:space="preserve">
+																	<title><?php echo esc_html__( 'Tablet', 'email-subscribers' ); ?></title>
+																	<path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"
+																			d="M416,0H96C78.313,0,64,14.328,64,32v448c0,17.688,14.313,32,32,32  h320c17.688,0,32-14.313,32-32V32C448,14.328,433.688,0,416,0z M256,496c-13.25,0-24-10.75-24-24s10.75-24,24-24s24,10.75,24,24  S269.25,496,256,496z M400,432H112V48h288V432z"></path>
+																</svg>
+																<?php
+																break;
+															case 'mobile':
+																?>
+																<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+																	<title><?php echo esc_html__( 'Mobile', 'email-subscribers' ); ?></title>
+																	<path fill="currentColor" d="M16,2H8A3,3,0,0,0,5,5V19a3,3,0,0,0,3,3h8a3,3,0,0,0,3-3V5A3,3,0,0,0,16,2Zm1,17a1,1,0,0,1-1,1H8a1,1,0,0,1-1-1V18H17Zm0-3H7V5A1,1,0,0,1,8,4h8a1,1,0,0,1,1,1Z"></path>
+																</svg>
+																<?php
+																break;
+															default:
+																?>
+																<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+																	<path fill="currentColor"
+																			d="M19,2H5A3,3,0,0,0,2,5V15a3,3,0,0,0,3,3H7.64l-.58,1a2,2,0,0,0,0,2,2,2,0,0,0,1.75,1h6.46A2,2,0,0,0,17,21a2,2,0,0,0,0-2l-.59-1H19a3,3,0,0,0,3-3V5A3,3,0,0,0,19,2ZM8.77,20,10,18H14l1.2,2ZM20,15a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V14H20Zm0-3H4V5A1,1,0,0,1,5,4H19a1,1,0,0,1,1,1Z"></path>
+																</svg>
+																<?php
+														}
+														?>
+													</span>
+												</td>
 
-											<td class="pl-3 py-3 text-gray-600 truncate">
-												<?php
-												echo esc_html( $activity['mail_client'] );
-												?>
-											</td>
-											<td class="pl-3 pr-2 py-3 truncate">
-												<?php
-												echo esc_html( $activity['os'] );
-												?>
-											</td>
-										</tr>
-									<?php } ?>
-						</tbody>
-					</table>
+												<td class="pl-3 py-3 text-gray-600 truncate">
+													<?php
+													echo esc_html( $activity['mail_client'] );
+													?>
+												</td>
+												<td class="pl-3 pr-2 py-3 truncate">
+													<?php
+													echo esc_html( $activity['os'] );
+													?>
+												</td>
+											</tr>
+										<?php } ?>
+							</tbody>
+						</table>
 
+					</div>
 				</div>
+			</div>
 		</div>
 	</div>
-</div>
 
 		<?php
 	}

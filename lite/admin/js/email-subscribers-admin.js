@@ -213,8 +213,8 @@
 							if ( 'undefined' !== typeof response.data ) {
 								let response_data = response.data;
 								let template_html = response_data.template_html;
-								$('.report_preview_container').html(template_html);
 								$('#report_preview_template').load().show();
+								ig_es_load_iframe_preview('.report_preview_container', template_html);
 							}
 						} else {
 							alert( ig_es_js_data.i18n_data.ajax_error_message );

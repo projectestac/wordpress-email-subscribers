@@ -48,31 +48,39 @@ class ES_Reports_Table extends ES_List_Table {
 				$view_report->es_campaign_report_callback();
 			} else {
 				?>
-				<div class="wrap pt-4 font-sans">
-					<header class="wp-heading-inline">
-						<div class="flex">
-							<div class="flex-1 min-w-0">
-								<h2 class="text-3xl font-bold leading-9 text-gray-700 sm:truncate"><?php esc_html_e( 'Reports', 'email-subscribers' ); ?>
-								</h2>
-							</div>
-							<?php
-							$emails_to_be_sent = ES_DB_Sending_Queue::get_total_emails_to_be_sent();
-							if ( $emails_to_be_sent > 0 ) {
-								$cron_url = ES()->cron->url( true );
-								/* translators: %s: Cron url */
-								$content = '<a href="' . esc_url( $cron_url ) . '" class="px-3 py-2 ig-es-imp-button">' . esc_html__( 'Send Queued Emails Now', 'email-subscribers' ) . '</a>';
-							} else {
-								$content  = '<span class="ig-es-send-queue-emails px-3 button-disabled">' . esc_html__( 'Send Queued Emails Now', 'email-subscribers' ) . '</span>';
-								$content .= '<br /><span class="es-helper pl-6">' . esc_html__( 'No emails found in queue', 'email-subscribers' ) . '</span>';
-							}
-							?>
-							<div class="flex flex-row">
-								<div>
-									<span class="ig-es-process-queue"><?php echo wp_kses_post( $content ); ?></span>
+				<div class="font-sans">
+					<div class="sticky top-0 z-10">
+						<header>
+							<nav aria-label="Global" class="pb-5 w-full pt-2">
+								<div class="brand-logo">
+									<span>
+										<img src="<?php echo ES_PLUGIN_URL . 'lite/admin/images/new/brand-logo/IG LOGO 192X192.svg'; ?>" alt="brand logo" />
+										<div class="divide"></div>
+										<h1><?php echo esc_html__( 'Reports', 'email-subscribers' ); ?></h1>
+									</span>
 								</div>
-							</div>
-						</div>
-					</header>
+
+								<div class="cta">
+									<?php
+									$emails_to_be_sent = ES_DB_Sending_Queue::get_total_emails_to_be_sent();
+									if ( $emails_to_be_sent > 0 ) {
+										$cron_url = ES()->cron->url( true );
+										/* translators: %s: Cron url */
+										$content = '<a href="' . esc_url( $cron_url ) . '" class="px-3 py-2 ig-es-imp-button">' . esc_html__( 'Send Queued Emails Now', 'email-subscribers' ) . '</a>';
+									} else {
+										$content  = '<button type="button" class="secondary"><span class="ig-es-send-queue-emails px-3 button-disabled">' . esc_html__( 'Send Queued Emails Now', 'email-subscribers' ) . '</span></button>';
+										$content .= '<br /><span class="es-helper queue_text">' . esc_html__( 'No emails found in queue', 'email-subscribers' ) . '</span>';
+									}
+									?>
+									<div class="flex flex-row">
+										<div>
+											<span class="ig-es-process-queue"><?php echo wp_kses_post( $content ); ?></span>
+										</div>
+									</div>
+								</div>
+							</nav>
+						</header>
+					</div>
 					<?php
 					$show_campaign_notice = $emails_to_be_sent > 0 && ES()->is_starter();
 					if ( $show_campaign_notice ) {
@@ -89,7 +97,7 @@ class ES_Reports_Table extends ES_List_Table {
 									echo sprintf( esc_html__( 'While the campaign is still sending, you can pause %1$s it anytime and update the campaign. Once you are done, resume %2$s the campaign.', 'email-subscribers' ), '<svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" class="h-6 w-6 text-gray-500 ml-1 inline">
 									<path d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 								</svg>',
-									'<svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" class="h-6 w-6 text-blue-500 inline">
+									'<svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" class="h-6 w-6 text-blue-600 inline">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
 								</svg>' );
@@ -112,7 +120,7 @@ class ES_Reports_Table extends ES_List_Table {
 					<div>
 						<hr class="wp-header-end">
 					</div>
-					<div id="poststuff" class="es-items-lists">
+					<div id="poststuff" class="es-reports-view es-items-lists">
 						<div id="post-body" class="metabox-holder column-1">
 							<div id="post-body-content">
 								<div class="meta-box-sortables ui-sortable">
@@ -224,7 +232,7 @@ class ES_Reports_Table extends ES_List_Table {
 		$status_html   = '';
 		if ( IG_ES_MAILING_QUEUE_STATUS_SENT === $report_status ) {
 			$status_html = sprintf(
-				'<svg class="flex-shrink-0 h-6 w-6 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+				'<svg class="status-sent" fill="currentColor" viewBox="0 0 20 20">
 			<title>%s</title>
 			<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
 		</svg>',
@@ -233,7 +241,7 @@ class ES_Reports_Table extends ES_List_Table {
 		} else {
 			if ( IG_ES_MAILING_QUEUE_STATUS_SENDING === $report_status ) {
 				$status_html = sprintf(
-					'<svg class="flex-shrink-0 h-6 w-6 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20">
+					'<svg class="status-sending" fill="currentColor" viewBox="0 0 20 20">
 				<title>%s</title>
 				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/>
 			</svg>',
@@ -241,7 +249,7 @@ class ES_Reports_Table extends ES_List_Table {
 				);
 			} elseif ( IG_ES_MAILING_QUEUE_STATUS_PAUSED === $report_status ) {
 				$status_html = sprintf(
-					'<svg xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 h-6 w-6 inline text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+					'<svg xmlns="http://www.w3.org/2000/svg" class="status-paused" viewBox="0 0 20 20" fill="currentColor">
 				<title>%s</title>
 				<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
 			</svg>',
@@ -249,7 +257,7 @@ class ES_Reports_Table extends ES_List_Table {
 				);
 			} elseif ( IG_ES_MAILING_QUEUE_STATUS_QUEUED === $report_status ) {
 				$status_html = sprintf(
-					'<svg class="flex-shrink-0 h-6 w-6 inline text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+					'<svg class="status-queued" fill="currentColor" viewBox="0 0 20 20">
 				<title>%s</title>
 				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
 			</svg>',
@@ -257,7 +265,7 @@ class ES_Reports_Table extends ES_List_Table {
 				);
 			} elseif ( IG_ES_MAILING_QUEUE_STATUS_FAILED === $report_status ) {
 				$status_html = sprintf(
-					'<svg class="flex-shrink-0 h-6 w-6 inline text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					'<svg class="status-failed" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 					<title>%s</title>
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
 					__( 'Failed', 'email-subscribers' )
@@ -285,7 +293,7 @@ class ES_Reports_Table extends ES_List_Table {
 	 */
 	public function column_cb( $item ) {
 		return sprintf(
-			'<input type="checkbox" name="bulk_delete[]" value="%s" />',
+			'<input type="checkbox" class="checkbox" name="bulk_delete[]" value="%s" />',
 			$item['id']
 		);
 	}
@@ -366,7 +374,7 @@ class ES_Reports_Table extends ES_List_Table {
 			/* translators: %s: Cron url */
 			$content = sprintf(
 				'<a href="%s" target="_blank">
-			<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			<svg xmlns="http://www.w3.org/2000/svg" class="status-send-now" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 			<title>%s</title>
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
 		  </svg></a>',
@@ -598,14 +606,14 @@ class ES_Reports_Table extends ES_List_Table {
 	public function display_preview_email() {
 		?>
 		<div class="hidden" id="report_preview_template">
-			<div class="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full" style="background-color: rgba(0,0,0,.5);">
-				<div style="height:485px" class="absolute h-auto p-4 ml-16 mr-4 text-left bg-white rounded shadow-xl z-80 md:max-w-5xl md:p-6 lg:p-8 ">
-					<h3 class="text-2xl text-center"><?php echo esc_html__( 'Template Preview', 'email-subscribers' ); ?></h3>
-					<p class="m-4 text-center"><?php echo esc_html__( 'There could be a slight variation on how your customer will view the email content.', 'email-subscribers' ); ?></p>
-					<div class="m-4 list-decimal report_preview_container">
+			<div class="report_template_div" style="background-color: rgba(0,0,0,.5);">
+				<div style="height:485px" class="template-abs-div">
+					<h3><?php echo esc_html__( 'Template Preview', 'email-subscribers' ); ?></h3>
+					<p class="sub-heading"><?php echo esc_html__( 'There could be a slight variation on how your customer will view the email content.', 'email-subscribers' ); ?></p>
+					<div class="list-decimal report_preview_container">
 					</div>
-					<div class="flex justify-center mt-8">
-						<button id="es_close_preview" class="px-4 py-2 text-sm font-medium tracking-wide text-gray-700 border rounded select-none no-outline focus:outline-none focus:shadow-outline-red hover:border-red-400 active:shadow-lg "><?php echo esc_html__( 'Close', 'email-subscribers' ); ?></button>
+					<div class="temp-btn-div">
+						<button id="es_close_preview"><?php echo esc_html__( 'Close', 'email-subscribers' ); ?></button>
 						
 					</div>
 				</div>
@@ -626,8 +634,8 @@ class ES_Reports_Table extends ES_List_Table {
 		?>
 		<p class="search-box">
 			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php echo esc_attr( $text ); ?>:</label>
-			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>"/>
-			<?php submit_button( __( 'Search Reports', 'email-subscribers' ), 'button', false, false, array( 'id' => 'search-submit' ) ); ?>
+			<input type="search" placeholder="Search" class="es-w-15" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php _admin_search_query(); ?>"/>
+			<button type="submit" id="search-submit" class="secondary"><?php echo esc_html__( 'Search Reports', 'email-subscribers'); ?></button>
 		</p>
 		<p class="search-box search-group-box box-ma10">
 			<?php

@@ -870,7 +870,8 @@ class ES_Import_Subscribers {
 
 				$contacts_data        = array();
 				$gmt_offset           = ig_es_get_gmt_offset( true );
-				$current_date_time    = gmdate( 'Y-m-d H:i:s', time() - $gmt_offset );
+				$current_date_time    =ig_get_current_date_time();
+
 				$current_batch_emails = array();
 				$processed_emails     = ! empty( $bulkdata['processed_emails'] ) ? $bulkdata['processed_emails'] : array();
 				$list_contact_data    = array();

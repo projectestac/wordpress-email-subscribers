@@ -833,40 +833,37 @@ class ES_DB_Contacts extends ES_DB {
 	 */
 	public function edit_list_contact_status( $contact_ids, $list_ids, $status ) {
 		global $wpbd;
+		
+		$contact_ids_placeholders = implode( ',', array_fill( 0, count( $contact_ids), '%d') );
+		$list_ids_placeholders    = implode( ',', array_fill( 0, count( $list_ids ), '%d') );
+		$current_date             = ig_get_current_date_time();
 
-		$contact_ids  = implode( ',', $contact_ids );
-		$list_ids     = implode( ',', $list_ids );
-		$current_date = ig_get_current_date_time();
+		if ( 'unconfirmed' === $status ) {
+			$query_args = array_merge([$status, IG_DOUBLE_OPTIN], $contact_ids, $list_ids);
+		} else {
+			$query_args = array_merge([$status, $current_date], $contact_ids, $list_ids);
+		}
 
 		$query_result = array();
 		if ( 'subscribed' === $status ) {
 			$query_result = $wpbd->query(
 				$wpbd->prepare(
-					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, subscribed_at = %s WHERE contact_id IN( {$contact_ids} ) AND list_id IN( {$list_ids} )",
-					array(
-						$status,
-						$current_date,
-					)
+					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, subscribed_at = %s WHERE contact_id IN( {$contact_ids_placeholders} ) AND list_id IN( {$list_ids_placeholders} )",
+					$query_args
 				)
 			);
 		} elseif ( 'unsubscribed' === $status ) {
 			$query_result = $wpbd->query(
 				$wpbd->prepare(
-					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, unsubscribed_at = %s WHERE contact_id IN( {$contact_ids} ) AND list_id IN( {$list_ids} )",
-					array(
-						$status,
-						$current_date,
-					)
+					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, unsubscribed_at = %s WHERE contact_id IN( {$contact_ids_placeholders} ) AND list_id IN( {$list_ids_placeholders} )",
+					$query_args
 				)
 			);
 		} elseif ( 'unconfirmed' === $status ) {
 			$query_result = $wpbd->query(
 				$wpbd->prepare(
-					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, optin_type = %d, subscribed_at = NULL, unsubscribed_at = NULL WHERE contact_id IN( {$contact_ids} ) AND list_id IN( {$list_ids} )",
-					array(
-						$status,
-						IG_DOUBLE_OPTIN,
-					)
+					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, optin_type = %d, subscribed_at = NULL, unsubscribed_at = NULL WHERE contact_id IN( {$contact_ids_placeholders} ) AND list_id IN( {$list_ids_placeholders} )",
+					$query_args
 				)
 			);
 		}

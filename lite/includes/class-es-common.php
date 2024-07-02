@@ -2427,13 +2427,15 @@ class ES_Common {
 							?>
 						<div class="pt-6 text-center -ml-6 pb-2">
 							<a href="<?php echo esc_url( $upsell_info['pricing_url'] ); ?>" target="_blank"
-							   class="rounded-md border border-transparent px-3 py-2 bg-white text-sm leading-7 font-medium text-white bg-indigo-600 hover:text-white hover:bg-indigo-500 transition ease-in-out duration-150 mt-2">
-								<?php
-								esc_html_e(
-									'Upgrade',
-									'email-subscribers'
-								);
-								?>
+							   class="">
+							   <button type="button" class="primary">
+									<?php
+									esc_html_e(
+										'Upgrade',
+										'email-subscribers'
+									);
+									?>
+								</button>
 							</a>
 						</div>
 							<?php

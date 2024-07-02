@@ -2255,3 +2255,34 @@ function ig_es_update_5713_db_version() {
 }
 // phpcs:enable
 /* --------------------- ES 5.7.13(End)--------------------------- */
+
+/* --------------------- ES 5.7.25(Start)--------------------------- */
+
+/**
+ * Mark onboarding as completed in versions for which onboarding wasn't present
+ */
+
+function ig_es_maybe_mark_onboarding_complete() {
+
+	if ( ! IG_ES_Onboarding::is_onboarding_completed() ) {
+		$ig_es_db_update_history  = ES_Common::get_ig_option( 'db_update_history', array() );
+		$ig_es_4015_db_updated_at = ( is_array( $ig_es_db_update_history ) && isset( $ig_es_db_update_history['4.0.15'] ) ) ? $ig_es_db_update_history['4.0.15'] : false;
+
+		$is_sa_option_exists = get_option( 'current_sa_email_subscribers_db_version', false );
+		if ( $is_sa_option_exists || ! empty( $ig_es_4015_db_updated_at ) ) {
+			update_option( 'ig_es_onboarding_complete', 'yes' );
+		}
+	}
+}
+
+
+ /**
+ * Update DB version
+ *
+ * @since 5.7.25
+ */
+function ig_es_update_5725_db_version() {
+	ES_Install::update_db_version( '5.7.25' );
+}
+/* --------------------- ES 5.7.25(End)--------------------------- */
+
