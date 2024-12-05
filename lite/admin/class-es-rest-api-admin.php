@@ -23,6 +23,12 @@ class ES_Rest_API_Admin {
 	}
 
 	public static function handle_generate_rest_api_key_request() {
+
+		$can_access_settings = ES_Common::ig_es_can_access( 'settings' );
+		if ( ! ( $can_access_settings ) ) {
+			return 0;
+		}
+
 		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
 		$response = array();
 		$user_id  = ig_es_get_request_data( 'user_id', 0 );
@@ -79,6 +85,12 @@ class ES_Rest_API_Admin {
 
 	public static function handle_delete_rest_api_key_request() {
 		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
+
+		$can_access_settings = ES_Common::ig_es_can_access( 'settings' );
+		if ( ! ( $can_access_settings ) ) {
+			return 0;
+		}
+		
 		$response = array();
 		$user_id  = ig_es_get_request_data( 'user_id', 0 );
 		if ( empty( $user_id ) ) {

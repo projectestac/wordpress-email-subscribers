@@ -77,6 +77,8 @@ class ES_Reports_Table extends ES_List_Table {
 											<span class="ig-es-process-queue"><?php echo wp_kses_post( $content ); ?></span>
 										</div>
 									</div>
+									
+									<?php do_action('ig_es_after_send_queued_email_button'); ?>
 								</div>
 							</nav>
 						</header>
@@ -84,6 +86,10 @@ class ES_Reports_Table extends ES_List_Table {
 					<?php
 					$show_campaign_notice = $emails_to_be_sent > 0 && ES()->is_starter();
 					if ( $show_campaign_notice ) {
+						$total_emails_can_send_now = ES()->mailer->get_total_emails_send_now();
+						$initial_batch_size     = $total_emails_can_send_now * 0.10;
+						$initial_batch_size     = ceil( $initial_batch_size );
+						$initial_batch_size = apply_filters('ig_es_batch_size', $initial_batch_size);
 						?>
 						<style>
 							#ig-es-edit-campaign-notice p {
@@ -91,28 +97,43 @@ class ES_Reports_Table extends ES_List_Table {
 							}
 						</style>
 						<div id="ig-es-edit-campaign-notice" class="px-5 py-2 notice notice-info">
-							<p>
-								<?php
-									/* translators: 1. Pause icon HTML 2. Resume icon HTML */
-									echo sprintf( esc_html__( 'While the campaign is still sending, you can pause %1$s it anytime and update the campaign. Once you are done, resume %2$s the campaign.', 'email-subscribers' ), '<svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" class="h-6 w-6 text-gray-500 ml-1 inline">
-									<path d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-								</svg>',
-									'<svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" class="h-6 w-6 text-blue-600 inline">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-								</svg>' );
+							<?php
+							if ( ES()->is_premium() ) {
 								?>
-							</p>
-							<p>
-								<strong>
+								<p>
 									<?php
-										echo esc_html__( 'Note: ', 'email-subscribers' );
+										/* translators: 1. Pause icon HTML 2. Resume icon HTML */
+										echo sprintf( esc_html__( 'To help you review your campaign before reaching a large audience, the first two batches will send only maximum %1$s emails, then the full batch size will resume. While the campaign is still sending, you can pause %2$s it anytime and update the campaign. Once you are done, resume %3$s the campaign.', 'email-subscribers' ), esc_html( $initial_batch_size ), '<svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" class="h-6 w-6 text-gray-500 ml-1 inline">
+										<path d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+									</svg>',
+										'<svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24" class="h-6 w-6 text-blue-600 inline">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+									</svg>' );
 									?>
-								</strong>
+								</p>
+								<p>
+									<strong>
+										<?php
+											echo esc_html__( 'Note: ', 'email-subscribers' );
+										?>
+									</strong>
+									<?php
+										echo esc_html__( 'Changes will reflect from the next sending batch.', 'email-subscribers' );
+									?>
+								</p>
 								<?php
-									echo esc_html__( 'Changes will reflect from the next sending batch.', 'email-subscribers' );
+							} else {
 								?>
-							</p>
+								<p>
+									<?php
+										/* translators: 1. Pause icon HTML 2. Resume icon HTML */
+										echo sprintf( esc_html__( 'To help you review your campaign before reaching a large audience, the first two batches will send only maximum %1$s emails, then the full batch size will resume.', 'email-subscribers' ), esc_html( $initial_batch_size ) );
+									?>
+								</p>
+								<?php
+							}
+							?>
 						</div>
 						<?php
 					}
@@ -313,11 +334,13 @@ class ES_Reports_Table extends ES_List_Table {
 
 		$title = '<strong>' . $item['subject'] . '</strong>';
 
+		$es_export_report_link = ( ES()->is_pro() ) ? sprintf( '<a href="#" data-report-id="%s" class="es-export-report text-indigo-600">%s</a>', absint( $item['id'] ), __( 'Export', 'email-subscribers' ) ) : '';
+
 		$actions = array(
 			'view'          => sprintf( '<a href="?page=%s&action=%s&list=%s&_wpnonce=%s" class="text-indigo-600">%s</a>', esc_attr( $page ), 'view', $item['hash'], $es_nonce, __( 'View', 'email-subscribers' ) ),
 			'delete'        => sprintf( '<a href="?page=%s&action=%s&list=%s&_wpnonce=%s" onclick="return checkDelete()">%s</a>', esc_attr( $page ), 'delete', absint( $item['id'] ), $es_nonce, __( 'Delete', 'email-subscribers' ) ),
 			'preview_email' => sprintf( '<a href="#" data-campaign-id="%s" class="es-preview-report text-indigo-600">%s</a><img class="es-preview-loader inline-flex align-middle pl-2 h-5 w-7" src="%s" style="display:none;"/>', absint( $item['id'] ), __( 'Preview', 'email-subscribers' ), esc_url( ES_PLUGIN_URL ) . 'lite/admin/images/spinner-2x.gif' ),
-
+			'export' => $es_export_report_link,
 		);
 
 		return $title . $this->row_actions( $actions );

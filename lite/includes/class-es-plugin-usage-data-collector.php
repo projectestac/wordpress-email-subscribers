@@ -33,8 +33,9 @@ if (!class_exists('ES_Plugin_Usage_Data_Collector')) {
 		}
 
 		public function register_hooks() {
+		
 			add_filter('ig_es_tracking_data_params', array(__CLASS__, 'add_tracking_data'));
-			add_filter('ig_es_activate_plugin', array(__CLASS__, 'add_plan_activation_dates'));
+			add_action('ig_es_plugin_activate', array(__CLASS__, 'add_plan_activation_dates'));
 		}
 
 		/**
@@ -58,11 +59,9 @@ if (!class_exists('ES_Plugin_Usage_Data_Collector')) {
 			
 			$current_plan = ES()->get_plan();
 			$current_date = ig_get_current_date_time();
-			
 			$user_plan_activation_dates = get_option('ig_es_plan_activation_dates', array());
 			$user_plan_activation_dates[$current_plan] = $current_date;
 			update_option('ig_es_plan_activation_dates', $user_plan_activation_dates);
-			
 		}
 		
 		

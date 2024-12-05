@@ -240,7 +240,7 @@ class ES_DB_Lists extends ES_DB {
    // phpcs:disable
 		$res = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT `name` FROM {$wpdb->prefix}ig_lists WHERE id IN ( SELECT list_id FROM {$wpdb->prefix}ig_lists_contacts WHERE contact_id = %d )",
+				"SELECT `name` FROM {$wpdb->prefix}ig_lists WHERE id IN ( SELECT list_id FROM {$wpdb->prefix}ig_lists_contacts WHERE status='subscribed' AND contact_id = %d )",
 				$id
 			)
 		);

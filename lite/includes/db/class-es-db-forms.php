@@ -62,6 +62,7 @@ class ES_DB_Forms extends ES_DB {
 			'body'       => '%s',
 			'settings'   => '%s',
 			'styles'     => '%s',
+			'preview_image' => '%s',
 			'created_at' => '%s',
 			'updated_at' => '%s',
 			'deleted_at' => '%s',
@@ -383,6 +384,34 @@ class ES_DB_Forms extends ES_DB {
 			}
 		}
 
+	}
+
+	/**
+	 * Duplicate Forms
+	 *
+	 * @param $ids
+	 *
+	 * @since 5.7.38
+	 */
+	public function duplicate_form( $id = null) {
+		if(!empty( $id )) {
+
+			$form_data = ES()->forms_db->get_form_by_id( $id );
+
+			$form['name'] = __( 'Copy', 'email-subscribers' ) . ' - ' . $form_data['name'];
+			$form['body'] = isset( $form_data['body'] ) ? $form_data['body'] : '';
+			$form['settings'] = isset( $form_data['settings'] ) ? $form_data['settings'] : '';
+			$form['styles'] = '';
+			$form['preview_image'] = isset( $form_data['preview_image'] ) ? $form_data['preview_image'] : '';
+			$form['created_at'] = ig_get_current_date_time();
+			$form['updated_at'] = null;
+			$form['deleted_at'] = null;
+			$form['af_id'] = 0;
+			
+			$duplicate_form_id = ES()->forms_db->add_form( $form );
+
+			return $duplicate_form_id;
+		}
 	}
 
 

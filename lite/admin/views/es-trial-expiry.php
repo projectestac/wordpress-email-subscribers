@@ -38,90 +38,12 @@ $es_wp_styles->do_item( 'google-fonts' );
 		margin: 20px 10px;
 	}
 
-	.heading {
-		font-size: 2em;
-		margin: 20px auto;
-		color: #2a231c;
-	}
-
-	.sub-heading {
-		color: #433c36;
-		font-size: 0.9em;
-	}
-
-	.my-30 {
-		margin: 30px auto;
-		font-size: 15px;
-	}
-
-	.mt-10 {
-		margin-top: 10px;
-	}
-
-	.mb-30 {
-		margin-bottom: 30px;
-	}
-
-	table {
-		width: 100%;
-	}
-
-	td {
-		padding: 10px;
-		text-align: center;
-		width: 33.33%;
-	}
-
-	td .title {
-		color: #433c36;
-		margin: 10px 0;
-		font-size: 15px;
-	}
-
-	td .value {
-		color: #5850ec;
-		font-size: 24px;
-		font-weight: 500;
-	}
-
-	.button {
-		background: #5850ec;
-		margin: unset;
-		padding: 20px;
-		display: inline-block;
-		text-decoration: none;
-		color: #FFFFFF;
-	}
-
 	a {
-		color: #5850ec;
-		text-decoration: none;
+		color: #5e19cf;
 	}
 
-	.m-auto {
-		margin: auto;
-	}
-
-	.w-95p {
-		width: 90%;
-	}
-
-	.desc {
-		line-height: 25px;
-	}
-
-	.seperator {
-		box-sizing:border-box;
-		height:0;
-		color:inherit;
-		margin:0;
-		border-top-width:1px;
-		border:solid #d1d5db;
-		border-width:0 0 1px;
-		border-style:dotted;
-		border-bottom-width:2px;
-		margin-top:2rem;
-		margin-bottom:2rem;
+	p {
+		font-size: 1.2em;
 	}
 </style>
 <body>
@@ -130,18 +52,38 @@ $es_wp_styles->do_item( 'google-fonts' );
 			<img src="<?php esc_attr_e( $logo_url ); ?>" width="64" alt="<?php echo esc_url( 'Icegram Express logo', 'email-subscribers' ); ?>"/>
 		</div>
 		<div>
-			<p class="">Hey Buddy,</p>
-			<p>Just dropping you a quick note to remind you that you're very close to:</p>
-			<p>1. <b>End of your trial usage</b> by tomorrow (14th day of usage)</p>
-			<p>2. Getting <b>25% off</b> on any plan (both Pro & Max) using this coupon code:[es-upgrade-25]</p>
-			<p>This is a <b>limited-time offer</b>, so be sure to take advantage before it expires! <b>[Upgrade before trial runs out]</b></p>
-			<p><b><em>1000+ have become our paid users using this offer over the last 1 year..</em></b></p>
-			<p>Join this success group and power up your emails!</p>
-			<p>Don't be that regretful, "should've, could've" person.</p>
-			<p><b>Have questions or need assistance</b> choosing the right plan for your business? Reach out to us - we're here to help.</p>
-			<p>Happy Emails!</p>
-			<p>Team Icegram</p>
-			<p><b>P.S.</b> Still deciding? Share your thoughts, and I'll address any concerns you may have.Drop us an email at <code>hello@icegram.com</code> </p>
+			<p class="">Hey <?php echo esc_html($first_name); ?>,</p>
+			<p>Just a quick reminder: your trial ends tomorrow!</p>
+			<p>And sadly <b>you will lose access to these key email marketing features:</b></p>
+			<ul>
+				<li>
+					<p><a href="https://www.icegram.com/docs/category/icegram-express-premium/add-utm-parameters-email/?utm_source=es&utm_medium=email&utm_campaign=plugin-email-13"><b>Google Analytics UTM tracking</b></a> - Measure the effectiveness of your email on autopilot.. This feature automatically add UTMs to all the links in your email, thus making sure each link is tracked and measured. </p>
+				</li>
+				<li>
+					<p><a href="https://www.icegram.com/docs/category/icegram-express-premium/check-spam-score#what-to-do-if-my-spam-score-is-higher-than-5/?utm_source=es&utm_medium=email&utm_campaign=plugin-email-13"><b>Spam score checking</b></a> - This feature checks the spam score of your email. Use this feature smartly to ensure your emails land in the inbox and not the spam folder of your subscribers.
+					</p>
+				</li>
+				<li>
+					<p><a href="https://www.icegram.com/docs/category/icegram-express-premium/enable-automatic-cron/?utm_source=es&utm_medium=email&utm_campaign=plugin-email-13"><b>Background email sending</b></a> - Hit send and relax. This feature will ensure that all your emails are sent without any mishaps or bottlenecks.
+					</p>
+				</li>
+				<li>
+					<p><a href="https://www.icegram.com/css-inliner/?utm_source=es&utm_medium=email&utm_campaign=plugin-email-13"><b>CSS inliner</b></a> - You don’t need to pay for a team of graphic designers anymore. This feature helps you create professional looking emails that go with your brand within minutes.
+					</p>
+				</li>
+			</ul>
+
+			<p>I have been an email marketer for a decade now and these features are a total must-have.</p>
+			<p>So don’t let go of this opportunity.</p>
+			<p>You can <a href="https://www.icegram.com/express/pricing/?utm_source=es&utm_medium=email&utm_campaign=plugin-email-13"><b>grab the Pro Or Max plan at 25% OFF</b></a> </p>
+			<p>Apply the code: <b>es-upgrade-25</b> at checkout</p>
+			<p>NOTE: <b>This offer expires in 24 hours.</b></p>
+			<p>So upgrade before your trial runs out…..</p>
+			<p>Avoid regret. Don't be the "should've, could've" person.</p>
+			<p>Emails are here for the long run. So upgrading is a worthy investment.</p>
+			<p><a href="https://www.icegram.com/express/pricing/?utm_source=es&utm_medium=email&utm_campaign=plugin-email-13"><b>Upgrade today at 25% OFF</b></a></p>
+			<p>Cheers, <br>Sandhya</p>
+			<p><b>P.S.</b> On the fence? Need help deciding the right plan/ Any other concern? Just reach out - I’m here for you! <code>hello@icegram.com</code> </p>
 		</div>
 		
 	</div>

@@ -194,7 +194,7 @@ __( 'Cancel', 'email-subscribers' ),
 __( 'Untitled Form', 'email-subscribers' ),
 __( 'Design', 'email-subscribers' ),
 __( 'Form Preview', 'email-subscribers' ),
-__( 'Theme styling', 'email-subscribers' ),
+__( 'Inherit from theme', 'email-subscribers' ),
 __( 'Copy', 'email-subscribers' ),
 __( 'Selected user doesn\'t exists. Please select a different user.', 'email-subscribers' ),
 /* Translators: %s: new API key */

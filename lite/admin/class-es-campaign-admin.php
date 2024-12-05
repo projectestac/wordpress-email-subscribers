@@ -42,16 +42,6 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 		}
 
 		public function register_hooks() {
-			add_action( 'ig_es_before_' . IG_CAMPAIGN_TYPE_POST_NOTIFICATION . '_content_settings', array( $this, 'show_save_as_template' ) );
-			add_action( 'ig_es_before_' . IG_CAMPAIGN_TYPE_POST_DIGEST . '_content_settings', array( $this, 'show_save_as_template' ) );
-			add_action( 'ig_es_before_' . IG_CAMPAIGN_TYPE_NEWSLETTER . '_content_settings', array( $this, 'show_save_as_template' ) );
-
-			// preview popup
-			add_action( 'ig_es_campaign_preview_options_content', array( $this, 'show_campaign_preview_options_content' ) );
-
-			add_action( 'wp_ajax_ig_es_draft_campaign', array( $this, 'draft_campaign' ) );
-			add_action( 'wp_ajax_ig_es_get_campaign_preview', array( $this, 'get_campaign_preview' ) );
-			add_action( 'wp_ajax_ig_es_save_as_template', array( $this, 'save_as_template' ) );
 
 			add_action( 'media_buttons', array( $this, 'add_tag_button' ) );
 		}
@@ -569,57 +559,6 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			<?php
 		}
 
-		/**
-		 * Method to show send test email and campaign content section.
-		 *
-		 * @param array $campaign_data Broadcast data
-		 *
-		 * @since 5.4.4.1.
-		 *
-		 */
-		public function show_campaign_preview_options_content( $campaign_data = array() ) {
-
-			$type       = isset( $campaign_data['type'] ) ? $campaign_data['type'] : 'campaign';
-			$subject    = isset( $campaign_data['subject'] ) ? $campaign_data['subject'] : '';
-			$test_email = ES_Common::get_admin_email();
-			$trim_character_count = 30;
-
-			if ( !( strlen($subject) <= $trim_character_count ) ) {
-				$subject 	   = substr( $subject, 0, $trim_character_count );
-				$string_length = empty( strrpos( $subject, ' ' ) ) ? $trim_character_count : strrpos( $subject, ' ' ) ;
-				$subject 	   = substr( $subject, 0, $string_length );				
-				$subject 	   = $subject . '...';
-			}
-			
-			?>
-			<div id="campaign-email-preview-container">
-
-				<div class="campaign-email-preview-container-left">
-
-						<div class="from leading-5">
-							<strong><?php echo esc_html__( 'From: ', 'email-subscribers' ); ?></strong><?php echo esc_html( $test_email ); ?>
-						</div>
-
-						<div class="from leading-5">
-							<strong><?php echo esc_html__( 'Subject: ', 'email-subscribers' ); ?></strong><span id="sequence-subject-preview" class="workflow-subject-preview"></span><?php echo esc_html( $subject ); ?>
-						</div>
-
-				</div>
-
-
-				<div class="campaign-email-preview-container-right">
-
-					<?php	do_action( 'ig_es_view_upsell_send_test_email_feature', $type, $test_email ); ?>
-
-					<?php do_action( 'ig_es_campaign_preview_test_email_content', $campaign_data ); ?>
-
-				</div>
-
-
-			</div>
-			<?php
-		}
-
 
 		/**
 		 * Method to display newsletter setting form
@@ -1086,26 +1025,6 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 		}
 
 		/**
-		 * Show option to save campaign as template
-		 *
-		 * @return void
-		 *
-		 * @since 5.3.3
-		 */
-		public function show_save_as_template() {
-			?>
-			<div class="ig-es-campaign-templates-wrapper block mx-4 pb-3 border-b border-gray-200 pt-4 pb-4">
-				<button id="save_campaign_as_template_button" name="ig_es_campaign_action" class="block edit-conditions rounded-md border text-indigo-600 border-indigo-500 text-sm leading-5 font-medium transition ease-in-out duration-150 select-none inline-flex justify-center hover:text-indigo-500 hover:border-indigo-600 hover:shadow-md focus:outline-none focus:shadow-outline-indigo focus:shadow-lg mt-1 px-1.5 py-1 mr-1 cursor-pointer" value="save_as_template">
-						<?php echo esc_html__( 'Save as template', 'email-subscribers' ); ?>
-				</button>
-				<img class="es-loader inline-flex align-middle pl-2 h-5 w-7" src="<?php echo esc_url( ES_PLUGIN_URL ); ?>lite/admin/images/spinner-2x.gif" style="display:none;"/>
-				<span class="es-saved-success es-icon" style="display:none;"><?php esc_html_e( 'Template saved succesfully.', 'email-subscribers' ); ?></span>
-				<br/><span class="es-saved-error es-icon" style="display:none;"><?php esc_html_e( 'Something went wrong. Please try again later.', 'email-subscribers' ); ?></span>
-			</div>
-			<?php
-		}
-
-		/**
 		 * Save campaign data
 		 *
 		 * @param array $campaign_data
@@ -1327,108 +1246,6 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 		}
 
 		/**
-		 * Method to draft a campaign
-		 *
-		 * @return $response Broadcast response.
-		 *
-		 * @since 4.4.7
-		 */
-		public function draft_campaign() {
-
-			check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
-
-			$response = array();
-
-			$campaign_data = ig_es_get_request_data( 'data', array(), false );
-
-			/**
-			 * To allow insert of new campaign data,
-			 * we are specifically setting $campaign_id to null when id is empty in $campaign_data
-			 */
-			$campaign_id   = ! empty( $campaign_data['id'] ) ? $campaign_data['id'] : null;
-			$campaign_type = ! empty( $campaign_data['type'] ) ? $campaign_data['type'] : IG_ES_DRAG_AND_DROP_EDITOR;
-			$is_updating   = ! empty( $campaign_id ) ? true : false;
-			$list_id       = ! empty( $campaign_data['list_ids'] ) ? $campaign_data['list_ids'] : '';
-			$template_id   = ! empty( $campaign_data['template_id'] ) ? $campaign_data['template_id'] : '';
-
-			if ( is_null( $campaign_id ) ) {
-				unset( $campaign_data['id'] );
-			}
-
-
-			$campaign_data['base_template_id'] = $template_id;
-			$campaign_data['list_ids']         = $list_id;
-			$campaign_data['status']           = ! empty( $campaign_data['status'] ) ? (int) $campaign_data['status'] : 0;
-			$meta                              = ! empty( $campaign_data['meta'] ) ? $campaign_data['meta'] : array();
-			$meta['pre_header']                = ! empty( $campaign_data['pre_header'] ) ? $campaign_data['pre_header'] : '';
-
-
-			if ( ! empty( $meta['list_conditions'] ) ) {
-				$meta['list_conditions'] = IG_ES_Campaign_Rules::remove_empty_conditions( $meta['list_conditions'] );
-			}
-
-			$campaign_data['meta'] = maybe_serialize( $meta );
-			$campaign_data['name'] = wp_strip_all_tags( $campaign_data['subject'] );
-			$campaign_data['slug'] = sanitize_title( sanitize_text_field( $campaign_data['name'] ) );
-
-			$campaign_data = apply_filters( 'ig_es_campaign_data', $campaign_data );
-			$campaign_data = apply_filters( 'ig_es_' . $campaign_type . '_data', $campaign_data );
-
-			$result = ES()->campaigns_db->save_campaign( $campaign_data, $campaign_id );
-
-			if ( ! empty( $result ) ) {
-				if ( ! $is_updating ) {
-					// In case of insert, result is campaign id.
-					$response['campaign_id'] = $result;
-				} else {
-					// In case of update, only update flag is returned.
-					$response['campaign_id'] = $campaign_id;
-				}
-				wp_send_json_success( $response );
-			} else {
-				wp_send_json_error();
-			}
-
-		}
-
-		/**
-		 * Method to get preview HTML for campaign
-		 *
-		 * @return $response
-		 *
-		 * @since 4.4.7
-		 */
-		public function get_campaign_preview() {
-
-			check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
-
-			$response = array();
-
-			$preview_type  = ig_es_get_request_data( 'preview_type' );
-			$campaign_data = ig_es_get_request_data( 'data', array(), false );
-
-			$template_data                = array();
-			$template_data['content']     = ! empty( $campaign_data['body'] ) ? $campaign_data['body'] : '';
-			$template_data['template_id'] = ! empty( $campaign_data['template_id'] ) ? $campaign_data['template_id'] : '';
-			$template_data['campaign_id'] = ! empty( $campaign_data['id'] ) ? $campaign_data['id'] : 0;
-
-			$campaign_data            = $this->add_campaign_body_data( $campaign_data );
-			$response['preview_html'] = $campaign_data['body'];
-
-			if ( 'inline' === $preview_type ) {
-				$inline_preview_data = $this->get_campaign_inline_preview_data( $campaign_data );
-				$response            = array_merge( $response, $inline_preview_data );
-			}
-
-			if ( ! empty( $response ) ) {
-				wp_send_json_success( $response );
-			} else {
-				wp_send_json_error();
-			}
-
-		}
-
-		/**
 		 * Method to get campaign inline preview data.
 		 *
 		 * @param array $campaign_data Broadcast data.
@@ -1560,65 +1377,6 @@ if ( ! class_exists( 'ES_Campaign_Admin' ) ) {
 			</div>
 			<!-- End-IG-Code -->
 			<?php
-		}
-
-		/**
-		 * Save campaign as a template
-		 */
-		public function save_as_template() {
-
-			check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
-
-			$response = array();
-
-			$campaign_data       = ig_es_get_request_data( 'data', array(), false );
-			$campaign_type       = ! empty( $campaign_data['type'] ) ? $campaign_data['type'] : IG_ES_DRAG_AND_DROP_EDITOR;
-			$campaign_body       = ! empty( $campaign_data['body'] ) ? $campaign_data['body'] : '';
-			$campaign_subject    = ! empty( $campaign_data['subject'] ) ? $campaign_data['subject'] : '';
-
-			if ( ! empty( $campaign_subject) && ! empty( $campaign_body ) ) {
-
-				$template_data = array(
-					'post_title'   	  => $campaign_subject,
-					'post_content'    => $campaign_body,
-					'post_type'       => 'es_template',
-					'post_status'     => 'publish',
-				);
-
-				$template_id       = wp_insert_post( $template_data );
-				$is_template_added = ! ( $template_id instanceof WP_Error );
-
-				if ( $is_template_added ) {
-
-					$editor_type = ! empty( $campaign_data['meta']['editor_type'] ) ? $campaign_data['meta']['editor_type'] : '';
-
-					$is_dnd_editor = IG_ES_DRAG_AND_DROP_EDITOR === $editor_type;
-
-					if ( $is_dnd_editor ) {
-						$dnd_editor_data = array();
-						if ( ! empty( $campaign_data['meta']['dnd_editor_data'] ) ) {
-							$dnd_editor_data = json_decode( $campaign_data['meta']['dnd_editor_data'] );
-							update_post_meta( $template_id, 'es_dnd_editor_data', $dnd_editor_data );
-						}
-					} else {
-						$custom_css = ! empty( $campaign_data['meta']['es_custom_css'] ) ? $campaign_data['meta']['es_custom_css'] : '';
-						update_post_meta( $template_id, 'es_custom_css', $custom_css );
-					}
-
-					update_post_meta( $template_id, 'es_editor_type', $editor_type );
-					update_post_meta( $template_id, 'es_template_type', $campaign_type );
-
-					$response['template_id'] = $template_id;
-				}
-
-				if ( ! empty( $response['template_id'] ) ) {
-					wp_send_json_success( $response );
-				} else {
-					wp_send_json_error();
-				}
-			}
-
-			return $response;
 		}
 	}
 

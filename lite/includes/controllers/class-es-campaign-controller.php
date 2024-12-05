@@ -90,7 +90,7 @@ if ( ! class_exists( 'ES_Campaign_Controller' ) ) {
 				if ( self::is_post_campaign( $campaign_type ) && IG_ES_CAMPAIGN_STATUS_ACTIVE == $campaign_data['status']) {
 						
 					$meta = maybe_unserialize($campaign_data['meta']);
-					if ( 'yes' === $meta['send_posts_now']) {
+					if ( ! empty( $meta['send_posts_now'] ) && 'yes' === $meta['send_posts_now']) {
 					
 					  $mailing_queue_id = self::generateReport($saved_campaign_id);
 						if (!empty($mailing_queue_id)) {

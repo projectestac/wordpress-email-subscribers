@@ -32,7 +32,9 @@ class ES_Service_Auth_Header_Check extends ES_Services {
 		$mailbox   = ES_Common::get_email_verify_test_email();
 		$this->cmd = str_replace( ':mailbox', $mailbox, $this->cmd );
 
-		$request_data     = array();
+		$request_data     = array(
+			'timeout' => 15,
+		);
 		$request_method   = 'GET';
 		$validate_request = true;
 

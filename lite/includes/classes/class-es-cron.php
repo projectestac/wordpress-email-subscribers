@@ -127,10 +127,6 @@ class ES_Cron {
 		if ( ! wp_next_scheduled( 'ig_es_cron_worker' ) ) {
 			wp_schedule_event( floor( time() / 300 ) * 300, 'ig_es_cron_interval', 'ig_es_cron_worker' );
 		}
-
-		if ( ES_Service_Email_Sending::opted_for_sending_service() ) {
-			$sending_service->schedule_ess_cron();
-		}
 		
 		if ( ES()->is_pro() ) {
 

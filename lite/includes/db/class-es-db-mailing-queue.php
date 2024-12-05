@@ -163,6 +163,30 @@ class ES_DB_Mailing_Queue {
 		return $notification;
 	}
 
+	//Add batch count 
+	public static function update_batch_count( $notification = array() ) {
+		if ( ! empty( $notification ) ) {
+			$meta = maybe_unserialize( $notification['meta'] );
+	
+			if ( empty( $meta['batch_count'] ) ) {
+				$meta['batch_count'] = 0;
+			}
+		   
+			$meta['batch_count']++;
+			global $wpdb;
+			$wpdb->query(
+				$wpdb->prepare(
+					"UPDATE {$wpdb->prefix}ig_mailing_queue SET meta = %s WHERE hash = %s",
+					array(
+						maybe_serialize( $meta ), 
+						$notification['hash'],
+					)
+				)
+			);
+		}
+		
+	}
+
 	// Query to insert sent emails (cron) records in table: es_sentdetails
 	public static function update_sent_status( $hash = '', $status = 'In Queue' ) {
 

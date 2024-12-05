@@ -869,7 +869,7 @@ if ( ! class_exists( 'IG_ES_Campaign_Rules' ) ) {
 		 */
 		public static function remove_empty_conditions( $conditions_data = array() ) {
 
-			if ( ! empty( $conditions_data ) ) {
+			if ( is_array( $conditions_data ) && ! empty( $conditions_data ) ) {
 				$list_conditions = $conditions_data;
 				foreach ( $list_conditions as $i => $and_cond ) {
 					foreach ( $and_cond as $j => $cond ) {

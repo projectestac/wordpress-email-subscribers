@@ -31,8 +31,6 @@ if ( ! class_exists( 'ES_Router' ) ) {
 
 		public function register_hooks() {
 			add_action( 'wp_ajax_icegram-express', array( $this, 'handle_ajax_request' ) );
-			/* Dev code */
-			add_action( 'wp_ajax_nopriv_icegram-express', array( $this, 'handle_ajax_request' ) );
 		}
 
 		/**

@@ -790,7 +790,7 @@ class ES_Contacts_Table extends ES_List_Table {
 		$lists_id_name_map = ES()->lists_db->get_list_id_name_map();
 
 		if ( count( $lists_id_name_map ) ) {
-			// $list_html = ES_Shortcode::prepare_lists_checkboxes( $lists_id_name_map, array_keys( $lists_id_name_map ), 4, $selected_list_ids, $id, 'contact_data[lists][]' );
+			// $list_html = ES_Shortcode::prepare_lists_multi_select( $lists_id_name_map, array_keys( $lists_id_name_map ), 4, $selected_list_ids, $id, 'contact_data[lists][]' );
 			$list_html = $this->prepare_lists_html( $id );
 		} else {
 			$list_html = "<tr><td><span class='text-sm leading-5 font-normal text-gray-500'>" . __( 'No list found', 'email-subscribers' ) . '</span></td></tr>';

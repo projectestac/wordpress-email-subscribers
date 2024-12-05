@@ -87,9 +87,10 @@ class ES_DB_Sending_Queue {
 // phpcs:disable
 		$queued_emails = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}ig_sending_queue WHERE contact_id = %d AND status = %s",
+				"SELECT * FROM {$wpdb->prefix}ig_sending_queue WHERE contact_id = %d AND status IN( %s, %s )",
 				$contact_id,
-				'In Queue'
+				IG_ES_SENDING_QUEUE_STATUS_QUEUED,
+				IG_ES_SENDING_QUEUE_STATUS_FAILED
 			),
 			ARRAY_A
 		);

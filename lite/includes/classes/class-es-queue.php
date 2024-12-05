@@ -44,6 +44,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 			add_action( 'ig_es_message_failed', array( &$this, 'set_failed_status' ), 10, 3 );
 			add_action( 'ig_es_contact_unsubscribe', array( &$this, 'delete_contact_queued_emails' ), 10, 4 );
 			add_action( 'ig_es_admin_contact_unsubscribe', array( &$this, 'delete_contact_queued_emails' ), 10, 4 );
+			add_action( 'ig_es_contacts_deleted', array( $this, 'delete_contact_queued_emails' ) );
 
 			// Ajax handler for running action scheduler task.
 			add_action( 'wp_ajax_ig_es_run_action_scheduler_task', array( 'IG_ES_Background_Process_Helper', 'run_action_scheduler_task' ) );
@@ -112,8 +113,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 				$campaigns_to_process[] = $campaign_id;
 
-				$meta = maybe_unserialize( $campaign['meta'] );
-
+				$meta = ! empty( $campaign['meta'] ) ? maybe_unserialize( $campaign['meta'] ) : array();
 				$rules = ! empty( $meta['rules'] ) ? $meta['rules'] : array();
 
 				if ( ! empty( $rules ) ) {
@@ -348,7 +348,7 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 						'status'		=> 'subscribed',
 						'subscriber_status'		=> array( 'verified' ),
 					);
-
+					$grace_period = apply_filters('ig_es_sequence_grace_period', $grace_period, $delay_unit, $delay_amount);
 					if ( $grace_period && 'after_subscription' === $send_when ) {
 						$start_time = gmdate( 'Y-m-d H:i:s', $now - $grace_period );
 
@@ -659,22 +659,28 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 								$notification_options = maybe_unserialize( $notification['_options'] );
 								$notification_type    = ! empty( $notification_options['type'] ) ? $notification_options['type'] : '';
+								$email_sent = false;
 								if ( 'optin_confirmation' === $notification_type ) {
 									$merge_tags['contact_id'] = $contact_id;
-									ES()->mailer->send_double_optin_email( $email, $merge_tags );
+									$send_result = ES()->mailer->send_double_optin_email( $email, $merge_tags );
+									$email_sent = ! empty( $send_result['status'] ) && 'SUCCESS' === $send_result['status'];
 								} elseif ( 'optin_welcome_email' === $notification_type ) {
 									$merge_tags['contact_id'] = $contact_id;
-									ES()->mailer->send_welcome_email( $email, $merge_tags );
+									$send_result = ES()->mailer->send_welcome_email( $email, $merge_tags );
+									$email_sent = ! empty( $send_result['status'] ) && 'SUCCESS' === $send_result['status'];
 								} else {
 									// Enable unsubscribe link and tracking pixel
 									ES()->mailer->add_unsubscribe_link = true;
 									ES()->mailer->can_track_open_clicks   = true;
-									ES()->mailer->send( $subject, $content, $email, $merge_tags );
+									$send_result = ES()->mailer->send( $subject, $content, $email, $merge_tags );
+									$email_sent = ! empty( $send_result['status'] ) && 'SUCCESS' === $send_result['status'];
 								}
 
 								$email_sending_limit--;
 
-								$this->db->delete_from_queue( $campaign_id, $contact_id );
+								if ( $email_sent ) {
+									$this->db->delete_from_queue( $campaign_id, $contact_id );
+								}
 							}
 
 							// Check if email sending limit or time limit or memory limit has been reached.
@@ -716,10 +722,24 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 				// Get GUID from sentdetails report which are in queue
 				$campaign_hash = ig_es_get_request_data( 'campaign_hash' );
 
+				// Check if admin has forcefully triggered the email sending.
+				$triggered_by_admin = ig_es_get_request_data( 'self', 0 );
+
 				$notification      = ES_DB_Mailing_Queue::get_notification_to_be_sent( $campaign_hash );
 				$notification_guid = isset( $notification['hash'] ) ? $notification['hash'] : null;
 				$message_id        = isset( $notification['id'] ) ? $notification['id'] : 0;
 				$campaign_id       = isset( $notification['campaign_id'] ) ? $notification['campaign_id'] : 0;
+				if ( ! $triggered_by_admin ) {
+				
+					$notification_meta = ! empty( $notification['meta'] ) ? maybe_unserialize( $notification['meta'] ) : array();
+					$batch_count       = isset( $notification_meta['batch_count'] ) ? $notification_meta['batch_count'] : 0;
+					
+					if ( $batch_count < 2 && $es_c_croncount > 200 ) {
+						$batch_size     = $es_c_croncount * 0.10;
+						$batch_size     = ceil( $batch_size );
+						$es_c_croncount = apply_filters( 'ig_es_batch_size', $batch_size );
+					}
+				}
 
 				if ( ! is_null( $notification_guid ) ) {
 
@@ -728,9 +748,6 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 					$cron_job_data = array(
 						'campaign_id' => $campaign_id,
 					);
-
-					// Check if admin has forcefully triggered the email sending.
-					$triggered_by_admin = ig_es_get_request_data( 'self', 0 );
 
 					// If admin has forcefully triggered the email sending, then unlock the cron job.
 					$force_unlock = '1' === $triggered_by_admin ? true : false;
@@ -812,7 +829,9 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 
 								
 								$sending_failed = ! empty( $send_result['status'] ) && 'ERROR' === $send_result['status'];
-								if ( $sending_failed ) {
+								$sending_success = ! empty( $send_result['status'] ) && 'SUCCESS' === $send_result['status'];
+								// Check if sending failed and no messages were sent
+								if ( $sending_failed && did_action( 'ig_es_message_sent' ) === 0 ) {
 									$pending_statuses = array( 
 										IG_ES_SENDING_QUEUE_STATUS_QUEUED,
 										IG_ES_SENDING_QUEUE_STATUS_SENDING 
@@ -853,6 +872,10 @@ if ( ! class_exists( 'ES_Queue' ) ) {
 										$notification_data['status'] = IG_ES_MAILING_QUEUE_STATUS_SENDING;
 										ES_DB_Mailing_Queue::update_mailing_queue( $message_id, $notification_data );
 									}
+								} elseif ( $sending_success ) {
+									
+									ES_DB_Mailing_Queue::update_batch_count($notification);
+
 								}
 
 								// TODO: Implement better solution

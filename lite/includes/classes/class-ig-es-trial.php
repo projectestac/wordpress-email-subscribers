@@ -25,7 +25,8 @@ class IG_ES_Trial {
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'show_trial_notices' ) );
 		add_action( 'wp_ajax_ig_es_trial_optin', array( $this, 'handle_trial_optin' ) );
-		add_action('ig_es_expires_email_send_action', array( $this,  'send_trial_expires_email'));  
+		add_action('ig_es_expires_email_send_action', array( $this,  'before_trial_expire'));
+		add_action('ig_es_trial_expires_reminder_action', array( $this,  'trial_expires_reminder'));
 	}
 
 	/**
@@ -110,16 +111,59 @@ class IG_ES_Trial {
 	 *
 	 * @since 4.6.1
 	 */
-	public function send_trial_expires_email() {
+	public function before_trial_expire() {
 		$admin_email = ES_Common::get_admin_email();
+		$user        = get_user_by( 'email', $admin_email );
+		$admin_name  = '';
+		if ( $user instanceof WP_User ) {
+			$admin_name = $user->display_name;
+		}
 
 		if ( is_email( $admin_email ) && $this->is_trial_valid() && !ES()->is_premium()) {
 			$data = array(
-				'logo_url'           => ES_PLUGIN_URL . 'lite/admin/images/es-logo-64x64.png'
+				'logo_url'   => ES_PLUGIN_URL . 'lite/admin/images/es-logo-64x64.png',
+				'first_name' => $admin_name,
 			);
 			$content = self::get_content( $data );
 			$email_expires_data = array(
-				'subject' => __( ' [Limited Time Offer - LIVE] Save 25%', 'email-subscribers' ),
+				'subject' => sprintf( __( '[Important] %s, take action now.', 'email-subscribers' ), $admin_name),
+				'email'   => $admin_email,
+				'content' => $content,
+			);
+			
+			if (!empty($email_expires_data)) {
+				ES()->mailer->can_track_open_clicks   = false;
+				ES()->mailer->add_unsubscribe_link = false;
+				return ES()->mailer->send( $email_expires_data['subject'], $email_expires_data['content'], $email_expires_data['email'] );
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Method to send notification after trial plan was expire.
+	 *
+	 * @return bool
+	 *
+	 * @since 4.6.1
+	 */
+	public function trial_expires_reminder() {
+		$admin_email = ES_Common::get_admin_email();
+		$user        = get_user_by( 'email', $admin_email );
+		$admin_name  = '';
+		if ( $user instanceof WP_User ) {
+			$admin_name = $user->display_name;
+		}
+
+		if ( is_email( $admin_email ) && !ES()->is_premium()) {
+			$data = array(
+				'logo_url'   => ES_PLUGIN_URL . 'lite/admin/images/es-logo-64x64.png',
+				'first_name' => $admin_name,
+			);
+			$content = self::get_expires_reminder_email_content( $data );
+			$email_expires_data = array(
+				'subject' => __( '' . $admin_name . ', still there?', 'email-subscribers' ),
 				'email'   => $admin_email,
 				'content' => $content , 
 			);
@@ -135,7 +179,7 @@ class IG_ES_Trial {
 	}
 
 	/**
-	 * Get the HTML content required for email
+	 * Get the HTML content required for expires email
 	 *
 	 * @param array $data
 	 *
@@ -152,6 +196,23 @@ class IG_ES_Trial {
 	}
 
 	/**
+	 * Get the HTML content required for expires email reminder
+	 *
+	 * @param array $data
+	 *
+	 * @return false|string
+	 */
+	public static function get_expires_reminder_email_content( $data ) {
+		ob_start();
+		ES_Admin::get_view(
+			'es-trial-expiry-reminder',
+			$data
+		);
+		$content = ob_get_clean();
+		return $content;
+	}
+
+	/**
 	 * Cron method for send when trial will expires.
 	 *
 	 */
@@ -160,11 +221,18 @@ class IG_ES_Trial {
 		if (!empty($trial_started_at)) {
 			$trial_expires_at = $trial_started_at + ES()->trial->get_trial_period();
 			$trial_expires_before_one_day = strtotime(gmdate('Y-m-d', $trial_expires_at) . '-1 day');
+			$trial_expires_after_six_day = strtotime(gmdate('Y-m-d', $trial_expires_at) . '+6 day');
 
 			$cron_response = wp_schedule_single_event( $trial_expires_before_one_day, 'ig_es_expires_email_send_action', array(), true );
+
+			$trial_reminder_cron_response = wp_schedule_single_event( $trial_expires_after_six_day, 'ig_es_trial_expires_reminder_action', array(), true );
 			
 			if ( $cron_response instanceof WP_Error ) {
 				wp_send_json_error( $cron_response );
+			}
+
+			if ( $trial_reminder_cron_response instanceof WP_Error ) {
+				wp_send_json_error( $trial_reminder_cron_response );
 			}
 		}
 

@@ -39,6 +39,128 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 			add_action( 'wp_ajax_ig_es_get_form_preview', array( $this, 'get_form_preview' ) );
 			add_action( 'ig_es_render_dnd_form', array( $this, 'render_dnd_form' ), 10, 2 );
 			add_action( 'ig_es_render_classic_form', array( $this, 'render_classic_form' ), 10, 2 );
+
+			add_filter( 'ig_es_forms_gallery', array( $this, 'add_forms' ) );
+		}
+
+		public function add_forms( $forms_gallery = array() ) {
+
+			$lite_forms_gallery = self::get_forms_gallery_items();
+
+			if ( !empty($lite_forms_gallery) ) {
+				$forms_gallery = array_merge( $forms_gallery, $lite_forms_gallery );
+			}
+
+			return $forms_gallery;
+		}
+
+		public static function get_forms_gallery_items() { 
+			$default_list = ES()->lists_db->get_list_by_name( IG_MAIN_LIST );
+			$list_id      = !empty( $default_list['id'] ) ? $default_list['id'] : null;
+
+			$add_gdpr_consent = ig_es_get_request_data( 'add_gdpr_consent', '' );
+
+			// Add GDPR setting if admin has opted for.
+			if ( 'yes' === $add_gdpr_consent ) {
+				$first_form_body = '<div class="es-form-field-container"><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_name_ce8b84bd85771" class="es-field-label">Name</label><input type="text" name="esfpx_name" autocomplete="off" placeholder="Enter your name" class="es-name" id="esfpx_name_ce8b84bd85771" required/></div></div><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_email_ce8b84bd85771" class="es-field-label">Email</label><input type="email" required class="es-email" name="esfpx_email" autocomplete="off" placeholder="Enter your email" id="esfpx_email_ce8b84bd85771"/></div></div><div class="gjs-row"><div class="gjs-cell"><div id="undefined" class="es_gdpr es-field-wrap"><label><input type="checkbox" name="es_gdpr_consent" value="true" required="required"/>Please read our <a href="' . home_url() . '">terms and conditions</a></label></div></div></div><div class="gjs-row"><div class="gjs-cell"><input type="submit" name="submit" value="Subscribe" required/></div></div></div>';
+			
+				$first_form_settings = array
+				(
+					'editor_type'     => 'drag-and-drop',
+					'form_style'      => '',
+					'dnd_editor_data' => '[{"type":"form-field-container","classes":["es-form-field-container"],"components":[{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_name_fa8e5109b0bef"},"components":[{"type":"textnode","content":"Name"}]},{"type":"name","void":true,"classes":["es-name"],"attributes":{"type":"text","name":"esfpx_name","autocomplete":"off","placeholder":"Enter your name","id":"esfpx_name_fa8e5109b0bef","required":true}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_email_fa8e5109b0bef"},"components":[{"type":"textnode","content":"Email"}]},{"type":"email","void":true,"classes":["es-email"],"attributes":{"type":"email","required":true,"name":"esfpx_email","autocomplete":"off","placeholder":"Enter your email","id":"esfpx_email_fa8e5109b0bef"}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"classes":["es_gdpr"],"components":[{"tagName":"label","type":"text","content":"<input type=\"checkbox\" name=\"es_gdpr_consent\" value=\"true\" required=\"required\"/>Please read our <a href=\"' . home_url() . '\">terms and conditions</a>","classes":["es-field-label"]}]}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"type":"submit","void":true,"attributes":{"type":"submit","name":"submit","value":"Subscribe","required":true}}]}]}]}]',
+					'dnd_editor_css'  => '* { box-sizing: border-box; } body {margin: 0;}.es-form-field-container .gjs-row{display:flex;justify-content:flex-start;align-items:stretch;flex-wrap:nowrap;}.es-form-field-container .gjs-cell{flex-grow:1;flex-basis:100%;}.es-form-field-container .gjs-cell[data-highlightable="1"]:empty{border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-style:dashed;border-right-style:dashed;border-bottom-style:dashed;border-left-style:dashed;border-top-color:rgb(204, 204, 204);border-right-color:rgb(204, 204, 204);border-bottom-color:rgb(204, 204, 204);border-left-color:rgb(204, 204, 204);border-image-source:initial;border-image-slice:initial;border-image-width:initial;border-image-outset:initial;border-image-repeat:initial;height:30px;}.es-form-field-container .gjs-row .gjs-cell input[type="checkbox"], .es-form-field-container .gjs-row .gjs-cell input[type="radio"]{margin-top:0px;margin-right:5px;margin-bottom:0px;margin-left:0px;width:auto;}.es-form-field-container .gjs-row{margin-bottom:0.6em;}.es-form-field-container label.es-field-label{display:block;}@media (max-width: 320px){.es-form-field-container{padding-top:1rem;padding-right:1rem;padding-bottom:1rem;padding-left:1rem;}}',
+					'lists'           => array( $list_id ),
+					'captcha'         => 'no',
+					'popup_headline'  => ''
+				);			
+			} else {
+				$first_form_body = '<div class="es-form-field-container"><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_name_e93fb7b28432b" class="es-field-label">Name</label><input type="text" name="esfpx_name" autocomplete="off" placeholder="Enter your name" class="es-name" id="esfpx_name_e93fb7b28432b" required/></div></div><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_email_e93fb7b28432b" class="es-field-label">Email</label><input type="email" required class="es-email" name="esfpx_email" autocomplete="off" placeholder="Enter your email" id="esfpx_email_e93fb7b28432b"/></div></div><div class="gjs-row"><div class="gjs-cell"><input type="submit" name="submit" value="Subscribe" required/></div></div></div>';
+
+				$first_form_settings = array
+				(
+					'editor_type'     => 'drag-and-drop',
+					'form_style'      => '',
+					'dnd_editor_data' => '[{"type":"form-field-container","classes":["es-form-field-container"],"components":[{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_name_0fe74ada6116e"},"components":[{"type":"textnode","content":"Name"}]},{"type":"name","void":true,"classes":["es-name"],"attributes":{"type":"text","name":"esfpx_name","autocomplete":"off","placeholder":"Enter your name","id":"esfpx_name_0fe74ada6116e","required":true}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_email_0fe74ada6116e"},"components":[{"type":"textnode","content":"Email"}]},{"type":"email","void":true,"classes":["es-email"],"attributes":{"type":"email","required":true,"name":"esfpx_email","autocomplete":"off","placeholder":"Enter your email","id":"esfpx_email_0fe74ada6116e"}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"type":"submit","void":true,"attributes":{"type":"submit","name":"submit","value":"Subscribe","required":true}}]}]}]}]',
+					'dnd_editor_css'  => '* { box-sizing: border-box; } body {margin: 0;}.es-form-field-container .gjs-row{display:flex;justify-content:flex-start;align-items:stretch;flex-wrap:nowrap;}.es-form-field-container .gjs-cell{flex-grow:1;flex-basis:100%;}.es-form-field-container .gjs-cell[data-highlightable="1"]:empty{border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-style:dashed;border-right-style:dashed;border-bottom-style:dashed;border-left-style:dashed;border-top-color:rgb(204, 204, 204);border-right-color:rgb(204, 204, 204);border-bottom-color:rgb(204, 204, 204);border-left-color:rgb(204, 204, 204);border-image-source:initial;border-image-slice:initial;border-image-width:initial;border-image-outset:initial;border-image-repeat:initial;height:30px;}.es-form-field-container .gjs-row .gjs-cell input[type="checkbox"], .es-form-field-container .gjs-row .gjs-cell input[type="radio"]{margin-top:0px;margin-right:5px;margin-bottom:0px;margin-left:0px;width:auto;}.es-form-field-container .gjs-row{margin-bottom:0.6em;}.es-form-field-container label.es-field-label{display:block;}@media (max-width: 320px){.es-form-field-container{padding-top:1rem;padding-right:1rem;padding-bottom:1rem;padding-left:1rem;}}',
+					'lists'           => array( $list_id ),
+					'captcha'         => 'no',
+					'popup_headline'  => ''
+				);
+			}
+	
+			$subscription_gdpr_form_body = '<div id="ixkr" class="es-form-field-container"><p id="itcxc">Get Free Email Updates!</p><div class="gjs-row"><div id="i17s" class="gjs-cell"><input type="text" name="esfpx_name" autocomplete="off" placeholder="Enter your name" class="es-name" id="esfpx_name_f791394fc5b9b" required/></div></div><div class="gjs-row"><div id="imab" class="gjs-cell"><input type="email" required class="es-email" name="esfpx_email" autocomplete="off" placeholder="Enter your email" id="esfpx_email_f791394fc5b9b"/></div></div><div class="gjs-row"><div class="gjs-cell"><div class="es_gdpr"><label id="iipe4" class="es-field-label"><input type="checkbox" required="required" name="es_gdpr_consent" value="true"/>Please read our <a href="yoursite.com" id="i3c18"><font color="#000000">terms and conditions</font></a></label></div></div></div><div class="gjs-row"><div class="gjs-cell"><input type="submit" name="submit" value="Subscribe" required id="ic2t8"/></div></div></div>';
+	
+			$subscription_gdpr_form_settings = array
+			(
+				'editor_type' => 'drag-and-drop',
+				'form_style' => '',
+				'dnd_editor_data' => '[{"type":"form-field-container","style":{"padding-top":"20px","padding-bottom":"20px","padding-right":"20px","padding-left":"20px","border-width":"0","border-style":"solid","border":"2px solid #006666","border-radius":"10px 10px 10px 10px","color":"#000000","width":"400px"},"classes":["es-form-field-container"],"attributes":{"style":"padding-top:20px;padding-bottom:20px;padding-right:20px;padding-left:20px;border-width:0;border-style:solid;border:2px solid #006666;border-radius:10px 10px 10px 10px;color:#000000;width:400px;","id":"ixkr"},"components":[{"tagName":"p","type":"text","style":{"font-family":"Georgia, serif","font-size":"26px","font-weight":"600","color":"#006666","margin":"8px 0 26px 0"},"attributes":{"style":"font-family:Georgia, serif;font-size:26px;font-weight:600;color:#006666;margin:8px 0 26px 0;","id":"itcxc"},"components":[{"type":"textnode","removable":false,"draggable":false,"highlightable":0,"copyable":false,"selectable":true,"content":"Get Free Email Updates!","_innertext":false}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"style":{"margin":"0 0 10px 0"},"classes":[{"name":"gjs-cell","private":1}],"attributes":{"style":"margin:0 0 10px 0;","id":"i17s"},"components":[{"type":"name","void":true,"style":{"padding-top":"8px","padding-bottom":"8px","padding-left":"8px","padding-right":"0","border-radius":"0 0 0 0","background-color":"#dddddd"},"classes":["es-name"],"attributes":{"type":"text","name":"esfpx_name","autocomplete":"off","placeholder":"Enter your name","id":"esfpx_name_f791394fc5b9b","required":true,"style":"padding-top:8px;padding-bottom:8px;padding-left:8px;padding-right:0;border-radius:0 0 0 0;background-color:#dddddd;"}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"style":{"margin":"0 0 10px 0"},"classes":[{"name":"gjs-cell","private":1}],"attributes":{"style":"margin:0 0 10px 0;","id":"imab"},"components":[{"type":"email","void":true,"style":{"padding-top":"8px","padding-right":"0","padding-bottom":"8px","padding-left":"8px","background-color":"#dddddd","border-radius":"0 0 0 0","__":1},"classes":["es-email"],"attributes":{"type":"email","required":true,"name":"esfpx_email","autocomplete":"off","placeholder":"Enter your email","id":"esfpx_email_f791394fc5b9b","style":"padding-top:8px;padding-right:0;padding-bottom:8px;padding-left:8px;background-color:#dddddd;border-radius:0 0 0 0;"}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"classes":["es_gdpr"],"components":[{"tagName":"label","type":"text","style":{"margin":"0 0 10px 0","font-family":"Georgia, serif"},"classes":["es-field-label"],"attributes":{"style":"margin:0 0 10px 0;font-family:Georgia, serif;","id":"iipe4"},"components":[{"type":"input","removable":false,"draggable":false,"highlightable":0,"copyable":false,"void":true,"attributes":{"type":"checkbox","required":"required","name":"es_gdpr_consent","value":"true"},"_innertext":false},{"type":"textnode","removable":false,"draggable":false,"highlightable":0,"copyable":false,"selectable":true,"content":"Please read our ","_innertext":false},{"type":"link","removable":false,"draggable":false,"highlightable":0,"copyable":false,"style":{"text-decoration":"underline","color":"#0853a6"},"attributes":{"href":"yoursite.com","style":"text-decoration:underline;color:#0853a6;","id":"i3c18"},"components":[{"tagName":"font","type":"text","removable":false,"draggable":false,"highlightable":0,"copyable":false,"editable":false,"selectable":false,"hoverable":false,"attributes":{"color":"#000000"},"components":[{"type":"textnode","removable":false,"draggable":false,"highlightable":0,"copyable":false,"selectable":true,"content":"terms and conditions","_innertext":false}],"_innertext":true}],"_innertext":false}]}]}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"type":"submit","void":true,"style":{"align":"center","padding-top":"15px","padding-bottom":"15px","padding-right":"15px","padding-left":"15px","background-color":"#006666","color":"white","font-family":"Georgia, serif","margin":"10px 0 0 0","vertical-align":"middle","font-size":"18px","border":"none rgb(255, 255, 255)"},"attributes":{"type":"submit","name":"submit","value":"Subscribe","required":true,"style":"align:center;padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px;background-color:#006666;color:white;font-family:Georgia, serif;margin:10px 0 0 0;vertical-align:middle;font-size:18px;border:none rgb(255, 255, 255);","id":"ic2t8"}}]}]}]}]',
+				'dnd_editor_css' => '* { box-sizing: border-box; } body {margin: 0;}#ixkr{padding-top:20px;padding-bottom:20px;padding-right:20px;padding-left:20px;border-width:0;border-style:solid;border:2px solid #006666;border-radius:10px 10px 10px 10px;color:#000000;width:400px;}#itcxc{font-family:Georgia, serif;font-size:26px;font-weight:600;color:#006666;margin:8px 0 26px 0;}#i17s{margin:0 0 10px 0;}#esfpx_name_f791394fc5b9b{padding-top:8px;padding-bottom:8px;padding-left:8px;padding-right:0;border-radius:0 0 0 0;background-color:#dddddd;}#imab{margin:0 0 10px 0;}#esfpx_email_f791394fc5b9b{padding-top:8px;padding-right:0;padding-bottom:8px;padding-left:8px;background-color:#dddddd;border-radius:0 0 0 0;}#iipe4{margin:0 0 10px 0;font-family:Georgia, serif;}#i3c18{text-decoration:underline;color:#0853a6;}#ic2t8{align:center;padding-top:15px;padding-bottom:15px;padding-right:15px;padding-left:15px;background-color:#006666;color:white;font-family:Georgia, serif;margin:10px 0 0 0;vertical-align:middle;font-size:18px;border:none rgb(255, 255, 255);}.es-form-field-container .gjs-row{display:flex;justify-content:flex-start;align-items:stretch;flex-wrap:nowrap;}.es-form-field-container .gjs-cell{flex-grow:1;flex-basis:100%;}.es-form-field-container .gjs-cell[data-highlightable="1"]:empty{border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-style:dashed;border-right-style:dashed;border-bottom-style:dashed;border-left-style:dashed;border-top-color:rgb(204, 204, 204);border-right-color:rgb(204, 204, 204);border-bottom-color:rgb(204, 204, 204);border-left-color:rgb(204, 204, 204);border-image-source:initial;border-image-slice:initial;border-image-width:initial;border-image-outset:initial;border-image-repeat:initial;height:30px;}.es-form-field-container .gjs-row .gjs-cell input[type="checkbox"], .es-form-field-container .gjs-row .gjs-cell input[type="radio"]{margin-top:0px;margin-right:5px;margin-bottom:0px;margin-left:0px;width:auto;}.es-form-field-container .gjs-row{margin-bottom:0.6em;}.es-form-field-container label.es-field-label{display:block;}@media (max-width: 320px){.es-form-field-container{padding-top:1rem;padding-right:1rem;padding-bottom:1rem;padding-left:1rem;}}',
+				'lists' => array( $list_id ),
+				'captcha' => 'no',
+				'popup_headline' => '',
+				'action_after_submit' => 'show_success_message',
+				'success_message' => '',
+				'redirection_url' => '',
+			);
+	
+			$subscription_logo_form_body = '<div class="gjs-cell"></div><div id="ib2a" class="es-form-field-container"><div id="i0fw6" class="gjs-cell"><img src="' . esc_url( ES_PLUGIN_URL . 'lite/admin/images/white_mail_icon.png' ) . '" width="300" height="200" id="iarpk"/></div><div class="gjs-row"></div><p id="it9g">Subscribe To Our Newsletter</p><div class="gjs-row"><div id="i9kx" class="gjs-cell"><input type="email" required class="es-email" name="esfpx_email" autocomplete="off" placeholder="Email Address" id="esfpx_email_bce83274f66ad"/></div></div><div class="gjs-row"><div id="imc2g" class="gjs-cell"><input type="submit" name="submit" value="Subscribe" required id="ivrac"/></div></div></div>';
+	
+			$subscription_logo_form_settings = array
+			(
+				'editor_type' => 'drag-and-drop',
+				'form_style' => '',
+				'dnd_editor_data' => '[{"classes":[{"name":"gjs-cell","private":1}]},{"type":"form-field-container","style":{"padding-top":"30px","padding-right":"10px","padding-bottom":"50px","padding-left":"10px","width":"450px","background-color":"#2a0555"},"classes":["es-form-field-container"],"attributes":{"style":"padding-top:30px;padding-right:10px;padding-bottom:50px;padding-left:10px;width:450px;background-color:#2a0555;","id":"ib2a"},"components":[{"style":{"text-align":"center"},"classes":[{"name":"gjs-cell","private":1}],"attributes":{"style":"text-align:center;","id":"i0fw6"},"components":[{"type":"image","style":{"height":"80px","en":"1","width":"100px"},"attributes":{"src":"http://localhost/igwp_setup/wp-content/uploads/2024/10/mail-vector-icon-white-illustration-260nw-575365351-removebg-preview.png","width":"300","height":"200","id":"iarpk","style":"height:80px;en:1;width:100px;"}}]},{"classes":[{"name":"gjs-row","private":1}]},{"tagName":"p","type":"text","style":{"text-align":"center","font-size":"24px","color":"white","margin":"0 0 24px 0","letter-spacing":"1px","font-family":"Georgia, serif","font-weight":"100"},"attributes":{"style":"text-align:center;font-size:24px;color:white;margin:0 0 24px 0;letter-spacing:1px;font-family:Georgia, serif;font-weight:100;","id":"it9g"},"components":[{"type":"textnode","removable":false,"draggable":false,"highlightable":0,"copyable":false,"selectable":true,"content":"Subscribe To Our Newsletter","_innertext":false}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"style":{"text-align":"center"},"classes":[{"name":"gjs-cell","private":1}],"attributes":{"style":"text-align:center;","id":"i9kx"},"components":[{"type":"email","void":true,"style":{"align":"center","padding-top":"8px","padding-bottom":"8px","padding-right":"115px","padding-left":"8px"},"classes":["es-email"],"attributes":{"type":"email","required":true,"name":"esfpx_email","autocomplete":"off","placeholder":"Email Address","id":"esfpx_email_bce83274f66ad","style":"align:center;padding-top:8px;padding-bottom:8px;padding-right:115px;padding-left:8px;"}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"style":{"text-align":"center"},"classes":[{"name":"gjs-cell","private":1}],"attributes":{"style":"text-align:center;","id":"imc2g"},"components":[{"type":"submit","void":true,"style":{"padding-top":"15px","padding-bottom":"14px","padding-right":"8px","padding-left":"8px","width":"200px","margin":"10px 0 0 0","color":"#ffffff","border":"2px solid #ffffff","vertical-align":"middle","line-height":"22px","font-weight":"800","font-size":"20px","background-color":"rgba(148,108,28,0)"},"attributes":{"type":"submit","name":"submit","value":"Subscribe","required":true,"style":"padding-top:15px;padding-bottom:14px;padding-right:8px;padding-left:8px;width:200px;margin:10px 0 0 0;color:#ffffff;border:2px solid #ffffff;vertical-align:middle;line-height:22px;font-weight:800;font-size:20px;background-color:rgba(148,108,28,0);","id":"ivrac"}}]}]}]}]',
+				'dnd_editor_css' => '* { box-sizing: border-box; } body {margin: 0;}#ib2a{padding-top:30px;padding-right:10px;padding-bottom:50px;padding-left:10px;width:450px;background-color:#2a0555;}#i0fw6{text-align:center;}#iarpk{height:80px;en:1;width:100px;}#it9g{text-align:center;font-size:24px;color:white;margin:0 0 24px 0;letter-spacing:1px;font-family:Georgia, serif;font-weight:100;}#i9kx{text-align:center;}#esfpx_email_bce83274f66ad{align:center;padding-top:8px;padding-bottom:8px;padding-right:115px;padding-left:8px;}#imc2g{text-align:center;}#ivrac{padding-top:15px;padding-bottom:14px;padding-right:8px;padding-left:8px;width:200px;margin:10px 0 0 0;color:#ffffff;border:2px solid #ffffff;vertical-align:middle;line-height:22px;font-weight:800;font-size:20px;background-color:rgba(148,108,28,0);}.es-form-field-container .gjs-row{display:flex;justify-content:flex-start;align-items:stretch;flex-wrap:nowrap;}.es-form-field-container .gjs-cell{flex-grow:1;flex-basis:100%;}.es-form-field-container .gjs-cell[data-highlightable="1"]:empty{border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-style:dashed;border-right-style:dashed;border-bottom-style:dashed;border-left-style:dashed;border-top-color:rgb(204, 204, 204);border-right-color:rgb(204, 204, 204);border-bottom-color:rgb(204, 204, 204);border-left-color:rgb(204, 204, 204);border-image-source:initial;border-image-slice:initial;border-image-width:initial;border-image-outset:initial;border-image-repeat:initial;height:30px;}.es-form-field-container .gjs-row .gjs-cell input[type="checkbox"], .es-form-field-container .gjs-row .gjs-cell input[type="radio"]{margin-top:0px;margin-right:5px;margin-bottom:0px;margin-left:0px;width:auto;}.es-form-field-container .gjs-row{margin-bottom:0.6em;}.es-form-field-container label.es-field-label{display:block;}@media (max-width: 320px){.es-form-field-container{padding-top:1rem;padding-right:1rem;padding-bottom:1rem;padding-left:1rem;}}',
+				'lists' => array( $list_id ),
+				'captcha' => 'no',
+				'popup_headline' => '',
+				'action_after_submit' => 'show_success_message',
+				'success_message' => '',
+				'redirection_url' => ''
+			);
+	
+			$form_data_array = [];
+	
+			$forms_data_array = array( 
+								'subscription_gdpr_form' => array( 
+									'name' => 'Subscription form with GDPR consent', 
+									'body' => $subscription_gdpr_form_body, 
+									'settings' => $subscription_gdpr_form_settings,
+									'preview_image' => 'subscription_gdpr_form_lite.png',
+								),
+								'subscription_logo_form' => array( 
+									'name' => 'Subscription form with logo', 
+									'body' => $subscription_logo_form_body, 
+									'settings' => $subscription_logo_form_settings,
+									'preview_image' => 'subscription_form_with_logo_lite.png',
+								),
+								'first_form' => array( 
+									'name' => 'First form', 
+									'body' => $first_form_body, 
+									'settings' => $first_form_settings,
+									'preview_image' => ''
+								),
+							);
+
+			foreach ( $forms_data_array as $forms_data ) {
+				$form_data = [];
+	
+				$form_data['name']       = $forms_data['name'];
+				$form_data['body']       = maybe_serialize( $forms_data['body'] );
+				$form_data['settings']   = maybe_serialize( $forms_data['settings'] );
+				$form_data['styles']     = '';
+				$form_data['preview_image'] = $forms_data['preview_image'];
+				$form_data['created_at'] = ig_get_current_date_time();
+				$form_data['updated_at'] = null;
+				$form_data['deleted_at'] = null;
+				$form_data['af_id']      = 0;
+	
+				$form_data_array[] = $form_data;
+			}
+	
+			return $form_data_array;
 		}
 
 		public function render_classic_form( $id, $data ) {
@@ -233,11 +355,11 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 															</div>
 														</div>
 														<div class="flex">
-															<div class="ml-16 mb-6 mr-4 mt-4">
+															<div class="ml-16 mb-6 mr-4 mt-4 ig-es-multiselect-container">
 																<?php
 																$allowedtags = ig_es_allowed_html_tags_in_esc();
 																if ( count( $lists ) > 0 ) {
-																	$lists_checkboxes = ES_Shortcode::prepare_lists_checkboxes( $lists, array_keys( $lists ), 3, (array) $form_data['lists'] );
+																	$lists_checkboxes = ES_Shortcode::prepare_lists_multi_select( $lists, array_keys( $lists ), 3, (array) $form_data['lists'] );
 																	echo wp_kses( $lists_checkboxes, $allowedtags );
 
 																} else {
@@ -246,7 +368,7 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 																	<span><b class="text-sm font-normal text-gray-600 pb-2">
 																		<?php
 																		/* translators: %s: Create list page url */
-																		echo sprintf( esc_html__( 'List not found. Please %s', 'email-subscribers' ), '<a href="' . esc_url( $create_list_link ) . '"> ' . esc_html__( 'create your first list', 'email-subscribers' ) . '</a>' );
+																		echo sprintf( esc_html__( 'List not found. Please %s', 'email-subscribers' ), '<a id="ig-es-open-add-list-modal" href="#"> ' . esc_html__( 'create your first list', 'email-subscribers' ) . '</a>' );
 																		?>
 																	</b></span>
 																<?php } ?>
@@ -372,7 +494,11 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 
 			$nonce = wp_create_nonce( 'es_form' );
 			?>
-
+            <style>
+			.select2-container{
+				width: 100%!important;
+			}
+			</style>
 			<div id="es-edit-form-container" data-editor-type="<?php echo esc_attr( $editor_type ); ?>" class="<?php echo esc_attr( $editor_type ); ?> font-sans pt-1.5 wrap">
 				<?php
 				if ( ! empty( $message_data ) ) {
@@ -611,7 +737,7 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 									<div class="form_side_content bg-gray-100 rounded-r-lg">
 										<div class="pt-4 pb-4 mx-4 border-b border-gray-200 es-form-lists ">
 											<div class="flex w-full ">
-												<div class="w-4/12">
+												<div class="w-3/12">
 														<label for="tag-link">
 															<span class="block pr-4 text-sm font-medium text-gray-600 pb-2">
 																<?php 
@@ -621,11 +747,11 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 															</span>
 														</label>
 												</div>
-												<div class="w-8/12">
+												<div class="w-9/12 ig-es-multiselect-container">
 													<?php
 													if ( count( $lists ) > 0 ) {
 														$form_lists       = ! empty( $form_data['settings']['lists'] ) ? $form_data['settings']['lists'] : array();
-														$lists_checkboxes = ES_Shortcode::prepare_lists_checkboxes( $lists, array_keys( $lists ), 3, (array) $form_lists, '', '', 'form_data[settings][lists][]' );
+														$lists_checkboxes = ES_Shortcode::prepare_lists_multi_select( $lists, array_keys( $lists ), 3, (array) $form_lists, '', '', 'form_data[settings][lists][]' );
 														echo wp_kses( $lists_checkboxes, $allowedtags );
 													} else {
 														$create_list_link = admin_url( 'admin.php?page=es_lists&action=new' );
@@ -633,10 +759,19 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 														<span><b class="text-sm font-normal text-gray-600 pb-2">
 															<?php
 															/* translators: %s: Create list page url */
-															echo sprintf( esc_html__( 'List not found. Please %s', 'email-subscribers' ), '<a href="' . esc_url( $create_list_link ) . '"> ' . esc_html__( 'create your first list', 'email-subscribers' ) . '</a>' );
+															echo sprintf( esc_html__( 'List not found. Please %s', 'email-subscribers' ), '<a id="ig-es-open-add-list-modal" href="#"> ' . esc_html__( 'create your first list', 'email-subscribers' ) . '</a>' );
 															?>
 														</b></span>
 													<?php } ?>
+													<script>
+													jQuery(document).ready(function() {
+														const selectId = 'ig-es-multiselect-lists';
+														jQuery('#' + selectId).select2({
+															placeholder: "Select options",
+															closeOnSelect: false
+														});
+													});
+												</script>
 												</div>
 											</div>
 										</div>
@@ -662,7 +797,41 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 
 					</fieldset>
 				</form>
-			</div>
+				
+<!-- Add new list modal popup -->
+<div id="ig-es-add-list-modal" class="inactive modal-overlay">
+    <div class="modal-content">
+        <h2 class="modal-title"><?php echo esc_html__('Add New List', 'email-subscribers'); ?></h2>
+
+        <div class="modal-close">
+            <button id="ig-es-list-close-modal" class="close-button">&times;</button>
+        </div>
+
+        <form id="add-list-form">
+            <input type="hidden" name="_wpnonce" value="<?php echo esc_attr(wp_create_nonce('es_list')); ?>" />
+
+            <div class="form-group">
+                <label for="es-list-name" class="form-label"><?php echo esc_html__('List Name', 'email-subscribers'); ?></label>
+                <input type="text" name="es-list-name" id="es-list-name" class="form-input" placeholder="<?php echo esc_html__('Enter list name', 'email-subscribers'); ?>" required />
+            </div>
+
+            <div class="form-group">
+                <label for="es-list-desc" class="form-label"><?php echo esc_html__('Description', 'email-subscribers'); ?></label>
+                <textarea name="es-list-desc" id="es-list-desc" class="form-textarea" rows="2" placeholder="<?php echo esc_html__('Enter description (optional)', 'email-subscribers'); ?>"></textarea>
+            </div>
+
+            <div class="form-actions">
+                
+                <span class="spinner-container" id="spinner-image">
+                    <img src="<?php echo esc_url(ES_PLUGIN_URL . 'lite/public/images/spinner.gif'); ?>" alt="<?php echo esc_attr__('Loading...', 'email-subscribers'); ?>" />
+                </span>
+                <div id="ig-es-list-message"></div>
+				<div><button type="button" id="ig-es-list-cancel-modal" class="button-cancel"><?php echo esc_html__('Cancel', 'email-subscribers'); ?></button>
+                <button type="button" id="es-add-list" class="button-save"><?php echo esc_html__('Save', 'email-subscribers'); ?></button></div>
+            </div>
+        </form>
+    </div>
+</div>
 			<?php
 		}
 
@@ -676,6 +845,11 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 		public function get_form_preview() {
 
 			check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
+
+			$can_access_forms = ES_Common::ig_es_can_access( 'forms' );
+			if ( ! $can_access_forms ) {
+				return 0;
+			}
 
 			$response = array();
 
@@ -728,7 +902,7 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 			$form_styles = array(
 				array(
 					'id'   => 'theme-styling',
-					'name' => __( 'Theme styling', 'email-subscribers' ),
+					'name' => __( 'Inherit from theme', 'email-subscribers' ),
 					'css'  => file_get_contents( $form_styles_path . 'theme-styling.css' ),
 				),
 			);

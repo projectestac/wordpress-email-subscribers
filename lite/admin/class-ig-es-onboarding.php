@@ -652,6 +652,10 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			return $response;
 		}
 
+		public static function get_forms_gallery_items() {
+			$forms_gallery = apply_filters( 'ig_es_forms_gallery', array() );
+			return $forms_gallery;
+		}
 		
 		/**
 		 * Create default form
@@ -665,55 +669,14 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 			$response = array(
 				'status' => 'error',
 			);
-
-			$form_data    = array();
-			$default_list = ES()->lists_db->get_list_by_name( IG_MAIN_LIST );
-			$list_id      = $default_list['id'];
 			
-			$add_gdpr_consent = ig_es_get_request_data( 'add_gdpr_consent', '' );
+			$forms_gallery_data = self::get_forms_gallery_items();
 
-			// Add GDPR setting if admin has opted for.
-			if ( 'yes' === $add_gdpr_consent ) {
-				$body = '<div class="es-form-field-container"><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_name_ce8b84bd85771" class="es-field-label">Name</label><input type="text" name="esfpx_name" autocomplete="off" placeholder="Enter your name" class="es-name" id="esfpx_name_ce8b84bd85771" required/></div></div><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_email_ce8b84bd85771" class="es-field-label">Email</label><input type="email" required class="es-email" name="esfpx_email" autocomplete="off" placeholder="Enter your email" id="esfpx_email_ce8b84bd85771"/></div></div><div class="gjs-row"><div class="gjs-cell"><div id="undefined" class="es_gdpr es-field-wrap"><label><input type="checkbox" name="es_gdpr_consent" value="true" required="required"/>Please read our <a href="' . home_url() . '">terms and conditions</a></label></div></div></div><div class="gjs-row"><div class="gjs-cell"><input type="submit" name="submit" value="Subscribe" required/></div></div></div>';
+			foreach ( $forms_gallery_data as $form_gallery_data ) {
+				$form_id = ES()->forms_db->add_form( $form_gallery_data );
+			}
 			
-				$settings = array
-				(
-					'editor_type'     => 'drag-and-drop',
-					'form_style'      => '',
-					'dnd_editor_data' => '[{"type":"form-field-container","classes":["es-form-field-container"],"components":[{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_name_fa8e5109b0bef"},"components":[{"type":"textnode","content":"Name"}]},{"type":"name","void":true,"classes":["es-name"],"attributes":{"type":"text","name":"esfpx_name","autocomplete":"off","placeholder":"Enter your name","id":"esfpx_name_fa8e5109b0bef","required":true}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_email_fa8e5109b0bef"},"components":[{"type":"textnode","content":"Email"}]},{"type":"email","void":true,"classes":["es-email"],"attributes":{"type":"email","required":true,"name":"esfpx_email","autocomplete":"off","placeholder":"Enter your email","id":"esfpx_email_fa8e5109b0bef"}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"classes":["es_gdpr"],"components":[{"tagName":"label","type":"text","content":"<input type=\"checkbox\" name=\"es_gdpr_consent\" value=\"true\" required=\"required\"/>Please read our <a href=\"' . home_url() . '\">terms and conditions</a>","classes":["es-field-label"]}]}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"type":"submit","void":true,"attributes":{"type":"submit","name":"submit","value":"Subscribe","required":true}}]}]}]}]',
-					'dnd_editor_css'  => '* { box-sizing: border-box; } body {margin: 0;}.es-form-field-container .gjs-row{display:flex;justify-content:flex-start;align-items:stretch;flex-wrap:nowrap;}.es-form-field-container .gjs-cell{flex-grow:1;flex-basis:100%;}.es-form-field-container .gjs-cell[data-highlightable="1"]:empty{border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-style:dashed;border-right-style:dashed;border-bottom-style:dashed;border-left-style:dashed;border-top-color:rgb(204, 204, 204);border-right-color:rgb(204, 204, 204);border-bottom-color:rgb(204, 204, 204);border-left-color:rgb(204, 204, 204);border-image-source:initial;border-image-slice:initial;border-image-width:initial;border-image-outset:initial;border-image-repeat:initial;height:30px;}.es-form-field-container .gjs-row .gjs-cell input[type="checkbox"], .es-form-field-container .gjs-row .gjs-cell input[type="radio"]{margin-top:0px;margin-right:5px;margin-bottom:0px;margin-left:0px;width:auto;}.es-form-field-container .gjs-row{margin-bottom:0.6em;}.es-form-field-container label.es-field-label{display:block;}@media (max-width: 320px){.es-form-field-container{padding-top:1rem;padding-right:1rem;padding-bottom:1rem;padding-left:1rem;}}',
-					'lists'           => array( $list_id ),
-					'captcha'         => 'no',
-					'popup_headline'  => ''
-				);			
-			}
-
-			if ( 'no' === $add_gdpr_consent ) {
-				$body = '<div class="es-form-field-container"><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_name_e93fb7b28432b" class="es-field-label">Name</label><input type="text" name="esfpx_name" autocomplete="off" placeholder="Enter your name" class="es-name" id="esfpx_name_e93fb7b28432b" required/></div></div><div class="gjs-row"><div class="gjs-cell"><label for="esfpx_email_e93fb7b28432b" class="es-field-label">Email</label><input type="email" required class="es-email" name="esfpx_email" autocomplete="off" placeholder="Enter your email" id="esfpx_email_e93fb7b28432b"/></div></div><div class="gjs-row"><div class="gjs-cell"><input type="submit" name="submit" value="Subscribe" required/></div></div></div>';
-
-				$settings = array
-				(
-					'editor_type'     => 'drag-and-drop',
-					'form_style'      => '',
-					'dnd_editor_data' => '[{"type":"form-field-container","classes":["es-form-field-container"],"components":[{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_name_0fe74ada6116e"},"components":[{"type":"textnode","content":"Name"}]},{"type":"name","void":true,"classes":["es-name"],"attributes":{"type":"text","name":"esfpx_name","autocomplete":"off","placeholder":"Enter your name","id":"esfpx_name_0fe74ada6116e","required":true}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"tagName":"label","type":"text","classes":["es-field-label"],"attributes":{"for":"esfpx_email_0fe74ada6116e"},"components":[{"type":"textnode","content":"Email"}]},{"type":"email","void":true,"classes":["es-email"],"attributes":{"type":"email","required":true,"name":"esfpx_email","autocomplete":"off","placeholder":"Enter your email","id":"esfpx_email_0fe74ada6116e"}}]}]},{"classes":[{"name":"gjs-row","private":1}],"components":[{"classes":[{"name":"gjs-cell","private":1}],"components":[{"type":"submit","void":true,"attributes":{"type":"submit","name":"submit","value":"Subscribe","required":true}}]}]}]}]',
-					'dnd_editor_css'  => '* { box-sizing: border-box; } body {margin: 0;}.es-form-field-container .gjs-row{display:flex;justify-content:flex-start;align-items:stretch;flex-wrap:nowrap;}.es-form-field-container .gjs-cell{flex-grow:1;flex-basis:100%;}.es-form-field-container .gjs-cell[data-highlightable="1"]:empty{border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;border-top-style:dashed;border-right-style:dashed;border-bottom-style:dashed;border-left-style:dashed;border-top-color:rgb(204, 204, 204);border-right-color:rgb(204, 204, 204);border-bottom-color:rgb(204, 204, 204);border-left-color:rgb(204, 204, 204);border-image-source:initial;border-image-slice:initial;border-image-width:initial;border-image-outset:initial;border-image-repeat:initial;height:30px;}.es-form-field-container .gjs-row .gjs-cell input[type="checkbox"], .es-form-field-container .gjs-row .gjs-cell input[type="radio"]{margin-top:0px;margin-right:5px;margin-bottom:0px;margin-left:0px;width:auto;}.es-form-field-container .gjs-row{margin-bottom:0.6em;}.es-form-field-container label.es-field-label{display:block;}@media (max-width: 320px){.es-form-field-container{padding-top:1rem;padding-right:1rem;padding-bottom:1rem;padding-left:1rem;}}',
-					'lists'           => array( $list_id ),
-					'captcha'         => 'no',
-					'popup_headline'  => ''
-				);
-			}
-
-			$form_data['name']       = 'First Form';
-			$form_data['body']       = maybe_serialize( $body );
-			$form_data['settings']   = maybe_serialize( $settings );
-			$form_data['styles']     = '';
-			$form_data['created_at'] = ig_get_current_date_time();
-			$form_data['updated_at'] = null;
-			$form_data['deleted_at'] = null;
-			$form_data['af_id']      = 0;
-
 			// Add Form.
-			$form_id = ES()->forms_db->add_form( $form_data );
 			if ( ! empty( $form_id ) ) {
 				$response['status']     = 'success';
 				$response['tasks_data'] = array(
@@ -1430,7 +1393,7 @@ if ( ! class_exists( 'IG_ES_Onboarding' ) ) {
 					'send_test_email',
 				),
 				'complete_ess_onboarding' => array(
-					'confirm_email_delivery',
+					'create_ess_account',
 				),
 
 				'check_test_email_on_server' => array(

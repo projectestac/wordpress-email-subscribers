@@ -1,17 +1,25 @@
-<div id="ig-ess-account-overview-block" class="relative pr-6 pl-6 w-full">
+<div id="ig-ess-account-overview-block" class="relative pl-6 w-full">
 	<p class="pb-3 text-lg font-medium leading-6 text-gray-400">
 		<span class="leading-7">
 			<?php
-				echo esc_html__( 'Email Sending Service status', 'email-subscribers' );
+				echo esc_html__( 'Icegram Email Sending Service', 'email-subscribers' );
 			?>
 		</span>
 		<?php
 		if ( 'success' === $service_status ) {
 			?>
-			<svg xmlns="http://www.w3.org/2000/svg" class="inline-block ml-1 h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+			<span class="block-status ml-1"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
 				<title><?php echo esc_attr__( 'Email Sending Service working fine', 'email-subscribers' ); ?></title>
 				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-			</svg>
+			</svg> &nbsp; 
+			<?php
+			// TODO: Improve plan detection logic. Currently doing based on allocated limit
+			if ( $allocated_limit <= 3000) {
+				echo esc_html__( 'Free plan', 'email-subscribers' );
+			} else {
+				echo esc_html__( 'Paid plan', 'email-subscribers' );
+			}
+			?> &nbsp;</span>
 			<?php
 		} else {
 			?>
@@ -25,7 +33,7 @@
 	</p>
 	<div id="subscribers-stats" class="clear-both">
 		<div class="stats-info">
-			<div class="p-1">
+			<div class="p-1 text-left">
 				<div class="md:flex md:items-center">
 					<span class="text-2xl font-bold leading-none text-indigo-600 pr-1">
 						<?php echo esc_html( $allocated_limit ); ?>
@@ -38,7 +46,7 @@
 					?>
 				</p>
 			</div>
-			<div class="p-1">
+			<div class="p-1 text-left">
 				<span class="text-2xl font-bold leading-none text-indigo-600">
 					<?php echo esc_html( $used_limit ); ?>			
 				</span>
@@ -48,7 +56,7 @@
 					</p>
 				</span>
 			</div>
-			<div class="p-1">
+			<div class="p-1 text-left">
 				<div id="es-dashboard-click-stats">
 					<span class="text-2xl font-bold leading-none text-indigo-600">
 						<?php echo esc_html( $allocated_limit - $used_limit ); ?>
@@ -59,20 +67,14 @@
 				</div>
 			</div>
 		</div>
-		<p class="xl:pr-3 2xl:pr-0 text-sm text-gray-500">
-			<?php
-				/* translators: Mailer name name */
-				echo sprintf( esc_html__( 'Emails beyond the first %1$d will be sent through %2$s.', 'email-subscribers' ), esc_html( $allocated_limit ), '<a href="' . esc_url( $settings_url ) . '" target="_blank">' . esc_html( $current_mailer_name ) . '</a>' );
-			?>
-		</p>
 		<p class="py-3 xl:pr-3 2xl:pr-0 text-sm text-gray-500">
 			<?php
-				echo esc_html__( 'If you have more email to send for a month consider our premium plans of Email Sending', 'email-subscribers' );
+				echo esc_html__( "If you're sending more emails, we recommend you upgrade to a higher plan for better deliverability and speed.", 'email-subscribers' );
 			?>
 		</p>
 		<a href="https://www.icegram.com/email-sending-service/?utm_source=es&utm_medium=dashboard&utm_campaign=revamp-01" target="_blank" class=" mt-3">
-			<button type="button" class="primary">
-				<?php echo esc_html( 'Upgrade', 'email-subscribers' ); ?> &rarr;
+			<button type="button" class="lighter-gray">
+				<?php echo esc_html( 'Increase email sending limits', 'email-subscribers' ); ?> &rarr;
 			</button>
 		</a>
 	</div>

@@ -78,6 +78,7 @@ class IG_ES_Subscribers_Query {
 		'click_after'         => null,
 		'click_link'          => null,
 		'click_link__not_in'  => null,
+		'subscribed'          => null,
 
 		'sub_query_limit'     => false,
 	);
@@ -107,6 +108,7 @@ class IG_ES_Subscribers_Query {
 		'_lists__in',
 		'_lists__not_in',
 		'_subscribed_before',
+		'subscribed',
 	);
 
 	private $custom_fields = array();
@@ -173,18 +175,19 @@ class IG_ES_Subscribers_Query {
 			$joins[] = $join;
 		}
 
-		if ( $this->args['conditions'] ) {
+		if ( is_array( $this->args['conditions'] ) && ! empty( $this->args['conditions'] ) ) {
 			$cond = array();
 
 			foreach ( $this->args['conditions'] as $i => $and_conditions ) {
 
-				if ( ! empty( $and_conditions ) ) {
+				if ( is_array( $and_conditions ) && ! empty( $and_conditions ) ) {
 					foreach ( $and_conditions as $j => $condition ) {
 
 						$field    = isset( $condition['field'] ) ? $condition['field'] : ( isset( $condition[0] ) ? $condition[0] : null );
 						$operator = isset( $condition['operator'] ) ? $condition['operator'] : ( isset( $condition[1] ) ? $condition[1] : null );
 						$value    = isset( $condition['value'] ) ? $condition['value'] : ( isset( $condition[2] ) ? $condition[2] : null );
 						// something is not set => skip
+						
 						if ( is_null( $field ) || is_null( $operator ) ) {
 							unset( $this->args['conditions'][ $i ][ $j ] );
 							continue;
@@ -198,12 +201,12 @@ class IG_ES_Subscribers_Query {
 			}
 		}
 
-		if ( ! empty( $this->args['conditions'] ) ) {
+		if ( is_array( $this->args['conditions'] ) && ! empty( $this->args['conditions'] ) ) {
 			foreach ( $this->args['conditions'] as $i => $and_conditions ) {
 
 				$sub_cond = array();
 
-				if ( ! empty( $and_conditions ) ) {
+				if ( is_array( $and_conditions ) && ! empty( $and_conditions ) ) {
 					foreach ( $and_conditions as $j => $condition ) {
 
 						$field    = isset( $condition['field'] ) ? $condition['field'] : ( isset( $condition[0] ) ? $condition[0] : null );
@@ -321,11 +324,28 @@ class IG_ES_Subscribers_Query {
 								}
 
 								$joins[] = $join;
+							} elseif (0=== strpos($field, 'subscribed') ) {
+							
+								if ($value) {
+								
+									$date_start = $value[0] . ' 00:00:00';
+									$date_end = $value[0] . ' 23:59:59';
+
+									if ( 'subscribed_on' === $operator || 'is' === $operator ) {
+										$sub_cond[] = $wpbd->prepare('lists_subscribers.subscribed_at BETWEEN %s AND %s', $date_start, $date_end);
+									} elseif ( 'subscribed_after' === $operator ) {
+										$sub_cond[] = $wpbd->prepare('lists_subscribers.subscribed_at > %s', $date_end);
+									} elseif ( 'subscribed_before' === $operator ) {
+										$sub_cond[] = $wpbd->prepare('lists_subscribers.subscribed_at < %s', $date_start);
+									}
+								}
+
 							}
 						}
 					}
 				}
 				$sub_cond = array_filter( $sub_cond );
+			
 				if ( ! empty( $sub_cond ) ) {
 					$cond[] = '( ' . implode( ' OR ', $sub_cond ) . ' )';
 				}
@@ -360,7 +380,7 @@ class IG_ES_Subscribers_Query {
 				// not in any list
 			} elseif ( -1 == $this->args['lists'] ) {
 				$wheres[] = 'AND lists_subscribers.list_id IS NULL';
-				// ignore lists
+				// ignore lists	
 			}
 		}
 
@@ -469,7 +489,6 @@ class IG_ES_Subscribers_Query {
 
 				unset( $sub_result );
 			}
-
 			$this->last_query  = $sql;
 			$this->last_error  = $wpbd->last_error;
 			$this->last_result = $result;

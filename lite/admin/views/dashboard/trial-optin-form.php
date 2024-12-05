@@ -1,51 +1,66 @@
 <?php
+$admin_name = wp_get_current_user();
 $admin_email = get_option( 'admin_email' );
+$trial_expiry_date           = ES()->trial->get_trial_expiry_date();
+$formatted_trial_expiry_date = ig_es_format_date_time( $trial_expiry_date );
 ?>
 <div id="ig-es-trial-optin-section" class="hidden">
 	<form id="ig-es-trial-optin-form" method="post">
 		<?php wp_nonce_field( 'ig-es-trial-optin-nonce', 'ig_es_trial_optin_nonce' ); ?>
 		<h3 class="pb-3 text-lg font-medium leading-6 text-gray-400">
-			<?php echo esc_html__( 'Sign up now', 'email-subscribers' ); ?>
+			<?php echo esc_html__( 'Premium - Activating Free Trial...', 'email-subscribers' ); ?>
 		</h3>
-		<div class="pt-1 space-y-2 text-sm">
-			<div class="w-full">
-				<input
-					id="ig-es-sign-up-name"
-					class="block w-full mt-1 text-sm transition duration-150 ease-in-out rounded-md shadow-sm form-input sm:leading-5"
-					placeholder="<?php echo esc_html__('Your name', 'email-subscribers' ); ?>"
-				/>
+		<div class="py-3">
+			<div class="py-2 space-y-2 text-sm">
+				<div class="w-full">
+					<label><?php echo esc_html__( 'Name', 'email-subscribers' ); ?></label>
+					<input
+						id="ig-es-sign-up-name"
+						class="block w-full mt-1 text-sm transition duration-150 ease-in-out rounded-md shadow-sm form-input sm:leading-5"
+						placeholder="<?php echo esc_html__('Your name', 'email-subscribers' ); ?>" value="<?php echo esc_attr( $admin_name->user_login ); ?>"
+					/>
+				</div>
 			</div>
-		</div>
-		<div class="pt-1 space-y-2 text-sm">
-			<div class="w-full">
-				<input
-				type="email"
-					id="ig-es-sign-up-email"
-					class="es_onboard_email block w-full mt-1 text-sm transition duration-150 ease-in-out rounded-md shadow-sm form-input sm:leading-5"
-					placeholder="<?php echo esc_html__('Your email', 'email-subscribers' ); ?>"
-					value="<?php echo esc_attr( $admin_email ); ?>"
-				/>
+			<div class="py-2 space-y-2 text-sm">
+				<div class="w-full">
+				<label><?php echo esc_html__( 'Email', 'email-subscribers' ); ?></label>
+					<input
+					type="email"
+						id="ig-es-sign-up-email"
+						class="es_onboard_email block w-full mt-1 text-sm transition duration-150 ease-in-out rounded-md shadow-sm form-input sm:leading-5"
+						placeholder="<?php echo esc_html__('Your email', 'email-subscribers' ); ?>"
+						value="<?php echo esc_attr( $admin_email ); ?>"
+					/>
+				</div>
 			</div>
-		</div>
-		<div class="pt-3 space-y-2 text-sm">
-			<button id="ig-es-trial-optin-btn" type="button" class="primary ig-es-inline-loader inline-flex mt-2 text-sm inline-block">
-				<span>
-					<?php echo esc_html__( 'Start trial', 'email-subscribers' ); ?>
-				</span>
-				<svg class="es-btn-loader"
-								xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-					<circle cx="12" cy="12" r="10" stroke="currentColor"
-							stroke-width="4"></circle>
-					<path fill="currentColor"
-							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-				</svg>
-			</button>
+			<div class="py-2 space-y-2 text-sm">
+				<button id="ig-es-trial-optin-btn" type="button" class="lighter-gray ig-es-inline-loader inline-flex mt-2 text-sm inline-block">
+					<span>
+						<?php echo esc_html__( 'Continue', 'email-subscribers' ); ?> &rarr;
+					</span>
+					<svg class="es-btn-loader"
+									xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<circle cx="12" cy="12" r="10" stroke="currentColor"
+								stroke-width="4"></circle>
+						<path fill="currentColor"
+								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					</svg>
+				</button>
+			</div>
 		</div>
 	</form>
 	<div id="ig-es-trial-optin-success-block" class="hidden">
-		<h3 class="text-lg font-medium tracking-tight text-gray-900">
-			<?php echo esc_html__( 'It\'s done!', 'email-subscribers' ); ?>
-		</h3>
+		<p class="sec-title">
+			<span>
+			<?php echo esc_html__( 'Icegram Express - Premium', 'email-subscribers' ); ?>
+			</span>
+			
+			<span class="block-status"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+				<title><?php echo esc_html__( 'Icegram Express - Premium Activated', 'email-subscribers'); ?></title>
+				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+			</svg> &nbsp; <?php echo esc_html__( 'Free trial', 'email-subscribers' ); ?> &nbsp;</span>
+		</p>
+		
 		<div class="pt-1 space-y-2 text-sm">
 			<div class="w-full">
 				<p class="pt-3 xl:pr-3 2xl:pr-0 text-sm text-gray-500">
@@ -53,15 +68,25 @@ $admin_email = get_option( 'admin_email' );
 						/* translators: 1: Trial period in days. */
 						echo esc_html__(
 							sprintf(
-								'Enjoy benefits of automatic email sending, advance spam protection and more for next %d days.',
-								ES()->trial->get_trial_period( 'in_days' )
+								'Your free trial of Premium plan is active till %s.',
+								$formatted_trial_expiry_date
 							),
 							'email-subscribers'
 						);
 						?>
 				</p>
+				<p class="py-3 mt-3 xl:pr-3 2xl:pr-0 text-sm text-gray-500">
+					<?php echo esc_html__('To keep using all the powerful email marketing features beyond the trial, switch to a paid plan. 94% users who take up our paid plans are highly satisfied.', 'email-subscribers'); ?>
+				</p>
 			</div>
 		</div>
+		<a href="https://www.icegram.com/express/pricing/" target="_blank">
+			<button id="ig-es-trial-optin-btn" type="button" class="lighter-gray ig-es-inline-loader inline-flex mt-2 text-sm inline-block">
+				<span>
+					<?php echo esc_html__( 'Yes, Choose a plan', 'email-subscribers' ); ?> &rarr;
+				</span>
+			</button>
+		</a>
 	</div>
 	<div id="ig-es-trial-optin-error-block" class="hidden">
 		<div class="pt-1 space-y-2 text-sm">
@@ -105,12 +130,6 @@ $admin_email = get_option( 'admin_email' );
 					if (response.success) {
 						$('#ig-es-trial-optin-form,#ig-es-trial-optin-error-block').addClass('hidden');
 						$('#ig-es-trial-optin-success-block').removeClass('hidden');
-
-						/*After 10 second of success block users will see trial-active block*/
-						setTimeout(function(){
-							$('#ig-es-trial-optin-success-block').addClass('hidden');
-							$('#ig-es-trial-active-block').removeClass('hidden');
-						}, 10000);
 
 						//$('#ig-es-trial-optin-block').removeClass('bg-white').addClass('bg-teal-100');
 					} else {

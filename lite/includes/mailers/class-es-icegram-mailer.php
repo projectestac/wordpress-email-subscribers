@@ -168,6 +168,10 @@ if ( ! class_exists( 'ES_Icegram_Mailer' ) ) {
 		 * @since 5.6.0
 		 */
 		public function add_into_batch( $email, $merge_tags = array(), $message = null ) {
+
+			if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
+				return;
+			}
 			
 			$name       = ig_es_get_data( $merge_tags, 'name', '' );
 			$first_name = ig_es_get_data( $merge_tags, 'first_name', '' );
@@ -206,10 +210,10 @@ if ( ! class_exists( 'ES_Icegram_Mailer' ) ) {
 				'list_name'        => $list_name,
 				'hash'             => $hash,
 				'email'            => $email,
-				'contact_id'       => $contact_id,
-				'campaign_id'      => $campaign_id,
-				'message_id'       => $message_id,
-				'list_ids'         => $list_ids,
+				'contact_id'       => (string) $contact_id,
+				'campaign_id'      => (string) $campaign_id,
+				'message_id'       => (string) $message_id,
+				'list_ids'         => is_array( $list_ids ) ? implode( ',', $list_ids ) : $list_ids,
 				'subscribe_link'   => $subscribe_link,
 				'unsubscribe_link' => $unsubscribe_link,
 			);

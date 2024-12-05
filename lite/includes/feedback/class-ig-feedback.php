@@ -4,20 +4,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
+if ( ! class_exists( 'IG_Feedback_V_1_2_11' ) ) {
 	/**
 	 * IG Feedback
 	 *
 	 * The IG Feedback class adds functionality to get quick interactive feedback from users.
 	 * There are different types of feedabck widget like Stars, Emoji, Thubms Up/ Down, Number etc.
 	 *
-	 * @class       IG_Feedback_V_1_2_8
+	 * @class       IG_Feedback_V_1_2_10
 	 * @since       1.0.0
 	 * @copyright   Copyright (c) 2019, Icegram
 	 * @license     https://opensource.org/licenses/gpl-license GNU Public License
 	 * @package     feedback
 	 */
-	class IG_Feedback_V_1_2_8 {
+	class IG_Feedback_V_1_2_11 {
 
 		/**
 		 * Version of Feedback Library
@@ -25,7 +25,7 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 		 * @since 1.0.13
 		 * @var string
 		 */
-		public $version = '1.2.8';
+		public $version = '1.2.11';
 		/**
 		 * The API URL where we will send feedback data.
 		 *
@@ -925,13 +925,14 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 			<div class="ig-general-feedback" id="ig-general-feedback-<?php echo esc_attr( $this->plugin ); ?>">
 				<form class="ig-general-feedback" id="ig-general-feedback">
 					<?php
-					if ( ! empty( $title ) ) {
-						?>
-						<h2><?php echo wp_kses_post( $title ); ?></h2>
-						<?php
+					if ( 'inline' === $display_as ) {
+						if ( ! empty( $title ) ) {
+							?>
+							<h2><?php echo wp_kses_post( $title ); ?></h2>
+							<?php
+						}
 					}
-					?>
-					<?php
+
 					if ( ! empty( $desc ) ) {
 						?>
 						<p><?php echo wp_kses_post( $desc ); ?></p>
@@ -939,54 +940,15 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 					}
 					?>
 					<p class="ig-general-feedback mb-3">
-						<?php 
-						foreach ( $fields as $index => $field ) {
-							$field_type        = $field['type'];
-							$field_name        =  $field['name'];
-							$field_value       = ! empty( $field['value'] ) ? $field['value'] : '';
-							$field_placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
-							$field_required    = isset ( $field['required'] ) ? $field['required'] : false;
-							switch ( $field_type ) {
-								case 'textarea':
-									?>
-										<p class="ig-feedback-data-poll-message mb-3" id="ig-feedback-data-poll-message">
-											<textarea name="feedback_data[<?php echo esc_attr( $field_name ); ?>]" id="ig-feedback-data-poll-additional-message" placeholder="<?php echo esc_attr( $field_placeholder ); ?>"></textarea>
-										</p>
-										<br/>
-									<?php
-									break;
-								case 'radio':
-								case 'checkbox':
-									?>
-									<label>
-											<input 
-												type="<?php echo esc_attr( $field_type ); ?>" 
-												name="feedback_data[<?php echo esc_attr( $field_name ); ?>]" 
-												value="<?php echo esc_attr( $field_value ); ?>"
-											<?php echo ( ! empty( $default_values[ $field_name ] ) && $field_value === $default_values[ $field_name ] ) ? 'checked' : ''; ?>
-												class="<?php echo esc_attr( $this->plugin_abbr ); ?>-feedback-field"
-												<?php echo $field_required ? 'required' : ''; ?>>
-										<?php echo wp_kses_post( $field['label'] ); ?>
-									</label>
-									<br/>
-									<?php
-									break;
-								default:
-									?>
-									<label>
-											<input 
-												type="<?php echo esc_attr( $field_type ); ?>" 
-												name="feedback_data[<?php echo esc_attr( $field_name ); ?>]" 
-												value="<?php echo esc_attr( $field['value'] ); ?>"
-												class="<?php echo esc_attr( $this->plugin_abbr ); ?>-feedback-field">
-										<?php echo wp_kses_post( $field['label'] ); ?>
-									</label>
-									<br/>
-									<?php
-							}
-							?>
 						<?php
-							if ( 'other' === $field['value'] ) {
+						foreach ( $fields as $index => $field ) {
+							if ( $allow_multiple ) {
+								$this->render_multiple_poll_field( $field );
+							} else {
+								$this->render_single_poll_field( $field );
+							}
+
+							if ( ! empty(  $field['value'] ) && 'other' === $field['value'] ) {
 								?>
 								<div class="ig_feedback_text_wrapper">
 									<textarea 
@@ -1116,12 +1078,14 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 			</div>
 			<script type="text/javascript">
 				jQuery(document).ready(function ($) {
+					var $overlay = $('#ig-general-feedback-<?php echo esc_js( $this->plugin ); ?>');
+					var $form = $overlay.find('form');
 					$('.<?php echo esc_attr( $this->plugin_abbr ); ?>-feedback-field').on('change', function(){
 						let value = $(this).val();
 						if ( 'other' === value ) {
-							$('#feedback_text').removeClass('hidden');
+							$form.find('#feedback_text').removeClass('hidden');
 						} else {
-							$('#feedback_text').addClass('hidden');
+							$form.find('#feedback_text').addClass('hidden');
 						}
 					});
 
@@ -1171,12 +1135,23 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 		public function render_popup_feedback_widget( $html, $params ) {
 			$escape_allowed_tags = $this->get_escape_allowed_tags();
 			?>
+			<style>
+				.ig-general-feedback label{
+					font-size: 14px;
+					padding-bottom: 0.5em;
+				}
+				.ig-general-feedback p{
+					font-size: 16px;
+					padding-bottom: 0.5em;
+				}
+
+			</style>
 			<script type="text/javascript">
 
 			jQuery(document).ready(function ($) {
 
 				Swal.mixin({
-					footer: '',
+					footer: '<i><?php echo !empty($params['after_button_text']) ? $params['after_button_text'] : ''; ?></i>',
 					position: '<?php echo esc_js( $params['position'] ); ?>',
 					width: <?php echo esc_js( $params['width'] ); ?>,
 					animation: false,
@@ -1190,14 +1165,10 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 				}).queue([
 					{
 						title: '<p class="ig-feedback-title"><?php echo esc_js( $params['title'] ); ?></p>',
-						html: '<?php echo wp_kses( $html, $escape_allowed_tags ); ?>',
+						html: '<?php echo wp_kses( addslashes($html), $escape_allowed_tags ); ?>',
 						customClass: {
 							popup: 'animated fadeInUpBig'
 						},
-						onOpen: () => {
-
-						},
-
 						preConfirm: () => {
 							var $overlay = $('#ig-general-feedback-<?php echo esc_js( $this->plugin ); ?>');
 							var $form = $overlay.find('form');
@@ -1206,7 +1177,38 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 								return;
 							}
 
-							var poll_options = $form.find("input[name='feedback_data[poll_options]']:checked").val();
+							var poll_options_fields = $form.find('input[name^="feedback_data[poll_options]"]:checked,textarea[name^="feedback_data[poll_options]"]');
+
+							var poll_options = {};
+							if ( poll_options_fields.length > 1 ) {
+								poll_options_fields.each( function( field_index, field ) {
+									var field_slug = $(this).data('slug');
+									var field_value = $(this).val();
+									var field_type = $(this).attr('type');
+									if(field_slug) {
+										if ( field_type === 'checkbox' ) {
+											if ( ! poll_options.hasOwnProperty( field_slug ) ) {
+												poll_options[field_slug] = [];
+											}
+											if ($(this).is(":checked")) {
+												poll_options[field_slug].push(field_value);
+
+												if (field_value === 'other') {
+													var other_text_value = $form.find('#feedback_text').val();
+													if (other_text_value) {
+														poll_options[field_slug + '_other'] = other_text_value;
+													}
+												}
+											}
+										} else {
+											poll_options[field_slug] = field_value;
+										}
+									}
+								})
+							} else {
+								poll_options = poll_options_fields.val();
+							}
+
 							var message = $form.find("#ig-feedback-data-poll-additional-message").val();
 
 							var data = {
@@ -1236,11 +1238,133 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 
 					}
 				});
+
+				jQuery(document).on('click', '.other_reason_option', function(){
+					var $overlay = $('#ig-general-feedback-<?php echo esc_js( $this->plugin ); ?>');
+					var $form = $overlay.find('form');
+					if(jQuery(this).attr('type') === 'radio') {
+						if(jQuery(this).val() === 'other') {
+							$form.find('#feedback_text').removeClass('hidden');
+						} else {
+							$form.find('#feedback_text').addClass('hidden');
+						}
+					} else if(jQuery(this).attr('type') === 'checkbox') { 
+						if(jQuery(this).is(':checked') && jQuery(this).val() === 'other') {
+							$form.find('#feedback_text').removeClass('hidden');
+						} else if( !jQuery(this).is(':checked') && jQuery(this).val() === 'other' ) {
+							$form.find('#feedback_text').addClass('hidden');
+						}
+					}
+				});
 			});
 
 			</script>
 			<?php
 		}
+
+		public function render_multiple_poll_field( $field ) {
+			$field_type = $field['type'];
+			$field_slug = $field['slug'];
+			$field_placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
+			$field_required    = isset ( $field['required'] ) ? $field['required'] : false;
+			$field_question    = ! empty( $field['question'] ) ? $field['question'] : '';
+			?>
+			<p><b><?php echo esc_html($field_question); ?></b></p>
+			<?php
+			switch ( $field_type ) {
+				case 'textarea':
+					?>
+						<p class="ig-feedback-data-poll-message mb-3" id="ig-feedback-data-poll-message">
+							<textarea name="feedback_data[poll_options][<?php echo esc_attr( $field_slug ); ?>]" data-slug="<?php echo esc_attr( $field_slug ); ?>" placeholder="<?php echo esc_attr( $field_placeholder ); ?>" <?php echo $field_required ? 'required' : ''; ?>></textarea>
+						</p>
+					<?php
+					break;
+				case 'radio':
+				case 'checkbox':
+					foreach ($field['options'] as $key => $value) {
+						?>
+						<label>
+						<input type="<?php echo $field['type']; ?>" name="feedback_data[poll_options][<?php echo $field_slug; ?>]" data-slug="<?php echo esc_attr( $field_slug ); ?>" value="<?php echo $key; ?>" class="<?php echo !empty($field['additional']) ? 'other_reason_option' : ''; ?>" <?php echo $field_required ? 'required' : ''; ?>><span><?php echo $value; ?></span>
+						</label>
+						<br/>
+						<?php
+						if ( 'other' === $key ) {
+							?>
+							<div class="ig_feedback_text_wrapper">
+								<textarea 
+									id="feedback_text"
+									name="feedback_data[poll_options][<?php echo esc_attr( $field_slug ); ?>]"
+									class="form-textarea text-sm w-2/3 mt-3 mb-1 border-gray-400 w-3/5 hidden"
+									placeholder="<?php echo esc_attr__( 'Tell us more about your desired feature', $this->plugin ); ?>"></textarea>
+							</div>
+							<?php
+						}
+					}
+					break;
+				default:
+					?>
+					<label>
+							<input 
+								type="<?php echo esc_attr( $field_type ); ?>" 
+								name="feedback_data[poll_options][<?php echo esc_attr( $field_slug ); ?>]" 
+								value="<?php echo esc_attr( $field['value'] ); ?>"
+								class="<?php echo esc_attr( $this->plugin_abbr ); ?>-feedback-field" <?php echo $field_required ? 'required' : ''; ?>>
+						<?php echo wp_kses_post( $field['label'] ); ?>
+					</label>
+					<br/>
+					<?php
+			}
+		}
+		
+		public function render_single_poll_field( $field ) {
+			$field_type = $field['type'];
+			$field_name = $field['name'];
+			$field_placeholder = ! empty( $field['placeholder'] ) ? $field['placeholder'] : '';
+			$field_value       = ! empty( $field['value'] ) ? $field['value'] : '';
+			$field_required    = isset ( $field['required'] ) ? $field['required'] : false;
+			$field_question      = ! empty( $field['question'] ) ? $field['question'] : '';
+			?>
+			<p><lable><?php echo esc_html($field_question); ?></label></p>
+			<?php
+			switch ( $field_type ) {
+				case 'textarea':
+					?>
+						<p class="ig-feedback-data-poll-message mb-3" id="ig-feedback-data-poll-message">
+							<textarea name="feedback_data[<?php echo esc_attr( $field_name ); ?>]" id="ig-feedback-data-poll-additional-message" placeholder="<?php echo esc_attr( $field_placeholder ); ?>"></textarea>
+						</p>
+						<br/>
+					<?php
+					break;
+				case 'radio':
+				case 'checkbox':
+					?>
+					<label>
+							<input 
+								type="<?php echo esc_attr( $field_type ); ?>" 
+								name="feedback_data[<?php echo esc_attr( $field_name ); ?>]" 
+								value="<?php echo esc_attr( $field_value ); ?>"
+								class="<?php echo esc_attr( $this->plugin_abbr ); ?>-feedback-field"
+								<?php echo $field_required ? 'required' : ''; ?>>
+						<?php echo wp_kses_post( $field['label'] ); ?>
+					</label>
+					<br/>
+					<?php
+					break;
+				default:
+					?>
+					<label>
+							<input 
+								type="<?php echo esc_attr( $field_type ); ?>" 
+								name="feedback_data[<?php echo esc_attr( $field_name ); ?>]" 
+								value="<?php echo esc_attr( $field['value'] ); ?>"
+								class="<?php echo esc_attr( $this->plugin_abbr ); ?>-feedback-field">
+						<?php echo wp_kses_post( $field['label'] ); ?>
+					</label>
+					<br/>
+					<?php
+			}
+		}
+		
 		/**
 		 * Get Feedback API url
 		 *
@@ -1869,28 +1993,26 @@ if ( ! class_exists( 'IG_Feedback_V_1_2_8' ) ) {
 			$system_info   = ( isset( $data['misc']['system_info'] ) && $data['misc']['system_info'] === 'true' ) ? true : false;
 			$meta_info     = ! empty( $data['misc']['meta_info'] ) ? $data['misc']['meta_info'] : array();
 
-			unset( $data['misc'] );
-
+			unset( $data['misc'] );		
 			$default_meta_info = array(
 				'plugin'      => sanitize_key( $plugin ),
 				'locale'      => get_locale(),
 				'wp_version'  => get_bloginfo( 'version' ),
 				'php_version' => PHP_VERSION,
 			);
-
+			
 			$meta_info = wp_parse_args( $meta_info, $default_meta_info );
-
 			$additional_info = array();
 			$additional_info = apply_filters( $plugin_abbr . '_additional_feedback_meta_info', $additional_info, $system_info ); // Get Additional meta information
 
 			if ( is_array( $additional_info ) && count( $additional_info ) > 0 ) {
 				$meta_info = array_merge( $meta_info, $additional_info );
 			}
-
+			
 			$data['meta'] = $meta_info;
-
+			
 			$data = wp_unslash( $data );
-
+			
 			$args = array(
 				'timeout'   => 15,
 				'sslverify' => false,

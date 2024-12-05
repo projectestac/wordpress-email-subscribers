@@ -312,6 +312,7 @@ class ES_Campaign_Report extends ES_List_Table {
 		if ( ES()->is_pro() ) {
 			$campaign_class = 'es_campaign_premium';
 		}
+		
 		?>
 		<div id="poststuff" class="es-items-lists es-campaign-reports-table">
 			<div id="post-body" class="metabox-holder column-1">

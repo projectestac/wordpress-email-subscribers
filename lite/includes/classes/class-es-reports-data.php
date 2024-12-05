@@ -189,6 +189,31 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 		}
 
 		/**
+		 * Get all contacts growth percentage
+		 *
+		 * @param int $days
+		 *
+		 * @return float|integer
+		 *
+		 * @since 4.8.0
+		 */
+		public static function get_total_contacts_growth_percentage( $args = array() ) {
+			$days = ! empty( $args['days'] ) ? $args['days'] : 60;
+			//For example, It will get last 60'days subscribers count
+			$present_contacts_count = ES()->lists_contacts_db->get_all_contacts_count( $days );
+			//For example, It will get last 120'days subscribers count
+			$past_to_present_contacts_count = ES()->lists_contacts_db->get_all_contacts_count( $days * 2 );
+			//For example, It will get last 60-120'days subscribers count
+			$past_contacts_count = intval( $past_to_present_contacts_count ) - intval( $present_contacts_count );
+
+			if ( 0 === $past_contacts_count ) {
+				return 0;
+			} else {
+				return round( ( $present_contacts_count - $past_contacts_count ) / $past_contacts_count * 100, 2 );
+			}
+		}
+
+		/**
 		 * Collect dashboard reports data
 		 *
 		 * @return array
@@ -256,18 +281,19 @@ if ( ! class_exists( 'ES_Reports_Data' ) ) {
 			}
 
 			$reports_data = array(
-				'total_subscribed'     => number_format( $total_subscribed ),
-				'total_email_opens'    => number_format( $total_email_opens ),
-				'total_links_clicks'   => number_format( $total_links_clicks ),
-				'total_message_sent'   => number_format( $total_message_sent ),
-				'total_unsubscribed'   => number_format( $total_unsubscribed ),
-				'avg_open_rate'        => number_format( $avg_open_rate, 2 ),
-				'avg_click_rate'       => number_format( $avg_click_rate, 2 ),
-				'avg_unsubscribe_rate' => number_format( $avg_unsubscribe_rate, 2 ),
-				'contacts_growth'      => $contacts_growth,
+				'total_subscribed'     => number_format($total_subscribed ?? 0),
+				'total_email_opens'    => number_format($total_email_opens ?? 0),
+				'total_links_clicks'   => number_format($total_links_clicks ?? 0),
+				'total_message_sent'   => number_format($total_message_sent ?? 0),
+				'total_unsubscribed'   => number_format($total_unsubscribed ?? 0),
+				'avg_open_rate'        => number_format($avg_open_rate ?? 0, 2),
+				'avg_click_rate'       => number_format($avg_click_rate ?? 0, 2),
+				'avg_unsubscribe_rate' => number_format($avg_unsubscribe_rate ?? 0, 2),
+				'contacts_growth'      => $contacts_growth ?? 0,
 			);
+			
 
-			$include_average_campaigns_stats = 'es_dashboard' === $page || 'es_campaigns' === $page;
+			$include_average_campaigns_stats = 'es_dashboard' === $page || 'es_campaigns' === $page || 'es_subscribers' === $page;
 			if ( $include_average_campaigns_stats ) {
 				$comp_args         = $args;
 				$comp_args['days'] = $args['days'] * 2;

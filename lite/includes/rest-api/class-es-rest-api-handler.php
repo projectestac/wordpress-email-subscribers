@@ -173,6 +173,26 @@ if ( ! class_exists( 'ES_Rest_Api_Handler' ) ) {
 				$list_contact_added = ES()->lists_contacts_db->add_contact_to_lists( $list_contact_data, $list_ids );
 
 				if ( $list_contact_added ) {
+					
+					$list_name = ES_Common::prepare_list_name_by_ids( $list_ids );
+					$merge_tags = array(
+						'email'      => $email,
+						'contact_id' => $contact_id,
+						'name'       => ES_Common::prepare_name_from_first_name_last_name( $first_name, $last_name ),
+						'first_name' => $first_name,
+						'last_name'  => $last_name,
+						'guid'       => $guid,
+						'list_name'  => $list_name,
+						'list_ids'   => $list_ids ?? [],
+					);
+			
+					if ( 'unconfirmed' === $list_status ) {
+						do_action( 'ig_es_contact_unconfirmed', $merge_tags );
+					} elseif ( 'subscribed' === $list_status ) {
+						do_action( 'ig_es_contact_subscribed', $merge_tags );
+					} else {
+						do_action( 'ig_es_contact_unsubscribe', $contact_id, 0, 0, $list_ids );
+					}
 					$message = [
 						'message_text' => 'Contact has been inserted with list successfully!',
 						'message'      => 'contact_added_with_list',
@@ -270,6 +290,67 @@ if ( ! class_exists( 'ES_Rest_Api_Handler' ) ) {
 					$contact_data['email'] = $email;
 				}
 
+
+				if ( ! empty( $params['list_ids'] ) ) {
+					$list_ids = $params['list_ids'];
+	
+					$list_status   = ! empty( $params['list_status'] ) ? $params['list_status'] : ES_Common::get_list_status_from_optin_type();
+					$optin_type    = 'subscribed' === $list_status ? IG_SINGLE_OPTIN : IG_DOUBLE_OPTIN;
+					$subscribed_at = 'subscribed' === $list_status ? ig_get_current_date_time() : '';
+					
+					$list_contact_data = [
+						'contact_id'    => $contact_id,
+						'status'        => $list_status,
+						'optin_type'    => $optin_type,
+						'subscribed_at' => $subscribed_at,
+						'subscribed_ip' => '',
+					];
+	
+					$list_contact_updated = ES()->lists_contacts_db->add_contact_to_lists( $list_contact_data, $list_ids );
+	
+					if ( $list_contact_updated ) {
+
+						$list_name = ES_Common::prepare_list_name_by_ids( $list_ids );
+						$merge_tags = [
+							'email'      => $email,
+							'contact_id' => $contact_id,
+							'name'       => ES_Common::prepare_name_from_first_name_last_name( $first_name, $last_name ),
+							'first_name' => $first_name,
+							'last_name'  => $last_name,
+							'guid'       => $params['guid'],
+							'list_name'  => $list_name,
+							'list_ids'   => $list_ids ?? [],
+						];
+		
+						if ( 'unconfirmed' === $list_status ) {
+							do_action( 'ig_es_contact_unconfirmed', $merge_tags );
+						} elseif ( 'subscribed' === $list_status ) {
+							do_action( 'ig_es_contact_subscribed', $merge_tags );
+						} else {
+							do_action( 'ig_es_contact_unsubscribe', $contact_id, 0, 0, $list_ids );
+						}
+
+						$message = [
+							'message_text' => 'Contact has been updated corresponding to specific list!',
+							'message'      => 'contact_updated_corr_to_list',
+							'success'      => true,
+						];
+			
+						$response = new WP_REST_Response( $message, 200 ); 
+						return $response;
+					} else {
+						$message = [
+							'message_text' => 'Contact not updated corresponding to specific list!',
+							'message'      => 'contact_not_updated_corr_to_list',
+							'success'      => false,
+						];
+			
+						$response = new WP_REST_Response( $message ); 
+						return $response;
+					}
+					
+				}
+
 				if ( ! empty( $contact_data ) ) {
 					$updated = ES()->contacts_db->update( $contact_id, $contact_data );
 					if ( $updated ) {
@@ -298,44 +379,7 @@ if ( ! class_exists( 'ES_Rest_Api_Handler' ) ) {
 				
 			}
 		  
-			if ( ! empty( $params['list_ids'] ) ) {
-				$list_ids = $params['list_ids'];
-
-				$list_status   = ! empty( $params['list_status'] ) ? $params['list_status'] : ES_Common::get_list_status_from_optin_type();
-				$optin_type    = 'subscribed' === $list_status ? IG_SINGLE_OPTIN : IG_DOUBLE_OPTIN;
-				$subscribed_at = 'subscribed' === $list_status ? ig_get_current_date_time() : '';
-				
-				$list_contact_data = [
-					'contact_id'    => $contact_id,
-					'status'        => $list_status,
-					'optin_type'    => $optin_type,
-					'subscribed_at' => $subscribed_at,
-					'subscribed_ip' => '',
-				];
-
-				$list_contact_updated = ES()->lists_contacts_db->add_contact_to_lists( $list_contact_data, $list_ids );
-
-				if ( $list_contact_updated ) {
-					$message = [
-						'message_text' => 'Contact has been updated corresponding to specific list!',
-						'message'      => 'contact_updated_corr_to_list',
-						'success'      => true,
-					];
-		
-					$response = new WP_REST_Response( $message, 200 ); 
-					return $response;
-				} else {
-					$message = [
-						'message_text' => 'Contact not updated corresponding to specific list!',
-						'message'      => 'contact_not_updated_corr_to_list',
-						'success'      => false,
-					];
-		
-					$response = new WP_REST_Response( $message ); 
-					return $response;
-				}
-				
-			}
+			
 
 		}
 		

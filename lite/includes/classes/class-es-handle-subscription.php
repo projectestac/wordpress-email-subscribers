@@ -243,7 +243,7 @@ if ( ! class_exists( 'ES_Handle_Subscription' ) ) {
 					}
 				}
 
-				$email      = ! empty( $form_data['esfpx_email'] ) ? sanitize_email( $form_data['esfpx_email'] ) : '';
+				$email      = ! empty( $form_data['esfpx_email'] ) ? strtolower( sanitize_email( $form_data['esfpx_email'] ) ): '';
 				$name       = ! empty( $form_data['esfpx_name'] ) ? sanitize_text_field( $form_data['esfpx_name'] ) : '';
 				$ip_address = ! empty( $form_data['esfpx_ip_address'] ) ? sanitize_text_field( $form_data['esfpx_ip_address'] ) : '';
 

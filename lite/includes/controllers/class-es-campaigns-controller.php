@@ -31,7 +31,7 @@ if ( ! class_exists( 'ES_Campaigns_Controller' ) ) {
 		public static function	get_campaigns_count( $args) {
 			$campaigns_table = ES_Campaigns_Table::get_instance();
 			$per_page = $campaigns_table->get_items_per_page(ES_Campaigns_Table::$option_per_page, 20);
-			$total_items = $campaigns_table->get_lists(0, 0, true);
+			$total_items = ES_DB_Campaigns::get_lists(0, 0, true , $args);
 			$total_campaign_pages = ceil($total_items / $per_page); 
 			$current_page=$args['currentPage'];
 			return [$total_items,$total_campaign_pages,$current_page,$per_page];
@@ -42,7 +42,7 @@ if ( ! class_exists( 'ES_Campaigns_Controller' ) ) {
 			$campaigns_table = ES_Campaigns_Table::get_instance();
 			$per_page = $campaigns_table->get_items_per_page(ES_Campaigns_Table::$option_per_page, 20);
 			$current_page = ! empty( $args['currentPage'] ) ? $args['currentPage'] : 1;
-			$total_items = $campaigns_table->get_lists(0, 0, true);
+			$total_items = ES_DB_Campaigns::get_lists(0, 0, true, array());
 			$offset = ( $current_page - 1 ) * $per_page;
 			$args['offset']=$offset;
 			$args['per_page']=$per_page;
@@ -151,7 +151,7 @@ if ( ! class_exists( 'ES_Campaigns_Controller' ) ) {
 		 * @since 4.6.3
 		 */
 		public static function duplicate_campaign( $campaign_id = 0 ) {
-
+			
 			if ( empty( $campaign_id ) ) {
 				return false;
 			}

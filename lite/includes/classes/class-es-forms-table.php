@@ -81,7 +81,7 @@ class ES_Forms_Table extends ES_List_Table {
 	 * @since 4.0
 	 */
 	public function render() {
-
+		
 		$action = ig_es_get_request_data( 'action' );
 		?>
 		<div class="font-sans">
@@ -91,6 +91,13 @@ class ES_Forms_Table extends ES_List_Table {
 			} elseif ( 'edit' === $action ) {
 				$form = ig_es_get_request_data( 'form' );
 				echo wp_kses_post( $this->edit_form( absint( $form ) ) );
+			} elseif ( 'duplicate_form' === $action ) {
+				$form = ig_es_get_request_data( 'form' );
+				$duplicated_form_id = $this->duplicate_form( absint( $form ) );
+				if( !empty($duplicated_form_id) ) {
+					wp_redirect( admin_url( 'admin.php?page=es_forms' ) );
+					exit;
+				}
 			} else {
 				?>
 				<div class="sticky top-0 z-10">
@@ -284,9 +291,7 @@ class ES_Forms_Table extends ES_List_Table {
 			$form_data = array();
 
 			$data = ES()->forms_db->get_by_conditions( $wpdb->prepare( ' id = %d', $id ) );
-
-			if ( count( $data ) > 0 ) {
-
+	      if ( count( $data ) > 0 ) {			
 				$submitted = ig_es_get_request_data( 'submitted' );
 
 				if ( 'submitted' === $submitted ) {
@@ -335,6 +340,20 @@ class ES_Forms_Table extends ES_List_Table {
 
 			$this->prepare_list_form( $id, $form_data );
 		}
+	}
+
+	public function duplicate_form( $form_id ) {
+
+		if ( empty( $form_id ) ) {
+			return false;
+		}
+		
+		$duplicated_form_id = ES()->forms_db->duplicate_form( $form_id );
+		if ( empty( $duplicated_form_id ) ) {
+			return false;
+		}
+
+		return $duplicated_form_id;
 	}
 
 	public function prepare_list_form( $id = 0, $data = array() ) {
@@ -860,6 +879,14 @@ class ES_Forms_Table extends ES_List_Table {
 			case 'total_active_subscribers':
 				$total_active_subscribers = ES()->contacts_db->get_total_contacts_by_form_id( $item['id'] );
 				return number_format( $total_active_subscribers );
+			case 'preview':
+				if(!empty($item['preview_image'])) {
+					$img = '<img src="'.esc_url( ES_PLUGIN_URL . 'lite/admin/images/form_templates/'.$item['preview_image'] ).'">';
+				} else {
+					$img = '-';
+				}
+				return $img;
+			break;
 			default:
 				return '';
 		}
@@ -897,6 +924,8 @@ class ES_Forms_Table extends ES_List_Table {
 			'edit'   => '<a href="?page=' . esc_attr( $page ) . '&action=edit&form=' . absint( $item['id'] ) . '&_wpnonce=' . $list_nonce . '" class="text-indigo-600">' . esc_html__( 'Edit', 'email-subscribers' ) . '</a>',
 
 			'delete' => '<a href="?page=' . esc_attr( $page ) . '&action=delete&form=' . absint( $item['id'] ) . '&_wpnonce=' . $list_nonce . '" onclick="return checkDelete()">' . esc_html__( 'Delete', 'email-subscribers' ) . '</a>',
+
+			'duplicate' => '<a href="?page=' . esc_attr( $page ) . '&action=duplicate_form&form=' . absint( $item['id'] ) . '&_wpnonce=' . $list_nonce . '" class="text-indigo-600">' . esc_html__( 'Duplicate', 'email-subscribers' ) . '</a>',
 		);
 		$actions = apply_filters('ig_es_form_table_row_actions', $actions, $item);
 
@@ -921,6 +950,7 @@ class ES_Forms_Table extends ES_List_Table {
 		'shortcode'                => sprintf( __( 'Shortcode %s', 'email-subscribers' ), $shortcode_tooltip_text ),
 		/* translators: %s Shortcode tooltip text */
 		'total_active_subscribers' => sprintf( __( 'Subscribers %s', 'email-subscribers' ), $subscribers_tooltip_text ),
+		'preview'				   => __( 'Preview', 'email-subscribers' ),
 		'created_at'               => __( 'Created', 'email-subscribers' ),
 	);
 	

@@ -622,6 +622,9 @@ class ES_DB_Lists_Contacts extends ES_DB {
 			$list_ids = array( $list_ids );
 		}
 
+		$ids_placeholder = implode( ',', array_fill( 0, count( $ids), '%d') );
+		$list_ids_placeholder = implode( ',', array_fill( 0, count( $list_ids), '%d') );
+
 		$ids    = array_map( 'absint', $ids );
 		$status = esc_sql( $status );
 
@@ -636,21 +639,15 @@ class ES_DB_Lists_Contacts extends ES_DB {
 				$list_ids_str = implode( ',', array_map( 'absint', $list_ids ) );
 				$result       = $wpbd->query(
 					$wpbd->prepare(
-						"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, subscribed_at = %s WHERE contact_id IN( {$ids_str} ) AND list_id IN( {$list_ids_str} )",
-						array(
-							$status,
-							$current_date,
-						)
+						"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, subscribed_at = %s WHERE contact_id IN( {$ids_placeholder} ) AND list_id IN( {$list_ids_placeholder} )",
+						array_merge(array($status, $current_date), $ids, $list_ids)
 					)
 				);
 			} else {
 				$result = $wpbd->query(
 					$wpbd->prepare(
-						"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, subscribed_at = %s WHERE contact_id IN( {$ids_str} )",
-						array(
-							$status,
-							$current_date,
-						)
+						"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, subscribed_at = %s WHERE contact_id IN( {$ids_placeholder} )",
+						array_merge(array($status, $current_date), $ids)
 					)
 				);
 			}
@@ -662,32 +659,23 @@ class ES_DB_Lists_Contacts extends ES_DB {
 
 				return $wpbd->query(
 					$wpbd->prepare(
-						"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, unsubscribed_at = %s WHERE contact_id IN( {$ids_str} ) AND list_id IN( {$list_ids_str} )",
-						array(
-							$status,
-							$current_date,
-						)
+						"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, unsubscribed_at = %s WHERE contact_id IN( {$ids_placeholder} ) AND list_id IN( {$list_ids_placeholder} )",
+						array_merge(array($status, $current_date), $ids, $list_ids)
 					)
 				);
 			} else {
 				return $wpbd->query(
 					$wpbd->prepare(
-						"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, unsubscribed_at = %s WHERE contact_id IN( {$ids_str} )",
-						array(
-							$status,
-							$current_date,
-						)
+						"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, unsubscribed_at = %s WHERE contact_id IN( {$ids_placeholder} )",
+						array_merge(array($status, $current_date), $ids)
 					)
 				);
 			}
 		} elseif ( 'unconfirmed' === $status ) {
 			return $wpbd->query(
 				$wpbd->prepare(
-					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, optin_type = %d, subscribed_at = NULL, unsubscribed_at = NULL WHERE contact_id IN( {$ids_str} )",
-					array(
-						$status,
-						IG_DOUBLE_OPTIN,
-					)
+					"UPDATE {$wpbd->prefix}ig_lists_contacts SET status = %s, optin_type = %d, subscribed_at = NULL, unsubscribed_at = NULL WHERE contact_id IN( {$ids_placeholder} )",
+					array_merge(array($status, IG_DOUBLE_OPTIN), $ids)
 				)
 			);
 		}

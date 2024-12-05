@@ -15,7 +15,7 @@ class ES_Info {
 
 	public function plugin_menu() {
 
-		$update_text = ES()->is_starter() ? esc_html__( ' Go MAX', 'email-subscribers' ) : esc_html__( ' Go PRO', 'email-subscribers' );
+		$update_text = ES()->is_starter() ? esc_html__( ' Get MAX', 'email-subscribers' ) : esc_html__( ' Get PRO', 'email-subscribers' );
 
 		// Start-IG-Code.
 		$help_title = __( 'Help & Info', 'email-subscribers' );

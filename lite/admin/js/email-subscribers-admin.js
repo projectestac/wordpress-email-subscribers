@@ -489,10 +489,12 @@
 						success: function (response) {
 							if (response && typeof response.status !== 'undefined' && response.status == "SUCCESS") {
 								let successMessageHTML = '<span style="color:green">' + response.message + '</span>';
-								$('#es-send-test').parent().find('.helper').html(successMessageHTML);
+								//$('#es-send-test').parent().find('.helper').html(successMessageHTML);
+								$('#es-send-test').closest('td').find('.helper').html(successMessageHTML);	
 							} else {
 								let errorMessageHTML = '<span style="color:#e66060"><strong>' + ig_es_js_data.i18n_data.sending_error_text + '</strong>: ' + ( Array.isArray( response.message ) ? response.message.join() : response.message ) + '</span>';
-								$('#es-send-test').parent().find('.helper').html(errorMessageHTML);
+								//$('#es-send-test').parent().find('.helper').html(errorMessageHTML);
+								$('#es-send-test').closest('td').find('.helper').html(errorMessageHTML);	
 							}
 
 							$('#es-send-test').next('#spinner-image').hide();
@@ -1030,18 +1032,6 @@
 			});
 			jQuery('.es_mailer').trigger('change');
 
-			jQuery('#ig_es_ess_opted_for_sending_service').on('change', function() {
-				if ( jQuery(this).is(':checked') ) {
-					jQuery('#sending_service_info').removeClass('hidden');
-					let fallback_mailer_html_text = `<span class="inline-block pt-5 text-xs italic font-normal leading-snug text-gray-500">${ig_es_js_data.i18n_data.ess_fallback_text}</span>`;
-					jQuery('#ig_es_mailer_settings-field-row td p:first').html(fallback_mailer_html_text);
-				} else {
-					jQuery('#sending_service_info').addClass('hidden');
-					jQuery('#ig_es_mailer_settings-field-row td p:first').html('');
-				}
-			});
-			jQuery('#ig_es_ess_opted_for_sending_service').trigger('change');
-
 			//preview broadcast
 			// ig_es_preview_broadcast
 			jQuery(document).on('click', '#ig_es_preview_broadcast', function (e) {
@@ -1221,7 +1211,7 @@
 				let template_button = $('#view_template_preview_button');
 				$(template_button).parent().find('.es-send-success').hide();
 				$(template_button).parent().find('.es-send-error').hide();
-				ig_es_show_template_preview_in_popup();
+				//ig_es_show_template_preview_in_popup();
 			});
 
 			$('#save_campaign_as_template_button').on('click', function(e){
@@ -1360,6 +1350,11 @@
 				}, 2000);
 			});
 
+			if(window.location.href.indexOf('page=es_settings&section=ess#tabs-email_sending') !== -1){
+				jQuery('html, body').animate({
+					scrollTop: jQuery("#ig_es_test_send_email-field-row").offset().top
+				}, 2000);
+			}
 			if(window.location.href.indexOf('page=es_settings&btn=check_auth_header#tabs-email_sending') !== -1){
 				jQuery('html, body').animate({
 					scrollTop: jQuery("#ig-es-settings-authentication-table").offset().top
@@ -3444,19 +3439,18 @@
 				});
 			});
 
-			$('#es-edit-form-container form').on('submit',function(e){
-
-				let list_required = ! $('.es-form-lists').hasClass('hidden');
-				if ( list_required ) {
-					let selected_lists_count = $('.es-form-lists input[name="form_data[settings][lists][]"]:checked').length;
-					if ( selected_lists_count === 0 ) {
-						alert( ig_es_form_editor_data.i18n.no_list_selected_message );
+			$('#es-edit-form-container form').on('submit', function(e) {
+				let list_required = !$('.es-form-lists').hasClass('hidden');
+				if (list_required) {
+					let selected_lists_count = $('#ig-es-multiselect-lists').val() ? $('#ig-es-multiselect-lists').val().length : 0;
+					if (selected_lists_count === 0) {
+						alert(ig_es_form_editor_data.i18n.no_list_selected_message);
 						e.preventDefault();
 						return false;
 					}
 				}
-
 			});
+			
 			/* DND form builder code end */
 
 		jQuery('body')
@@ -3549,6 +3543,10 @@
 			 * To prevent this, we are setting iframe element name to 'editor-canvas' because Jetpack doesn't triggers its code for elements with this name attribute.
 			 */
 			window.esVisualEditor.Canvas.getFrameEl().name = 'editor-canvas';
+			if ( typeof CKEDITOR !== 'undefined' ) {
+				CKEDITOR.dtd.$editable.a = 1;   
+   }
+		   
 		});
 
 	});
@@ -3859,55 +3857,6 @@ function ig_es_show_campaign_preview_in_popup() {
 		}
 	}).done(function(){
 		jQuery('#view_campaign_preview_button').removeClass('loading');
-	});
-}
-
-function ig_es_show_template_preview_in_popup() {
-	ig_es_sync_wp_editor_content();
-
-	let content = jQuery('textarea[name="data[body]"]').val();
-	if (jQuery("#edit-es-campaign-body-wrap").hasClass("tmce-active")) {
-		content = tinyMCE.activeEditor.getContent();
-	}
-
-
-	if ( !content ) {
-		alert( ig_es_js_data.i18n_data.empty_template_message );
-		return;
-	}
-
-	let template_button = jQuery('#view_campaign_preview_button,#view_template_preview_button');
-	jQuery(template_button).addClass('loading');
-	let form_data = jQuery('#view_campaign_preview_button,#view_template_preview_button').closest('form').serialize();
-	// Add action to form data
-	form_data += form_data + '&action=ig_es_get_template_preview&security='  + ig_es_js_data.security;
-	jQuery.ajax({
-		method: 'POST',
-		url: ajaxurl,
-		data: form_data,
-		dataType: 'json',
-		success: function (response) {
-			if (response.success) {
-				if ( 'undefined' !== typeof response.data ) {
-					let response_data = response.data;
-					let template_html = response_data.preview_html;
-					jQuery('#browser-preview-tab').trigger('click');
-					ig_es_load_iframe_preview( '#campaign-preview-iframe-container', template_html );
-					// We are setting popup visiblity hidden so that we can calculate iframe width/height before it is shown to user.
-					jQuery('#campaign-preview-popup').css('visibility','hidden').show();
-					setTimeout(()=>{
-						jQuery('#campaign-preview-popup').css('visibility','visible');
-					},100);
-				}
-			} else {
-				alert( ig_es_js_data.i18n_data.ajax_error_message );
-			}
-		},
-		error: function (err) {
-			alert( ig_es_js_data.i18n_data.ajax_error_message );
-		}
-	}).done(function(){
-		jQuery(template_button).removeClass('loading');
 	});
 }
 
@@ -4223,3 +4172,146 @@ jQuery.fn.extend({
 //   });
   
 //app.js code ended
+
+jQuery(document).ready(function(){
+
+	jQuery(".es-export-report").click(function(){
+		var reports_id = '';
+		var reportIdAttr = jQuery(this).attr('data-report-id');
+
+		if (reportIdAttr && reportIdAttr.trim() !== "") {
+			reports_id = reportIdAttr;
+		} else {
+			jQuery('table.reports th input[type=checkbox]').each(function(){
+				if(jQuery(this).val().trim().length !== 0){
+					reports_id += jQuery(this).val() + ",";
+				}
+			});
+		}
+
+		let reports_export_data = {
+			action: 'ig_es_reports_export',
+			security: ig_es_js_data.security,
+			all_reports_id: reports_id,
+		};
+
+		jQuery.ajax({
+			method: 'POST',
+			url: ajaxurl,
+			data: reports_export_data,
+			xhrFields: {
+				responseType: 'blob' // Ensure the response is treated as binary data
+			},
+			success: function(response, status, xhr) {
+				var disposition = xhr.getResponseHeader('Content-Disposition');
+				var filename = '';
+
+				if (disposition && disposition.indexOf('attachment') !== -1) {
+					var matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+					if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+				}
+
+				var blob = new Blob([response], { type: 'text/csv' });
+				var url = window.URL.createObjectURL(blob);
+				var a = document.createElement('a');
+				a.href = url;
+				a.download = filename || 'export.csv';
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+				window.URL.revokeObjectURL(url);
+			},
+			error: function(xhr, status, error) {
+				alert('An error occurred during the CSV export.');
+				console.error('Error:', error);
+				console.error('Status:', status);
+				console.error('XHR:', xhr);
+			}
+		});
+	});
+});
+
+// Add new list popup functionality
+jQuery(document).on('click', '#ig-es-open-add-list-modal', function (e) {
+    e.preventDefault();
+    jQuery('#ig-es-add-list-modal').removeClass('inactive');
+});
+
+jQuery(document).on('click', '#ig-es-list-close-modal, #ig-es-list-cancel-modal', function (e) {
+    e.preventDefault();
+    jQuery('#ig-es-add-list-modal').addClass('inactive');
+	jQuery('#list-message').html(''); 
+});
+
+jQuery(document).on('click', '#es-add-list', function (e) {
+    e.preventDefault();
+
+    var listName   = jQuery('#add-list-form #es-list-name').val();
+    var listDesc   = jQuery('#add-list-form #es-list-desc').val();
+
+    if (listName) {
+        var params = {
+            es_list_name: listName,
+            es_list_desc: listDesc,
+            action      : 'ig_es_add_list',
+            security    : ig_es_js_data.security 
+        };
+
+        // Show the spinner and disable the button
+        jQuery('#spinner-image').show();
+        jQuery('#es-add-list').prop('disabled', true); 
+        jQuery.ajax({
+            method: 'POST',
+            url: ajaxurl,
+            data: params,
+            dataType: 'json',
+            success: function (response) {
+                // Hide the spinner and enable the button
+                jQuery('#spinner-image').hide();
+                jQuery('#es-add-list').prop('disabled', false); 
+
+                // Handle success response
+                if (response.success) {
+                    let successMessageHTML = '<span style="color:green">' + response.data.message + '</span>';
+                    jQuery('#ig-es-list-message').html(successMessageHTML);
+                    // Clear the input fields
+                    jQuery('#es-list-name').val('');
+                    jQuery('#es-list-desc').val('');
+
+					 // If the multi-select does not exist, create it dynamically
+					 if (!jQuery('#ig-es-multiselect-lists').length) {
+						let selectHTML = `
+							<div class="max-w-sm mx-auto bg-white shadow-md rounded-lg p-6 pt-0.5">
+								<label for="form multi-select" class="block text-gray-700 text-sm font-bold mb-2">Select list(s)*</label>
+								<select id="ig-es-multiselect-lists" name="form_data[settings][lists][]" multiple class="block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-300">
+								</select>
+							</div>`;
+						jQuery('.ig-es-multiselect-container').html(selectHTML);
+					}
+
+					let listId    = response.data.list_id;  
+					let newOption = new Option(listName, listId, true, true);
+					jQuery('#ig-es-multiselect-lists').append(newOption).trigger('change');
+					jQuery('#ig-es-multiselect-lists').select2();
+                    
+                } else {
+                    let errorMessageHTML = '<span style="color:#e66060"><strong>' + ig_es_js_data.i18n_data.sending_error_text + '</strong>: ' + response.data + '</span>';
+                    jQuery('#ig-es-list-message').html(errorMessageHTML);
+                }
+            },
+            error: function (err) {
+                // Hide the spinner and enable the button
+                jQuery('#spinner-image').hide();
+                jQuery('#es-add-list').prop('disabled', false); 
+                let errorMessageHTML = '<span style="color:#e66060"><strong>Error:</strong> ' + err.statusText + '</span>';
+                jQuery('#ig-es-list-message').html(errorMessageHTML);
+            }
+        });
+    } else {
+        alert( __( 'Please enter a list name','email-subscribers' ) ); 
+    }
+});
+
+
+
+

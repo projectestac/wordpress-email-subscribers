@@ -47,14 +47,6 @@ if ( ! class_exists( 'ES_Admin' ) ) {
 
 
 			add_action( 'ig_es_before_template_settings', array( $this, 'show_template_setting_fields' ) );
-
-			// preview popup
-			//add_action( 'ig_es_template_preview_options_content', array( $this, 'show_campaign_preview_options_content' ) );
-
-			add_action( 'wp_ajax_ig_es_draft_campaign', array( $this, 'draft_campaign' ) );
-			add_action( 'wp_ajax_ig_es_get_template_preview', array( $this, 'get_template_preview' ) );
-
-			//add_action( 'media_buttons', array( $this, 'add_tag_button' ) );
 		}
 
 		public function setup() {
@@ -623,32 +615,6 @@ if ( ! class_exists( 'ES_Admin' ) ) {
 				$template_data['body'] = $template_body;
 
 				return $template_data;
-			}
-
-		}
-
-		/**
-		 * Method to get preview HTML for campaign
-		 *
-		 * @return $response
-		 *
-		 * @since 4.4.7
-		 */
-		public function get_template_preview() {
-
-			check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
-
-			$response = array();
-
-			$data = ig_es_get_request_data( 'data', array(), false );
-
-			$template_data            = $this->add_campaign_body_data( $data );
-			$response['preview_html'] = $template_data['body'];
-
-			if ( ! empty( $response ) ) {
-				wp_send_json_success( $response );
-			} else {
-				wp_send_json_error();
 			}
 
 		}

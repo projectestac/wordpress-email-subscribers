@@ -67,7 +67,6 @@ class ES_Admin_Settings {
 				$options = apply_filters( 'ig_es_before_save_settings', $options );
 
 				$options['ig_es_disable_wp_cron']             = isset( $options['ig_es_disable_wp_cron'] ) ? $options['ig_es_disable_wp_cron'] : 'no';
-				$options['ig_es_ess_opted_for_sending_service']             = isset( $options['ig_es_ess_opted_for_sending_service'] ) ? $options['ig_es_ess_opted_for_sending_service'] : 'no';
 				$options['ig_es_ess_branding_enabled']             = isset( $options['ig_es_ess_branding_enabled'] ) ? $options['ig_es_ess_branding_enabled'] : 'no';
 				$options['ig_es_track_email_opens']           = isset( $options['ig_es_track_email_opens'] ) ? $options['ig_es_track_email_opens'] : 'no';
 				$options['ig_es_enable_ajax_form_submission'] = isset( $options['ig_es_enable_ajax_form_submission'] ) ? $options['ig_es_enable_ajax_form_submission'] : 'no';
@@ -124,6 +123,8 @@ class ES_Admin_Settings {
 				$email_fields_to_sanitize = array(
 					'ig_es_from_email',
 				);
+
+				do_action( 'ig_es_before_settings_save', $options );
 
 				foreach ( $options as $key => $value ) {
 					if ( substr( $key, 0, 6 ) === 'ig_es_' ) {
@@ -899,133 +900,6 @@ class ES_Admin_Settings {
 		return $html;
 	}
 
-	/**
-	 * Prepare Icegram Mailer Setting
-	 *
-	 * @return string
-	 */
-	public static function get_icegram_mailer_html() {
-		$html                      = '';
-		$opted_for_sending_service = get_option( 'ig_es_ess_opted_for_sending_service', 'no' );
-		$es_ess_data               = get_option( 'ig_es_ess_data', '' );
-		$current_month              = ig_es_get_current_month();
-		$allocated_limit           = isset( $es_ess_data['allocated_limit'] ) ? $es_ess_data['allocated_limit']: 0;
-		$used_limit                = isset( $es_ess_data['used_limit'][$current_month] ) ? $es_ess_data['used_limit'][$current_month] : 0;
-		$remaining_limit		   = $allocated_limit - $used_limit;
-		if ( $allocated_limit > 0 ) {
-			$remaining_limit_percentage = number_format_i18n( ( ( $remaining_limit * 100 ) / $allocated_limit ), 2 );
-		} else {
-			$remaining_limit_percentage = 0;
-		}
-		$remaining_percentage_limit = 10;   //Set email remaining percentage limit, so upsell notice box will visible.
-		$plan                      = ES_Service_Email_Sending::get_plan();
-		$premium_plans             = array( 'pro', 'max' );
-		$is_premium_plan           = in_array( $plan, $premium_plans, true );
-		$is_ess_branding_enabled   = ES_Service_Email_Sending::is_ess_branding_enabled();
-		ob_start();
-		?>
-		<section id="sending_service_optin">
-			<label for="ig_es_ess_opted_for_sending_service">
-				<span class="relative">
-					<input id="ig_es_ess_opted_for_sending_service" type="checkbox" name="ig_es_ess_opted_for_sending_service" value="yes" <?php echo 'yes' === $opted_for_sending_service ? esc_attr( 'checked="checked"') : ''; ?> class="sr-only peer absolute w-0 h-0 mt-6 opacity-0 es-check-toggle ">
-					<div class="w-11 h-6 bg-gray-200 rounded-full peer  dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-				</span>
-				<span>
-					<?php echo esc_html__( 'Enable Icegram email sending service', 'email-subscribers' ); ?>
-				</span>
-			</label>
-			<p>
-				<?php
-					/* translators: %s Break tag */
-					echo sprintf( esc_html__( 'Use this to get high speed & reliable email delivery via %sIcegram\'s own Email Sending Service at 3000 free emails/ month.', 'email-subscribers' ), '<br/>' );
-				?>
-			</p>
-		</section>
-		<section id="sending_service_info">
-			<?php if ( $is_premium_plan ) : ?>
-			<label for="ig_es_ess_branding_enabled">
-				<span class="relative">
-					<input id="ig_es_ess_branding_enabled" type="checkbox" name="ig_es_ess_branding_enabled" value="yes" <?php echo $is_ess_branding_enabled ? esc_attr( 'checked="checked"') : ''; ?> class="sr-only peer absolute w-0 h-0 mt-6 opacity-0 es-check-toggle">
-					<div class="w-11 h-6 bg-gray-200 rounded-full peer  dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-				</span>
-				<span>
-					<?php echo esc_html__( 'Show "Sent by Icegram"', 'email-subscribers' ); ?>
-				</span>
-			</label>
-			<p>
-				<?php
-					/* translators: %s Break tag */
-					echo sprintf( esc_html__( 'Include "Sent by Icegram" link in the footer of your emails.', 'email-subscribers' ), '<br/>' );
-				?>
-			</p>
-			<br/>
-			<?php endif; ?>
-			<label id="icegram-mailer-info" class="inline-flex items-center cursor-pointer">
-				<div class="mr-4 border border-gray-200 rounded-lg shadow-md es-mailer-logo">
-					<div class="border-0 es-logo-wrapper">
-					<img src="<?php echo esc_url( ES_PLUGIN_URL . 'lite/admin/images/icegram-mailer.png' ); ?>" alt="Default (none)">
-					</div>
-					<p title="<?php echo esc_attr__( 'Icegram Email Sending Service', 'email-subscribers' ); ?>">
-						Icegram ESS
-					</p>
-				</div>
-				<?php
-				if ( ! empty( $es_ess_data ) ) {
-					?>
-					<div class="mt-4 mr-4 field-desciption mb-2 text-xs italic font-normal leading-snug text-gray-500 helper">
-						<div>
-							<?php echo esc_html__( 'Allocated limit', 'email-subscribers' ); ?>: <b><?php echo esc_html( $allocated_limit ); ?></b>
-						</div>
-						<div>
-						<?php echo esc_html__( 'Used limit', 'email-subscribers' ); ?>: <b><?php echo esc_html( $used_limit ) . ' (' . esc_html( number_format_i18n( ( ( $used_limit * 100 ) / $allocated_limit ), 2 ) ) . '%)'; ?></b>
-						</div>
-						<div>
-						<?php echo esc_html__( 'Remaining limit', 'email-subscribers' ); ?>: <b style="<?php echo ( $remaining_limit_percentage <= $remaining_percentage_limit ) ? 'color:orange' : ''; ?>"><?php echo esc_html( $remaining_limit ) . ' (' . esc_html( $remaining_limit_percentage ) . '%)'; ?></b>
-						</div>
-					</div>
-					<?php
-				}
-				?>
-			</label>
-			<?php
-			if ( 'yes' === $opted_for_sending_service && $remaining_limit_percentage <= $remaining_percentage_limit && $allocated_limit != 30000) {
-				?>
-				<div class="ess-upsell-sec">
-					<div class="main-upsell-sec">
-						<div class="flex">
-							<div class="flex-shrink-0">
-								<svg class='h-5 w-5 text-teal-400' fill='currentColor' viewBox='0 0 20 20'>
-									<path fill-rule='evenodd'
-										d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z'
-										clip-rule='evenodd'/>
-								</svg>
-							</div>
-							<div class="ess-upsell-msg">
-								<h3>
-									<?php 
-										echo esc_html__( 'You are about to exhaust your monthly email sending limit. Upgrade now to continue sending emails through our Icegram email sending service.', 'email-subscribers' );
-									?>
-								</h3>
-							</div>
-						</div>
-						<div class="upsell-btn-sec">
-							<a href="https://www.icegram.com/email-sending-service/?utm_source=in_app&utm_medium=ess_setting&utm_campaign=ess_upsell" target="_blank">
-								<button class="primary" type="button">
-									<?php esc_html_e( 'Upgrade', 'email-subscribers'); ?>
-								</button>
-							</a>
-						</div>
-					</div>
-				</div>
-				<?php
-			}
-			?>
-		</section>
-		<?php
-		$html = ob_get_clean();
-		return $html;
-	}
-
 	public static function get_test_send_email_html( $test_email ) {
 
 		/* translators: %s: Spinner image path */
@@ -1080,20 +954,6 @@ class ES_Admin_Settings {
 				),
 			);
 			$email_sending_settings = ig_es_array_insert_after( $email_sending_settings, 'ig_es_cronurl', $es_cron_info );
-		}
-
-		$opted_for_sending_service = get_option( 'ig_es_ess_opted_for_sending_service', '' );
-		if ( ! empty( $opted_for_sending_service ) ) {
-			$sending_service_setting = array(
-				'ig_es_icegram_mailer_info'         => array(
-					'type' => 'html',
-					'html' => self::get_icegram_mailer_html(),
-					'id'   => 'ig_es_icegram_mailer_info',
-					'name' => ' ',
-				),
-			);
-
-			$email_sending_settings = ig_es_array_insert_after( $email_sending_settings, 'ig_es_test_send_email', $sending_service_setting );
 		}
 
 		return $email_sending_settings;

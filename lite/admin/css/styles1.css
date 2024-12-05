@@ -122,6 +122,9 @@ table td
     &.secondary {
       @apply bg-secondary text-gray-900 hover:ring-[0.5px] hover:ring-tertiary;
     }
+    &.lighter-gray {
+      @apply bg-lighter-gray text-gray-900 hover:ring-[0.5px] hover:ring-tertiary;
+    }
     &.cross {
       @apply rounded-md bg-secondary px-0.5 text-gray-900 focus:ring-[0.5px] focus:ring-tertiary hover:ring-[0.5px] hover:ring-tertiary;
     }
@@ -262,7 +265,7 @@ table td
   .sidebar, 
   .form-fields, #es-admin-contact-form, #es-admin-lists-form, #es-admin-custom-fields-form, #ig-es-trial-optin-form {
     label {
-      @apply block text-sm font-medium leading-6 text-gray-900;
+      @apply block text-sm font-medium leading-6 text-gray-500;
     }
     input:not([type="radio"]) {
       @apply block w-full rounded-sm border-0 py-1.5 text-gray-900 shadow-sm ring-[0.5px] ring-inset ring-lighter-gray placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-tertiary sm:text-sm sm:leading-6;
@@ -350,7 +353,7 @@ table td
   }
 
   .overview {
-    @apply flex flex-col bg-white space-y-5 p-4 mt-5 ml-5 mr-5 border border-lighter-gray rounded-md;
+    @apply flex flex-col bg-white space-y-3 p-4 mt-5 ml-5 mr-5 border border-lighter-gray rounded-md;
 
     .kpi {
       @apply flex justify-between w-full px-3 py-2 items-center rounded-md bg-light-gray;
@@ -603,7 +606,7 @@ table td
 }
 
 /* Audience page tooltip CSS */
-.icegram-express_page_es_subscribers .es-tooltip, .icegram-express_page_es_lists .es-tooltip, .icegram-express_page_es_forms .es-tooltip, .icegram-express_page_es_settings .es-tooltip {
+.icegram-express_page_es_subscribers .es-tooltip, .icegram-express_page_es_lists .es-tooltip, .icegram-express_page_es_forms .es-tooltip, .icegram-express_page_es_settings .es-tooltip, .toplevel_page_es_dashboard .es-tooltip {
   @apply align-middle;
   span.tooltip-text {
     @apply bg-white w-64 p-3 py-2 shadow-lg rounded-sm;
@@ -822,7 +825,7 @@ table td
           /* End */
 
           /* Cron info & authentication table CSS */
-          table.cron-info, table#ig-es-settings-authentication-table, #ig-es-rest-api-section table {
+          table.cron-info, table#ig-es-settings-authentication-table, #ig-es-rest-api-section table, #ig-ess-plan-info-table {
             @apply min-w-fit rounded-lg ml-0;
 
             thead {
@@ -934,6 +937,24 @@ table td
 }
 /* End */
 
+
+
+/*** ESS plan info  CSS START***/
+#ig-es-ess-sending-service-info p {
+  vertical-align: bottom;
+  display: inline-block;
+}
+
+#ig-es-ess-sending-service-info table#ig-ess-plan-info-table tr td {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+}
+/*** ESS plan info CSS END***/
+
+.toplevel_page_es_dashboard .sticky {
+  top: 32px; /* Adjust for standard admin bar height */
+}
+
 /* Dashboard page CSS */
 /* There are still some inline clasess used in dashboard.php. The clasess which are already available tailwind.css. */
 .recent-campaigns, .audience-activity, .forms-lists {
@@ -983,9 +1004,41 @@ table td
     }
   }
 }
+
+.audience-activity {
+  @apply min-h-[562px];
+}
+
 .toplevel_page_es_dashboard {
   nav {
-    @apply pt-10;
+    @apply pt-5;
+  }
+  .main-section{
+    @apply col-span-2;
+  }
+  .col-section{
+    @apply col-span-1;
+  }
+  .forms-lists{
+    @apply grid grid-cols-2 gap-20;
+
+    .new_form_link, .new_list_link {
+      @apply text-xs font-normal text-[#000] leading-7;
+    }
+
+    .new_form_link a:hover, .new_list_link a:hover {
+      @apply text-[#000];
+    }
+  }
+  .lists-container{
+    @apply mt-0 !important;
+  }
+  .dashboard-kpi{
+    @apply ml-4;
+
+    .kpi-div {
+      @apply mr-20 p-1;
+    }
   }
 }
 
@@ -1005,10 +1058,10 @@ table td
   @apply flex flex-row;
 
   #ig-es-trial-expired-block, #ig-es-trial-active-block, #ig-es-trial-optin-block {
-    @apply pr-6 pl-6 pt-4 w-full;
+    @apply pr-6 pt-3 w-full;
 
     .sec-title {
-      @apply py-2 text-lg font-medium leading-6 text-gray-400;
+      @apply py-1 text-lg font-medium leading-6 text-gray-400;
     }
 
     #ig-es-trial-optin-btn {
@@ -1024,20 +1077,49 @@ table td
         }
       }
     }
-  }
 
-  #ig-ess-account-overview-block {
-    @apply relative pr-6 pl-6 w-full;
-    #subscribers-stats {
-      .stats-info {
-        @apply grid grid-cols-3 gap-4 py-4 text-gray-600 text-center;
+    ul.features_list {
+      @apply py-3 list-disc text-gray-500 pl-4;
+    }
+
+    .block-status {
+      @apply p-1 ml-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-black align-sub;
+
+      svg {
+        @apply inline-block h-5 w-5 text-green-600;
+      }
+    }
+
+    .trial-ended-block {
+      @apply p-1 ml-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-600 text-white align-sub;
+
+      svg {
+        @apply inline-block ml-1 h-5 w-5 text-white;
       }
     }
   }
 
+  #ig-ess-account-overview-block {
+    @apply relative pl-6 w-full;
+    #subscribers-stats {
+      .stats-info {
+        @apply flex justify-between py-4 text-gray-600 text-center;
+      }
+    }
+
+    .block-status {
+      @apply p-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-black align-sub;
+
+      svg {
+        @apply inline-block h-5 w-5 text-green-600;
+      }
+    }
+
+  }
+
   #sending-service-benefits, #sending-service-onboarding-tasks-list {
     .item-dots {
-      @apply relative pt-1 flex items-center justify-center flex-shrink-0 w-5 h-5;
+      @apply relative flex items-center justify-center flex-shrink-0 w-5 h-5;
 
       span {
         @apply block w-2 h-2 transition duration-150 ease-in-out bg-gray-300 rounded-full group-hover:bg-gray-400 group-focus:bg-gray-400;
@@ -1047,6 +1129,14 @@ table td
     svg {
       @apply mt-1 w-full h-full text-indigo-700 transition duration-150 ease-in-out group-hover:text-indigo-600 group-focus:text-indigo-600;
     }
+  }
+
+  .ess-block {
+    @apply ml-4;
+  }
+
+  .tips-trick-section {
+    @apply ml-16;
   }
 }
 /* End */

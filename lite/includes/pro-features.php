@@ -44,6 +44,8 @@ add_filter( 'ig_es_contacts_bulk_action', 'ig_es_upsell_contacts_bulk_action' );
 add_action( 'ig_es_after_form_buttons', 'ig_es_upsell_cf_button');
 add_action( 'ig_es_additional_form_fields', 'ig_es_upsell_cf_form_field');
 
+add_action( 'ig_es_after_send_queued_email_button', 'ig_es_upsell_export_reports_button');
+
 add_action( 'ig_es_show_bounced_contacts_stats', 'ig_es_upsell_bounced_dashboard_stats', 10, 2 );
 add_action( 'ig_es_show_sequence_message_stats', 'ig_es_upsell_sequence_message_stats' );
 add_action( 'ig_es_show_top_countries_stats', 'ig_es_upsell_top_countries_stats' );
@@ -2103,6 +2105,22 @@ function ig_es_upsell_cf_form_field() {
 				</a>
 			</td>
 		</tr>
+		<?php
+	}
+}
+
+function ig_es_upsell_export_reports_button() {
+	if ( ES()->can_upsell_features( array( 'lite','starter', 'trial' ) ) ) {
+		$utm_args = array(
+			'url'  		 => 'https://www.icegram.com/express/pricing/',
+			'utm_medium' => 'export_campaigns_reports'
+		);
+		$url = ES_Common::get_utm_tracking_url($utm_args);
+		?>
+		<a href = "<?php echo esc_url( $url ); ?>" target = "_blank" class="es_export_report_link">
+			<button type="button" class="secondary mb-5"><?php esc_html_e( 'Export Reports', 'email-subscribers' ); ?></button>
+			<span class="premium-icon max"></span>
+		</a>
 		<?php
 	}
 }

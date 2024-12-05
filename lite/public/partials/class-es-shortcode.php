@@ -514,7 +514,7 @@ class ES_Shortcode {
 			remove_filter( 'safe_style_css', 'ig_es_allowed_css_style', 999 );
 		}
 	}
-
+	
 	public static function prepare_lists_checkboxes( $lists, $list_ids = array(), $columns = 3, $selected_lists = array(), $list_label = '', $contact_id = 0, $name = 'lists[]', $lists_id_hash_map = array() ) {
 
 		$list_label = ! empty( $list_label ) ? $list_label : __( 'Select list(s)', 'email-subscribers' );
@@ -556,6 +556,24 @@ class ES_Shortcode {
 
 		$lists_html .= '</tr></table></div>';
 
+		return $lists_html;
+	}
+
+	public static function prepare_lists_multi_select( $lists, $list_ids = array(), $columns = 3, $selected_lists = array(), $list_label = '', $contact_id = 0, $name = 'lists[]', $lists_id_hash_map = array() ) {
+		$list_label = ! empty( $list_label ) ? $list_label : __( 'Select list(s)', 'email-subscribers' );
+		$lists_html = '<div class="max-w-sm mx-auto bg-white shadow-md rounded-lg p-6 pt-0.5">';
+		$lists_html .= '<label for="form multi-select" class="block text-gray-700 text-sm font-bold mb-2">' . $list_label . '*</label>';
+		$lists_html .= '<select id="ig-es-multiselect-lists" name="' . $name . '" multiple class="block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-300">';
+		$lists = apply_filters( 'ig_es_lists', $lists );
+	
+		foreach ( $lists as $list_id => $list_name ) {
+			$is_selected = in_array( $list_id, $selected_lists ) ? 'selected' : '';
+			$list_value = ! empty( $lists_id_hash_map[ $list_id ] ) ? $lists_id_hash_map[ $list_id ] : $list_id;
+			$lists_html .= '<option value="' . esc_attr( $list_value ) . '" ' . $is_selected . '>' . esc_html( $list_name ) . '</option>';
+		}
+	
+		$lists_html .= '</select></div>';
+	
 		return $lists_html;
 	}
 
@@ -619,5 +637,3 @@ class ES_Shortcode {
 		return self::get_form_identifier() === $form_identifier;
 	}
 }
-
-

@@ -2286,3 +2286,179 @@ function ig_es_update_5725_db_version() {
 }
 /* --------------------- ES 5.7.25(End)--------------------------- */
 
+/* --------------------- ES 5.7.28(Start)--------------------------- */
+
+/**
+ * Trial expires email for existing users
+ */
+
+function ig_es_schedule_trial_expires_reminder_cron() {
+
+	if ( ES()->is_premium() ) {
+		return;
+	}
+
+	$trial_started_at = get_option('ig_es_trial_started_at');
+
+	if (!empty($trial_started_at)) {
+		$trial_expires_at = $trial_started_at + ES()->trial->get_trial_period();
+		$trial_expires_after_six_day = strtotime(gmdate('Y-m-d', $trial_expires_at) . '+6 day');
+		$current_time = time();
+		// Don't schedule event if we already passed the trial email expiry sending window(1 day before trial expiry)
+		if ( $current_time > $trial_expires_after_six_day ) {
+			return;
+		}
+
+		wp_schedule_single_event( $trial_expires_after_six_day, 'ig_es_trial_expires_reminder_action', array(), true );
+	}
+}
+
+
+ /**
+ * Update DB version
+ *
+ * @since 5.7.28
+ */
+function ig_es_update_5728_db_version() {
+	ES_Install::update_db_version( '5.7.28' );
+}
+// phpcs:enable
+/* --------------------- ES 5.7.28(End)--------------------------- */
+
+/* --------------------- ES 5.7.37(Start)--------------------------- */
+
+/**
+ * Premium Form templates for existing users
+ */
+
+function ig_es_add_premium_forms_templates() {
+
+	$forms_gallery = apply_filters( 'ig_es_forms_gallery', array() );
+
+	$forms_gallery = array_filter($forms_gallery, function( $form) {
+		return $form['name'] !== 'First form';
+	});
+
+	$forms_gallery = array_values($forms_gallery);
+	
+	foreach ( $forms_gallery as $form_gallery_data ) {
+		if ( isset( $form_gallery_data['preview_image'] ) ) {
+			unset( $form_gallery_data['preview_image'] );
+		}
+		$form_id = ES()->forms_db->add_form( $form_gallery_data );
+	}
+}
+
+
+ /**
+ * Update DB version
+ *
+ * @since 5.7.37
+ */
+function ig_es_update_5737_db_version() {
+	ES_Install::update_db_version( '5.7.37' );
+}
+// phpcs:enable
+/* --------------------- ES 5.7.37(End)--------------------------- */
+
+/* --------------------- ES 5.7.38(Start)--------------------------- */
+
+/**
+ * Premium Form templates for existing users
+ */
+
+ function ig_es_add_preview_forms_column() {
+
+	global $wpdb;
+
+	$column_exists = $wpdb->get_var("
+		SELECT COUNT(*) 
+		FROM information_schema.COLUMNS 
+		WHERE TABLE_NAME = '".$wpdb->prefix."ig_forms' 
+		AND COLUMN_NAME = 'preview_image'
+	");
+
+	if ($column_exists == 0) {
+		$result = $wpdb->query("ALTER TABLE ".$wpdb->prefix."ig_forms ADD preview_image mediumtext DEFAULT NULL");
+
+		$preview_images = array(
+			'Contact form' => 'contact_form_pro.png',
+			'Inline newsletter form' => 'inline_form_pro.png',
+			'Minimal subscription form with selection of list' => 'minimal_subscription_form_starter.png',
+			'Subscription form for updates' => 'subscription_form_for_update_pro.png',
+			'Subscription Form' => 'subscription_form_pro.png',
+			'Subscription form with logo' => 'subscription_form_with_logo_lite.png',
+			'Subscription form with GDPR consent' => 'subscription_gdpr_form_lite.png',
+		);
+
+
+		$last_released_date = gmdate('Y-m-d H:i:s', strtotime('2024-10-24 00:00:00'));
+
+		foreach($preview_images as $form_name => $preview_image) {
+
+			$sql = $wpdb->prepare(
+				"UPDATE {$wpdb->prefix}ig_forms SET preview_image = %s WHERE name = %s AND created_at > %s",
+				$preview_image,
+				$form_name,
+				$last_released_date
+			);
+
+			$wpdb->query($sql);
+		}
+	}
+}
+
+
+ /**
+ * Update DB version
+ *
+ * @since 5.7.38
+ */
+function ig_es_update_5738_db_version() {
+	ES_Install::update_db_version( '5.7.38' );
+}
+// phpcs:enable
+/* --------------------- ES 5.7.38(End)--------------------------- */
+
+/* --------------------- ES 5.7.38(Start)--------------------------- */
+
+/**
+ * Premium Form templates for existing users
+ */
+
+function ig_es_migrate_ess_data_to_mailer_settings() {
+
+	if ( ! ES_Service_Email_Sending::opted_for_sending_service() ) {
+		return;
+	}
+	
+	$ess_data = get_option( 'ig_es_ess_data', array() );
+	if ( empty( $ess_data ) ) {
+		return;
+	} else {
+		$allocated_limit = ! empty( $ess_data['allocated_limit'] ) ? $ess_data['allocated_limit'] : 0;
+		$allocated_limit = (int) $allocated_limit;
+		$api_key         = ! empty( $ess_data['api_key'] ) ? $ess_data['api_key'] : '';
+		if ( '' === $api_key || 0 === $allocated_limit ) {
+			return;
+		}
+	}
+	$mailer_settings                     = get_option( 'ig_es_mailer_settings', array() );
+	$mailer_settings['mailer']           = 'icegram';
+	$mailer_settings['icegram']['email'] = ES_Common::get_admin_email();
+	update_option( 'ig_es_mailer_settings', $mailer_settings );
+	
+}
+
+
+ /**
+ * Update DB version
+ *
+ * @since 5.7.38
+ */
+function ig_es_update_5739_db_version() {
+	ES_Install::update_db_version( '5.7.39' );
+}
+// phpcs:enable
+/* --------------------- ES 5.7.38(End)--------------------------- */
+

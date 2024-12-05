@@ -7,17 +7,18 @@ if ( $show_trial_optin ) {
 
 	$trial_block = array(
 		'trial-optin' => array(
-			'title'        => __( 'Try Icegram Express Premium', 'email-subscribers' ),
+			'title'        => __( 'Try Icegram Express - Premium', 'email-subscribers' ),
 			/* translators: %d: Trial period in days */
-			'desc'         => sprintf( __( 'Start your %d days free trial to get below listed premium features.', 'email-subscribers' ), $trial_period_in_days),
-			'cta_text'     => __( 'Start trial', 'email-subscribers' ),
+			'desc'         => __( 'You\'re currently on the "Free, Basic" plan. But you can start a 14 days free trial of Premium plan and unlock:', 'email-subscribers' ),
+			'cta_text'     => __( 'Start my free trial', 'email-subscribers' ),
 			'feature_url'  => '#',
 			/* translators: %s Trial days */
-			'features_heading' => sprintf( esc_html__( 'Here is what you get for the next %s', 'email-subscribers' ), $trial_period_in_days . ' days' ),
+			//'features_heading' => sprintf( esc_html__( 'Here is what you get for the next %s', 'email-subscribers' ), $trial_period_in_days . ' days' ),
 			'features_list' => array(
-				'feature_first' => __( "<a class='text-blue-600 font-bold' href='https://www.icegram.com/docs/category/icegram-express-premium/add-utm-parameters-email/?utm_source=es&utm_medium=in_app&utm_campaign=revamp-01' target='_blank'>UTM tracking</a> - Google Analytics UTM tracking", 'email-subscribers' ),
-				'feature_second' => __( "<a class='text-blue-600 font-bold' href='https://www.icegram.com/docs/category/icegram-express-premium/check-spam-score#what-to-do-if-my-spam-score-is-higher-than-5/?utm_source=es&utm_medium=in_app&utm_campaign=revamp-01' target='_blank'>Spam score checking</a> - Stop lading your email in spams", 'email-subscribers' ),
-				'feature_third' => __( "<a class='text-blue-600 font-bold' href='https://www.icegram.com/docs/category/icegram-express-premium/enable-automatic-cron/?utm_source=es&utm_medium=in_app&utm_campaign=revamp-01' target='_blank'>Background email sending</a> - To ensure reliable email sending", 'email-subscribers' ),
+				'feature_first' => __( 'Reliable email sending with background batch processing', 'email-subscribers' ),
+				'feature_second' => __( 'Spam check - prevent your emails from hitting the junk folder', 'email-subscribers' ),
+				'feature_third' => __( 'UTM link tracking with Google Analytics', 'email-subscribers' ),
+				'feature_fourth' => __( 'Much better email marketing results', 'email-subscribers' ),
 			),
 		),
 	);
@@ -31,7 +32,7 @@ if ( $show_trial_optin ) {
 		$trial_block = array(
 			'trial-active' => array(
 				/* translators: %d: Trial period in days */
-				'title'        => sprintf( esc_html__( 'Your free %s trial is on', 'email-subscribers' ), '<b class="text-gray-900">' . $trial_period_in_days . ' days </b>' ),
+				'title'        => sprintf( esc_html__( 'Your free %s trial is on ', 'email-subscribers' ), $trial_period_in_days . ' days' ),
 				/* translators: %s: Number of days remaining in trial */
 				'desc'         => sprintf( __( 'Hope you are enjoying the premium features of Icegram Express. It will expire on %s. You can anytime upgrade it to MAX.', 'email-subscribers' ), $formatted_trial_expiry_date ),
 				'cta_text'     => __( 'Upgrade to Max', 'email-subscribers' ),
@@ -60,40 +61,42 @@ if ( $show_trial_optin ) {
 	
 } elseif ( ! ES()->is_premium() && ES()->trial->is_trial() && ES()->trial->is_trial_expired() ) {
 	$trial_period_in_days = ES()->trial->get_trial_period( 'in_days' );
+	$trial_expiry_date           = ES()->trial->get_trial_expiry_date();
+	$formatted_trial_expiry_date = ig_es_format_date_time( $trial_expiry_date );
 
 	$trial_block = array(
 		'trial-expired' => array(
 			/* translators: %d: Trial period in days */
-			'title'        => sprintf( __( 'Your %d days trial is expired', 'email-subscribers' ), $trial_period_in_days ),
-			'desc'         => __( 'Upgrade now to continue uninterrupted use of premium features like automatic email sending and more.', 'email-subscribers' ),
-			'cta_text'     => __( 'Upgrade to Max', 'email-subscribers' ),
+			'title'        => __( 'Icegram Express - Premium', 'email-subscribers' ),
+			'desc'         => sprintf( esc_html__( 'Your free trial of Premium plan ended on %s. So Premium features like faster email sending, spam check and UTM tracking are disabled. ', 'email-subscribers'), $formatted_trial_expiry_date),
+			'cta_text'     => __( 'Choose a plan and reactivate', 'email-subscribers' ),
 			'feature_url'  => 'https://www.icegram.com/email-subscribers-pricing/?utm_source=in_app&utm_medium=upsell&utm_campaign=es_upsell',
 		),
 	);
 } elseif (ES()->is_premium()) {
 	$trial_block = array(
 		'trial-expired' => array( 
-			'title' => __('Top read from our blog'),
-			'desc' => '',
+			'title' => __('Icegram Express - Premium'),
+			'desc' => __('You\'re currently on the Premium plan and advanced email marketing features are enabled.', 'email-subscribers'),
 			'feature_url'  => '#',
 			'features_heading' => '',
-			'features_list' => array(
-				/* translators: 1. Anchor start tag 2. Anchor close tag */
-				'feature_first' => sprintf( __( ' %1$sFluentCRM vs. Icegram Express%2$s', 'email-subscribers' ), '<a class="text-indigo-600 font-bold" href="https://www.icegram.com/fluentcrm-vs-icegram-express/?utm_source=es&utm_medium=in_app&utm_campaign=dashboard_help" target="_blank">', '</a>' ),
+			// 'features_list' => array(
+			// 	/* translators: 1. Anchor start tag 2. Anchor close tag */
+			// 	'feature_first' => sprintf( __( ' %1$sFluentCRM vs. Icegram Express%2$s', 'email-subscribers' ), '<a class="text-indigo-600 font-bold" href="https://www.icegram.com/fluentcrm-vs-icegram-express/?utm_source=es&utm_medium=in_app&utm_campaign=dashboard_help" target="_blank">', '</a>' ),
 				
-				/* translators: 1. Anchor start tag 2. Anchor close tag */
-				'feature_second' => sprintf( __( ' %1$sMailpoet vs. Icegram Express%2$s', 'email-subscribers' ), "<a class='text-indigo-600 font-bold' href='https://www.icegram.com/mailpoet-review-best-mailpoet-alternative/?utm_source=es&utm_medium=in_app&utm_campaign=dashboard_help' target='_blank'>", '</a>' ),
+			// 	/* translators: 1. Anchor start tag 2. Anchor close tag */
+			// 	'feature_second' => sprintf( __( ' %1$sMailpoet vs. Icegram Express%2$s', 'email-subscribers' ), "<a class='text-indigo-600 font-bold' href='https://www.icegram.com/mailpoet-review-best-mailpoet-alternative/?utm_source=es&utm_medium=in_app&utm_campaign=dashboard_help' target='_blank'>", '</a>' ),
 				
-				/* translators: 1. Anchor start tag 2. Anchor close tag */
-				'feature_third' => sprintf( __( ' %1$sOrganize email newsletter content calendar%2$s', 'email-subscribers' ), "<a class='text-indigo-600 font-bold' href='https://www.icegram.com/how-to-organize-email-newsletter-content-calendar/?utm_source=es&utm_medium=in_app&utm_campaign=dashboard_help' target='_blank'>", '</a>' ),
-			),
-			'features_sub_heading' => sprintf( esc_html__('Other products we have', 'email-subscribers')),
+			// 	/* translators: 1. Anchor start tag 2. Anchor close tag */
+			// 	'feature_third' => sprintf( __( ' %1$sOrganize email newsletter content calendar%2$s', 'email-subscribers' ), "<a class='text-indigo-600 font-bold' href='https://www.icegram.com/how-to-organize-email-newsletter-content-calendar/?utm_source=es&utm_medium=in_app&utm_campaign=dashboard_help' target='_blank'>", '</a>' ),
+			// ),
+			'features_sub_heading' => sprintf( esc_html__('Try our other products', 'email-subscribers')),
 			'features_sub_list' => array(
 				/* translators: 1. Anchor start tag 2. Anchor close tag */
-				'feature_first' => sprintf( __( ' %1$sIcegram Engage%2$s', 'email-subscribers' ), "<a class='text-indigo-600 font-bold' href='https://www.icegram.com/engage/?utm_source=es&utm_medium=in_app&utm_campaign=dashboard_help' target='_blank'>", '</a>' ),
+				'feature_first' => sprintf( __( ' %1$s%2$s%3$sIcegram Engage%4$s - popups, CTAs and more for onsite conversion%5$s%6$s', 'email-subscribers' ), "<div class='flex'><img class='mr-2 h-6' src='https://ps.w.org/icegram/assets/icon-128x128.png' alt=''>", "<a class='text-gray-500 text-sm hover:text-black-600' href='https://www.icegram.com/engage/?utm_source=es&utm_medium=in_app&utm_campaign=dashboard_help' target='_blank'>", '<b>', '</b>', '</a>', '</div>' ),
 				
 				/* translators: 1. Anchor start tag 2. Anchor close tag */
-				'feature_second' => sprintf( __( ' %1$sIcegram Collect%2$s', 'email-subscribers' ), "<a class='text-indigo-600 font-bold' href='https://www.icegram.com/collect/?utm_source=es&utm_medium=in_app&utm_campaign=dashboard_help' target='_blank'>", '</a>' ),
+				'feature_second' => sprintf( __( ' %1$s%2$s%3$sIcegram Collect%4$s - easy forms and lead capture%5$s%6$s', 'email-subscribers' ), "<div class='flex'><img class='mr-2 h-6' src='https://ps.w.org/icegram-rainmaker/assets/icon-128x128.png' alt=''>", "<a class='text-gray-500 text-sm hover:text-black-600' href='https://www.icegram.com/collect/?utm_source=es&utm_medium=in_app&utm_campaign=dashboard_help' target='_blank'>", '<b>', '</b>', '</a>', '</div>' ),
 			),
 		),
 	);
@@ -110,6 +113,32 @@ foreach ( $trial_block as $feature => $data ) {
 			<span>
 			<?php echo wp_kses_post( $data['title'] ); ?>
 			</span>
+			<?php 
+			if ($feature == 'trial-active') {
+				?>
+				<span class="block-status"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+				<title><?php echo esc_html__( 'Icegram Express - Premium Activated', 'email-subscribers' ); ?></title>
+				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> &nbsp; <?php echo esc_html__( 'Active', 'email-subscribers' ); ?> &nbsp;</span>
+				<?php
+			}
+
+			if ( $feature == 'trial-expired' && ! ES()->is_premium() && ES()->trial->is_trial() && ES()->trial->is_trial_expired()) {
+				?>
+				<span class="trial-ended-block "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+					<title><?php echo esc_html__( 'Trial Ended', 'email-subscribers' ); ?></title>
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+				</svg> &nbsp; Trial ended &nbsp; </span>
+				<?php
+			}
+
+			if ($feature == 'trial-expired' && ES()->is_premium()) {
+				?>
+				<span class="block-status"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+				<title><?php echo esc_html__( 'Icegram Express - Premium Activated', 'email-subscribers' ); ?></title>
+				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> &nbsp; <?php echo esc_html__( 'Active', 'email-subscribers' ); ?> &nbsp;</span>
+				<?php
+			}
+			?>
 		</p>
 		<?php
 		if ( ! empty( $data['graphics_img'] ) ) {
@@ -120,7 +149,7 @@ foreach ( $trial_block as $feature => $data ) {
 		}
 		?>
 		<div class="block-description" style="width: calc(100% - 4rem)">
-			<p class="pt-3 xl:pr-3 2xl:pr-0 text-sm text-gray-500">
+			<p class="py-3 xl:pr-3 2xl:pr-0 text-sm text-gray-500">
 				<?php
 				if ( ! empty( $data['html_desc'] ) ) {
 					echo wp_kses_post( $data['html_desc'] );
@@ -131,6 +160,14 @@ foreach ( $trial_block as $feature => $data ) {
 			</p>
 
 			<?php
+			if ( $feature == 'trial-expired' && ! ES()->is_premium() && ES()->trial->is_trial() && ES()->trial->is_trial_expired()) { 
+				?>
+				<p class="py-3 xl:pr-3 2xl:pr-0 text-sm text-gray-500">
+					<?php echo esc_html__( 'But it\'s not too late yet. You can reactivate all the powerful email marketing features today. 94% users who take up a paid plan are highly satisfied. ', 'email-subscribers'); ?>
+				</p>
+				<?php
+			}
+
 			if ( !empty($data['feature_url'])) {
 				$feature_url = $data['feature_url'];
 				if ( ! ES()->is_pro() && isset( $data['documentation_url'] ) ) {
@@ -148,22 +185,36 @@ foreach ( $trial_block as $feature => $data ) {
 				}
 				?>
 
-				<ul class="list-disc pl-5">
-					<?php 
-					if (!empty($data['features_list'])) {
+				<?php 
+				if (!empty($data['features_list'])) {
+					?>
+					<ul class="features_list text-sm">
+						<?php
 						foreach ($data['features_list'] as $key => $val) {
 							?>
 							<li><?php echo wp_kses( $val, $allowed_tags ); ?></li>
 							<?php
 						}
-					}
+						?>
+					</ul>
+					<?php
+				}
+					
+				if ($feature == 'trial-expired' && ES()->is_premium()) {
 					?>
-				</ul>
+					<a id="ig-es-<?php echo esc_attr( $feature ); ?>-cta" href="<?php echo esc_url( 'https://www.icegram.com/my-account/' ); ?>" target="_blank">
+						<button type="button" class="lighter-gray mt-2">
+							<?php echo esc_html__( 'Switch / manage your plan', 'email-subscribers' ); ?> &rarr;
+						</button>
+					</a>
+					<?php
+				}
+				?>
 				
 				<?php
 				if (!empty($data['features_sub_heading'])) {
 					?>
-					<p class="py-3 text-lg font-medium leading-6 text-gray-400">
+					<p class="py-3 mt-6 text-lg font-medium leading-6 text-gray-400">
 						<span class="leading-7">
 						<?php echo esc_html( $data['features_sub_heading'] ); ?>
 						</span>
@@ -171,7 +222,7 @@ foreach ( $trial_block as $feature => $data ) {
 					<?php 
 				}
 				?>
-				<ul class="list-disc pl-5">
+				<ul class="list-disc">
 					<?php 
 					if (!empty($data['features_sub_list'])) {
 						foreach ($data['features_sub_list'] as $key => $val) {
@@ -184,7 +235,7 @@ foreach ( $trial_block as $feature => $data ) {
 				</ul>
 				<?php if (!empty($data['cta_text']) && !empty($feature_url)) { ?>
 				<a id="ig-es-<?php echo esc_attr( $feature ); ?>-cta" href="<?php echo esc_url( $feature_url ); ?>" target="_blank">
-					<button type="button" class="primary mt-2">
+					<button type="button" class="lighter-gray mt-2">
 						<?php echo esc_html( $data['cta_text'] ); ?> &rarr;
 					</button>
 				</a>

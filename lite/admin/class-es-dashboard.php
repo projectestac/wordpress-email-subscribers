@@ -44,12 +44,6 @@ if ( ! class_exists( 'ES_Dashboard' ) ) {
 			);
 			$forms = ES()->forms_db->get_forms($forms_args);
 			$lists = array_slice(array_reverse(ES()->lists_db->get_lists()), 0, 2);
-
-
-			$a = array_column($audience_activity, 'id');
-			$b = array_column(ES()->lists_db->get_lists(), 'id');
-
-			//echo "<pre>"; print_r(ES()->lists_contacts_db->get_contacts()); echo "</pre>";
 			/*End*/
 			
 			
@@ -60,6 +54,7 @@ if ( ! class_exists( 'ES_Dashboard' ) ) {
 					'audience_activity' => $audience_activity,
 					'forms' => $forms,
 					'lists' => $lists,
+					'dashboard_kpi' => $reports_data
 				)
 			);
 		}
@@ -67,6 +62,12 @@ if ( ! class_exists( 'ES_Dashboard' ) ) {
 		public static function get_subscribers_stats() {
 
 			check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
+
+			$can_access_audience = ES_Common::ig_es_can_access( 'audience' );
+			if ( ! $can_access_audience ) {
+				return 0;
+			}
+
 			$page           = 'es_dashboard';
 			$days           = ig_es_get_request_data( 'days' );
 			$list_id        = ig_es_get_request_data( 'list_id' );
@@ -157,6 +158,28 @@ if ( ! class_exists( 'ES_Dashboard' ) ) {
 			}
 
 			return $activities;
+		}
+
+		public static function get_recent_campaigns_kpis( $campaign_id ) {
+			$args = array(
+				'campaign_id' => $campaign_id,
+				'types' => array(
+					IG_MESSAGE_SENT,
+					IG_MESSAGE_OPEN,
+					IG_LINK_CLICK
+				)
+			);
+			$actions_count       = ES()->actions_db->get_actions_count( $args );
+			$total_email_sent    = $actions_count['sent'];
+			$total_email_opened  = $actions_count['opened'];
+			$total_email_clicked = $actions_count['clicked'];
+			$open_rate  = ! empty( $total_email_sent ) ? number_format_i18n( ( ( $total_email_opened * 100 ) / $total_email_sent ), 2 ) : 0 ;
+			$click_rate = ! empty( $total_email_sent ) ? number_format_i18n( ( ( $total_email_clicked * 100 ) / $total_email_sent ), 2 ) : 0;
+			$campaign['open_rate']  = $open_rate;
+			$campaign['click_rate'] = $click_rate;
+			$campaign['total_email_sent'] = $total_email_sent;
+
+			return $campaign;
 		}
 	}
 }

@@ -9,13 +9,13 @@
 </style>
 <?php
 $plan    = ES()->get_plan();
-$offer_name = 'offer_bfcm_2023';
-$img_url = esc_url( ES_PLUGIN_URL ) . 'lite/admin/images/bfcm-pro-banner-2023.png';
+$offer_name = 'offer_bfcm_2024';
+$img_url = esc_url( ES_PLUGIN_URL ) . 'lite/admin/images/bfcm-express-free-pro-banner-2024.png';
 if ( ES()->is_pro() ) {
-	$img_url = esc_url( ES_PLUGIN_URL ) . 'lite/admin/images/bfcm-common-banner-2023.png';
+	$img_url = esc_url( ES_PLUGIN_URL ) . 'lite/admin/images/bfcm-common-max-banner-2024.jpg';
 }
 
-if ( ( get_option( 'ig_es_offer_bfcm_2023' ) !== 'yes' ) && ES()->is_offer_period( 'bfcm' ) ) { 
+if ( ( get_option( 'ig_es_offer_bfcm_2024' ) !== 'yes' ) && ES()->is_offer_period( 'bfcm' ) ) { 
 	$notice_dismiss_url = wp_nonce_url(
 		add_query_arg(
 			array(

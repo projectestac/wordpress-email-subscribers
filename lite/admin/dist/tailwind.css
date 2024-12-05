@@ -1215,6 +1215,18 @@ button:focus,
           box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
   --tw-ring-color: var(--brand-color-2);
 }
+.lighter-gray:is(button,.tab) {
+  background-color: var(--lighter-gray);
+  --tw-text-opacity: 1;
+  color: rgb(22 30 46 / var(--tw-text-opacity));
+}
+.lighter-gray:is(button,.tab):hover {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0.5px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  -webkit-box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+          box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: var(--brand-color-2);
+}
 .cross:is(button,.tab) {
   border-radius: 0.375rem;
   background-color: var(--secondary);
@@ -1804,7 +1816,7 @@ input[type="time"] {
   font-weight: 500;
   line-height: 1.5rem;
   --tw-text-opacity: 1;
-  color: rgb(22 30 46 / var(--tw-text-opacity));
+  color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 :is(.template-editor,.sidebar,.form-fields,#es-admin-contact-form,#es-admin-lists-form,#es-admin-custom-fields-form,#ig-es-trial-optin-form) input:not([type="radio"]) {
   display: block;
@@ -2105,8 +2117,8 @@ input[type="time"] {
 }
 .overview > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
-  margin-top: calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(1.25rem * var(--tw-space-y-reverse));
+  margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
 }
 .overview {
   border-radius: 0.375rem;
@@ -2978,11 +2990,11 @@ input[type="time"] {
 .mt-3 {
   margin-top: 0.75rem;
 }
-.mt-48 {
-  margin-top: 12rem;
-}
 .mt-6 {
   margin-top: 1.5rem;
+}
+.mt-64 {
+  margin-top: 16rem;
 }
 .mt-8 {
   margin-top: 2rem;
@@ -3391,6 +3403,10 @@ input[type="time"] {
 .bg-purple-500\/20 {
   background-color: rgb(144 97 249 / 0.2);
 }
+.bg-red-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(253 232 232 / var(--tw-bg-opacity));
+}
 .bg-red-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(224 36 36 / var(--tw-bg-opacity));
@@ -3492,6 +3508,9 @@ input[type="time"] {
 }
 .pl-3 {
   padding-left: 0.75rem;
+}
+.pl-5 {
+  padding-left: 1.25rem;
 }
 .pr-2 {
   padding-right: 0.5rem;
@@ -3826,10 +3845,10 @@ table td
   --tw-ring-color: transparent;
 }
 /* Audience page tooltip CSS */
-.icegram-express_page_es_subscribers .es-tooltip, .icegram-express_page_es_lists .es-tooltip, .icegram-express_page_es_forms .es-tooltip, .icegram-express_page_es_settings .es-tooltip {
+.icegram-express_page_es_subscribers .es-tooltip, .icegram-express_page_es_lists .es-tooltip, .icegram-express_page_es_forms .es-tooltip, .icegram-express_page_es_settings .es-tooltip, .toplevel_page_es_dashboard .es-tooltip {
   vertical-align: middle;
 }
-.icegram-express_page_es_subscribers .es-tooltip span.tooltip-text, .icegram-express_page_es_lists .es-tooltip span.tooltip-text, .icegram-express_page_es_forms .es-tooltip span.tooltip-text, .icegram-express_page_es_settings .es-tooltip span.tooltip-text {
+.icegram-express_page_es_subscribers .es-tooltip span.tooltip-text, .icegram-express_page_es_lists .es-tooltip span.tooltip-text, .icegram-express_page_es_forms .es-tooltip span.tooltip-text, .icegram-express_page_es_settings .es-tooltip span.tooltip-text, .toplevel_page_es_dashboard .es-tooltip span.tooltip-text {
   width: 16rem;
   border-radius: 0.125rem;
   --tw-bg-opacity: 1;
@@ -3842,7 +3861,7 @@ table td
   -webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
           box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
-.icegram-express_page_es_subscribers .es-tooltip svg.tooltip-arrow, .icegram-express_page_es_lists .es-tooltip svg.tooltip-arrow, .icegram-express_page_es_forms .es-tooltip svg.tooltip-arrow, .icegram-express_page_es_settings .es-tooltip svg.tooltip-arrow {
+.icegram-express_page_es_subscribers .es-tooltip svg.tooltip-arrow, .icegram-express_page_es_lists .es-tooltip svg.tooltip-arrow, .icegram-express_page_es_forms .es-tooltip svg.tooltip-arrow, .icegram-express_page_es_settings .es-tooltip svg.tooltip-arrow, .toplevel_page_es_dashboard .es-tooltip svg.tooltip-arrow {
   fill: #ffffff;
 }
 /* Audience page advance filter CSS */
@@ -4044,7 +4063,6 @@ table td
 /* Setting tab content CSS */
 #es-menu-tab-content {
   width: 80%;
-  /* End */
 
   /* All tab content table CSS*/
 }
@@ -4112,7 +4130,6 @@ table td
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-left: 1.25rem;
-          /* End */
 
           /* Upsell section CSS */
 }
@@ -4314,14 +4331,14 @@ table td
 }
 /* End */
 /* Cron info & authentication table CSS */
-#es-menu-tab-content #tabs-general table tr td table.cron-info, #es-menu-tab-content #tabs-email_sending table tr td table.cron-info, #es-menu-tab-content #tabs-security_settings table tr td table.cron-info, #es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info, #es-menu-tab-content #tabs-user_roles table tr td table.cron-info, #es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table, #es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table, #es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table, #es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table, #es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table, #es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table, #es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table, #es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table, #es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table, #es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table {
+#es-menu-tab-content #tabs-general table tr td table.cron-info, #es-menu-tab-content #tabs-email_sending table tr td table.cron-info, #es-menu-tab-content #tabs-security_settings table tr td table.cron-info, #es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info, #es-menu-tab-content #tabs-user_roles table tr td table.cron-info, #es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table, #es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table, #es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table, #es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table, #es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table, #es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table, #es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table, #es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table, #es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table, #es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table, #es-menu-tab-content #tabs-general table tr td #ig-ess-plan-info-table, #es-menu-tab-content #tabs-email_sending table tr td #ig-ess-plan-info-table, #es-menu-tab-content #tabs-security_settings table tr td #ig-ess-plan-info-table, #es-menu-tab-content #tabs-rest_api_settings table tr td #ig-ess-plan-info-table, #es-menu-tab-content #tabs-user_roles table tr td #ig-ess-plan-info-table {
   margin-left: 0;
   min-width: -webkit-fit-content;
   min-width: -moz-fit-content;
   min-width: fit-content;
   border-radius: 0.5rem;
 }
-:is(#es-menu-tab-content #tabs-general table tr td table.cron-info,#es-menu-tab-content #tabs-email_sending table tr td table.cron-info,#es-menu-tab-content #tabs-security_settings table tr td table.cron-info,#es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info,#es-menu-tab-content #tabs-user_roles table tr td table.cron-info,#es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table) thead tr {
+:is(#es-menu-tab-content #tabs-general table tr td table.cron-info,#es-menu-tab-content #tabs-email_sending table tr td table.cron-info,#es-menu-tab-content #tabs-security_settings table tr td table.cron-info,#es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info,#es-menu-tab-content #tabs-user_roles table tr td table.cron-info,#es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-general table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-email_sending table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-security_settings table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-user_roles table tr td #ig-ess-plan-info-table) thead tr {
   --tw-bg-opacity: 1;
   background-color: rgb(235 245 255 / var(--tw-bg-opacity));
   font-size: 0.75rem;
@@ -4332,26 +4349,26 @@ table td
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
 }
-:is(#es-menu-tab-content #tabs-general table tr td table.cron-info,#es-menu-tab-content #tabs-email_sending table tr td table.cron-info,#es-menu-tab-content #tabs-security_settings table tr td table.cron-info,#es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info,#es-menu-tab-content #tabs-user_roles table tr td table.cron-info,#es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table) thead tr th {
+:is(#es-menu-tab-content #tabs-general table tr td table.cron-info,#es-menu-tab-content #tabs-email_sending table tr td table.cron-info,#es-menu-tab-content #tabs-security_settings table tr td table.cron-info,#es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info,#es-menu-tab-content #tabs-user_roles table tr td table.cron-info,#es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-general table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-email_sending table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-security_settings table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-user_roles table tr td #ig-ess-plan-info-table) thead tr th {
   display: table-cell;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
-:is(#es-menu-tab-content #tabs-general table tr td table.cron-info,#es-menu-tab-content #tabs-email_sending table tr td table.cron-info,#es-menu-tab-content #tabs-security_settings table tr td table.cron-info,#es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info,#es-menu-tab-content #tabs-user_roles table tr td table.cron-info,#es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table) tbody tr {
+:is(#es-menu-tab-content #tabs-general table tr td table.cron-info,#es-menu-tab-content #tabs-email_sending table tr td table.cron-info,#es-menu-tab-content #tabs-security_settings table tr td table.cron-info,#es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info,#es-menu-tab-content #tabs-user_roles table tr td table.cron-info,#es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-general table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-email_sending table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-security_settings table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-user_roles table tr td #ig-ess-plan-info-table) tbody tr {
   border-bottom-width: 1px;
   --tw-border-opacity: 1;
   border-color: rgb(229 231 235 / var(--tw-border-opacity));
 }
-:is(#es-menu-tab-content #tabs-general table tr td table.cron-info,#es-menu-tab-content #tabs-email_sending table tr td table.cron-info,#es-menu-tab-content #tabs-security_settings table tr td table.cron-info,#es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info,#es-menu-tab-content #tabs-user_roles table tr td table.cron-info,#es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table) tbody tr td {
+:is(#es-menu-tab-content #tabs-general table tr td table.cron-info,#es-menu-tab-content #tabs-email_sending table tr td table.cron-info,#es-menu-tab-content #tabs-security_settings table tr td table.cron-info,#es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info,#es-menu-tab-content #tabs-user_roles table tr td table.cron-info,#es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-general table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-email_sending table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-security_settings table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-user_roles table tr td #ig-ess-plan-info-table) tbody tr td {
   width: 25%;
   border-radius: 0px;
   --tw-bg-opacity: 1;
   background-color: rgb(235 245 255 / var(--tw-bg-opacity));
   text-align: left;
 }
-:is(#es-menu-tab-content #tabs-general table tr td table.cron-info,#es-menu-tab-content #tabs-email_sending table tr td table.cron-info,#es-menu-tab-content #tabs-security_settings table tr td table.cron-info,#es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info,#es-menu-tab-content #tabs-user_roles table tr td table.cron-info,#es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table) tbody tr td span#ig-es-verify-auth-message {
+:is(#es-menu-tab-content #tabs-general table tr td table.cron-info,#es-menu-tab-content #tabs-email_sending table tr td table.cron-info,#es-menu-tab-content #tabs-security_settings table tr td table.cron-info,#es-menu-tab-content #tabs-rest_api_settings table tr td table.cron-info,#es-menu-tab-content #tabs-user_roles table tr td table.cron-info,#es-menu-tab-content #tabs-general table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-email_sending table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-security_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-rest_api_settings table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-user_roles table tr td table#ig-es-settings-authentication-table,#es-menu-tab-content #tabs-general table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-email_sending table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-security_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-user_roles table tr td #ig-es-rest-api-section table,#es-menu-tab-content #tabs-general table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-email_sending table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-security_settings table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-rest_api_settings table tr td #ig-ess-plan-info-table,#es-menu-tab-content #tabs-user_roles table tr td #ig-ess-plan-info-table) tbody tr td span#ig-es-verify-auth-message {
   font-size: 0.75rem;
   line-height: 1rem;
   font-weight: 700;
@@ -4489,6 +4506,7 @@ table td
 #es-menu-tab-content #tabs-general table tr td table.user-roles-table tbody tr td, #es-menu-tab-content #tabs-email_sending table tr td table.user-roles-table tbody tr td, #es-menu-tab-content #tabs-security_settings table tr td table.user-roles-table tbody tr td, #es-menu-tab-content #tabs-rest_api_settings table tr td table.user-roles-table tbody tr td, #es-menu-tab-content #tabs-user_roles table tr td table.user-roles-table tbody tr td {
   padding-left: 2.5rem;
 }
+/* End */
 #es-menu-tab-content #tabs-general table tr:last-of-type, #es-menu-tab-content #tabs-email_sending table tr:last-of-type, #es-menu-tab-content #tabs-security_settings table tr:last-of-type, #es-menu-tab-content #tabs-rest_api_settings table tr:last-of-type, #es-menu-tab-content #tabs-user_roles table tr:last-of-type {
   border-width: 0px;
 }
@@ -4496,6 +4514,20 @@ table td
       border-width: 0px;
   }
 /* End */
+/* End */
+/*** ESS plan info  CSS START***/
+#ig-es-ess-sending-service-info p {
+  vertical-align: bottom;
+  display: inline-block;
+}
+#ig-es-ess-sending-service-info table#ig-ess-plan-info-table tr td {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+}
+/*** ESS plan info CSS END***/
+.toplevel_page_es_dashboard .sticky {
+  top: 32px; /* Adjust for standard admin bar height */
+}
 /* Dashboard page CSS */
 /* There are still some inline clasess used in dashboard.php. The clasess which are already available tailwind.css. */
 .recent-campaigns table, .audience-activity table, .forms-lists table {
@@ -4567,8 +4599,43 @@ table td
 .recent-campaigns table tbody tr:last-of-type, .audience-activity table tbody tr:last-of-type, .forms-lists table tbody tr:last-of-type {
   border-bottom-width: 0px;
 }
+.audience-activity {
+  min-height: 562px;
+}
 .toplevel_page_es_dashboard nav {
-  padding-top: 2.5rem;
+  padding-top: 1.25rem;
+}
+.toplevel_page_es_dashboard .main-section {
+  grid-column: span 2 / span 2;
+}
+.toplevel_page_es_dashboard .col-section {
+  grid-column: span 1 / span 1;
+}
+.toplevel_page_es_dashboard .forms-lists {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5rem;
+}
+.toplevel_page_es_dashboard .forms-lists .new_form_link, .toplevel_page_es_dashboard .forms-lists .new_list_link {
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.75rem;
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+.toplevel_page_es_dashboard .forms-lists .new_form_link a:hover, .toplevel_page_es_dashboard .forms-lists .new_list_link a:hover {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+.toplevel_page_es_dashboard .lists-container {
+  margin-top: 0 !important;
+}
+.toplevel_page_es_dashboard .dashboard-kpi {
+  margin-left: 1rem;
+}
+.toplevel_page_es_dashboard .dashboard-kpi .kpi-div {
+  margin-right: 5rem;
+  padding: 0.25rem;
 }
 #ig-es-create-dropdown {
   position: absolute;
@@ -4631,12 +4698,11 @@ table td
 .ig-dashboardcommon-section #ig-es-trial-expired-block, .ig-dashboardcommon-section #ig-es-trial-active-block, .ig-dashboardcommon-section #ig-es-trial-optin-block {
   width: 100%;
   padding-right: 1.5rem;
-  padding-left: 1.5rem;
-  padding-top: 1rem;
+  padding-top: 0.75rem;
 }
 .ig-dashboardcommon-section #ig-es-trial-expired-block .sec-title, .ig-dashboardcommon-section #ig-es-trial-active-block .sec-title, .ig-dashboardcommon-section #ig-es-trial-optin-block .sec-title {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
   font-size: 1.125rem;
   font-weight: 500;
   line-height: 1.5rem;
@@ -4671,21 +4737,100 @@ table td
 .ig-dashboardcommon-section #ig-es-trial-expired-block #ig-es-trial-optin-btn svg path, .ig-dashboardcommon-section #ig-es-trial-active-block #ig-es-trial-optin-btn svg path, .ig-dashboardcommon-section #ig-es-trial-optin-block #ig-es-trial-optin-btn svg path {
   opacity: 0.75;
 }
+.ig-dashboardcommon-section #ig-es-trial-expired-block ul.features_list, .ig-dashboardcommon-section #ig-es-trial-active-block ul.features_list, .ig-dashboardcommon-section #ig-es-trial-optin-block ul.features_list {
+  list-style-type: disc;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1rem;
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+.ig-dashboardcommon-section #ig-es-trial-expired-block .block-status, .ig-dashboardcommon-section #ig-es-trial-active-block .block-status, .ig-dashboardcommon-section #ig-es-trial-optin-block .block-status {
+  margin-left: 0.5rem;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  border-radius: 9999px;
+  --tw-bg-opacity: 1;
+  background-color: rgb(222 247 236 / var(--tw-bg-opacity));
+  padding: 0.25rem;
+  vertical-align: sub;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+.ig-dashboardcommon-section #ig-es-trial-expired-block .block-status svg, .ig-dashboardcommon-section #ig-es-trial-active-block .block-status svg, .ig-dashboardcommon-section #ig-es-trial-optin-block .block-status svg {
+  display: inline-block;
+  height: 1.25rem;
+  width: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(5 122 85 / var(--tw-text-opacity));
+}
+.ig-dashboardcommon-section #ig-es-trial-expired-block .trial-ended-block, .ig-dashboardcommon-section #ig-es-trial-active-block .trial-ended-block, .ig-dashboardcommon-section #ig-es-trial-optin-block .trial-ended-block {
+  margin-left: 0.5rem;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  border-radius: 9999px;
+  --tw-bg-opacity: 1;
+  background-color: rgb(224 36 36 / var(--tw-bg-opacity));
+  padding: 0.25rem;
+  vertical-align: sub;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ig-dashboardcommon-section #ig-es-trial-expired-block .trial-ended-block svg, .ig-dashboardcommon-section #ig-es-trial-active-block .trial-ended-block svg, .ig-dashboardcommon-section #ig-es-trial-optin-block .trial-ended-block svg {
+  margin-left: 0.25rem;
+  display: inline-block;
+  height: 1.25rem;
+  width: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
 .ig-dashboardcommon-section #ig-ess-account-overview-block {
   position: relative;
   width: 100%;
-  padding-right: 1.5rem;
   padding-left: 1.5rem;
 }
 .ig-dashboardcommon-section #ig-ess-account-overview-block #subscribers-stats .stats-info {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   padding-top: 1rem;
   padding-bottom: 1rem;
   text-align: center;
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+.ig-dashboardcommon-section #ig-ess-account-overview-block .block-status {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  border-radius: 9999px;
+  --tw-bg-opacity: 1;
+  background-color: rgb(222 247 236 / var(--tw-bg-opacity));
+  padding: 0.25rem;
+  vertical-align: sub;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+.ig-dashboardcommon-section #ig-ess-account-overview-block .block-status svg {
+  display: inline-block;
+  height: 1.25rem;
+  width: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(5 122 85 / var(--tw-text-opacity));
 }
 .ig-dashboardcommon-section #sending-service-benefits .item-dots, .ig-dashboardcommon-section #sending-service-onboarding-tasks-list .item-dots {
   position: relative;
@@ -4702,7 +4847,6 @@ table td
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  padding-top: 0.25rem;
 }
 .ig-dashboardcommon-section #sending-service-benefits .item-dots span, .ig-dashboardcommon-section #sending-service-onboarding-tasks-list .item-dots span {
   display: block;
@@ -4750,6 +4894,12 @@ table td
 .group:focus .ig-dashboardcommon-section #sending-service-benefits svg,.group:focus  .ig-dashboardcommon-section #sending-service-onboarding-tasks-list svg {
   --tw-text-opacity: 1;
   color: rgb(88 80 236 / var(--tw-text-opacity));
+}
+.ig-dashboardcommon-section .ess-block {
+  margin-left: 1rem;
+}
+.ig-dashboardcommon-section .tips-trick-section {
+  margin-left: 4rem;
 }
 /* End */
 /* Reports dashboard CSS */
@@ -4941,12 +5091,6 @@ table td
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-.reports-statistic .statistic-info .stat-sec .stat-grid-sec {
-
-        /* .email_sent, .email_unsubscribed {
-          @apply mt-1 font-medium leading-6 text-gray-500";
-        } */
-      }
 .reports-statistic .statistic-info .stat-sec .stat-grid-sec .email_viewed_count {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -5001,6 +5145,9 @@ table td
   --tw-text-opacity: 1;
   color: rgb(88 80 236 / var(--tw-text-opacity));
 }
+/* .email_sent, .email_unsubscribed {
+          @apply mt-1 font-medium leading-6 text-gray-500";
+        } */
 .reports-statistic .empty_country_data {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
@@ -5075,6 +5222,9 @@ table td
   position: sticky;
   z-index: 40;
   height: 0;
+}
+.toplevel_page_es_dashboard .campaign-msg-box {
+  top: 32px; /* Adjust for standard admin bar height */
 }
 @media (min-width: 1024px) {
 

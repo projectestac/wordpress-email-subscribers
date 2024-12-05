@@ -33,7 +33,7 @@ class ES_Email_Delivery_Check extends ES_Services {
 
 		$this->cmd = str_replace( ':mailbox', $mailbox, $this->cmd );
 
-		$request_data     = array();
+		$request_data     = array( 'timeout' => 15 );
 		$request_method   = 'GET';
 		$validate_request = false;
 

@@ -76,7 +76,7 @@ if ( ! class_exists( 'ES_Gallery' ) ) {
 					$campaign_status_codes = ES_Common::get_campaign_status_code_map();
 					$post_categories       = ES_Common::get_post_categories();
 					$post_types_name       = ES_Common::get_post_types_name();
-					$optimization_option=ES_Common::get_optimization_details();
+					$optimization_option   = ES_Common::get_optimization_details();
 					
 					$main_js_data['campaign_status_names'] = $campaign_status_names;
 					$main_js_data['campaign_status_codes'] = $campaign_status_codes;

@@ -31,11 +31,3 @@ $import_url = admin_url( 'admin.php?page=es_subscribers&action=import' );
 		?>
 	</tbody>
 </table>
-
-<a href="<?php echo esc_url( $import_url ); ?>" style="position: absolute;bottom: 5%;">
-	<button type="button" class="primary">
-		<span>
-			<?php echo esc_html__( 'Import', 'email-subscribers' ); ?>
-		</span>
-	</button>
-</a>

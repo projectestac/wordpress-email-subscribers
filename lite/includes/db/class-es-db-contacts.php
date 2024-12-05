@@ -493,18 +493,24 @@ class ES_DB_Contacts extends ES_DB {
 	 *
 	 * @modify 4.3.12
 	 */
-	public function delete_contacts_by_ids( $ids = array() ) {
+	public function delete_contacts_by_ids( $contact_ids = array() ) {
 
-		$ids = $this->prepare_for_in_query( $ids );
+		$ids_str = $this->prepare_for_in_query( $contact_ids );
 
-		$where = "id IN ($ids)";
+		$where = "id IN ($ids_str)";
 
 		$delete = $this->delete_by_condition( $where );
 
 		if ( $delete ) {
-			$where = "contact_id IN ($ids)";
-
-			return ES()->lists_contacts_db->delete_by_condition( $where );
+			
+			$where = "contact_id IN ($ids_str)";
+			
+			$contacts_deleted_from_lists = ES()->lists_contacts_db->delete_by_condition( $where );
+			
+			if ( $contacts_deleted_from_lists ) {
+				do_action( 'ig_es_contacts_deleted', $contact_ids );
+				return true;
+			}
 		}
 
 		return false;
@@ -1179,5 +1185,15 @@ class ES_DB_Contacts extends ES_DB {
 		$last_contact_id = $wpdb->get_var( "SELECT id FROM {$wpdb->prefix}ig_contacts ORDER BY id DESC LIMIT 0, 1" );
 		// phpcs:enable
 		return $last_contact_id;
+	}
+
+	//Get contacts by list id.
+	public function get_contacts_by_list_id( $status = 'all', $list_id = 0 ) {
+	
+		$contacts = ES()->lists_contacts_db->get_contacts($status, $list_id); 
+		$contact_ids = array_column($contacts, 'contact_id'); 
+		$contact_details = $this->get_details_by_ids($contact_ids);
+		
+		return $contact_details;
 	}
 }

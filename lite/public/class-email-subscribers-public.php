@@ -470,11 +470,11 @@ class Email_Subscribers_Public {
 				</style>
 			</head>
 			<body>
-				<div class="min-h-screen px-4 pt-10 pb-12 mx-auto bg-gray-100 sm:px-6 lg:px-8">
+				<div id="ig_es_unsubscribe_form_wrapper" class="min-h-screen px-4 pt-10 pb-12 mx-auto bg-gray-100 sm:px-6 lg:px-8">
 					<section class="bg-white mt-12 py-7 shadow-md sm:rounded-lg mx-auto sm:w-2/4 xl:w-6/12">
 						<div class="flex">
 							<div class="w-full pl-6 pr-6 leading-6">
-								<form action="<?php echo esc_attr( $action ); ?>" method="post" id="">
+								<form action="<?php echo esc_attr( $action ); ?>" method="post" id="ig_es_unsubscribe_form">
 									<?php wp_nonce_field( 'ig-es-unsubscribe-nonce', 'ig_es_unsubscribe_nonce' ); ?>
 									<?php
 									do_action( 'ig_es_unsubscribe_form_after_start' );
