@@ -171,6 +171,14 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 				</section>
 			</div>
 			
+
+            <?php
+            // XTEC ************ AFEGIT - Removed Form style
+            // 2025.01.08 @aginard
+            if (is_xtec_super_admin()) {
+            // ************ Fi
+            ?>
+
 			<!-- Recent Activity -->
 			<section class="overview relative audience-activity">
 				<div class="es-w-full">
@@ -200,6 +208,14 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 						?>
 				</div>
 			</section>
+
+            <?php
+            // XTEC ************ ELIMINAT - Removed box
+            // 2025.01.08 @aginard
+            }
+            // *********** Fi
+            ?>
+
 		</div>
 
 		
