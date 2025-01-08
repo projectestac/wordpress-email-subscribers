@@ -23,3 +23,14 @@
   margin-left: 0px;
   width: auto;
 }
+
+@media only screen and (max-width: 576px) {
+    .gjs-row {
+      display: flex;
+      flex-direction: column;
+    }
+    .gjs-cell img {
+      width: 100%;
+      height: auto;
+    }
+  }

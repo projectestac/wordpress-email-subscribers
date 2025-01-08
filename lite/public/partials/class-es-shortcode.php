@@ -442,7 +442,7 @@ class ES_Shortcode {
 		
 		}
 		
-		$form_data_html .= '<span class="es_subscription_message ' . $message_class . '" id="es_subscription_message_' . $unique_id . '">' . $message_text . '</span>';
+		$form_data_html .= '<span class="es_subscription_message ' . $message_class . '" id="es_subscription_message_' . $unique_id . '" role="alert" aria-live="assertive">' . $message_text . '</span>';
 
 		// Wrap form html inside a container.
 		$form_data_html = '<div class="emaillist" id="es_form_' . self::$form_identifier . '">' . $form_data_html . '</div>';
@@ -486,7 +486,7 @@ class ES_Shortcode {
 					var message = '<h3 style=\"text-align: center;\"><?php echo esc_js( $es_popup_headline ); ?></h3>';
 					
 					es_pre_data.ajax_url = '<?php echo esc_url(admin_url( 'admin-ajax.php' )); ?>';
-					es_pre_data.messages[0].form_html = <?php echo json_encode($form); ?>;
+					es_pre_data.messages[0].form_html = `<?php echo wp_kses(html_entity_decode($form),$allowedtags); ?>`;
 					es_pre_data.messages[0].id = es_pre_data.messages[0].campaign_id = es_message_id;
 					es_pre_data.messages[0].label = <?php echo json_encode($button_label); ?>;
 					es_pre_data.messages[0].message = message;
@@ -637,3 +637,5 @@ class ES_Shortcode {
 		return self::get_form_identifier() === $form_identifier;
 	}
 }
+
+

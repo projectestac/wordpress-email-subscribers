@@ -4,9 +4,9 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Author URI: https://www.icegram.com/
 Tags: email marketing, email subscribers, email newsletters, autoresponders, email automation, newsletters
 Requires at least: 3.9
-Tested up to: 6.6
+Tested up to: 6.7.1
 Requires PHP: 7.0
-Stable tag: 5.7.43
+Stable tag: 5.7.47
 License: GPLv3
 
 License URI: http://www.gnu.org/licenses
@@ -433,12 +433,34 @@ Option 2:
 
 == Upgrade Notice ==
 
-= 5.7.43 =
+= 5.7.47 =
 
-* Fix: "Add Posts" block not showing WordPress default posts in DND campaign editor [PRO]
-* Fix: Bounce stats were not getting properly updated on audience dashboard [MAX]
+* Fix: Contact email getting trimmed in the Audience dashboard
+* Fix: Keyword fallback replacement issue with Sendgrid [MAX]
 
 == Changelog ==
+
+**5.7.47 (02.01.2025)**
+
+* Fix: Contact email getting trimmed in the Audience dashboard
+* Fix: Keyword fallback replacement issue with Sendgrid [MAX]
+
+**5.7.46 (26.12.2024)**
+
+* Fix: XSS vulnerabilities in Forms Popup [Thanks to WPScan team]
+
+**5.7.45 (19.12.2024)**
+
+* Fix: XSS vulnerabilities in Forms and Workflows [Thanks to WPScan team]
+
+**5.7.44 (11.12.2024)**
+
+* Update: Tested up to WordPress 6.7.1
+* Enhancement: Subscription form responsiveness issue
+* Fix: XSS and SQL injection vulnerabilities [Thanks to Cleantalk team]
+* Fix: Subscribe link not working in User Unsubscribed workflow email
+* Fix: Name field was not syncing properly in Gravity form workflow [PRO]
+* Fix: Custom URL fields were not getting imported properly in some cases [MAX]
 
 **5.7.43 (13.11.2024)**
 

@@ -255,7 +255,11 @@ class ES_Forms_Table extends ES_List_Table {
 			$form_data['lists'] = $lists;
 
 			$editor_type = ! empty( $form_data['settings']['editor_type'] ) ? $form_data['settings']['editor_type'] : '';
+			if ( isset( $form_data ) ) {
 
+			    $form_data = self::sanitize_data( $form_data );
+			}
+			
 			$validate_data = array(
 				'nonce' => $nonce,
 				'name'  => ! empty( $form_data['name'] ) ? sanitize_text_field( $form_data['name'] ) : '',
@@ -282,7 +286,6 @@ class ES_Forms_Table extends ES_List_Table {
 		$this->prepare_list_form();
 	}
 
-
 	public function edit_form( $id ) {
 		global $wpdb;
 
@@ -304,7 +307,13 @@ class ES_Forms_Table extends ES_List_Table {
 
 					$form_data['lists'] = $lists;
 					$editor_type = ! empty( $form_data['settings']['editor_type'] ) ? $form_data['settings']['editor_type'] : '';
+					
 
+					if ( isset( $form_data ) ) {
+
+						$form_data = self::sanitize_data( $form_data );
+					}
+					
 					$validate_data = array(
 						'nonce' => $nonce,
 						'name'  => $form_data['name'],
@@ -375,6 +384,40 @@ class ES_Forms_Table extends ES_List_Table {
 			do_action( 'ig_es_render_classic_form', $id, $data );
 		}
 	}
+
+	public static function sanitize_data( $form_data ) {
+
+		if ( isset( $form_data['settings']['dnd_editor_css'] ) ) {
+			$form_data['settings']['dnd_editor_css'] = wp_strip_all_tags( $form_data['settings']['dnd_editor_css'] );
+		}
+	
+		$allowedtags = ig_es_allowed_html_tags_in_esc();
+	
+		if ( isset( $form_data['body'] ) ) {
+			$form_data['body'] = wp_kses( $form_data['body'], $allowedtags );
+		}
+	
+		if ( ! empty( $form_data['settings']['success_message'] ) ) {
+			$form_data['settings']['success_message'] = wp_kses( $form_data['settings']['success_message'], $allowedtags );
+		}
+	
+		$dnd_editor_data = isset( $form_data['settings']['dnd_editor_data'] ) 
+			? json_decode( $form_data['settings']['dnd_editor_data'], true ) 
+			: [];
+	
+		if ( is_array( $dnd_editor_data ) ) {
+			array_walk_recursive( $dnd_editor_data, function ( &$value ) use ( $allowedtags ) {
+				if ( is_string( $value ) ) {
+					$value = wp_kses( $value, $allowedtags );
+				}
+			});
+		}
+	
+		$form_data['settings']['dnd_editor_data'] = wp_json_encode( $dnd_editor_data );
+	
+		return $form_data;
+	}
+	
 
 	/**
 	 * Show additional form setting for es form

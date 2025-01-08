@@ -450,8 +450,9 @@ if ( ! class_exists( 'ES_Pepipost_Mailer' ) ) {
 		public function set_tracking_options() {
 
 			$tracking_settings = array(
-				'opentrack'  => ES()->mailer->can_track_open() ? 1 : 0,
-				'clicktrack' => ES()->mailer->can_track_clicks() ? 1 : 0,
+				'opentrack'   => ES()->mailer->can_track_open() ? 1 : 0,
+				'clicktrack'  => ES()->mailer->can_track_clicks() ? 1 : 0,
+				'unsubscribe' => 0,
 			);
 
 			$this->set_body_param(

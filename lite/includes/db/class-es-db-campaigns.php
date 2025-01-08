@@ -934,7 +934,7 @@ class ES_DB_Campaigns extends ES_DB {
 	
 		$output          = ! empty( $args['output'] ) ? $args['output'] : ARRAY_A;
 		$use_cache       = false;
-		$order_by_column = ! empty( $args['order_by_column'] ) ? $args['order_by_column'] : '';
+		$order_by_column = ! empty( $args['order_by_column'] ) ? sanitize_key( $args['order_by_column'] ) : '';
 		$order           = ! empty( $args['order'] ) ? $args['order'] : '';
 	
 		if (! empty( $args['is_campaigns_listing'] )) {

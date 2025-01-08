@@ -107,6 +107,8 @@ class Email_Subscribers_Admin {
 		add_action( 'ig_es_campaign_failed', array( $this, 'save_campaign_error_details' ) );
 		add_action( 'ig_es_campaign_sent', array( $this, 'remove_campaign_failed_flag' ) );
 		add_action( 'admin_notices', array( $this, 'show_email_sending_failed_notice' ) );
+		add_action( 'admin_notices', array( $this, 'show_post_duplicator_promotion_notice' ) );
+		add_action( 'wp_ajax_ig_es_dismiss_post_duplicator_promotion_notice', array( $this, 'dismiss_post_duplicator_promotion_notice' ) );
 
 		add_action( 'admin_init', array( $this, 'maybe_apply_bulk_actions_on_all_contacts' ) );
 
@@ -920,6 +922,7 @@ class Email_Subscribers_Admin {
 				'show_membership_integration_notice',
 				'show_email_sending_failed_notice',
 				'show_ess_fallback_removal_notice',
+				'show_post_duplicator_promotion_notice',
 				'show_ess_promotion_notice',
 				'ig_es_show_feature_survey',
 				'ig_es_show_trial_optin_reminder_notice',
@@ -1767,6 +1770,80 @@ class Email_Subscribers_Admin {
 			<?php
 			delete_option( 'ig_es_campaign_error' );
 		}
+	}
+
+	public function show_post_duplicator_promotion_notice() {
+
+		if ( ! ES()->is_es_admin_screen() ) {
+			return;
+		}
+
+		$can_access_settings = ES_Common::ig_es_can_access( 'settings' );
+		if ( ! $can_access_settings ) {
+			return 0;
+		}
+
+		$current_page = ig_es_get_request_data( 'page' );
+
+		if ( 'es_dashboard' === $current_page ) {
+			return;
+		}
+
+		$fallback_notice_dismissed = 'yes' === get_option( 'ig_es_post_duplicator_promotion_notice_dismissed', 'no' );
+		if ( ! $fallback_notice_dismissed ) {
+			$optin_url = 'https://wordpress.org/plugins/duplicate-post-page-copy-clone-wp/';
+			?>
+			<div id="ig_es_post_duplicator_promotion_notice" class="notice notice-success is-dismissible">
+				<div id="" class="text-gray-700 not-italic">
+					<p class="mb-2">
+					&#x1F389;
+						<?php echo sprintf( esc_html__( 'We’re thrilled to introduce our latest plugin to ease your daily task - %1$sDuplicate Pages and Posts%2$s. Give it a try and let us know your feedback.', 'email-subscribers' ), '<a href="' . esc_url( $optin_url ) . '" target="_blank" class="text-indigo-600">', '</a>' ); ?>
+					</p>
+					<p>
+						<a href="<?php echo esc_url( admin_url( 'plugin-install.php?s=icegram&tab=search&type=author' ) ); ?>" target="_blank" id="ig-es-post-duplicator-promo-button">
+							<button class="primary">	<?php echo esc_html__('Try now', 'email-subscribers'); ?>
+							</button>
+						</a>
+					</p>
+				</div>
+			</div>
+			<script>
+				jQuery(document).ready(function($) {
+					$('#ig_es_post_duplicator_promotion_notice').on('click', '.notice-dismiss, #ig-es-post-duplicator-promo-button', function() {
+						$.ajax({
+							method: 'POST',
+							url: ajaxurl,
+							dataType: 'json',
+							data: {
+								action: 'ig_es_dismiss_post_duplicator_promotion_notice',
+								security: ig_es_js_data.security
+							}
+						}).done(function(response){
+							console.log( 'response: ', response );
+						});
+					});
+				});
+
+			</script>
+			<?php
+		}
+	}
+
+	public function dismiss_post_duplicator_promotion_notice() {
+		$response = array(
+			'status' => 'success',
+		);
+
+		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
+
+		$can_access_settings = ES_Common::ig_es_can_access( 'settings' );
+		if ( ! $can_access_settings ) {
+			return 0;
+		}
+
+		update_option( 'ig_es_post_duplicator_promotion_notice_dismissed', 'yes', false );
+
+		wp_send_json( $response );
 	}
 
 	/**

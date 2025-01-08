@@ -2407,7 +2407,7 @@ body[class*="es_reports"] .recipient-text {
 
 /** Add/Edit Contact CSS - START **/
 #es-admin-contact-form .form-input[type=email] {
-	padding: .5rem 3rem .5rem 2.5rem;
+	padding: .5rem .5rem .5rem 2.5rem;
     line-height: 1.5;
 }
 /** Add/Edit Contact CSS - END **/

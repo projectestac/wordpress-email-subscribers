@@ -730,7 +730,9 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 							}
 						}
 					}
-
+				
+					$merge_tags=ES_Common::process_subscriber_fallbacks($content,$merge_tags);
+					
 					$subject = $this->replace_global_tags( $subject );
 					$subject = $this->mailer->convert_es_tags_to_mailer_tags( $subject );
 
@@ -769,7 +771,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 					$this->mailer->set_email_data( $email_data );
 				}
 			}
-
+			
 			foreach ( $emails as $email_counter => $email ) {
 				
 				// Break if we have reached Icegram mailer limit set by ESS
@@ -786,25 +788,24 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 				$contact_id = ! empty( $this->email_id_map[ $email ] ) ? $this->email_id_map[ $email ] : 0;
 
 				$merge_tags['contact_id'] = $contact_id;
-
-				$merge_tags = array_merge( $merge_tags, $this->get_contact_merge_tags( $contact_id ) );
+				$updated_merge_tags = $this->get_contact_merge_tags( $contact_id,$merge_tags ) ;
 
 				$this->link_data = array(
 					'message_id'  => $message_id,
 					'campaign_id' => $campaign_id,
 					'contact_id'  => $contact_id,
 					'email'       => $email,
-					'guid'        => ig_es_get_data( $merge_tags, 'hash', '' ),
+					'guid'        => ig_es_get_data( $updated_merge_tags, 'hash', '' ),
 				);
 
 				if ( $can_use_batch_api ) {
 
 					if ( ! $this->mailer->is_batch_limit_reached() ) {
 						if ( 'single' === $this->mailer->batch_sending_mode ) {
-							$message = $this->build_message( $subject, $content, $email, $merge_tags, $nl2br, $sender_data );
-							$this->mailer->add_into_batch( $email, $merge_tags, $message );
+							$message = $this->build_message( $subject, $content, $email, $updated_merge_tags, $nl2br, $sender_data );
+							$this->mailer->add_into_batch( $email, $updated_merge_tags, $message );
 						} else {
-							$this->mailer->add_into_batch( $email, $merge_tags );
+							$this->mailer->add_into_batch( $email, $updated_merge_tags );
 						}
 					}
 
@@ -841,7 +842,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 				} else {
 					do_action( 'ig_es_before_message_send', $contact_id, $campaign_id, $message_id );
 
-					$message = $this->build_message( $subject, $content, $email, $merge_tags, $nl2br, $sender_data );
+					$message = $this->build_message( $subject, $content, $email, $updated_merge_tags, $nl2br, $sender_data );
 
 					// object | WP_Error
 					$send_response = $this->mailer->send( $message );
@@ -1118,18 +1119,26 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 *
 		 * @since 4.3.2
 		 */
-		public function get_contact_merge_tags( $contact_id = 0 ) {
-			$merge_tags = array();
-
+		public function get_contact_merge_tags( $contact_id = 0 ,$merge_tags = array()) {
+			
 			if ( 0 != $contact_id ) {
 				$contact_details = ES()->contacts_db->get_details_by_ids( array( $contact_id ) );
 				if ( is_array( $contact_details ) ) {
 
-					$merge_tags         = array_shift( $contact_details );
-					$merge_tags['name'] = ES_Common::prepare_name_from_first_name_last_name( $merge_tags['first_name'], $merge_tags['last_name'] );
+					$contact_details = array_shift( $contact_details );
+					foreach ($contact_details as $key => $value) {
+						if ( !empty( $value ) ) {  
+							$merge_tags[$key] = $value;
+						}
+					}
+
+						if ( !empty( $merge_tags['first_name'] ) && !empty( $merge_tags['last_name'] ) ) {
+							$merge_tags['name'] = ES_Common::prepare_name_from_first_name_last_name( $merge_tags['first_name'], $merge_tags['last_name'] );
+						} elseif ( !empty( $merge_tags['first_name'] ) ) {
+							$merge_tags['name'] = $merge_tags['first_name'];
+						}
 				}
 			}
-
 			return $merge_tags;
 		}
 

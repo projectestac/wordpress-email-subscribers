@@ -3223,4 +3223,63 @@ class ES_Common {
 		return '';
 	}
 
+	public static function process_subscriber_fallbacks($content, $merge_tags) {
+
+		if ( empty( $content ) ) {
+			return $merge_tags;
+		}
+	
+		if ( ! is_array( $merge_tags ) || empty( $merge_tags ) ) {
+			$merge_tags = [];
+		}
+	
+		$decoded_content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5);
+		$normalized_content = str_replace(['‘', '’', '“', '”'], ["'", "'", '"', '"'], $decoded_content);
+	
+		preg_match_all('/{{([a-zA-Z0-9_.]+)(?: \| fallback=(\'|"|&quot;)(.+?)\2)?}}/', $normalized_content, $fallback_matches, PREG_SET_ORDER);
+	
+		foreach ($fallback_matches as $match) {
+			$key = $match[1];
+			$provided_fallback = isset($match[3]) ? $match[3] : null;
+	
+			if ('subscriber.name' === $key || 'NAME' === $key) {
+				$merge_tag_key = 'name';
+	
+			} elseif ('subscriber.first_name' === $key || 'FIRSTNAME' === $key) {
+				$merge_tag_key = 'first_name';
+	
+			} elseif ('subscriber.last_name' === $key || 'LASTNAME' === $key) {
+				$merge_tag_key = 'last_name';
+	
+			} elseif ('subscriber.email' === $key || 'EMAIL' === $key) {
+				$merge_tag_key = 'email';
+	
+			} else {
+				
+				if (strpos($key, 'subscriber.') === 0) {
+					$merge_tag_key = str_replace('subscriber.', '', $key);
+				} else {
+					$merge_tag_key = $key;
+				}
+			}
+	
+			if ( ! isset($merge_tags[$merge_tag_key] ) || empty( $merge_tags[$merge_tag_key] ) ) {
+				$merge_tags[$merge_tag_key] = $provided_fallback ?? null;
+			}
+		}
+	
+		return $merge_tags;
+	}
+	
+	
+	
+	public static function strip_js_code( $html ) {
+
+		$html = preg_replace( '/<\/?(script)[^>]*>/i', '', $html );
+		
+		// Remove inline JS event handlers
+		$html = preg_replace('/\s*(on[a-z]+|javascript|style)\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $html );
+		return $html;
+	}
+
 }
