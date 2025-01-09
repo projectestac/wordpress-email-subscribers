@@ -400,6 +400,18 @@ class Email_Subscribers_Admin {
 
 		$accessible_sub_menus = ES_Common::ig_es_get_accessible_sub_menus();
 
+        // XTEC ************ AFEGIT - Hidden workflows to all users
+        // 2021.01.20 @aginard
+        if (!is_xtec_super_admin()) {
+            if (($key = array_search('workflows', $accessible_sub_menus, true)) !== false) {
+                unset($accessible_sub_menus[$key]);
+            }
+            if (($key = array_search('logs', $accessible_sub_menus, true)) !== false) {
+                unset($accessible_sub_menus[$key]);
+            }
+        }
+        // ********* Fi
+
 		if ( count( $accessible_sub_menus ) > 0 ) {
 
 			$menu_title = ES()->get_admin_menu_title();
@@ -1642,6 +1654,14 @@ class Email_Subscribers_Admin {
 					}
 					?>
 			</div>
+
+            <?php
+            // XTEC ************ AFEGIT - Removed posts from Icegram blog to all users but xtecadmin
+            // 2023.10.24 @aginard
+            if (is_xtec_super_admin()) {
+            // ************ Fi
+            ?>
+
 			<div class="border-t border-gray-200">
 				<p class="px-4 text-base font-medium leading-6 text-gray-600">
 					<span class="rounded-md bg-gray-200 px-2 py-0.5">
@@ -1705,6 +1725,12 @@ class Email_Subscribers_Admin {
 			</div>
 			<?php
 			}
+
+            // XTEC ************ AFEGIT - BRemoved posts from Icegram blog to all users but xtecadmin
+            // 2023.10.24 @aginard
+            }
+            // ************ Fi
+
 			?>
 
 		</div>
