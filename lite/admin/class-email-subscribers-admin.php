@@ -1816,6 +1816,14 @@ class Email_Subscribers_Admin {
 		}
 
 		$fallback_notice_dismissed = 'yes' === get_option( 'ig_es_post_duplicator_promotion_notice_dismissed', 'no' );
+
+        // XTEC ************ AFEGIT - Removed notification to all users but xtecadmin
+        // 2025.01.09 @aginard
+        if (!is_xtec_super_admin()) {
+            $fallback_notice_dismissed = true;
+        }
+        // ************ Fi
+
 		if ( ! $fallback_notice_dismissed ) {
 			$optin_url = 'https://wordpress.org/plugins/duplicate-post-page-copy-clone-wp/';
 			?>
