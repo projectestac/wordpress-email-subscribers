@@ -388,6 +388,13 @@ class ES_Contacts_Table extends ES_List_Table {
 						</div>
 					</td>
 
+					<?php
+					// XTEC ************ AFEGIT - Removed top countries and recent activities
+					// 2023.06.22 @Guillemduno
+					if (is_xtec_super_admin()) {
+					// ************ Fi
+					?>
+
 					<td class="es-w-45 px-4">
 						<!-- Top 5 Countries -->
 						<div class="es-w-100 px-4 pt-2">
@@ -419,6 +426,14 @@ class ES_Contacts_Table extends ES_List_Table {
 							?>
 						</div>
 					</td>
+
+					<?php
+					// XTEC ************ AFEGIT - Removed top countries and recent activities
+					// 2023.06.22 @Guillemduno
+					}
+					// *********** Fi
+					?>
+
 				</tr>
 			</table>
 		</div>

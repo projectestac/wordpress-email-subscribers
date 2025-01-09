@@ -35,10 +35,17 @@ if ( ! class_exists( 'ES_IG_Redirect' ) ) {
 				$info = sprintf( __( 'Create Popups using <a href="%s" target="_blank">Icegram</a>', 'email-subscribers' ), esc_url( $plugin_url ) );
 			}
 
+			// XTEC ************ ELIMINAT - Removed access to Onsite Campaigns
+			// 2021.02.05 @aginard
+			/*
+
 			$icegram_plugin = 'icegram/icegram.php';
 
 			$active_plugins   = $ig_es_tracker::get_active_plugins();
 			$inactive_plugins = $ig_es_tracker::get_inactive_plugins();
+
+			*/
+			// ********* Fi
 
 			/**
 			 * If Icegram Installed & Activated
@@ -50,6 +57,10 @@ if ( ! class_exists( 'ES_IG_Redirect' ) ) {
 			 * If Icegram is not installed
 			 *  - Show Intermediate page & ask them to Install & activate Icegram
 			 */
+
+			// XTEC ************ ELIMINAT - Removed access to Onsite Campaigns
+			// 2021.02.05 @aginard
+			/*
 
 			if ( in_array( $icegram_plugin, $active_plugins ) ) {
 				wp_safe_redirect( $redirect_url );
@@ -161,6 +172,10 @@ if ( ! class_exists( 'ES_IG_Redirect' ) ) {
 
 				<?php
 			}
+
+			*/
+			// ********* Fi
+
 		}
 	}
 }
