@@ -213,6 +213,13 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 					?>
 			</div>
 			
+			<?php
+            // XTEC ************ AFEGIT - Removed top countries and recent activities
+            // 2023.06.22 @Guillemduno
+            if (is_xtec_super_admin()) {
+            // ************ Fi
+            ?>
+
 			<!-- Email sending service section -->
 			<div class="flex-auto min-w-0 es-w-35 pr-3 ess-block">
 				<?php
@@ -250,6 +257,20 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 				?>
 			</div>
 			
+			<?php
+            // XTEC ************ AFEGIT - Removed top countries and recent activities
+            // 2023.06.22 @Guillemduno
+            }
+            // ************ Fi
+            ?>
+
+			<?php
+            // XTEC ************ AFEGIT - Removed tips & tricks
+            // 2023.06.22 @Guillemduno
+            if (is_xtec_super_admin()) {
+            //*********** Fi
+            ?>
+
 			<!--Tips and Trick section -->
 			<div class="flex-auto min-w-0 es-w-35 tips-trick-section">
 				<p class="text-lg font-medium leading-6 text-gray-400">
@@ -268,6 +289,14 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 					);
 					?>
 			</div>
+
+			<?php
+            // XTEC ************ AFEGIT - Removed tips & tricks
+            // 2023.06.22 @Guillemduno
+            }
+            // *********** Fi
+            ?>
+
 		</section>
 	</main>
 </div>
