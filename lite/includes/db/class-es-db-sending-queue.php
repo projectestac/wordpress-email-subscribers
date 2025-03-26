@@ -98,7 +98,31 @@ class ES_DB_Sending_Queue {
 		return $queued_emails;
 	}
 
-	public static function update_sent_status( $contact_ids, $message_id = 0, $status = 'Sent' ) {
+	/**
+	 * Get contact queued emails
+	 *
+	 * @param int $contact_id
+	 *
+	 * @return array $queued_emails
+	 *
+	 * @since 4.7.6
+	 */
+	public static function get_sent_emails( $contact_id ) {
+		global $wpdb;
+		// phpcs:disable
+		$queued_emails = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$wpdb->prefix}ig_sending_queue WHERE contact_id = %d AND status = %s",
+				$contact_id,
+				IG_ES_MAILING_QUEUE_STATUS_SENT
+			),
+			ARRAY_A
+		);
+		// phpcs:enable
+		return $queued_emails;
+	}
+
+	public static function update_sent_status( $contact_ids, $message_id = 0, $sending_queue_ids = 0, $status = 'Sent' ) {
 		global $wpbd;
 
 		$updated = false;
@@ -107,10 +131,10 @@ class ES_DB_Sending_Queue {
 		}
 
 		$id_str = '';
-		if ( is_array( $contact_ids ) && count( $contact_ids ) > 0 ) {
-			$id_str = implode( ',', $contact_ids );
-		} elseif ( is_string( $contact_ids ) ) {
-			$id_str = $contact_ids;
+		if ( is_array( $sending_queue_ids ) && count( $sending_queue_ids ) > 0 ) {
+			$id_str = implode( ',', $sending_queue_ids );
+		} elseif ( is_string( $sending_queue_ids ) ) {
+			$id_str = $sending_queue_ids;
 		}
 
 		if ( ! empty( $id_str ) ) {
@@ -118,22 +142,39 @@ class ES_DB_Sending_Queue {
 				$current_time = ig_get_current_date_time();
 				$updated      = $wpbd->query(
 					$wpbd->prepare(
-						"UPDATE {$wpbd->prefix}ig_sending_queue SET status = %s, sent_at = %s WHERE mailing_queue_id = %d AND contact_id IN($id_str)",
+						"UPDATE {$wpbd->prefix}ig_sending_queue SET status = %s, sent_at = %s WHERE id IN($id_str)",
 						$status,
-						$current_time,
-						$message_id
+						$current_time
 					)
 				);
 			} else {
 				$updated = $wpbd->query(
 					$wpbd->prepare(
-						"UPDATE {$wpbd->prefix}ig_sending_queue SET status = %s WHERE mailing_queue_id = %d AND contact_id IN($id_str)",
-						$status,
-						$message_id
+						"UPDATE {$wpbd->prefix}ig_sending_queue SET status = %s WHERE id IN($id_str)",
+						$status
 					)
 				);
 			}
 		}
+
+		return $updated;
+
+	}
+
+	public static function update_contact_email( $contact_id, $contact_email, $mailing_queue_ids ) {
+		global $wpbd;
+
+		$ids_count        = count( $mailing_queue_ids );
+		$ids_placeholders = array_fill( 0, $ids_count, '%d' );
+		$query_args       = array( $contact_email, $contact_id );
+		$query_args       = array_merge( $query_args, $mailing_queue_ids );
+
+		$updated = $wpbd->query(
+			$wpbd->prepare(
+				"UPDATE {$wpbd->prefix}ig_sending_queue SET email = %s WHERE contact_id = %d AND mailing_queue_id IN( " . implode( ',', $ids_placeholders ) . ' )',
+				$query_args
+			)
+		);
 
 		return $updated;
 
@@ -870,21 +911,23 @@ class ES_DB_Sending_Queue {
 // phpcs:disable
 		$results = $wpbd->get_results(
 			$wpbd->prepare(
-				"SELECT contact_id, email FROM {$wpbd->prefix}ig_sending_queue WHERE campaign_id = %d AND mailing_queue_id = %d AND email IN($emails_str)",
+				"SELECT id, contact_id, email FROM {$wpbd->prefix}ig_sending_queue WHERE campaign_id = %d AND mailing_queue_id = %d AND email IN($emails_str)",
 				$campaign_id,
 				$message_id
 			),
 			ARRAY_A
 		);
 // phpcs:enable
-		$emails_id_map = array();
+		$emails_id_map        = array();
+		$sending_queue_id_map = array();
 		if ( count( $results ) > 0 ) {
 			foreach ( $results as $result ) {
-				$emails_id_map[ $result['email'] ] = $result['contact_id'];
+				$emails_id_map[ $result['email'] ]             = $result['contact_id'];
+				$sending_queue_id_map[ $result['contact_id'] ] = $result['id'];
 			}
 		}
 
-		return $emails_id_map;
+		return array( $emails_id_map, $sending_queue_id_map );
 	}
 
 

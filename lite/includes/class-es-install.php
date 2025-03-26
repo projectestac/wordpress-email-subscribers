@@ -840,17 +840,17 @@ if ( ! class_exists( 'ES_Install' ) ) {
 			$report .= "For more information, login to your dashboard and go to Reports menu in Icegram Express.\n\n";
 			$report .= 'Thank You.';
 
-			$new_contact_email_subject = 'One more contact joins our tribe!';
-			$new_contact_email_content = "Hi,\r\n\r\nYour friendly Icegram Express notification bot here!\r\n\r\n{{NAME}} ({{EMAIL}}) joined our tribe just now.\r\n\r\nWhich list/s? {{LIST}}\r\n\r\nIf you know this person, or if they are an influencer, you may want to reach out to them personally!\r\n\r\nLater...";
+			$new_contact_email_subject = 'New subscriber to {{SITENAME}}';
+			$new_contact_email_content = "Hi,\r\n\r\nA new subscriber has been confirmed:\r\n\r\nName: {{NAME}}\r\n\r\nEmail: {{EMAIL}}\r\n\r\nList: {{LIST}}\r\n\r\n";
 
-			$confirmation_email_subject = 'Thanks!';
-			$confirmation_email_content = "Hi {{NAME}},\r\n\r\nJust one more step before we share the awesomeness from {{SITENAME}}!\r\n\r\nPlease confirm your subscription by clicking on <a href='{{SUBSCRIBE-LINK}}'>this link</a>\r\n\r\nThanks!";
+			$confirmation_email_subject = 'Confirm your subscription to {{SITENAME}}';
+			$confirmation_email_content = "Hi {{NAME}},\r\n\r\nJust one more step before we share the awesomeness from {{SITENAME}}!\r\n\r\nPlease confirm your subscription by clicking the link below:\r\n\r\n<a href='{{SUBSCRIBE-LINK}}'>Confirm Subscription</a>\r\n\r\nIf you didn't sign up, you can safely ignore this email.\r\n\r\nThanks!";
 
 			$welcome_email_subject = 'Welcome to {{SITENAME}}';
-			$welcome_email_content = "Hi {{NAME}},\r\n\r\nJust wanted to send you a quick note...\r\n\r\nThank you for joining the awesome {{SITENAME}} tribe.\r\n\r\nOnly valuable emails from me, promise!\r\n\r\nThanks!";
+			$welcome_email_content = "Hi {{NAME}},\r\n\r\nJust wanted to send you a quick note...\r\n\r\nThank you for joining the awesome {{SITENAME}} tribe.\r\n\r\nOnly valuable emails from me, promise!\r\n\r\nIf you ever change your mind, you can <a href='{{UNSUBSCRIBE-LINK}}'>unsubscribe here</a> anytime.\r\n\r\nThanks!";
 
-			$cron_admin_email         = "Hi Admin,\r\n\r\nCron URL has been triggered successfully on {{DATE}} for the email '{{SUBJECT}}'. And it sent email to {{COUNT}} recipient(s).\r\n\r\nBest,\r\n" . $blogname;
-			$unsubscribe_link_content = "I'd be sad to see you go. But if you want to, you can unsubscribe from <a href='{{UNSUBSCRIBE-LINK}}'>here</a>";
+			$cron_admin_email         = "Hi,\r\n\r\nThe scheduled email campaign <strong>'{{SUBJECT}}'</strong> was sent on <strong>{{DATE}}</strong> to <strong>{{COUNT}}</strong> recipient(s).\r\n\r\nBest,\r\n" . $blogname;
+			$unsubscribe_link_content = "I'd be sad to see you go. But if you want to, you can <a href='{{UNSUBSCRIBE-LINK}}'>unsubscribe here</a>";
 
 			$unsubscribe_message        = '<p>You will no longer hear from us. ☹️ Sorry to see you go!</p>';
 			$subscription_error_message = "Hmm.. Something's amiss..\r\n\r\nCould not complete your request. That email address  is probably already subscribed. Or worse blocked!!\r\n\r\nPlease try again after some time - or contact us if the problem persists.\r\n\r\n";
@@ -1026,7 +1026,7 @@ if ( ! class_exists( 'ES_Install' ) ) {
 					'old_option' => '',
 				),
 				'ig_es_form_submission_success_message'           => array(
-					'default'    => __( 'Your subscription was successful! Kindly check your mailbox and confirm your subscription. If you don\'t see the email within a few minutes, check the spam/junk folder.', 'email-subscribers' ),
+					'default'    => __( 'Your subscription request has been received. Please check your email for a message containing a confirmation link. If it doesn\'t arrive within a few minutes, check your spam/junk folder.', 'email-subscribers' ),
 					'old_option' => '',
 				),
 				'ig_es_db_update_history'                         => array( 'default' => $ig_es_db_update_history ),

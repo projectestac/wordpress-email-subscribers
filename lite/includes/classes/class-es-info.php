@@ -45,7 +45,8 @@ class ES_Info {
 
 	public static function es_pricing_callback() {
 
-		Email_Subscribers_Pricing::sm_show_pricing();
+		// Email_Subscribers_Pricing::sm_show_pricing();
+		Email_Subscribers_Pricing::es_show_pricing();
 
 	}
 

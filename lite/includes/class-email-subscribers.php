@@ -2130,5 +2130,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			) );
 			return $action_types;
 		}
-	}
+	
+}
+
 }

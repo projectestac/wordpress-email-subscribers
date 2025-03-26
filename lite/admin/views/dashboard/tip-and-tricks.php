@@ -1,5 +1,5 @@
 <?php
-$manage_templates_url = admin_url( 'admin.php?page=es_gallery&manage-templates=yes' );
+$manage_templates_url = admin_url( 'admin.php?page=es_campaigns#!/gallery?manageTemplates=yes' );
 $reports_url          = admin_url( 'admin.php?page=es_reports' );
 $settings_url         = admin_url( 'admin.php?page=es_settings' );
 $topics_indexes       = array_rand( $topics, 4 );

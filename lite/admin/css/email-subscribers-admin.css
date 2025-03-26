@@ -2407,8 +2407,9 @@ body[class*="es_reports"] .recipient-text {
 
 /** Add/Edit Contact CSS - START **/
 #es-admin-contact-form .form-input[type=email] {
-	padding: .5rem .5rem .5rem 2.5rem;
+	padding: .5rem 0.5rem .5rem 2.5rem;
     line-height: 1.5;
+	width: 15.625rem;
 }
 /** Add/Edit Contact CSS - END **/
 
@@ -3348,4 +3349,21 @@ body.icegram-express_page_es_forms #wpcontent {
 #ig-es-add-list-modal #ig-es-list-message {
     margin-left: 10px;
 	max-width:290px; 
+}
+
+.ig-es-primary-link {
+	background-color: var(--brand-color); 
+	color: #ffffff; 
+	padding: 0.5rem 1rem; 
+	border-radius: 0.25rem; 
+	text-decoration: none; 
+	display: inline-block;
+	font-weight: 700;
+}
+
+#icegram_messages_container .ig_data .ig_message .ig_qh_container{
+    padding: 0 !important; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

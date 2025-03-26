@@ -17,14 +17,15 @@ if ( 'optin' === $es_page_request ) {
 $site_name = get_option( 'blogname' );
 $noerror   = true;
 $home_url  = home_url( '/' );
+header( 'Content-Type: text/html; charset=' . get_option( 'blog_charset' ) );
 ?>
 <!DOCTYPE html>
 	<html <?php language_attributes(); ?>>
 	  <head>
-		<meta charset="<?php bloginfo( 'charset' ); ?>">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta charset="<?php bloginfo( 'charset' ); ?>"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<title><?php echo esc_html( $site_name ); ?></title>
-		<meta1 http-equiv="refresh" content="10; url=<?php echo esc_url( $home_url ); ?>" charset="<?php echo esc_attr( get_option( 'blog_charset' ) ); ?>"/>
+		<meta http-equiv="refresh" content="10; url=<?php echo esc_url( $home_url ); ?>" charset="<?php echo esc_attr( get_option( 'blog_charset' ) ); ?>"/>
 		<?php do_action( 'es_message_head' ); ?>
 		<?php
 			wp_register_style( 'tailwind', ES_PLUGIN_URL . 'lite/admin/dist/main.css', array(), ES_PLUGIN_VERSION, 'all' );

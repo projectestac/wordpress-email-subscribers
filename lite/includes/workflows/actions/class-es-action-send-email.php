@@ -180,14 +180,15 @@ if ( ! class_exists( 'ES_Action_Send_Email' ) ) {
 							
 							// If source is 'es, it means it is from ES subscriber form, replace {{EMAIL}}, {{NAME}} placeholders with subscriber's email, name
 							// If we don't replace it here then for workflow configured to be sent to admins, {{EMAIL}}, {{NAME}} gets replaced with admin email and names which is not desired for subscriber based workflows.
-							if ( 'es' === $data['source'] ) {
-								$subject = str_replace( '{{EMAIL}}', $data['email'], $subject );
-								$subject = str_replace( '{{NAME}}', $data['name'], $subject );
-								
-								$email_content = str_replace( '{{EMAIL}}', $data['email'], $email_content );
-								$email_content = str_replace( '{{NAME}}', $data['name'], $email_content );
-								$email_content = str_replace( '{{LIST}}', $data['list_name'], $email_content );
+							if ( isset( $data['source'] ) && 'es' === $data['source'] ) {
+								$subject = str_replace( '{{EMAIL}}', isset( $data['email'] ) ? $data['email'] : '', $subject );
+								$subject = str_replace( '{{NAME}}', isset( $data['name'] ) ? $data['name'] : '', $subject );
+							
+								$email_content = str_replace( '{{EMAIL}}', isset( $data['email'] ) ? $data['email'] : '', $email_content );
+								$email_content = str_replace( '{{NAME}}', isset( $data['name'] ) ? $data['name'] : '', $email_content );
+								$email_content = str_replace( '{{LIST}}', isset( $data['list_name'] ) ? $data['list_name'] : '', $email_content );
 							}
+							
 						}
 	
 						if ( 'campaign' === $data_type_id && ! empty( $data['notification_guid'] ) ) {

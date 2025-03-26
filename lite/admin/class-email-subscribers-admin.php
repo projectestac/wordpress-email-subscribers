@@ -110,10 +110,15 @@ class Email_Subscribers_Admin {
 		add_action( 'admin_notices', array( $this, 'show_post_duplicator_promotion_notice' ) );
 		add_action( 'wp_ajax_ig_es_dismiss_post_duplicator_promotion_notice', array( $this, 'dismiss_post_duplicator_promotion_notice' ) );
 
+		add_action( 'admin_notices', array( $this, 'show_ig_engage_promotion_notice' ) );
+		add_action( 'wp_ajax_ig_es_dismiss_ig_engage_promotion_notice', array( $this, 'dismiss_ig_engage_promotion_notice' ) );
+
 		add_action( 'admin_init', array( $this, 'maybe_apply_bulk_actions_on_all_contacts' ) );
 
 		add_action( 'wp_ajax_ig_es_get_subscribers_stats', array( 'ES_Dashboard', 'get_subscribers_stats' ) );
 		add_action( 'wp_ajax_ig_es_add_list', array( $this, 'add_list_callback' ) );
+        //Quick help widget
+		add_filter( 'ig_active_plugins_for_quick_help', array( $this, 'get_active_quick_help_plugins' ), 10, 2 );
 	}
 
 	/**
@@ -261,6 +266,9 @@ class Email_Subscribers_Admin {
 
 				'add_attachment_text'             => __( 'Add Attachment', 'email-subscribers' ),
 				'sending_error_text'              => __( 'Sending error', 'email-subscribers' ),
+				/* translators: 1. Anchor start tag 2. Anchor end tag */
+				'bulk_contact_select_text'              => __( sprintf( 'Only contacts from the current page have been selected. %1$sClick here%2$s to select all matching contacts across pages.', '<a id="ig-es-select-all-contacts" class="hover:underline text-sm font-medium text-indigo-600" href="#">', '</a>' ), 'email-subscribers' ),
+				'all_page_contact_selected_text'              => __( 'All contacts matching the selected filters across all pages have been selected.', 'email-subscribers' ),
 			),
 			'is_pro'     => ES()->is_pro() ? true : false,
 			'is_premium' => ES()->is_premium(),
@@ -923,6 +931,7 @@ class Email_Subscribers_Admin {
 				'show_email_sending_failed_notice',
 				'show_ess_fallback_removal_notice',
 				'show_post_duplicator_promotion_notice',
+				'show_ig_engage_promotion_notice',
 				'show_ess_promotion_notice',
 				'ig_es_show_feature_survey',
 				'ig_es_show_trial_optin_reminder_notice',
@@ -1846,6 +1855,99 @@ class Email_Subscribers_Admin {
 		wp_send_json( $response );
 	}
 
+	public function show_ig_engage_promotion_notice() {
+
+		$can_access_settings = ES_Common::ig_es_can_access( 'settings' );
+		if ( ! $can_access_settings ) {
+			return 0;
+		}
+
+		$engage_plugin_path = 'icegram/icegram.php';
+
+    	if ( is_plugin_active($engage_plugin_path) ) { 
+			return;
+		}
+
+		if( file_exists(WP_PLUGIN_DIR . '/' . $engage_plugin_path) ) {
+			$optin_url = admin_url( 'plugins.php' );
+			$optin_btn_txt = esc_html("Activate Icegram Engage", 'email-subscribers' );
+		} else {
+			$optin_url = admin_url( 'plugin-install.php?s=Icegram%2520Engage%2520%25E2%2580%2593%2520Ultimate%2520WP%2520Popup%2520Builder%252C%2520Lead%2520Generation%252C%2520Optins%252C%2520and%2520CTA&tab=search&type=term' );
+			$optin_btn_txt = esc_html("Get start with engage", 'email-subscribers' );
+		}
+		
+
+		$current_page = ig_es_get_request_data( 'page' );
+		$current_action = ig_es_get_request_data( 'action' );
+
+		if ( 'es_forms' === $current_page ) {
+			if ( 'new' === $current_action || 'edit' === $current_action ) {
+				$fallback_notice_dismissed = 'yes' === get_option( 'ig_es_engage_promotion_notice_dismissed', 'no' );
+				if ( ! $fallback_notice_dismissed ) {
+					?>
+					<div id="ig_es_engage_promotion_notice" class="notice is-dismissible" style="border-left-width:1px;">
+						<div class="text-gray-700 not-italic flex">
+							<span class="text-2xl mt-2">
+								&#128161;
+							</span>
+							<p class="text-sm">
+								<b>
+									<?php echo esc_html__( 'Boost Form Conversions with Icegram Engage!', 'email-subscribers' ); ?>
+								</b>
+							</p>
+
+							<p class="text-sm" style="margin-left:0.5rem;">
+								<?php echo esc_html__( 'Show this form in an eye-catching popup, slide-in, or sticky bar to grab more attention.', 'email-subscribers' ); ?>
+							</p>
+
+							<a href="<?php echo esc_url( $optin_url ); ?>" target="_blank" id="ig-es-engage-promo-button" class="m-1 ml-8">
+								<button class="inline-flex justify-center py-1 text-sm font-medium leading-5 text-indigo-600 transition duration-150 ease-in-out rounded-md cursor-pointer select-none focus:outline-none focus:shadow-outline-indigo focus:shadow-lg hover:bg-indigo-500 hover:text-white  hover:shadow-md md:px-2 lg:px-3 xl:px-4" type="button">
+									<b><?php echo esc_html__( $optin_btn_txt, 'email-subscribers'); ?></b>
+								</button>
+							</a>
+						</div>
+					</div>
+					<script>
+						jQuery(document).ready(function($) {
+							$('#ig_es_engage_promotion_notice').on('click', '.notice-dismiss, #ig-es-engage-promo-button', function() {
+								$.ajax({
+									method: 'POST',
+									url: ajaxurl,
+									dataType: 'json',
+									data: {
+										action: 'ig_es_dismiss_ig_engage_promotion_notice',
+										security: ig_es_js_data.security
+									}
+								}).done(function(response){
+									console.log( 'response: ', response );
+								});
+							});
+						});
+
+					</script>
+					<?php
+				}
+			}
+		}
+	}
+
+	public function dismiss_ig_engage_promotion_notice() {
+		$response = array(
+			'status' => 'success',
+		);
+
+		check_ajax_referer( 'ig-es-admin-ajax-nonce', 'security' );
+
+		$can_access_settings = ES_Common::ig_es_can_access( 'settings' );
+		if ( ! $can_access_settings ) {
+			return 0;
+		}
+
+		update_option( 'ig_es_engage_promotion_notice_dismissed', 'yes', false );
+
+		wp_send_json( $response );
+	}
+
 	/**
 	 * Method to send email for authentication headers test
 	 *
@@ -1948,6 +2050,21 @@ class Email_Subscribers_Admin {
 		}
 	}
 	
+	public function get_active_quick_help_plugins( $active_plugins ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return $active_plugins;
+		}
+		
+		if ( ! ES()->is_es_admin_screen() ) {
+			if ( isset( $active_plugins['ig_sku'] ) ) {
+				unset( $active_plugins['ig_sku'] );
+			}
+			return $active_plugins;
+		}
 	
-
+		$active_plugins['ig_sku'] = 'icegram-express';
+	
+		return $active_plugins;
+	}
+	
 }

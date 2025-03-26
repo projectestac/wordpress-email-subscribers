@@ -113,7 +113,7 @@ if ( ! class_exists( 'ES_Icegram_Mailer' ) ) {
 
 			ES()->logger->info( 'Start Sending Email Using Icegram', $this->logger_context );
 
-			$ig_es_ess_data = get_option( 'ig_es_ess_data', array() );
+			$ig_es_ess_data = ES_Service_Email_Sending::get_ess_data();
 
 			if ( ES()->is_const_defined( 'icegram', 'api_key' ) ) {
 				$this->api_key = ES()->get_const_value( 'icegram', 'api_key' );
@@ -169,7 +169,7 @@ if ( ! class_exists( 'ES_Icegram_Mailer' ) ) {
 		 */
 		public function add_into_batch( $email, $merge_tags = array(), $message = null ) {
 
-			if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
+			if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) && ! is_email( $email ) ) {
 				return;
 			}
 			
@@ -321,7 +321,7 @@ if ( ! class_exists( 'ES_Icegram_Mailer' ) ) {
 
 			ES()->logger->info( 'Start Sending Email Using Icegram', $this->logger_context );
 
-			$ig_es_ess_data = get_option( 'ig_es_ess_data', array() );
+			$ig_es_ess_data = ES_Service_Email_Sending::get_ess_data();
 
 			if ( ES()->is_const_defined( 'icegram', 'api_key' ) ) {
 				$this->api_key = ES()->get_const_value( 'icegram', 'api_key' );
@@ -539,7 +539,7 @@ if ( ! class_exists( 'ES_Icegram_Mailer' ) ) {
 					foreach ( $emails as $email ) {
 						$holder = array();
 	
-						if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
+						if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) && ! is_email( $email ) ) {
 							continue;
 						}
 	

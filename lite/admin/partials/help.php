@@ -12,6 +12,7 @@ $ig_install_url            = admin_url( 'plugin-install.php?s=icegram&tab=search
 $rainmaker_install_url     = admin_url( 'plugin-install.php?s=rainmaker&tab=search&type=term' );
 $smart_manager_install_url = admin_url( 'plugin-install.php?s=smart+manager&tab=search&type=term' );
 $tlwp_install_url          = admin_url( 'plugin-install.php?s=temporary+login+without+password&tab=search&type=term' );
+$duplicate_install_url          = admin_url( 'plugin-install.php?s=icegram&tab=search&type=author' );
 $deactivate_link           = admin_url( 'plugins.php' );
 $icegram_plugin            = 'icegram/icegram.php';
 $rainmaker_plugin          = 'icegram-rainmaker/icegram-rainmaker.php';
@@ -58,6 +59,14 @@ $ig_plugins = array(
 		'name'        => 'temporary-login-without-password/temporary-login-without-password.php',
 		'install_url' => $tlwp_install_url,
 		'plugin_url'  => 'https://wordpress.org/plugins/temporary-login-without-password/',
+	),
+	array(
+		'title'       => __( 'Duplicate Pages and Posts', 'email-subscribers' ),
+		'logo'        => 'https://s.w.org/plugins/geopattern-icon/duplicate-post-page-copy-clone-wp.svg',
+		'desc'        => __( 'A Duplicate Pages and Posts Plugin is a tool for WordPress that enables users to easily create duplicate versions of existing posts, pages, or custom post types with just a click.', 'email-subscribers' ),
+		'name'        => 'duplicate-post-page-copy-clone-wp/duplicate-post-page-copy-clone-wp.php',
+		'install_url' => $duplicate_install_url,
+		'plugin_url'  => 'https://wordpress.org/plugins/duplicate-post-page-copy-clone-wp/',
 	),
 );
 
@@ -158,12 +167,12 @@ $articles = array(
 				</div>
 			<?php } else { ?>
 				<h3 class="mt-4 mb-6 text-2xl font-medium text-center text-gray-700"><?php echo esc_html__( 'Get Help?', 'email-subscribers' ); ?></h3>
-				<ul class="mx-6 leading-relaxed list-disc">
+				<ul class="mx-6 pb-2 leading-relaxed list-disc">
 					<li>Install & Activate <a href="https://www.icegram.com/r7gg" target="_blank" class="text-indigo-600">Temporary Login Without Password</a> plugin</li>
 					<li>Create & Copy new Temporary Login link. <a href="https://www.icegram.com/r7gg" target="_blank" class="text-indigo-600">Learn why you should use this plugin</a></li>
 					<li>Click on <b>Contact US</b> button and let us know your queries along with Temporary Login Link </li>
 				</ul>
-				<div class="flex w-2/3 py-2 justify-center <?php echo esc_attr( $contact_us_btn_class ); ?>">
+				<div class="flex w-2/2 py-2 justify-center <?php echo esc_attr( $contact_us_btn_class ); ?>">
 				 <span class="rounded-md shadow-sm">
 					<button type="button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue">
 					<?php

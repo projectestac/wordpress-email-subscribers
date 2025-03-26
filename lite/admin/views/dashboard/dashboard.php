@@ -177,7 +177,7 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 					<div class="flex items-center pr-2 md:justify-between">
 						<p class="text-lg font-medium leading-6 text-gray-400">
 							<?php
-								echo esc_html__( 'Recent Activity', 'email-subscribers' );
+								echo esc_html__( 'Recent Subscribers Activity', 'email-subscribers' );
 							?>
 						</p>
 						
@@ -219,7 +219,7 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 				if ( ES_Service_Email_Sending::is_onboarding_completed() ) {
 					$current_month       = ig_es_get_current_month();
 					$service_status      = ES_Service_Email_Sending::get_sending_service_status();
-					$ess_data            = get_option( 'ig_es_ess_data', array() );
+					$ess_data            = ES_Service_Email_Sending::get_ess_data();
 					$used_limit          = isset( $ess_data['used_limit'][$current_month] ) ? $ess_data['used_limit'][$current_month]: 0;
 					$allocated_limit     = isset( $ess_data['allocated_limit'] ) ? $ess_data['allocated_limit']                    : 0;
 					$interval            = isset( $ess_data['interval'] ) ? $ess_data['interval']                                  : '';

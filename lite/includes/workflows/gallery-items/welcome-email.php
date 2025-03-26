@@ -9,6 +9,8 @@ Thank you for joining the awesome {{SITENAME}} tribe.
 
 Only valuable emails from me, promise!
 
+If you ever change your mind, you can <a href="{{UNSUBSCRIBE_LINK}}">unsubscribe here</a> anytime.
+
 Thanks!
 EMAIL;
 

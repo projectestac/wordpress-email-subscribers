@@ -5,7 +5,11 @@ Hi {{NAME}},
 
 Just one more step before we share the awesomeness from {{SITENAME}}!
 
-Please confirm your subscription by clicking on <a href='{{SUBSCRIBE-LINK}}'>this link</a>
+Please confirm your subscription by clicking the link below:
+
+<a href="{{SUBSCRIBE-LINK}}">Confirm Subscription</a>
+
+If you didn't sign up, you can safely ignore this email.
 
 Thanks!
 EMAIL;
@@ -23,7 +27,7 @@ return array(
 		array(
 			'action_name'         => 'ig_es_send_email',
 			'ig-es-send-to'       => '{{EMAIL}}',
-			'ig-es-email-subject' => __( 'Thanks!', 'email-subscribers' ),
+			'ig-es-email-subject' => __( 'Confirm your subscription to {{SITENAME}}', 'email-subscribers' ),
 			'ig-es-email-content' => $email_content,
 		),
 	),

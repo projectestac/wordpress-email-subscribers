@@ -658,12 +658,12 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 													</div>
 												</div>
 											</div>`;
-		
+											
 											$(formStylesHTML).insertBefore('.es-content');
 											
 											$('form#es-edit-form #form-style-button').on('click',()=>{
 												if ( canUpsellFormStyle ) {
-													window.open('https://www.icegram.com/express/pricing/?utm_source=in_app&utm_medium=form_styles&utm_campaign=es_upsell', '_blank');
+													window.open('<?php echo esc_url(admin_url('admin.php?page=es_pricing'));?>', '_blank');
 												} else {
 													$('form#es-edit-form #form-styles-options').toggle();
 												}

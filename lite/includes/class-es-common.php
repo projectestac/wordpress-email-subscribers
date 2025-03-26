@@ -3223,7 +3223,7 @@ class ES_Common {
 		return '';
 	}
 
-	public static function process_subscriber_fallbacks($content, $merge_tags) {
+	public static function process_subscriber_fallbacks( $content, $merge_tags ) {
 
 		if ( empty( $content ) ) {
 			return $merge_tags;
@@ -3275,11 +3275,30 @@ class ES_Common {
 	
 	public static function strip_js_code( $html ) {
 
-		$html = preg_replace( '/<\/?(script)[^>]*>/i', '', $html );
+		$html = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $html);
 		
 		// Remove inline JS event handlers
-		$html = preg_replace('/\s*(on[a-z]+|javascript|style)\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $html );
+		$html = preg_replace('/\s*(on[a-z]+|javascript)\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $html );
+		
+		$html = preg_replace('/javascript\s*:\s*/i', '', $html);
 		return $html;
+	}
+
+	public static function mask_email( $email ) {
+		
+		list( $user_name, $domain ) = explode('@', $email);
+	
+		// Mask the username (show first and last character, mask the rest)
+		$user_name_masked = substr( $user_name, 0, 1 ) . str_repeat( '*', max( 0, strlen($user_name) - 2 ) ) . substr( $user_name, -1 );
+		$domain_parts     = explode( '.', $domain );
+		$domain_name      = $domain_parts[0];
+		$domain_extension = isset( $domain_parts[1] ) ? $domain_parts[1] : '';
+	
+		// Mask the domain name (show first character only, mask the rest)
+		$domain_name_masked = substr( $domain_name, 0, 1 ) . str_repeat( '*', max( 0, strlen( $domain_name ) - 1 ) );
+		$masked_email       = $user_name_masked . '@' . $domain_name_masked . '.' . $domain_extension;
+	
+		return $masked_email;
 	}
 
 }

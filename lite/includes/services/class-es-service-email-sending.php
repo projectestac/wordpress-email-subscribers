@@ -108,6 +108,8 @@ class ES_Service_Email_Sending extends ES_Services {
 	 */
 	private static $onboarding_step_option = 'ig_es_ess_onboarding_step';
 
+	private static $ess_data_option = 'ig_es_ess_data';
+
 	/**
 	 * ES_Service_Email_Sending constructor.
 	 *
@@ -301,7 +303,7 @@ class ES_Service_Email_Sending extends ES_Services {
 				'plan'			  => $plan,
 			);
 
-			update_option( 'ig_es_ess_data', $ess_data );
+			self::update_ess_data( $ess_data );
 
 			$mailer_settings           = get_option( 'ig_es_mailer_settings', array() );
 			$mailer_settings['mailer'] = 'icegram';
@@ -558,7 +560,7 @@ class ES_Service_Email_Sending extends ES_Services {
 	public static function get_account_overview_html() {
 		$current_month       = ig_es_get_current_month();
 		$service_status      = self::get_sending_service_status();
-		$ess_data            = get_option( 'ig_es_ess_data', array() );
+		$ess_data            = self::get_ess_data();
 		$used_limit          = isset( $ess_data['used_limit'][$current_month] ) ? $ess_data['used_limit'][$current_month]: 0;
 		$allocated_limit     = isset( $ess_data['allocated_limit'] ) ? $ess_data['allocated_limit']                    : 0;
 		$interval            = isset( $ess_data['interval'] ) ? $ess_data['interval']                                  : '';
@@ -738,12 +740,21 @@ class ES_Service_Email_Sending extends ES_Services {
 		return $response;
 	}
 
-	public function get_ess_data() {
-		return get_option( 'ig_es_ess_data', array() );
+	public static function get_ess_data() {
+		return apply_filters( 'ig_es_ess_data', get_option( self::get_ess_data_option(), array() ) );
+	}
+
+	public static function get_ess_data_option() {
+		return apply_filters( 'ig_es_ess_data_option', self::$ess_data_option );
+	}
+
+	public static function update_ess_data( $new_ess_data ) {
+		$ess_data_option = self::get_ess_data_option();
+		update_option( $ess_data_option, $new_ess_data );
 	}
 
 	public static function update_used_limit( $sent_count = 0 ) {
-		$ess_data      = get_option( 'ig_es_ess_data', array() );
+		$ess_data      = self::get_ess_data();
 		$current_month = ig_es_get_current_month();
 		$used_limit    = ! empty( $ess_data['used_limit'][$current_month] ) ? $ess_data['used_limit'][$current_month] : 0;
 		$used_limit   += $sent_count;
@@ -751,13 +762,13 @@ class ES_Service_Email_Sending extends ES_Services {
 			$ess_data['used_limit'] = array();
 		}
 		$ess_data['used_limit'][$current_month] = $used_limit;
-		update_option( 'ig_es_ess_data', $ess_data );
+		self::update_ess_data( $ess_data );
 	}
 
 	public static function get_remaining_limit() {
 	
 		self::fetch_and_update_ess_limit();
-		$ess_data        = get_option( 'ig_es_ess_data', array() );
+		$ess_data        = self::get_ess_data();
 		$current_month   = ig_es_get_current_month();
 		$allocated_limit = ! empty( $ess_data['allocated_limit'] ) ? $ess_data['allocated_limit'] : 0;
 		$used_limit      = ! empty( $ess_data['used_limit'][$current_month] ) ? $ess_data['used_limit'][$current_month] : 0;
@@ -776,7 +787,7 @@ class ES_Service_Email_Sending extends ES_Services {
 		$data        = array(
 			'admin_email'   => $admin_email,
 		);
-		$ess_data    = get_option( 'ig_es_ess_data', array() );
+		$ess_data    = self::get_ess_data();
 		$api_key     = $ess_data['api_key'];
 		$options     = array(
 			'method'  => 'POST',
@@ -799,11 +810,11 @@ class ES_Service_Email_Sending extends ES_Services {
 				if ( ! empty( $response_data['account'] ) ) {
 					$current_month                          = ig_es_get_current_month();
 					$account                                = (array) $response_data['account'];
-					$ess_data                               = get_option( 'ig_es_ess_data', array() );
+					$ess_data                               = self::get_ess_data();
 					$ess_data['allocated_limit']            = $account['allocated_limit'];
 					$ess_data['next_reset']                 = $account['next_reset'];
 					$ess_data['used_limit'][$current_month] = $account['used_limit'];
-					update_option( 'ig_es_ess_data', $ess_data );
+					self::update_ess_data( $ess_data );
 				}
 			}
 		}
@@ -819,7 +830,7 @@ class ES_Service_Email_Sending extends ES_Services {
 	}
 
 	public static function get_ess_from_email() {
-		$ess_data       = get_option( 'ig_es_ess_data', array() );
+		$ess_data       = self::get_ess_data();
 		$ess_from_email = ! empty( $ess_data['from_email'] ) ? $ess_data['from_email'] : '';
 		return $ess_from_email;
 	}
@@ -1093,7 +1104,7 @@ class ES_Service_Email_Sending extends ES_Services {
 			'status' => 'error',
 		);
 
-		$ess_data = get_option( 'ig_es_ess_data', array() );
+		$ess_data = self::get_ess_data();
 		$api_key  = $ess_data['api_key'];
 
 		$data = array(
@@ -1132,7 +1143,7 @@ class ES_Service_Email_Sending extends ES_Services {
 	 */
 	public function get_plan_info_block() {
 		$html            = '';
-		$es_ess_data     = get_option( 'ig_es_ess_data', '' );
+		$es_ess_data     = self::get_ess_data();
 		$current_month   = ig_es_get_current_month();
 		$interval        = isset( $es_ess_data['interval'] ) ? $es_ess_data['interval']: '';
 		$next_reset      = isset( $es_ess_data['next_reset'] ) ? $es_ess_data['next_reset']: '';
@@ -1163,7 +1174,7 @@ class ES_Service_Email_Sending extends ES_Services {
 							<?php echo esc_html__( 'Allocated limit', 'email-subscribers' ); ?> 
 						</td>
 						<td>
-						<b><?php echo esc_html( $allocated_limit ); ?> / <?php echo esc_html( $interval ); ?></b>
+						<b><?php echo esc_html( $allocated_limit ); ?> <?php echo ! empty( $interval ) ? ' / ' . esc_html( $interval ) : ''; ?></b>
 						</td>
 					</tr>
 					<tr class="border-b border-gray-200 text-xs leading-4 font-medium pt-1">
@@ -1171,10 +1182,10 @@ class ES_Service_Email_Sending extends ES_Services {
 						<td>
 							<b>
 							<?php 
-								echo esc_html( $used_limit ); 
-								if ( $allocated_limit > 0 ) { 
-									echo ' (' . esc_html( number_format_i18n( ( ( $used_limit * 100 ) / $allocated_limit ), 2 ) ) . '%)';
-								}
+							echo esc_html( $used_limit ); 
+							if ( $allocated_limit > 0 ) { 
+								echo ' (' . esc_html( number_format_i18n( ( ( $used_limit * 100 ) / $allocated_limit ), 2 ) ) . '%)';
+							}
 							?>
 							</b>
 						</td>

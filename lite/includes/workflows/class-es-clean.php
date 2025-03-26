@@ -141,5 +141,6 @@ class ES_Clean {
 		$content = wp_check_invalid_utf8( stripslashes( (string) $content ) );
 		return $content;
 	}
+	
 
 }

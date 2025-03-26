@@ -963,7 +963,13 @@ if ( ! function_exists( 'ig_es_covert_to_utf8_encoding' ) ) {
 			}
 		} else {
 			// Remove invalid UTF-8 characters.
-			$data = wp_check_invalid_utf8( $data, true );
+			if ( is_array( $data ) ) {
+				// If the data is an array
+				$data = array_map( 'wp_check_invalid_utf8', $data );
+			} else {
+				// If it's a string
+				$data = wp_check_invalid_utf8( stripslashes( (string) $data ) );
+			}
 		}
 
 		return $data;

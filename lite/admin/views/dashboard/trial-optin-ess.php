@@ -63,21 +63,22 @@ if ( $show_trial_optin ) {
 	$trial_period_in_days = ES()->trial->get_trial_period( 'in_days' );
 	$trial_expiry_date           = ES()->trial->get_trial_expiry_date();
 	$formatted_trial_expiry_date = ig_es_format_date_time( $trial_expiry_date );
-
+    $plan = ES()->get_plan();
 	$trial_block = array(
 		'trial-expired' => array(
 			/* translators: %d: Trial period in days */
-			'title'        => __( 'Icegram Express - Premium', 'email-subscribers' ),
-			'desc'         => sprintf( esc_html__( 'Your free trial of Premium plan ended on %s. So Premium features like faster email sending, spam check and UTM tracking are disabled. ', 'email-subscribers'), $formatted_trial_expiry_date),
+			'title' => sprintf( __( 'Icegram Express - %s', 'email-subscribers' ), $plan ),
+			'desc' => sprintf( esc_html__( 'Your free trial of %1$s plan ended on %2$s. So %1$s features like faster email sending, spam check, and UTM tracking are disabled.', 'email-subscribers' ), $plan, $formatted_trial_expiry_date ),
 			'cta_text'     => __( 'Choose a plan and reactivate', 'email-subscribers' ),
 			'feature_url'  => 'https://www.icegram.com/email-subscribers-pricing/?utm_source=in_app&utm_medium=upsell&utm_campaign=es_upsell',
 		),
 	);
 } elseif (ES()->is_premium()) {
+	$plan = ES()->get_plan();
 	$trial_block = array(
 		'trial-expired' => array( 
-			'title' => __('Icegram Express - Premium'),
-			'desc' => __('You\'re currently on the Premium plan and advanced email marketing features are enabled.', 'email-subscribers'),
+			'title' => sprintf( __( 'Icegram Express - %s', 'email-subscribers' ), $plan ),
+			'desc' => sprintf( __( 'You\'re currently on the %s plan and advanced email marketing features are enabled.', 'email-subscribers' ), $plan ),
 			'feature_url'  => '#',
 			'features_heading' => '',
 			// 'features_list' => array(
@@ -97,6 +98,10 @@ if ( $show_trial_optin ) {
 				
 				/* translators: 1. Anchor start tag 2. Anchor close tag */
 				'feature_second' => sprintf( __( ' %1$s%2$s%3$sIcegram Collect%4$s - easy forms and lead capture%5$s%6$s', 'email-subscribers' ), "<div class='flex'><img class='mr-2 h-6' src='https://ps.w.org/icegram-rainmaker/assets/icon-128x128.png' alt=''>", "<a class='text-gray-500 text-sm hover:text-black-600' href='https://www.icegram.com/collect/?utm_source=es&utm_medium=in_app&utm_campaign=dashboard_help' target='_blank'>", '<b>', '</b>', '</a>', '</div>' ),
+
+				'feature_third' => sprintf( __( ' %1$s%2$s%3$sDuplicate Pages and Posts%4$s - A Duplicate Pages and Posts Plugin is a tool for WordPress.%5$s%6$s', 'email-subscribers' ), "<div class='flex'><img class='mr-2 h-6' src='https://s.w.org/plugins/geopattern-icon/duplicate-post-page-copy-clone-wp.svg' alt=''>", "<a class='text-gray-500 text-sm hover:text-black-600' href='https://wordpress.org/plugins/duplicate-post-page-copy-clone-wp/' target='_blank'>", '<b>', '</b>', '</a>', '</div>' ),
+
+				
 			),
 		),
 	);

@@ -264,6 +264,7 @@ if ( ! class_exists( 'ES_Gallery_Controller' ) ) {
 					}
 				}
 
+				
 				$campaign_meta = maybe_serialize( $campaign_meta );
 
 				preg_match_all( '#<img\s+(?:[^>]*?\s+)?src=(\'|")?(https?[^\'"]+)(\'|")?#', $content, $image_urls );

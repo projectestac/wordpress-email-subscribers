@@ -55,7 +55,7 @@
 				}
 			});
 
-			var $newDiv = $("<div/>").addClass("pt-2 pb-2").html(`<div class="ig_es_process_message">Page <span id="ig_es_page_number">1</span> is processing <svg class="es-btn-loader animate-spin h-4 w-4 text-indigo inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+			var $newDiv = $("<div/>").addClass("pt-2 pb-2").html(`<div class="text-center ig_es_process_message">Page <span id="ig_es_page_number">1</span> is processing <svg class="es-btn-loader animate-spin h-4 w-4 text-indigo inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
 			<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
 			<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 			</svg> </div>`);
@@ -77,36 +77,43 @@
 				return false;
 			};
 
-			
 			$('.es-audience-view table.contacts #cb-select-all-1').click(function (e) {
 
+				
 				if($('.es-audience-view table.contacts #cb-select-all-1').prop('checked') == true){
-					flag = confirm( ig_es_js_data.i18n_data.confirm_select_all );					
-				}
+					let columns = $('tbody#the-list tr:first-child > *').length;
+					let isMultipleContactPages = $('.pagination-links').length > 0;
+					if ( isMultipleContactPages ) {
+						$('tbody#the-list').prepend('<tr class="ig-es-select-all-contacts"><td colspan="' + columns + '"><p class="text-center">' + ig_es_js_data.i18n_data.bulk_contact_select_text + '</p></td></tr>');
+					}
+				} else {
+					$('tbody#the-list .ig-es-select-all-contacts').remove();
+				}		
 
-				if( flag ) {
-					$('.es-audience-view .tablenav.top #doaction').click(function (e) {
-						e.preventDefault();
-						let actionData = $(this).closest('form').serializeArray();
-						let unchecked_subscriber_checkboxes = $('.es-audience-view form input[type="checkbox"][name="subscribers[]"]:not(:checked)');
-						let exclude_subscribers = [];
-						if ( unchecked_subscriber_checkboxes.length > 0 ) {
-							$(unchecked_subscriber_checkboxes).each((index,unchecked_subscriber_checkbox) => {
-								let unchecked_subscriber_id = $(unchecked_subscriber_checkbox).val();
-								exclude_subscribers.push(unchecked_subscriber_id);
-							});
-						}
-						actionData.push({ name: "exclude_subscribers", value: exclude_subscribers });
-						actionData.push({ name: "is_ajax", value: true });
-						let pageNumber = getUrlParameter('paged');
-						pageNumber = pageNumber ? pageNumber : 1;
-						ig_es_apply_contacts_bulk_action( actionData, pageNumber );
-						$(".es-audience-view table.contacts").addClass("ig_es_contacts_table");
-						
-					});
-				}
-							
+			});
 
+			$('.es-audience-view table.contacts').on('click','#ig-es-select-all-contacts',function(e){
+				e.preventDefault();
+				$('.ig-es-select-all-contacts td').html('<p class="text-center">' + ig_es_js_data.i18n_data.all_page_contact_selected_text + '</p>');
+				$('.es-audience-view .tablenav.top #doaction').click(function (e) {
+					e.preventDefault();
+					let actionData = $(this).closest('form').serializeArray();
+					let unchecked_subscriber_checkboxes = $('.es-audience-view form input[type="checkbox"][name="subscribers[]"]:not(:checked)');
+					let exclude_subscribers = [];
+					if ( unchecked_subscriber_checkboxes.length > 0 ) {
+						$(unchecked_subscriber_checkboxes).each((index,unchecked_subscriber_checkbox) => {
+							let unchecked_subscriber_id = $(unchecked_subscriber_checkbox).val();
+							exclude_subscribers.push(unchecked_subscriber_id);
+						});
+					}
+					actionData.push({ name: "exclude_subscribers", value: exclude_subscribers });
+					actionData.push({ name: "is_ajax", value: true });
+					let pageNumber = getUrlParameter('paged');
+					pageNumber = pageNumber ? pageNumber : 1;
+					ig_es_apply_contacts_bulk_action( actionData, pageNumber );
+					$(".es-audience-view table.contacts").addClass("ig_es_contacts_table");
+					
+				});
 			});
 
 
@@ -118,7 +125,7 @@
 					dataType: 'json',
 					beforeSend: function () {
 						$($newDiv).find("#ig_es_page_number").text(pageNumber);
-						$('.es-audience-view .tablenav.top').append($newDiv);
+						$('.ig-es-select-all-contacts td').html('').append($newDiv);
 					},
 					success: function (response) {
 						if ( 'undefined' !== typeof response.success  ) {

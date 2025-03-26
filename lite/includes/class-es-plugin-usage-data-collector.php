@@ -233,7 +233,7 @@ if (!class_exists('ES_Plugin_Usage_Data_Collector')) {
 		}
 
 		public static function get_ess_email_sending_stats() {
-			$results = get_option('ig_es_ess_data', array());
+			$results = ES_Service_Email_Sending::get_ess_data();
 			if ( empty($results) || !isset( $results['used_limit'] )) {
 				return array();
 			}

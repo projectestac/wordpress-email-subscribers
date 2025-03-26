@@ -1200,7 +1200,7 @@ class ES_Admin_Settings {
 			</table>
 			<div id="ig-es-create-new-rest-api-container" class="mt-2">
 				<select id="ig-es-rest-api-user-id">
-					<option value=""><?php echo esc_html__('Please select a user', 'email-subscribers'); ?></option>
+					<option value=""><?php echo esc_html__('Select user', 'email-subscribers'); ?></option>
 					<?php
 					foreach ($admin_users as $user) {
 						?>

@@ -264,7 +264,7 @@ class Email_Subscribers_Public {
 					}
 
 				} else {
-					$message = __( 'Sorry, we couldn\'t find you. Please contact admin.', 'email-subscribers' );
+					$message = __( 'This email address is not on our mailing list. You will not receive any further emails from us.', 'email-subscribers' );
 				}
 
 				// We are using $message in following file

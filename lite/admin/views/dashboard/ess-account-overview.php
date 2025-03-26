@@ -38,7 +38,7 @@
 					<span class="text-2xl font-bold leading-none text-indigo-600 pr-1">
 						<?php echo esc_html( $allocated_limit ); ?>
 					</span>
-					<span class="pt-2"><?php echo esc_html( ' / ' . substr($interval, 0, 2) ); ?></span>
+					<span class="pt-2"><?php echo ! empty( $interval ) ? esc_html( ' / ' . substr($interval, 0, 2) ) : ''; ?></span>
 				</div>
 				<p class="mt-1 font-medium leading-6 text-gray-500">
 					<?php

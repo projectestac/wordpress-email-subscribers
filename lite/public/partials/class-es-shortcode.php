@@ -446,8 +446,8 @@ class ES_Shortcode {
 
 		// Wrap form html inside a container.
 		$form_data_html = '<div class="emaillist" id="es_form_' . self::$form_identifier . '">' . $form_data_html . '</div>';
-
-		$form = $form_data_html;
+		$form_data_html = ES_Common::strip_js_code($form_data_html);
+		$form = str_replace(['`', '´','&#096;'], '', $form_data_html);
 
 		$show_in_popup = false;
 	
@@ -486,7 +486,7 @@ class ES_Shortcode {
 					var message = '<h3 style=\"text-align: center;\"><?php echo esc_js( $es_popup_headline ); ?></h3>';
 					
 					es_pre_data.ajax_url = '<?php echo esc_url(admin_url( 'admin-ajax.php' )); ?>';
-					es_pre_data.messages[0].form_html = `<?php echo wp_kses(html_entity_decode($form),$allowedtags); ?>`;
+					es_pre_data.messages[0].form_html = `<?php echo wp_kses( html_entity_decode( $form ), $allowedtags); ?>`;
 					es_pre_data.messages[0].id = es_pre_data.messages[0].campaign_id = es_message_id;
 					es_pre_data.messages[0].label = <?php echo json_encode($button_label); ?>;
 					es_pre_data.messages[0].message = message;
