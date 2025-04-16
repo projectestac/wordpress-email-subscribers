@@ -742,6 +742,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 
 				// Admin Notices
 				'lite/includes/notices/class-es-admin-notices.php',
+				'lite/includes/notices/class-es-admin-notice.php',
 
 				// Database class files
 				'lite/includes/db/class-es-db.php',
@@ -1017,6 +1018,9 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				'starter/starter-class-email-subscribers.php',
 				'pro/pro-class-email-subscribers.php',
 
+				// Gutenberg editor handler
+				'lite/includes/classes/class-es-gutenberg-editor.php',
+
 			);
 
 			foreach ( $files_to_load as $file ) {
@@ -1281,6 +1285,7 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 				"{$prefix}_page_es_custom_fields",
 				"{$prefix}_page_es_templates",
 				"{$prefix}_page_es_gallery",
+				"{$prefix}_page_es_gutenberg_editor",
 			);
 
 			$screens = apply_filters( 'ig_es_admin_screens', $screens );
@@ -2131,6 +2136,6 @@ if ( ! class_exists( 'Email_Subscribers' ) ) {
 			return $action_types;
 		}
 	
-}
+	}
 
 }

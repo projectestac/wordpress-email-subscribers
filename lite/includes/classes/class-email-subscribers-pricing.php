@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Email_Subscribers_Pricing {
 
-	public static function es_show_pricing(){
+	public static function es_show_pricing() {
 		$utm_medium  = apply_filters( 'ig_es_pricing_page_utm_medium', 'in_app_pricing' );
 		$allowedtags = ig_es_allowed_html_tags_in_esc();
 
@@ -106,7 +106,7 @@ class Email_Subscribers_Pricing {
 				padding-left: 1.875rem;
 				list-style: none; /* Removes default bullet points */
 				font-size: 0.875rem;
-    			line-height: 1.25rem;
+				line-height: 1.25rem;
 				color: rgb(107 114 128);
 				font-weight: 500;
 			}
@@ -134,7 +134,7 @@ class Email_Subscribers_Pricing {
 				font-size: 1.5rem;
 				font-style: italic;
 				font-weight: 600;
-    			rotate: 20deg;
+				rotate: 20deg;
 			}
 
 			.ig_es_feature_heading {
@@ -163,7 +163,7 @@ class Email_Subscribers_Pricing {
 
 			.ig_es_price_symbol {
 				font-weight: 400;
-    			padding-right: 0.063rem;
+				padding-right: 0.063rem;
 				font-size: 1rem;
 			}
 

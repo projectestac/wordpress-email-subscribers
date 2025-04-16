@@ -870,10 +870,10 @@ class ES_Admin_Settings {
 		$selected_mailer = ( array_key_exists( $selected_mailer, $mailers ) ) ? $selected_mailer : 'wpmail';
 
 		foreach ( $mailers as $key => $mailer ) {
-			$html .= '<label class="inline-flex items-center cursor-pointer">';
+			$html .= '<label class="es-mailer-label inline-flex items-center cursor-pointer" data-mailer="' . esc_attr( $key ) . '">';
 			$html .= '<input type="radio" class="absolute w-0 h-0 opacity-0 es_mailer" name="ig_es_mailer_settings[mailer]" value="' . $key . '" ' . checked( $selected_mailer, $key, false ) . '></input>';
 
-			if ( ! empty( $mailer['is_premium'] ) ) {
+			if ( ! empty( $mailer['url'] ) ) {
 				$html .= '<a href="' . $mailer['url'] . '" target="_blank">';
 			}
 
@@ -884,8 +884,10 @@ class ES_Admin_Settings {
 			. $mailer['name'] . '</p>';
 
 			if ( ! empty( $mailer['is_premium'] ) ) {
-				$plan = isset( $mailer['plan'] ) ? $mailer['plan'] : '';
+				$plan  = isset( $mailer['plan'] ) ? $mailer['plan'] : '';
 				$html .= '<span class="premium-icon ' . $plan . '"></span>';
+			} elseif ( ! empty( $mailer['is_recommended'] ) ) {
+				$html .= '<span class="ig-es-recommended-icon text-indigo-600 uppercase">' . __( 'Recommended', 'email-subscribers' ) . '</span>';
 			}
 
 			$html .= '</div>';

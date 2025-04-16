@@ -120,7 +120,7 @@ class ES_Workflow_Admin_Edit {
 		}
 		$allowedtags = ig_es_allowed_html_tags_in_esc();
 
-        $content  = ig_es_get_request_data( 'content', '', false );
+		$content  = ig_es_get_request_data( 'content', '', false );
 		$content  = wp_kses( $content, $allowedtags );
 		
 		$response = array();

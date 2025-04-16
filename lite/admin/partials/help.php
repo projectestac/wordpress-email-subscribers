@@ -134,54 +134,21 @@ $articles = array(
 		</div>
 
 		<div class="inline-block w-4/12 border-r border-dashed">
-			<?php if ( ES()->is_current_user_administrator() && $enable_manual_update ) { ?>
-
-				<div class="px-4 py-4 bg-gray-200 database-migration">
-					<h3 class="mt-4 mb-6 text-2xl font-medium text-center text-gray-700"><?php echo esc_html__( 'Database Migration', 'email-subscribers' ); ?></h3>
-
-					<p class="px-2 py-2">
-					<?php
-						/* translators: 1. Starting strong tag 2. Closing strong tag */
-						echo sprintf( esc_html__( 'If you found duplicate campaigns, lists, forms, reports after upgrading from Icegram Express 3.5.x to 4.x and want to run the database migration again to fix this, please click the below %1$sRun the updater%2$s button.', 'email-subscribers' ), '<strong>', '</strong>' );
-					?>
-					</p>
-
-					<p class="px-2 py-2">
-					<?php
-						/* translators: 1. Starting strong tag 2. Closing strong tag */
-						echo sprintf( esc_html__( 'Once you click on %1$sRun the updater%2$s button, it will run the migration process from 3.5.x once again. So, if you have created new campaigns, forms or lists after migration to 4.x earlier, you will lose those data. So, make sure you have a backup with you.', 'email-subscribers' ), '<strong>', '</strong>' );
-					?>
-					</p>
-
-					<div class="flex justify-start w-2/3 py-2">
-						 <span class="rounded-md shadow-sm">
-							 <a href="<?php echo esc_url( $update_url ); ?>">
-								 <button type="button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue">
-								<?php
-								echo esc_html__( 'Run the updater', 'email-subscribers' );
-								?>
-								</button>
-							</a>
-						 </span>
-					</div>
-				</div>
-			<?php } else { ?>
-				<h3 class="mt-4 mb-6 text-2xl font-medium text-center text-gray-700"><?php echo esc_html__( 'Get Help?', 'email-subscribers' ); ?></h3>
-				<ul class="mx-6 pb-2 leading-relaxed list-disc">
-					<li>Install & Activate <a href="https://www.icegram.com/r7gg" target="_blank" class="text-indigo-600">Temporary Login Without Password</a> plugin</li>
-					<li>Create & Copy new Temporary Login link. <a href="https://www.icegram.com/r7gg" target="_blank" class="text-indigo-600">Learn why you should use this plugin</a></li>
-					<li>Click on <b>Contact US</b> button and let us know your queries along with Temporary Login Link </li>
-				</ul>
-				<div class="flex w-2/2 py-2 justify-center <?php echo esc_attr( $contact_us_btn_class ); ?>">
-				 <span class="rounded-md shadow-sm">
-					<button type="button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue">
-					<?php
-						echo esc_html__( 'Contact US', 'email-subscribers' );
-					?>
-					</button>
-				 </span>
-				</div>
-			<?php } ?>
+			<h3 class="mt-4 mb-6 text-2xl font-medium text-center text-gray-700"><?php echo esc_html__( 'Get Help?', 'email-subscribers' ); ?></h3>
+			<ul class="mx-6 pb-2 leading-relaxed list-disc">
+				<li>Install & Activate <a href="https://www.icegram.com/r7gg" target="_blank" class="text-indigo-600">Temporary Login Without Password</a> plugin</li>
+				<li>Create & Copy new Temporary Login link. <a href="https://www.icegram.com/r7gg" target="_blank" class="text-indigo-600">Learn why you should use this plugin</a></li>
+				<li>Click on <b>Contact US</b> button and let us know your queries along with Temporary Login Link </li>
+			</ul>
+			<div class="flex w-2/2 py-2 justify-center <?php echo esc_attr( $contact_us_btn_class ); ?>">
+				<span class="rounded-md shadow-sm">
+				<button type="button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-white transition duration-150 ease-in-out bg-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-500 focus:outline-none focus:shadow-outline-blue">
+				<?php
+					echo esc_html__( 'Contact US', 'email-subscribers' );
+				?>
+				</button>
+				</span>
+			</div>
 		</div>
 
 		<div class="inline-block w-4/12">

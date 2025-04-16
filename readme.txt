@@ -6,7 +6,7 @@ Tags: email marketing, email subscribers, email newsletters, autoresponders, ema
 Requires at least: 3.9
 Tested up to: 6.7.1
 Requires PHP: 7.0
-Stable tag: 5.7.56
+Stable tag: 5.8.0
 License: GPLv3
 
 License URI: http://www.gnu.org/licenses
@@ -486,12 +486,34 @@ Option 2:
 
 == Upgrade Notice ==
 
-= 5.7.56 =
+= 5.8.0 =
 
-* Fix: Subscription confirmation error due to incorrect 'Content-Type' header on some sites
-* Fix: Open tracking is disabled in some cases when creating a campaign from a template
+* New: Gutenberg-based email editor [Experimental]
+* Fix: Unsubscribe link encoding issue in Apple Mail
 
 == Changelog ==
+
+**5.8.0 (16.04.2025)**
+
+* New: Gutenberg-based email editor [Experimental]
+* Fix: Unsubscribe link encoding issue in Apple Mail
+
+**5.7.59 (09.04.2025)**
+
+* New: Added a workflow trigger for the WP Event Manager Registrations plugin [MAX]
+* New: Added workflow triggers for WooCommerce orders that are on hold and in processing status [MAX]
+
+**5.7.58 (02.04.2025)**
+
+* Enhancement: Added bulk export functionality for campaign reports [MAX]
+
+**5.7.57.1 (31.03.2025)**
+
+* Fix: New release version was not getting reflected 
+
+**5.7.57 (26.03.2025)**
+
+* Fix: Duplicate post notifications were getting sent for posts with multiple categories and recipients subscribed to multiple lists
 
 **5.7.56 (20.03.2025)**
 

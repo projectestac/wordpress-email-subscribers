@@ -139,24 +139,6 @@
 								</div>
 							</div>
 						<?php } ?>
-						
-						<!-- ESS Checkbox -->
-						<div class="flex">
-							  <div class="ess-checkbox-animate">
-								<input
-									  id="ig_es_enable_ess"
-									  type="checkbox"
-								/>
-								<span class="ess-input-check"></span>
-							  </div>
-						  <div class="pl-3">
-							<label for="ig_es_enable_ess" class="text-sm animate-text-shadow">
-									<?php echo esc_html__( 'Opt-in to use the Icegram email sending service for improved email delivery', 'email-subscribers' ); ?>
-									<span class="ess-new-feature"><?php echo esc_html__( 'New!', 'email-subscribers' ); ?></span>
-							</label>
-						  </div>
-						</div>
-						<!-- End -->
 
 						<!-- End-IG-Code -->
 						<div class="flex">

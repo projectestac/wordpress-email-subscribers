@@ -94,7 +94,7 @@ class ES_Forms_Table extends ES_List_Table {
 			} elseif ( 'duplicate_form' === $action ) {
 				$form = ig_es_get_request_data( 'form' );
 				$duplicated_form_id = $this->duplicate_form( absint( $form ) );
-				if( !empty($duplicated_form_id) ) {
+				if ( !empty($duplicated_form_id) ) {
 					wp_redirect( admin_url( 'admin.php?page=es_forms' ) );
 					exit;
 				}
@@ -257,7 +257,7 @@ class ES_Forms_Table extends ES_List_Table {
 			$editor_type = ! empty( $form_data['settings']['editor_type'] ) ? $form_data['settings']['editor_type'] : '';
 			if ( isset( $form_data ) ) {
 
-			    $form_data = self::sanitize_data( $form_data );
+				$form_data = self::sanitize_data( $form_data );
 			}
 			
 			$validate_data = array(
@@ -294,7 +294,7 @@ class ES_Forms_Table extends ES_List_Table {
 			$form_data = array();
 
 			$data = ES()->forms_db->get_by_conditions( $wpdb->prepare( ' id = %d', $id ) );
-	      if ( count( $data ) > 0 ) {			
+			if ( count( $data ) > 0 ) {			
 				$submitted = ig_es_get_request_data( 'submitted' );
 
 				if ( 'submitted' === $submitted ) {
@@ -923,8 +923,8 @@ class ES_Forms_Table extends ES_List_Table {
 				$total_active_subscribers = ES()->contacts_db->get_total_contacts_by_form_id( $item['id'] );
 				return number_format( $total_active_subscribers );
 			case 'preview':
-				if(!empty($item['preview_image'])) {
-					$img = '<img src="'.esc_url( ES_PLUGIN_URL . 'lite/admin/images/form_templates/'.$item['preview_image'] ).'">';
+				if (!empty($item['preview_image'])) {
+					$img = '<img src="' . esc_url( ES_PLUGIN_URL . 'lite/admin/images/form_templates/' . $item['preview_image'] ) . '">';
 				} else {
 					$img = '-';
 				}

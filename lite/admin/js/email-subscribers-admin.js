@@ -1039,6 +1039,16 @@
 			});
 			jQuery('.es_mailer').trigger('change');
 
+			jQuery('.es-mailer-label[data-mailer="icegram"]').click(function(e){
+				e.preventDefault();
+				jQuery('#ig-es-icegram-mailer-promotion-popup').removeClass('hidden');
+			});
+			
+			jQuery('.ig-es-popup-close-container').click(function(e){
+				e.preventDefault();
+				jQuery('.ig-es-popup-container').addClass('hidden');
+			});
+
 			//preview broadcast
 			// ig_es_preview_broadcast
 			jQuery(document).on('click', '#ig_es_preview_broadcast', function (e) {
@@ -2428,7 +2438,7 @@
 
 				maybe_show_run_option: function() {
 					let trigger_name        = IG_ES_Workflows.$trigger_select.val();
-					let runnable_triggers   = [ 'ig_es_wc_order_created', 'ig_es_wc_order_completed', 'ig_es_wc_order_refunded' ];
+					let runnable_triggers = ['ig_es_wc_order_created', 'ig_es_wc_order_completed', 'ig_es_wc_order_refunded', 'ig_es_wc_order_on_hold','ig_es_wc_order_processing'];
 					let is_trigger_runnable = runnable_triggers.includes( trigger_name );
 					let actions             = $('.ig-es-action:not([data-action-number = ""]) .js-action-select');
 					let has_runnable_action = false;
@@ -3556,6 +3566,17 @@
 		   
 		});
 
+		jQuery(document).ready(function($) {
+			$(document).on('click', '.ig-es-admin-notice.notice[data-notice-id] .notice-dismiss, .ig-es-admin-notice.notice[data-notice-id] .ig-es-dismiss-notice', function(e) {
+				var notice   = $(this).closest('.notice');
+				var noticeId = notice.data('notice-id');
+				
+				$.post(ajaxurl, {
+					action: 'dismiss_' + noticeId + '_notice',
+					security: ig_es_js_data.security
+				});
+			});
+		});
 	});
 
 	function ig_es_uc_first(string){
@@ -4182,19 +4203,35 @@ jQuery.fn.extend({
 
 jQuery(document).ready(function(){
 
-	jQuery(".es-export-report").click(function(){
-		var reports_id = '';
-		var reportIdAttr = jQuery(this).attr('data-report-id');
+    var totalPages = 1;
+    var reportsData = [];
 
-		if (reportIdAttr && reportIdAttr.trim() !== "") {
-			reports_id = reportIdAttr;
+	var $newDiv = jQuery("<div/>").addClass("pt-2 pb-2").html(`<div class="text-center ig_es_process_message">Page <span id="ig_es_page_number">1</span> is processing <svg class="es-btn-loader animate-spin h-4 w-4 text-indigo inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+		<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+		<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+		</svg> </div>`);
+
+	jQuery('.es-reports-view table.reports #cb-select-all-1').click(function (e) {		
+		if(jQuery('.es-reports-view table.reports #cb-select-all-1').prop('checked') == true){
+			let columns = jQuery('tbody#the-list tr:first-child > *').length;
+			let isMultipleReportPages = jQuery('.pagination-links').length > 0;
+			if ( isMultipleReportPages ) {
+				jQuery('tbody#the-list').prepend('<tr class="ig-es-select-all-reports" data-all-selected="false"><td colspan="' + columns + '"><p class="text-center">' + ig_es_js_data.i18n_data.bulk_reports_select_text + '</p></td></tr>');
+			}
 		} else {
-			jQuery('table.reports th input[type=checkbox]').each(function(){
-				if(jQuery(this).val().trim().length !== 0){
-					reports_id += jQuery(this).val() + ",";
-				}
-			});
+			jQuery('tbody#the-list .ig-es-select-all-reports').remove();
 		}
+	});
+
+	jQuery('.es-reports-view table.reports').on('click','#ig-es-select-all-reports',function(e){
+		e.preventDefault();
+		jQuery('.ig-es-select-all-reports').attr('data-all-selected', 'true');
+		jQuery('.ig-es-select-all-reports td').html('<p class="text-center">' + ig_es_js_data.i18n_data.all_page_reports_selected_text + '</p>');
+	});
+
+	function processAllReports(reportsData) {
+
+		let reports_id = reportsData.join(',');
 
 		let reports_export_data = {
 			action: 'ig_es_reports_export',
@@ -4235,8 +4272,91 @@ jQuery(document).ready(function(){
 				console.error('XHR:', xhr);
 			}
 		});
+    }
+
+	function fetchReports(pageNumber, callback, filter_reports_by_campaign_status, filter_reports_by_campaign_type, filter_report_by_date, isAllPagesSelected) {
+        let actionData = {
+            action: "ig_es_fetch_reports", 
+            security: ig_es_js_data.security, // Ensure valid nonce
+            paged: pageNumber,
+			fetch_all: isAllPagesSelected ? "true" : "false", // Add this
+			filter_reports_by_campaign_status: filter_reports_by_campaign_status,
+			filter_reports_by_campaign_type: filter_reports_by_campaign_type,
+			filter_report_by_date: filter_report_by_date
+        };
+
+        jQuery.ajax({
+            method: "POST",
+            url: ajaxurl, 
+            data: actionData,
+            dataType: "json",
+            beforeSend: function () {
+                jQuery($newDiv).find("#ig_es_page_number").text(pageNumber);
+				jQuery('.ig-es-select-all-reports td').html('').append($newDiv);
+            },
+            success: function (response) {
+                if (response.success) {
+                    reportsData = reportsData.concat(response.data.reports);
+                    totalPages = response.data.total_pages;
+
+                    if (pageNumber < totalPages) {
+						setTimeout(() => {
+							fetchReports(pageNumber + 1, callback, filter_reports_by_campaign_status, filter_reports_by_campaign_type, filter_report_by_date, isAllPagesSelected); // Fetch next page
+						}, 500);
+					} else {
+						if (callback) callback(reportsData); // Execute callback when all data is collected
+						jQuery('.ig-es-select-all-reports td').html('').append('<p class="text-center">Process Completed.</p>');
+					}
+                } else {
+                    console.log("Error: " + response.data.message);
+                }
+            },
+            error: function (err) {
+                console.error("AJAX Error:", err);
+            }
+        });
+    }
+
+	jQuery(".es-export-single-report").click(function () {
+		let singleReportId = jQuery(this).attr("data-report-id");
+		
+		if (singleReportId) {
+			processAllReports([singleReportId]);
+		} else {
+			alert( __( 'No report ID found.', 'email-subscribers' ) );
+		}
+	});
+
+	jQuery(".es-export-report").click(function(){
+		let isAllPagesSelected = jQuery('.ig-es-select-all-reports').attr('data-all-selected') === 'true';
+		let selectedReports = [];
+
+		let filter_reports_by_campaign_status = jQuery("#ig_es_filter_report_by_status").val();
+		let filter_reports_by_campaign_type = jQuery("#ig_es_filter_reports_by_campaign_type").val();
+		let filter_report_by_date = jQuery("#ig_es_filter_report_by_date").val();
+
+		if (isAllPagesSelected) {
+			// **Export All Pages**
+			reportsData = [];
+			fetchReports(1, function (finalReportsData) {
+				processAllReports(finalReportsData);
+			}, filter_reports_by_campaign_status, filter_reports_by_campaign_type, filter_report_by_date, isAllPagesSelected);
+		} else {
+			// **Export Current Page Selected Reports**
+			jQuery('table.reports tbody#the-list input[type=checkbox]:checked').each(function () {
+				let reportId = parseInt(jQuery(this).val(), 10);
+				selectedReports.push(reportId);
+			});
+
+			if (selectedReports.length > 0) {
+				processAllReports(selectedReports);
+			} else {
+				alert( __( 'Please select at least one report.', 'email-subscribers' ) );
+			}
+		}
 	});
 });
+
 
 // Add new list popup functionality
 jQuery(document).on('click', '#ig-es-open-add-list-modal', function (e) {
@@ -4319,6 +4439,34 @@ jQuery(document).on('click', '#es-add-list', function (e) {
     }
 });
 
+//Gutennerg POC 
+document.addEventListener('DOMContentLoaded', function () {
+	const storedContent = sessionStorage.getItem('ig_es_gutenberg_poc_content');
+	const triggeredByRedirect = sessionStorage.getItem('ig_es_triggered_redirect');
+	const subjectInput = document.querySelector('input[name="subject"]');
 
+	if (storedContent && triggeredByRedirect === 'yes') {
+		// Wait for TinyMCE to be available
+		const interval = setInterval(() => {
+			const editorInstance = window.tinymce?.get('es-campaign-body');
+
+			if (subjectInput && !subjectInput.value.includes('Gutenberg Post Campaign')) {
+				subjectInput.value ='Gutenberg Post Campaign';
+			}
+
+			if (editorInstance && editorInstance.initialized) {
+				editorInstance.setContent(storedContent);
+
+				// Clean up
+				sessionStorage.removeItem('ig_es_gutenberg_poc_content');
+				sessionStorage.removeItem('ig_es_triggered_redirect');
+				clearInterval(interval);
+			}
+		}, 300); 
+
+		// Stop after 10s if not loaded
+		setTimeout(() => clearInterval(interval), 10000);
+	}
+});
 
 

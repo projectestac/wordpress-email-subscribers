@@ -117,8 +117,10 @@ class Email_Subscribers_Admin {
 
 		add_action( 'wp_ajax_ig_es_get_subscribers_stats', array( 'ES_Dashboard', 'get_subscribers_stats' ) );
 		add_action( 'wp_ajax_ig_es_add_list', array( $this, 'add_list_callback' ) );
-        //Quick help widget
+		//Quick help widget
 		add_filter( 'ig_active_plugins_for_quick_help', array( $this, 'get_active_quick_help_plugins' ), 10, 2 );
+		add_action( 'init', array( $this, 'register_gutenberg_editor' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'ig_es_enqueue_gutenberg_editor_scripts' ) );
 	}
 
 	/**
@@ -167,7 +169,7 @@ class Email_Subscribers_Admin {
 		//This below condition will helping to apply main.css file on dashboard onboarding process.
 		$es_dashboard = ( IG_ES_Onboarding::is_onboarding_completed() ) ? 'es_dashboard' : '';
 		
-		$enqueue_tailwind 	   = in_array( $current_page, array( 'es_gallery', 'es_campaigns', 'es_subscribers', 'es_lists', $es_forms, 'es_custom_fields', 'es_settings', $es_dashboard, 'es_reports' ), true );
+		$enqueue_tailwind 	   = in_array( $current_page, array( 'es_gallery', 'es_campaigns', 'es_subscribers', 'es_lists', $es_forms, 'es_custom_fields', 'es_settings', $es_dashboard, 'es_reports','es_gutenberg_editor' ), true );
 		
 		if ( ! $enqueue_tailwind ) {
 			wp_enqueue_style( 'ig-es-style', plugin_dir_url( __FILE__ ) . 'dist/main.css', array(), $this->version, 'all' );
@@ -181,6 +183,8 @@ class Email_Subscribers_Admin {
 		if ( $enqueue_flag_icon_css ) {
 			wp_enqueue_style( 'flag-icon-css', 'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css', array(), $this->version, 'all' );
 		}
+
+
 	}
 
 	/**
@@ -269,6 +273,9 @@ class Email_Subscribers_Admin {
 				/* translators: 1. Anchor start tag 2. Anchor end tag */
 				'bulk_contact_select_text'              => __( sprintf( 'Only contacts from the current page have been selected. %1$sClick here%2$s to select all matching contacts across pages.', '<a id="ig-es-select-all-contacts" class="hover:underline text-sm font-medium text-indigo-600" href="#">', '</a>' ), 'email-subscribers' ),
 				'all_page_contact_selected_text'              => __( 'All contacts matching the selected filters across all pages have been selected.', 'email-subscribers' ),
+				/* translators: 1. Anchor start tag 2. Anchor end tag */
+				'bulk_reports_select_text'              => __( sprintf( 'Only reports from the current page have been selected. %1$sClick here%2$s to select all matching reports across pages.', '<a id="ig-es-select-all-reports" class="hover:underline text-sm font-medium text-indigo-600" href="#">', '</a>' ), 'email-subscribers' ),
+				'all_page_reports_selected_text'              => __( 'All reports matching the selected filters across all pages have been selected.', 'email-subscribers' ),
 			),
 			'is_pro'     => ES()->is_pro() ? true : false,
 			'is_premium' => ES()->is_premium(),
@@ -354,10 +361,8 @@ class Email_Subscribers_Admin {
 		} elseif ( 'es_sequence' === $page ) {
 			add_filter( 'tiny_mce_before_init', array( 'ES_Common', 'override_tinymce_formatting_options' ), 10, 2 );
 			add_filter( 'mce_external_plugins', array( 'ES_Common', 'add_mce_external_plugins' ) );
-		}
-
-
-
+		} 
+		
 		// timepicker
 		wp_register_script( $this->email_subscribers . '-timepicker', plugin_dir_url( __FILE__ ) . 'js/jquery.timepicker.js', array( 'jquery' ), ES_PLUGIN_VERSION, true );
 		wp_enqueue_script( $this->email_subscribers . '-timepicker' );
@@ -462,6 +467,10 @@ class Email_Subscribers_Admin {
 		if ( in_array( 'settings', $accessible_sub_menus ) ) {
 			$hook = add_submenu_page( 'es_dashboard', __( 'Settings', 'email-subscribers' ), __( 'Settings', 'email-subscribers' ), 'manage_options', 'es_settings', array( $this, 'load_settings' ) );
 			add_action( "load-$hook", array( 'ES_Admin_Settings', 'screen_options' ) );
+		}
+
+		if ( in_array( 'gutenberg_editor', $accessible_sub_menus ) ) {
+			add_submenu_page( 'es_dashboard', __( 'Email Editor', 'email-subscribers' ), __( 'Email Editor <span class="absolute text-xs font-medium text-color-gray-500 border border-gray-500 px-1 py-0 rounded ml-1">Beta</span>', 'email-subscribers' ), 'manage_options', 'es_gutenberg_editor', array( $this, 'load_gutenberg_editor' ) );
 		}
 
 		/**
@@ -936,6 +945,8 @@ class Email_Subscribers_Admin {
 				'ig_es_show_feature_survey',
 				'ig_es_show_trial_optin_reminder_notice',
 				'show_list_cleanup_notice',
+				'show_ess_free_limit_decrease_notice',
+				'display_es_plugin_notice',
 			);
 		}
 
@@ -963,7 +974,6 @@ class Email_Subscribers_Admin {
 		if ( ! empty( $wp_filter['admin_notices']->callbacks ) && is_array( $wp_filter['admin_notices']->callbacks ) ) {
 			foreach ( $wp_filter['admin_notices']->callbacks as $priority => $callbacks ) {
 				foreach ( $callbacks as $name => $details ) {
-
 					if ( is_object( $details['function'] ) && $details['function'] instanceof \Closure ) {
 						unset( $wp_filter['admin_notices']->callbacks[ $priority ][ $name ] );
 						continue;
@@ -1864,16 +1874,16 @@ class Email_Subscribers_Admin {
 
 		$engage_plugin_path = 'icegram/icegram.php';
 
-    	if ( is_plugin_active($engage_plugin_path) ) { 
+		if ( is_plugin_active($engage_plugin_path) ) { 
 			return;
 		}
 
-		if( file_exists(WP_PLUGIN_DIR . '/' . $engage_plugin_path) ) {
+		if ( file_exists(WP_PLUGIN_DIR . '/' . $engage_plugin_path) ) {
 			$optin_url = admin_url( 'plugins.php' );
-			$optin_btn_txt = esc_html("Activate Icegram Engage", 'email-subscribers' );
+			$optin_btn_txt = esc_html('Activate Icegram Engage', 'email-subscribers' );
 		} else {
 			$optin_url = admin_url( 'plugin-install.php?s=Icegram%2520Engage%2520%25E2%2580%2593%2520Ultimate%2520WP%2520Popup%2520Builder%252C%2520Lead%2520Generation%252C%2520Optins%252C%2520and%2520CTA&tab=search&type=term' );
-			$optin_btn_txt = esc_html("Get start with engage", 'email-subscribers' );
+			$optin_btn_txt = esc_html('Get start with engage', 'email-subscribers' );
 		}
 		
 
@@ -2050,6 +2060,47 @@ class Email_Subscribers_Admin {
 		}
 	}
 	
+	public function load_gutenberg_editor() {
+		do_action( 'ig_es_render_gutenberg_editor' );
+	}
+	public function register_gutenberg_editor() {
+		 register_post_type('ig_es_campaign', array(
+		'label'         => 'ES Campaigns',
+		'public'        => true,
+		'show_ui'       => true,
+		'publicly_queryable' => true,
+		'show_in_menu'  => false, // Hides it from default WP menu
+		'supports'      => ['title', 'editor'],
+		'show_in_rest'  => true, 
+		'rest_base' => 'ig_es_campaign',
+		'rest_controller_class' => 'WP_REST_Posts_Controller',
+	));
+	}
+
+	public function ig_es_enqueue_gutenberg_editor_scripts( $hook) {
+	
+		$screen = get_current_screen();
+		if (!$screen || $screen->post_type !== 'ig_es_campaign') {
+				return;
+		}
+		wp_enqueue_script('mjml-browser', plugin_dir_url(__FILE__) . 'js/gutenberg-editor/mjml-browser.js', array(), null, true);
+		wp_enqueue_script('gutenberg-editor', plugin_dir_url(__FILE__) . 'js/gutenberg-editor/gutenberg-editor.js', ['wp-edit-post', 'wp-element', 'wp-plugins','wp-components', 'wp-data','wp-i18n','wp-blocks', 'wp-editor'], null, true);
+
+		$site_logo_url = ES_Common::get_site_logo_url();
+		$site_colors   = array(
+			'#0073aa',
+			'#ffffff'
+		);
+
+		wp_localize_script('gutenberg-editor', 'ig_es_gutenberg_mjml_ajax', array(
+			'ajaxurl'       => admin_url('admin-ajax.php'),
+			'nonce'         => wp_create_nonce('ig_es_convert_to_mjml_nonce'),
+			'site_name'     => get_bloginfo( 'name' ),
+			'site_logo_url' => $site_logo_url, 
+			'site_colors'   => $site_colors, 
+		)); 
+	}
+
 	public function get_active_quick_help_plugins( $active_plugins ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return $active_plugins;

@@ -394,7 +394,7 @@ class ES_DB_Forms extends ES_DB {
 	 * @since 5.7.38
 	 */
 	public function duplicate_form( $id = null) {
-		if(!empty( $id )) {
+		if (!empty( $id )) {
 
 			$form_data = ES()->forms_db->get_form_by_id( $id );
 

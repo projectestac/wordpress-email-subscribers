@@ -14,23 +14,28 @@ jQuery(document).ready(function() {
 
 	// Wrapper objects for onboarding functions.
 	let onboarding_functions = {
-		perform_configuration_tasks: function() {
+		perform_installation_tasks: function() {
+			let task = 'install_mailer_plugin';
+			let task_html_elem = 'ig-es-onboard-' + task;
+			setTimeout(function(){						
+				ig_es_change_onboard_task_status( task_html_elem, 'in-progress' );
+			}, time_increament);
 
 			let params = {
 				type: 'POST',
 				url: ajaxurl,
 				data: {
 					action: 'ig_es_setup_email_sending_service',
-					request: 'perform_configuration_tasks',
+					request: 'perform_installation_tasks',
 					security: ig_es_js_data.security
 				},
 				dataType: 'json',
 				success: function(data, status, xhr) {
 
 					if ( data.status && 'success' === data.status ) {
-						jQuery(document).trigger('ig_es_perform_configuration_tasks_success');
+						jQuery(document).trigger('ig_es_perform_installation_tasks_success');
 					} else {
-						jQuery(document).trigger('ig_es_perform_configuration_tasks_error');
+						jQuery(document).trigger('ig_es_perform_installation_tasks_error');
 					}
 
 
@@ -55,7 +60,7 @@ jQuery(document).ready(function() {
 					}
 				},
 				error: function(data, status, xhr) {
-					ig_es_handle_onboard_task_error( 'perform_configuration_tasks', data, status, xhr );
+					ig_es_handle_onboard_task_error( 'perform_installation_tasks', data, status, xhr );
 				}
 			};
 
@@ -64,8 +69,8 @@ jQuery(document).ready(function() {
 
 			jQuery.ajax(params);
 		},
-		dispatch_emails_from_server: function() {
-			let task = 'dispatch_emails_from_server';
+		perform_activation_tasks: function() {
+			let task = 'activate_mailer_plugin';
 			let task_html_elem = 'ig-es-onboard-' + task;
 			setTimeout(function(){						
 				ig_es_change_onboard_task_status( task_html_elem, 'in-progress' );
@@ -75,57 +80,33 @@ jQuery(document).ready(function() {
 				url: ajaxurl,
 				data: {
 					action: 'ig_es_setup_email_sending_service',
-					request: 'dispatch_emails_from_server',
+					request: 'perform_activation_tasks',
 					security: ig_es_js_data.security
 				},
 				dataType: 'json',
 				success: function(data, status, xhr) {
 					let tasks = data.tasks;
-					if( tasks && tasks.hasOwnProperty( 'dispatch_emails_from_server' ) ) {
+					ig_es_handle_onboard_task_response( 'activate_mailer_plugin', data );
+					if( tasks && tasks.hasOwnProperty( 'activate_mailer_plugin' ) ) {
 						let task_data     = tasks[ task ];
 						let form_source	  = '';
-						if( 'error' === task_data.status ) {
-							form_source = 'es_email_send_error';
-						} else {
-							form_source = 'es_email_send_success';
+						if( 'success' === task_data.status ) {
+							setTimeout(function(){						
+								ig_es_change_onboard_task_status( 'ig-es-onboard-redirect_to_mailer_plugin_dashboard', 'in-progress' );
+							}, time_increament);
+							setTimeout(function(){
+								ig_es_change_onboard_task_status( 'ig-es-onboard-redirect_to_mailer_plugin_dashboard', 'success' );
+								window.location.href = ig_es_ess_onboarding_data.mailer_plugin_url;
+							},time_increament + 1000);	
 						}
-						jQuery('#ig-es-onboarding-final-steps-form #sign-up-form-source').val(form_source);
 					}
-					ig_es_handle_onboard_task_response( 'dispatch_emails_from_server', data );
 				},
 				error: function(data, status, xhr) {
-					ig_es_handle_onboard_task_error( 'dispatch_emails_from_server', data, status, xhr );
+					ig_es_handle_onboard_task_error( 'activate_mailer_plugin', data, status, xhr );
 				}
 			};
 
 			jQuery.ajax(params);
-		},
-		check_test_email_on_server: function() {
-			setTimeout(function(){						
-				ig_es_change_onboard_task_status( 'ig-es-onboard-check_test_email_on_server', 'in-progress' );
-			}, time_increament);
-			
-			// Add 10s delay while checking for arrival of test email on our server since from some hosts, some delay may happen in receiveing the test email.
-			setTimeout(function(){
-				var params = {
-					type: 'POST',
-					url: ajaxurl,
-					data: {
-						action: 'ig_es_setup_email_sending_service',
-						request: 'check_test_email_on_server',
-						security: ig_es_js_data.security
-					},
-					dataType: 'json',
-					success: function(data, status, xhr) {
-						ig_es_handle_onboard_task_response( 'check_test_email_on_server', data );
-					},
-					error: function(data, status, xhr) {
-						ig_es_handle_onboard_task_error( 'check_test_email_on_server', data, status, xhr );
-					}
-				};
-	
-				jQuery.ajax(params);
-			}, 3000);
 		},
 		updating_email_delivery_main_task_status: function() {
 			setTimeout(function() {
@@ -171,45 +152,13 @@ jQuery(document).ready(function() {
 		e.preventDefault();
 		jQuery('#sending-service-benefits').hide();
 		jQuery('#sending-service-onboarding-tasks-list').show();
-		ig_es_start_processing_tasks_queue( 'perform_configuration_tasks' );
-	});
-	jQuery('#ig-es-complete-ess-onboarding').on( 'click', function(e){
-		e.preventDefault();
-		var btn_elem = jQuery(this);
-		var params = {
-			type: 'POST',
-			url: ajaxurl,
-			data: {
-				action: 'ig_es_setup_email_sending_service',
-				request: 'complete_ess_onboarding',
-				security: ig_es_js_data.security
-			},
-			dataType: 'json',
-			beforeSend: function() {
-				jQuery(btn_elem).addClass('cursor-wait').attr('disabled', true);
-				jQuery(btn_elem).find('.es-btn-arrow').hide();
-				jQuery(btn_elem).find('.es-btn-loader').show().addClass('animate-spin').attr('disabled', true);
-			},
-			success: function(response, status, xhr) {
-				if ( 'success' === response.status ) {
-					jQuery('#sending-service-onboarding-tasks-list').replaceWith(response.html);
-				} else {
-					alert( ig_es_js_data.i18n_data.ajax_error_message );
-				}
-			},
-			error: function(response, status, xhr) {
-				ig_es_handle_onboard_task_error( '', response, status, xhr );
-			}
-		};
-
-		jQuery.ajax(params);	
+		ig_es_start_processing_tasks_queue( 'perform_installation_tasks' );
 	});
 
 	// Variable to hold order of onboarding tasks to be performed.
 	let onboarding_functions_queue = [
-		'perform_configuration_tasks',
-		'dispatch_emails_from_server',
-		'check_test_email_on_server',
+		'perform_installation_tasks',
+		'perform_activation_tasks',
 	];
 
 	jQuery(document).on('ig_es_check_test_email_on_server_success', function(){

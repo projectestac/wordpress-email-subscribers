@@ -741,7 +741,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 						}
 					}
 				
-					$merge_tags=ES_Common::process_subscriber_fallbacks($content,$merge_tags);
+					$merge_tags=ES_Common::process_subscriber_fallbacks($content, $merge_tags);
 					
 					$subject = $this->replace_global_tags( $subject );
 					$subject = $this->mailer->convert_es_tags_to_mailer_tags( $subject );
@@ -805,7 +805,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 				}
 
 				$merge_tags['contact_id'] = $contact_id;
-				$updated_merge_tags = $this->get_contact_merge_tags( $contact_id,$merge_tags ) ;
+				$updated_merge_tags = $this->get_contact_merge_tags( $contact_id, $merge_tags ) ;
 
 				$this->link_data = array(
 					'message_id'  => $message_id,
@@ -1138,7 +1138,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 		 *
 		 * @since 4.3.2
 		 */
-		public function get_contact_merge_tags( $contact_id = 0 ,$merge_tags = array()) {
+		public function get_contact_merge_tags( $contact_id = 0, $merge_tags = array()) {
 			
 			if ( 0 != $contact_id ) {
 				$contact_details = ES()->contacts_db->get_details_by_ids( array( $contact_id ) );
@@ -1151,11 +1151,11 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 						}
 					}
 
-						if ( !empty( $merge_tags['first_name'] ) && !empty( $merge_tags['last_name'] ) ) {
-							$merge_tags['name'] = ES_Common::prepare_name_from_first_name_last_name( $merge_tags['first_name'], $merge_tags['last_name'] );
-						} elseif ( !empty( $merge_tags['first_name'] ) ) {
-							$merge_tags['name'] = $merge_tags['first_name'];
-						}
+					if ( !empty( $merge_tags['first_name'] ) && !empty( $merge_tags['last_name'] ) ) {
+						$merge_tags['name'] = ES_Common::prepare_name_from_first_name_last_name( $merge_tags['first_name'], $merge_tags['last_name'] );
+					} elseif ( !empty( $merge_tags['first_name'] ) ) {
+						$merge_tags['name'] = $merge_tags['first_name'];
+					}
 				}
 			}
 			return $merge_tags;
@@ -1857,7 +1857,7 @@ if ( ! class_exists( 'ES_Mailer' ) ) {
 				if ( ! empty( $message_id ) ) {
 					$mail_to_body .= ",Message-ID:$message_id";
 				}
-				$mail_to_body     .= ',Unsubscribe-Link:' . str_replace( '&', '%26', $unsubscribe_link );
+				$mail_to_body     .= ',Unsubscribe-Link:' . str_replace( 'es=unsubscribe&hash=', 'es-list-unsubscribe-hash=', $unsubscribe_link );
 				$list_unsub_header = sprintf(
 					/* translators: 1. Unsubscribe link 2. Blog admin email */
 					'<%1$s>,<mailto:%2$s?subject=%3$s&body=%4$s>',

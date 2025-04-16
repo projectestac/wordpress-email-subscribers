@@ -4,7 +4,7 @@ $campaign_url = admin_url( 'admin.php?page=es_campaigns' );
 if ( ! empty( $campaigns ) && count( $campaigns ) > 0 ) { ?>
 	<table class="mt-2 w-full bg-white rounded-md overflow-hidden " style="<?php echo ! empty( $upsell ) ? 'filter:blur(1px);' : ''; ?>">
 		<thead>
-		    <th class="text-center text-sm font-medium leading-6 text-gray-400 "><?php echo esc_html__( 'Name', 'email-subscribers' ); ?></th>
+			<th class="text-center text-sm font-medium leading-6 text-gray-400 "><?php echo esc_html__( 'Name', 'email-subscribers' ); ?></th>
 			<th class="text-right text-sm font-medium leading-6 text-gray-400"><?php echo esc_html__( 'Sent', 'email-subscribers' ); ?></th>
 			<th class="text-right text-sm font-medium leading-6 text-gray-400"><?php echo esc_html__( 'Opens', 'email-subscribers' ); ?></th>
 			<th class="text-right text-sm font-medium leading-6 text-gray-400"><?php echo esc_html__( 'Clicks', 'email-subscribers' ); ?></th>
@@ -16,8 +16,8 @@ if ( ! empty( $campaigns ) && count( $campaigns ) > 0 ) { ?>
 			if ( ! empty( $campaigns ) ) {
 				foreach ( $campaigns as $campaign_id => $campaign ) {
 					$campaign_kpi = ES_Dashboard::get_recent_campaigns_kpis( $campaign['id'] );
-					if( !empty( $campaign['name'] ) ) {
-					?>
+					if ( !empty( $campaign['name'] ) ) {
+						?>
 					<tr>
 						<td class="avatar-column">
 							<div class="avatar">
@@ -28,17 +28,18 @@ if ( ! empty( $campaigns ) && count( $campaigns ) > 0 ) { ?>
 									$img_name = 'sequences';
 								} elseif ( IG_CAMPAIGN_TYPE_POST_NOTIFICATION === $campaign['type'] ) {
 									$img_name = 'notification';
-								} elseif( IG_CAMPAIGN_TYPE_POST_DIGEST === $campaign['type'] ) {
+								} elseif ( IG_CAMPAIGN_TYPE_POST_DIGEST === $campaign['type'] ) {
 									$img_name = 'notification';
 								}
 
-								if( !empty($img_name) ) {
+								if ( !empty($img_name) ) {
 									?>
 									<div class='dash-avatar'>
 									<img src="<?php echo esc_url( ES_PLUGIN_URL . '/lite/admin/images/new/' . esc_attr( $img_name ) . '.svg' ); ?>" alt="">
-								    </div>
+									</div>
 									<?php
-								} ?>
+								} 
+								?>
 							</div>
 							<div class="font-medium">
 								<?php echo "<a class='dash-recent-p es-ellipsis-text' href='admin.php?page=es_campaigns#!/campaign/edit/" . esc_html( $campaign['id'] ) . "' target='_blank'>" . esc_html( $campaign['name'] ) . '</a>'; ?>

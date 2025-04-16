@@ -2367,44 +2367,44 @@ function ig_es_update_5737_db_version() {
  * Premium Form templates for existing users
  */
 
- function ig_es_add_preview_forms_column() {
+function ig_es_add_preview_forms_column() {
 
 	global $wpdb;
 
 	$column_exists = $wpdb->get_var("
 		SELECT COUNT(*) 
 		FROM information_schema.COLUMNS 
-		WHERE TABLE_NAME = '".$wpdb->prefix."ig_forms' 
+		WHERE TABLE_NAME = '" . $wpdb->prefix . "ig_forms' 
 		AND COLUMN_NAME = 'preview_image'
 	");
 
 	if ($column_exists == 0) {
-		$result = $wpdb->query("ALTER TABLE ".$wpdb->prefix."ig_forms ADD preview_image mediumtext DEFAULT NULL");
+		   $result = $wpdb->query('ALTER TABLE ' . $wpdb->prefix . 'ig_forms ADD preview_image mediumtext DEFAULT NULL');
 
-		$preview_images = array(
-			'Contact form' => 'contact_form_pro.png',
-			'Inline newsletter form' => 'inline_form_pro.png',
-			'Minimal subscription form with selection of list' => 'minimal_subscription_form_starter.png',
-			'Subscription form for updates' => 'subscription_form_for_update_pro.png',
-			'Subscription Form' => 'subscription_form_pro.png',
-			'Subscription form with logo' => 'subscription_form_with_logo_lite.png',
-			'Subscription form with GDPR consent' => 'subscription_gdpr_form_lite.png',
-		);
+		   $preview_images = array(
+		   'Contact form' => 'contact_form_pro.png',
+		   'Inline newsletter form' => 'inline_form_pro.png',
+		   'Minimal subscription form with selection of list' => 'minimal_subscription_form_starter.png',
+		   'Subscription form for updates' => 'subscription_form_for_update_pro.png',
+		   'Subscription Form' => 'subscription_form_pro.png',
+		   'Subscription form with logo' => 'subscription_form_with_logo_lite.png',
+		   'Subscription form with GDPR consent' => 'subscription_gdpr_form_lite.png',
+		   );
 
 
-		$last_released_date = gmdate('Y-m-d H:i:s', strtotime('2024-10-24 00:00:00'));
+		   $last_released_date = gmdate('Y-m-d H:i:s', strtotime('2024-10-24 00:00:00'));
 
-		foreach($preview_images as $form_name => $preview_image) {
+		   foreach ($preview_images as $form_name => $preview_image) {
 
-			$sql = $wpdb->prepare(
-				"UPDATE {$wpdb->prefix}ig_forms SET preview_image = %s WHERE name = %s AND created_at > %s",
-				$preview_image,
-				$form_name,
-				$last_released_date
-			);
+			   $sql = $wpdb->prepare(
+			   "UPDATE {$wpdb->prefix}ig_forms SET preview_image = %s WHERE name = %s AND created_at > %s",
+			   $preview_image,
+			   $form_name,
+			   $last_released_date
+			   );
 
-			$wpdb->query($sql);
-		}
+			   $wpdb->query($sql);
+		   }
 	}
 }
 

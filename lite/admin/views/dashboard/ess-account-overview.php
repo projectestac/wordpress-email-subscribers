@@ -19,7 +19,8 @@
 			} else {
 				echo esc_html__( 'Paid plan', 'email-subscribers' );
 			}
-			?> &nbsp;</span>
+			?>
+			 &nbsp;</span>
 			<?php
 		} else {
 			?>

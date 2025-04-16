@@ -126,6 +126,7 @@ class ES_Handle_Post_Notification {
 
 			if ( count( $notifications ) > 0 ) {
 				$post_mailing_queue_ids = array();
+				
 				foreach ( $notifications as $notification ) {
 					$notification_id      = $notification['id'];
 					$notification_body    = $notification['body'];
@@ -176,7 +177,7 @@ class ES_Handle_Post_Notification {
 									)
 								),
 							);
-
+							
 							// Add entry into mailing queue table
 							$mailing_queue_id = ES_DB_Mailing_Queue::add_notification( $data );
 
@@ -184,7 +185,7 @@ class ES_Handle_Post_Notification {
 
 								$mailing_queue_hash = $guid;
 								$campaign_id        = $notification['id'];
-								$emails_queued		= ES_DB_Sending_Queue::queue_emails( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id );
+								$emails_queued		= ES_DB_Sending_Queue::queue_emails( $mailing_queue_id, $mailing_queue_hash, $campaign_id, $list_id, $post_mailing_queue_ids );
 
 								if ( $emails_queued ) {
 									update_post_meta( $post_id, 'ig_es_is_post_notified', 1 );

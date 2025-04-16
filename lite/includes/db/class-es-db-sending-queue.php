@@ -380,7 +380,7 @@ class ES_DB_Sending_Queue {
 	 *
 	 * @since 4.6.4
 	 */
-	public static function queue_emails( $mailing_queue_id = 0, $mailing_queue_hash = '', $campaign_id = 0, $list_ids = array() ) {
+	public static function queue_emails( $mailing_queue_id = 0, $mailing_queue_hash = '', $campaign_id = 0, $list_ids = array(), $post_mailing_queue_ids = array() ) {
 
 		global $wpbd;
 
@@ -400,7 +400,7 @@ class ES_DB_Sending_Queue {
 
 		$campaign = ES()->campaigns_db->get( $campaign_id );
 		$args     = array(
-			'select'     => array( 'subscribers.id' ),
+			'select'     => array( 'subscribers.id'),
 			'lists'      => $list_ids,
 			'return_sql' => true, // This flag will return the required sql query
 			'orderby'    => array( 'id' ),
@@ -476,6 +476,14 @@ class ES_DB_Sending_Queue {
 		if ( empty( $send_at_query ) ) {
 			$send_at_query = $wpbd->prepare('%s AS `send_at`', array($current_utc_time));
 		}
+
+		$not_in_sql_query = '';
+		if ( !empty($post_mailing_queue_ids) ) {
+			$excluded_mailing_queue_ids = $post_mailing_queue_ids; 
+			$excluded_mailing_queue_ids_string = implode(',', array_map('intval', $excluded_mailing_queue_ids));
+
+			$not_in_sql_query = "AND id NOT IN ( SELECT contact_id FROM {$wpbd->prefix}ig_sending_queue WHERE mailing_queue_id IN (" . $excluded_mailing_queue_ids_string . ') )';
+		}
 		
 		$query = $wpbd->prepare(
 			"SELECT 
@@ -492,7 +500,7 @@ class ES_DB_Sending_Queue {
 				%s AS `opened_at`,
 				   {$send_at_query}
 			FROM `{$wpbd->prefix}ig_contacts` AS `ig_contacts` 
-			WHERE id IN ( " . $sql_query . ')
+			WHERE id IN ( " . $sql_query . ' )
 			GROUP BY `ig_contacts`.`email`
 			ORDER BY `ig_contacts`.`email`',
 			$query_args
@@ -529,7 +537,7 @@ class ES_DB_Sending_Queue {
 					%s AS `opened_at`,
 			       	{$send_at_query}
 				FROM `{$wpbd->prefix}ig_contacts` AS `ig_contacts` 
-				WHERE id IN ( " . $sql_query . ')
+				WHERE id IN ( " . $sql_query . ' )  ' . $not_in_sql_query . '
 				GROUP BY `ig_contacts`.`email`
 				ORDER BY `ig_contacts`.`email`',
 				$query_args

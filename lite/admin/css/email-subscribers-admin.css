@@ -1888,7 +1888,7 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
 	margin-bottom : 0px;
 }
 
-.premium-icon {
+.premium-icon,.ig-es-recommended-icon {
 	display: inline-block;
 	color: #319795;
 	width: 44px;
@@ -1906,7 +1906,7 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
     background: url(../images/premium-icon-white.svg);
 }
 
-.premium-icon::before {
+.premium-icon::before,.ig-es-recommended-icon::before {
     font-size: 11px;
     font-weight: 500;
     padding: 0px 10px;
@@ -1930,17 +1930,33 @@ body.email-subscribers_page_es_campaigns .column-status .dashicons[title="Finish
     content: 'PRO';
 }
 
-.es-mailer-logo .premium-icon {
-    position: absolute;
-    top: 0;
-    right: 0;
+.es-mailer-label[data-mailer="icegram"] .es-mailer-logo {
+    background-color: #e7e6fd;
 }
 
 .es-mailer-logo {
     position: relative;
 }
 
-.es-mailer-logo .premium-icon::before {
+.es-mailer-logo .premium-icon ,.es-mailer-logo .ig-es-recommended-icon{
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.es-mailer-logo .ig-es-recommended-icon {
+    width: 80px;
+    border-top-right-radius: 5px;
+    font-size: 9px;
+    font-weight: 500;
+    line-height: 1.2rem;
+}
+
+#ig-es-icegram-mailer-promotion-popup .ig-es-popup {
+    width: 33.33%;
+}
+
+.es-mailer-logo .premium-icon::before, .es-mailer-logo .ig-es-recommended-icon::before {
     border-radius: 0;
     border-top-right-radius: 5px;
 }

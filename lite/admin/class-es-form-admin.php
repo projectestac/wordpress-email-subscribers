@@ -494,7 +494,7 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 
 			$nonce = wp_create_nonce( 'es_form' );
 			?>
-            <style>
+			<style>
 			.select2-container{
 				width: 100%!important;
 			}
@@ -663,7 +663,7 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 											
 											$('form#es-edit-form #form-style-button').on('click',()=>{
 												if ( canUpsellFormStyle ) {
-													window.open('<?php echo esc_url(admin_url('admin.php?page=es_pricing'));?>', '_blank');
+													window.open('<?php echo esc_url(admin_url('admin.php?page=es_pricing')); ?>', '_blank');
 												} else {
 													$('form#es-edit-form #form-styles-options').toggle();
 												}
@@ -800,37 +800,37 @@ if ( ! class_exists( 'ES_Form_Admin' ) ) {
 				
 <!-- Add new list modal popup -->
 <div id="ig-es-add-list-modal" class="inactive modal-overlay">
-    <div class="modal-content">
-        <h2 class="modal-title"><?php echo esc_html__('Add New List', 'email-subscribers'); ?></h2>
+	<div class="modal-content">
+		<h2 class="modal-title"><?php echo esc_html__('Add New List', 'email-subscribers'); ?></h2>
 
-        <div class="modal-close">
-            <button id="ig-es-list-close-modal" class="close-button">&times;</button>
-        </div>
+		<div class="modal-close">
+			<button id="ig-es-list-close-modal" class="close-button">&times;</button>
+		</div>
 
-        <form id="add-list-form">
-            <input type="hidden" name="_wpnonce" value="<?php echo esc_attr(wp_create_nonce('es_list')); ?>" />
+		<form id="add-list-form">
+			<input type="hidden" name="_wpnonce" value="<?php echo esc_attr(wp_create_nonce('es_list')); ?>" />
 
-            <div class="form-group">
-                <label for="es-list-name" class="form-label"><?php echo esc_html__('List Name', 'email-subscribers'); ?></label>
-                <input type="text" name="es-list-name" id="es-list-name" class="form-input" placeholder="<?php echo esc_html__('Enter list name', 'email-subscribers'); ?>" required />
-            </div>
+			<div class="form-group">
+				<label for="es-list-name" class="form-label"><?php echo esc_html__('List Name', 'email-subscribers'); ?></label>
+				<input type="text" name="es-list-name" id="es-list-name" class="form-input" placeholder="<?php echo esc_html__('Enter list name', 'email-subscribers'); ?>" required />
+			</div>
 
-            <div class="form-group">
-                <label for="es-list-desc" class="form-label"><?php echo esc_html__('Description', 'email-subscribers'); ?></label>
-                <textarea name="es-list-desc" id="es-list-desc" class="form-textarea" rows="2" placeholder="<?php echo esc_html__('Enter description (optional)', 'email-subscribers'); ?>"></textarea>
-            </div>
+			<div class="form-group">
+				<label for="es-list-desc" class="form-label"><?php echo esc_html__('Description', 'email-subscribers'); ?></label>
+				<textarea name="es-list-desc" id="es-list-desc" class="form-textarea" rows="2" placeholder="<?php echo esc_html__('Enter description (optional)', 'email-subscribers'); ?>"></textarea>
+			</div>
 
-            <div class="form-actions">
-                
-                <span class="spinner-container" id="spinner-image">
-                    <img src="<?php echo esc_url(ES_PLUGIN_URL . 'lite/public/images/spinner.gif'); ?>" alt="<?php echo esc_attr__('Loading...', 'email-subscribers'); ?>" />
-                </span>
-                <div id="ig-es-list-message"></div>
+			<div class="form-actions">
+				
+				<span class="spinner-container" id="spinner-image">
+					<img src="<?php echo esc_url(ES_PLUGIN_URL . 'lite/public/images/spinner.gif'); ?>" alt="<?php echo esc_attr__('Loading...', 'email-subscribers'); ?>" />
+				</span>
+				<div id="ig-es-list-message"></div>
 				<div><button type="button" id="ig-es-list-cancel-modal" class="button-cancel"><?php echo esc_html__('Cancel', 'email-subscribers'); ?></button>
-                <button type="button" id="es-add-list" class="button-save"><?php echo esc_html__('Save', 'email-subscribers'); ?></button></div>
-            </div>
-        </form>
-    </div>
+				<button type="button" id="es-add-list" class="button-save"><?php echo esc_html__('Save', 'email-subscribers'); ?></button></div>
+			</div>
+		</form>
+	</div>
 </div>
 			<?php
 		}

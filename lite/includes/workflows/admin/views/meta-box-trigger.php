@@ -46,6 +46,8 @@ if ( ! ES()->is_pro() ) {
 		),
 		'Order'     => array(
 			'ig_es_wc_order_refunded' => __( 'WooCommerce Order Refunded', 'email-subscribers' ),
+			'ig_es_wc_order_on_hold' => __( 'WooCommerce Order On Hold', 'email-subscribers' ),
+			'ig_es_wc_order_processing' => __( 'WooCommerce Order Processed', 'email-subscribers' ),
 		),
 		'Wishlists' => array(
 			'ig_es_yith_wc_wishlist' => __( 'Wishlist Item On Sale (YITH Wishlists)', 'email-subscribers' ),
@@ -87,6 +89,9 @@ if ( ! ES()->is_pro() ) {
 			'es_trigger_buddyboss_user_account_suspended'   => __( 'Buddyboss user suspended', 'email-subscribers' ),
 			'es_trigger_buddyboss_user_account_unsuspended' => __( 'Buddyboss user unsuspended', 'email-subscribers' ),
 		),
+		'WP Event Manager' => array(
+			'es_trigger_wpem_event_registered'   => __( 'Event registered', 'email-subscribers' ),
+		),
 	);
 	$trigger_list     = array_merge_recursive( $trigger_list, $pro_trigger_list );
 }
@@ -100,7 +105,9 @@ if ( ! ES()->is_pro() ) {
 		<td class="ig-es-table__col ig-es-table__col--field">
 			<select name="ig_es_workflow_data[trigger_name]" class="ig-es-field js-trigger-select" required>
 				<option value=""><?php esc_html_e( '[Select]', 'email-subscribers' ); ?></option>
-				<?php foreach ( $trigger_list as $trigger_group => $triggers ) : ?>
+				<?php
+				foreach ( $trigger_list as $trigger_group => $triggers ) : 
+					?>
 					<optgroup label="<?php echo esc_attr( $trigger_group ); ?>">
 						<?php
 						foreach ( $triggers as $trigger_name => $_trigger ) :

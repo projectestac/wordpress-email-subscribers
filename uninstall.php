@@ -33,6 +33,18 @@ include_once 'lite/includes/class-email-subscribers-uninstall.php';
 $delete_setting = get_option( 'ig_es_delete_plugin_data', 'no' );
 
 if ( 'yes' === $delete_setting ) {
+
+	$active_plugins           = get_option( 'active_plugins', array() );
+	$premium_plugin_folder    = 'email-subscribers-premium';
+	$premium_plugin_file      = 'email-subscribers-premium/email-subscribers-premium.php';
+	$current_plugin_folder    = basename( dirname(__FILE__) );
+	$is_deleting_lite_plugin  = $current_plugin_folder !== $premium_plugin_folder;
+	$is_premium_plugin_active = in_array( $premium_plugin_file, $active_plugins, true );
+
+	// Don't delete data if lite plugin is deleting and premium plugin is active
+	if ( $is_deleting_lite_plugin && $is_premium_plugin_active ) {
+		return;
+	}
 	
 	// Delete data
 	Email_Subscribers_Uninstall::delete_plugin_data_on_uninstall();

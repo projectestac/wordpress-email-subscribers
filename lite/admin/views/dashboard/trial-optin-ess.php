@@ -63,7 +63,7 @@ if ( $show_trial_optin ) {
 	$trial_period_in_days = ES()->trial->get_trial_period( 'in_days' );
 	$trial_expiry_date           = ES()->trial->get_trial_expiry_date();
 	$formatted_trial_expiry_date = ig_es_format_date_time( $trial_expiry_date );
-    $plan = ES()->get_plan();
+	$plan = ES()->get_plan();
 	$trial_block = array(
 		'trial-expired' => array(
 			/* translators: %d: Trial period in days */

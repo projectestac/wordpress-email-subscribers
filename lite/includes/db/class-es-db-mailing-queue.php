@@ -401,6 +401,7 @@ class ES_DB_Mailing_Queue {
 
 		$data           = $prepared_data['data'];
 		$column_formats = $prepared_data['column_formats'];
+		
 // phpcs:disable
 		$inserted = $wpdb->insert( IG_MAILING_QUEUE_TABLE, $data, $column_formats );
 // phpcs:enable

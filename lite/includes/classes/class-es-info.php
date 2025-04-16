@@ -30,16 +30,6 @@ class ES_Info {
 
 	public function es_information_callback() {
 
-		$is_option_exists     = get_option( 'current_sa_email_subscribers_db_version', false );
-		$enable_manual_update = false;
-		if ( $is_option_exists ) {
-			$enable_manual_update = true;
-		}
-
-		$update_url = add_query_arg( 'do_update_ig_es', 'true', admin_url( 'admin.php?page=es_general_information' ) );
-		$update_url = add_query_arg( 'from_db_version', '3.5.18', $update_url );
-		$update_url = wp_nonce_url( $update_url, 'ig_es_db_update', 'ig_es_db_update_nonce' );
-
 		include_once ES_PLUGIN_DIR . '/lite/admin/partials/help.php';
 	}
 

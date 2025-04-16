@@ -214,7 +214,7 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 			</div>
 			
 			<!-- Email sending service section -->
-			<div class="flex-auto min-w-0 es-w-35 pr-3 ess-block">
+			
 				<?php
 				if ( ES_Service_Email_Sending::is_onboarding_completed() ) {
 					$current_month       = ig_es_get_current_month();
@@ -224,7 +224,9 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 					$allocated_limit     = isset( $ess_data['allocated_limit'] ) ? $ess_data['allocated_limit']                    : 0;
 					$interval            = isset( $ess_data['interval'] ) ? $ess_data['interval']                                  : '';
 					$current_mailer_name = ES()->mailer->get_current_mailer_name();
-
+					?>
+					<div class="flex-auto min-w-0 es-w-35 pr-3 ess-block">
+					<?php
 					ES_Admin::get_view(
 						'dashboard/ess-account-overview',
 						array(
@@ -236,19 +238,25 @@ $allowed_html_tags = ig_es_allowed_html_tags_in_esc();
 							'settings_url'        => $settings_url,
 						)
 					);
-				} else {
-					$ess_onboarding_step = get_option( 'ig_es_ess_onboarding_step', 1 );
+					?>
+					</div>
+					<?php
+				} elseif ( ! is_plugin_active( 'icegram-mailer/icegram-mailer.php' ) && current_user_can( 'install_plugins' ) ) {
 					$ess_optin           = ig_es_get_request_data( 'ess_optin' );
+					?>
+					<div class="flex-auto min-w-0 es-w-35 pr-3 ess-block">
+					<?php
 					ES_Admin::get_view(
-						'dashboard/ess-onboarding', 
+						'dashboard/mailer-plugin-onboarding', 
 						array(
-							'ess_onboarding_step' => (int) $ess_onboarding_step,
 							'ess_optin'           => $ess_optin,
 						)
 					);
+					?>
+					</div>
+					<?php
 				}
 				?>
-			</div>
 			
 			<!--Tips and Trick section -->
 			<div class="flex-auto min-w-0 es-w-35 tips-trick-section">
