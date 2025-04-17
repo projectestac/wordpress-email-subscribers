@@ -565,10 +565,6 @@ class ES_Admin_Settings {
 				'desc'         => __( 'Enter email address to send test email.', 'email-subscribers' ),
 			),
 
-			// XTEC ************ ELIMINAT - Hidden option to Select Mailer to all users
-            // 2021.01.20 @aginard
-            /*
-
 			'ig_es_mailer_settings'         => array(
 				'type'         => 'html',
 				'sub_fields'   => array(
@@ -606,10 +602,6 @@ class ES_Admin_Settings {
 				'name'         => __( 'Email Sender', 'email-subscribers' ),
 				'info'         => '',
 			),
-
-			*/
-			// ********* Fi
-
 		);
 
 		$email_sending_settings = apply_filters( 'ig_es_registered_email_sending_settings', $email_sending_settings );
@@ -912,6 +904,13 @@ class ES_Admin_Settings {
 		$mailers = apply_filters( 'ig_es_mailers', $mailers );
 
 		$selected_mailer = ( array_key_exists( $selected_mailer, $mailers ) ) ? $selected_mailer : 'wpmail';
+
+        // XTEC ************ AFEGIT - Remove reminders to all users except xtecadmin.
+        // 2025.04.17 @aginard
+        if (!is_xtec_super_admin()) {
+            unset($mailers['phpmail'], $mailers['pepipost'], $mailers['icegram']);
+        }
+        // ************ Fi
 
 		foreach ( $mailers as $key => $mailer ) {
 			$html .= '<label class="es-mailer-label inline-flex items-center cursor-pointer" data-mailer="' . esc_attr( $key ) . '">';

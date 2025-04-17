@@ -535,6 +535,13 @@ add_filter( 'ig_es_deactivation_reasons', 'ig_es_add_deactivation_reasons' );
 if ( ! function_exists( 'ig_es_show_trial_optin_reminder_notice' ) ) {
 	function ig_es_show_trial_optin_reminder_notice() {
 
+        // XTEC ************ AFEGIT - Remove reminders to all users except xtecadmin.
+        // 2025.04.17 @aginard
+        if (!is_xtec_super_admin()) {
+            return true;
+        }
+        // ************ Fi
+
 		if ( ! ES()->is_es_admin_screen() ) {
 			return false;
 		}

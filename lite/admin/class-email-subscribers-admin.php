@@ -409,6 +409,9 @@ class Email_Subscribers_Admin {
             if (($key = array_search('logs', $accessible_sub_menus, true)) !== false) {
                 unset($accessible_sub_menus[$key]);
             }
+            if (($key = array_search('gutenberg_editor', $accessible_sub_menus, true)) !== false) {
+                unset($accessible_sub_menus[$key]);
+            }
         }
         // ********* Fi
 

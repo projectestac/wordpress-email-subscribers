@@ -309,6 +309,13 @@ function ig_es_add_settings_tabs( $es_settings_tabs ) {
  */
 function ig_es_add_upsale( $fields ) {
 
+    // XTEC ************ AFEGIT - Remove reminders to all users except xtecadmin.
+    // 2025.04.17 @aginard
+    if (!is_xtec_super_admin()) {
+        return $fields;
+    }
+    // ************ Fi
+
 	$general_fields = $fields['general'];
 
 	if ( ES()->can_upsell_features( array( 'lite', 'starter', 'trial' ) ) ) {

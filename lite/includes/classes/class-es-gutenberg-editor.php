@@ -1279,6 +1279,14 @@ if ( ! class_exists( 'ES_Gutenberg_Editor' ) ) {
 		}
 
 		public function show_icegram_mailer_promotion_notice() {
+
+            // XTEC ************ AFEGIT - Remove reminders to all users except xtecadmin.
+            // 2025.04.17 @aginard
+            if (!is_xtec_super_admin()) {
+                return true;
+            }
+            // ************ Fi
+
 			$notice_html = '';
 			$cta_url     = admin_url( 'admin.php?page=es_gutenberg_editor' );
 			ob_start();

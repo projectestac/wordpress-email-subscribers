@@ -1454,6 +1454,14 @@ class ES_Service_Email_Sending extends ES_Services {
 	}
 
 	public function show_icegram_mailer_promotion_notice() {
+
+        // XTEC ************ AFEGIT - Remove reminders to all users except xtecadmin.
+        // 2025.04.17 @aginard
+        if (!is_xtec_super_admin()) {
+            return true;
+        }
+        // ************ Fi
+
 		global $ig_es_tracker;
 		if ( $ig_es_tracker::is_plugin_installed( 'icegram-mailer/icegram-mailer1.php' ) ) {
 			return;
